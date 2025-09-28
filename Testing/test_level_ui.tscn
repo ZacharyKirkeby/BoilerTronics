@@ -1,9 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
-
-[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://icon.svg" id="1_6egta"]
-
-[sub_resource type="TileSet" id="TileSet_s745w"]
-tile_shape = 1
+[gd_scene format=3 uid="uid://c5l1g2k8geg2o"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -35,7 +30,6 @@ drag_to_rearrange_enabled = true
 [node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
 layout_mode = 2
-delimiter_strings = Array[String](["\" \"", "' '"])
 metadata/_tab_index = 0
 
 [node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
@@ -46,7 +40,6 @@ metadata/_tab_index = 1
 [node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
 layout_mode = 2
-delimiter_strings = Array[String](["\" \"", "' '"])
 metadata/_tab_index = 2
 
 [node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
@@ -72,26 +65,6 @@ gui_snap_controls_to_pixels = false
 size = Vector2i(738, 492)
 size_2d_override_stretch = true
 render_target_update_mode = 4
-
-[node name="PanelContainer" type="PanelContainer" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer/SubViewportContainer/SubViewport"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -131.0
-offset_top = -40.0
-offset_right = 136.0
-offset_bottom = 217.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="TileMapLayer" type="TileMapLayer" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer/SubViewportContainer/SubViewport/PanelContainer"]
-tile_set = SubResource("TileSet_s745w")
-
-[node name="Sprite2D" type="Sprite2D" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer/SubViewportContainer/SubViewport/PanelContainer"]
-position = Vector2(713, 388)
-texture = ExtResource("1_6egta")
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="Control/VFlowContainer"]
 custom_minimum_size = Vector2(1150, 140)
