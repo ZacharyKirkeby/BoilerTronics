@@ -2,9 +2,9 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 
-namespace BoilerTronicsObjects.Placable
+namespace BoilerTronicsObjects.Placeable
 {
-    public abstract partial class PlacableObject
+    public abstract partial class PlaceableObject
     {
         // Values used to keep track of the position of the object and what sprite it is
         Vector2 OGTilePos;          // Original position of the object
