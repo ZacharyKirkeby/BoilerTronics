@@ -27,24 +27,52 @@ layout_mode = 2
 current_tab = 3
 drag_to_rearrange_enabled = true
 
+[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+visible = true
+layout_mode = 2
+metadata/_tab_index = 0
+draw_line_numbers = true
+scroll_smooth = true
+placeholder_text = "Enter Solution Code Here"
+highlight_current_line = true
+syntax_highlighting = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+visible = true
+layout_mode = 2
+metadata/_tab_index = 1
+draw_line_numbers = true
+scroll_smooth = true
+placeholder_text = "Enter Solution Code Here"
+highlight_current_line = true
+syntax_highlighting = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
 [node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 0
+metadata/_tab_index = 2
+draw_line_numbers = true
+scroll_smooth = true
+placeholder_text = "Enter Solution Code Here"
+highlight_current_line = true
+syntax_highlighting = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
-
-[node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 2
-
-[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-layout_mode = 2
-metadata/_tab_index = 3
+draw_line_numbers = true
+scroll_smooth = true
+placeholder_text = "Enter Solution Code Here"
+highlight_current_line = true
+syntax_highlighting = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/VFlowContainer/HFlowContainer"]
 layout_mode = 2
