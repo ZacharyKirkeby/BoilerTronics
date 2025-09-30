@@ -1,12 +1,47 @@
-[gd_scene load_steps=2 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=11 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_28flt"]
+[ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_1ehe0"]
+[ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Scenes/menubuttonhover.tres" id="3_ce3w2"]
+[ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="4_ce3w2"]
+[ext_resource type="Texture2D" uid="uid://b65q7unusmxur" path="res://Resources/Icons/podium.png" id="5_cp0ys"]
+[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="6_yhxw7"]
+[ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="7_cp0ys"]
+
+[sub_resource type="FontVariation" id="FontVariation_28flt"]
+base_font = ExtResource("1_28flt")
+
+[sub_resource type="Theme" id="Theme_48xlc"]
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
+Button/fonts/font = SubResource("FontVariation_28flt")
+Button/styles/focus = ExtResource("2_1ehe0")
+Button/styles/hover = ExtResource("3_ce3w2")
+Button/styles/normal = ExtResource("2_1ehe0")
+
+[sub_resource type="Theme" id="Theme_28flt"]
+Button/constants/icon_max_width = 60
+Button/styles/focus = ExtResource("2_1ehe0")
+Button/styles/hover = ExtResource("3_ce3w2")
+Button/styles/normal = ExtResource("2_1ehe0")
 
 [node name="MainMenu" type="Node2D"]
 
-[node name="Label" type="Label" parent="."]
+[node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1920.0
-offset_bottom = 500.0
+offset_bottom = 1080.0
+color = Color(0.33333334, 0.34901962, 0.3764706, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_top = -50.0
+offset_right = 1920.0
+offset_bottom = 450.0
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.69411767)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 14
+theme_override_constants/outline_size = 6
 theme_override_fonts/font = ExtResource("1_28flt")
 theme_override_font_sizes/font_size = 175
 text = "Boilertronics"
@@ -14,28 +49,69 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
-offset_top = 500.0
-offset_right = 1920.0
-offset_bottom = 1080.0
+offset_top = 300.0
+offset_right = 960.0
+offset_bottom = 880.0
+theme = SubResource("Theme_48xlc")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 30
 
 [node name="New Game" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
+focus_mode = 0
 theme_override_fonts/font = ExtResource("1_28flt")
 theme_override_font_sizes/font_size = 76
 text = "New Game"
 
 [node name="Level Select" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
+focus_mode = 0
 theme_override_fonts/font = ExtResource("1_28flt")
 theme_override_font_sizes/font_size = 76
 text = "Level Select"
 
 [node name="Settings" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
+focus_mode = 0
 theme_override_fonts/font = ExtResource("1_28flt")
 theme_override_font_sizes/font_size = 76
-text = "New Game"
+text = "Settings"
+
+[node name="CenterContainer2" type="CenterContainer" parent="."]
+offset_top = 800.0
+offset_right = 960.0
+offset_bottom = 900.0
+theme = SubResource("Theme_28flt")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="Button" type="Button" parent="CenterContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("4_ce3w2")
+icon_alignment = 1
+
+[node name="Button2" type="Button" parent="CenterContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("5_cp0ys")
+icon_alignment = 1
+
+[node name="Button3" type="Button" parent="CenterContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("6_yhxw7")
+icon_alignment = 1
+
+[node name="Button4" type="Button" parent="CenterContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+icon = ExtResource("7_cp0ys")
+icon_alignment = 1
