@@ -52,7 +52,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
+visible = true
 layout_mode = 2
 metadata/_tab_index = 2
 draw_line_numbers = true
@@ -64,8 +64,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+visible = true
 layout_mode = 2
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 draw_line_numbers = true
 scroll_smooth = true
 placeholder_text = "Enter Solution Code Here"
