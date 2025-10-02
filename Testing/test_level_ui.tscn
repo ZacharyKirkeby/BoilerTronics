@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=2 format=3 uid="uid://c5l1g2k8geg2o"]
+
+[ext_resource type="PackedScene" path="res://Testing/test_layer.tscn" id="1_ymet6"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -46,25 +48,21 @@ metadata/_tab_index = 2
 layout_mode = 2
 metadata/_tab_index = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/VFlowContainer/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-horizontal_scroll_mode = 2
-vertical_scroll_mode = 2
-
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VFlowContainer/HFlowContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 mouse_target = true
 
-[node name="SubViewport" type="SubViewport" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="Control/VFlowContainer/HFlowContainer/SubViewportContainer"]
 handle_input_locally = false
 gui_snap_controls_to_pixels = false
-size = Vector2i(738, 492)
+size = Vector2i(746, 500)
 size_2d_override_stretch = true
 render_target_update_mode = 4
+
+[node name="Node2D" parent="Control/VFlowContainer/HFlowContainer/SubViewportContainer/SubViewport" instance=ExtResource("1_ymet6")]
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="Control/VFlowContainer"]
 custom_minimum_size = Vector2(1150, 140)
