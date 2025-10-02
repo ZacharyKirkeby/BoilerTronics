@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
 
 [ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
-[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -67,6 +67,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "test
+test
 test
 test
 "
