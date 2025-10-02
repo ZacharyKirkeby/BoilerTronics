@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://6cjch4hanpsj"]
+
+[node name="ClawInventoryError" type="AcceptDialog"]
+oversampling_override = 1.0
+title = "Claw Inventory Error"
+initial_position = 2
+size = Vector2i(400, 300)
+visible = true
+ok_button_text = "OK"
+dialog_text = "It looks like you tried to grab an item that your claw could not hold onto! Please make sure that you are grabbing onto the correct item and that the claw is not already holding an item."
+dialog_autowrap = true
