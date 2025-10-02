@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=4 uid="uid://b82n3qy4mojn5"]
+[gd_scene load_steps=3 format=4 uid="uid://bi5xoykbg2jdl"]
 
 [ext_resource type="TileSet" uid="uid://djkh3hy34rb6n" path="res://Resources/new_tile_set.tres" id="1_odxnw"]
 [ext_resource type="Script" uid="uid://baifu7ayw6u6s" path="res://BoilerTronicsObjects/Layers/Layer.cs" id="2_r4n4m"]
@@ -9,6 +9,6 @@
 y_sort_enabled = true
 texture_filter = 1
 position = Vector2(219, 124)
-tile_map_data = PackedByteArray("AAABAP7/AAAIAAgAAAAAAAAAAAAIAAgAAAABAP//AAAIAAgAAAACAP7/AAAIAAgAAAADAP7/AAAIAAgAAAACAP//AAAIAAgAAAABAAAAAAAIAAgAAAAAAP//AAAIAAgAAAD//wAAAAAIAAgAAAANAAAAAAAIAAgAAAASAP7/AAAIAAgAAAAPAAAAAAAIAAgAAAAQAP//AAAIAAgAAAAOAP//AAAIAAgAAAA=")
+tile_map_data = PackedByteArray("AAABAP7/AAAIAAgAAAAAAAAAAAAIAAgAAAABAP//AAAIAAgAAAACAP7/AAAIAAgAAAADAP7/AAAIAAgAAAACAP//AAAIAAgAAAABAAAAAAAIAAgAAAAAAP//AAAIAAgAAAD//wAAAAAIAAgAAAANAAAAAAAIAAgAAAASAP7/AAAIAAgAAAAPAAAAAAAIAAgAAAAQAP//AAAIAAgAAAAOAP//AAAIAAgAAAADAAAAAAAGAAkAAAAGAP//AAAGAAkAAAAGAP3/AAAGAAkAAAA=")
 tile_set = ExtResource("1_odxnw")
 script = ExtResource("2_r4n4m")
