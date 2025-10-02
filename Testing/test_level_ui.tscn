@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
+
+[ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -26,6 +29,7 @@ layout_direction = 2
 layout_mode = 2
 current_tab = 3
 drag_to_rearrange_enabled = true
+script = ExtResource("1_31yto")
 
 [node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
@@ -35,6 +39,7 @@ size_flags_vertical = 3
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
+script = ExtResource("2_6tjow")
 metadata/_tab_index = 0
 
 [node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
