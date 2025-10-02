@@ -15,10 +15,8 @@ namespace BoilerTronicsObjects.Layers
         public void addObject(PlaceableObject newPlaceable)
         {
             if (newPlaceable == null) return; // make sure that the object isn't null
-                                              // TODO: add extra checks
-                                              // Check to make sure that we can place there
-                                              // Check to make sure that another object isn't already there
             objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
+            SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
             numItems++;
         }
 
@@ -26,6 +24,7 @@ namespace BoilerTronicsObjects.Layers
         {
             if (!objectList.Contains(objectToRemove)) return;
             objectList.Remove(objectToRemove); // remove to object form the list
+            EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
             numItems--;
         }
 
@@ -35,7 +34,7 @@ namespace BoilerTronicsObjects.Layers
             {
                 PlaceableObject obj = (PlaceableObject)objectList[objIndex];
                 if (obj == null) continue; // The item in the list was not a placable object    
-                Vector2 pos = obj.getPos();
+                Vector2 pos = obj.GetCurrPos();
                 if (pos.X == loc.X && pos.Y == loc.Y) return obj; // We found the object!!
             }
             
