@@ -9,11 +9,16 @@ namespace BoilerTronicsObjects.Layers
     {
         ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
         int numItems = 0;                           // Number of items in this layer
+                                                    // TODO: add a bit mad for plocable areas
+                                                    // TODO: add a bit mad to show where stuff is already placed
 
         public void addObject(PlaceableObject newPlaceable)
         {
-            if (newPlaceable == null) return;
-            objectList.Add(newPlacabel); // adds the placeable to the list of objects on this layer
+            if (newPlaceable == null) return; // make sure that the object isn't null
+                                              // TODO: add extra checks
+                                              // Check to make sure that we can place there
+                                              // Check to make sure that another object isn't already there
+            objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
             numItems++;
         }
 
