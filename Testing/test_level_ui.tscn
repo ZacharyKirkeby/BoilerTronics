@@ -66,15 +66,14 @@ metadata/_tab_index = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "test
-test
-test
-test
-"
+text = ""
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 metadata/_tab_index = 3
+clear_button_enabled = true
+keep_editing_on_text_submit = false
+set_max_length(value: 30)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/VFlowContainer/HFlowContainer"]
 layout_mode = 2

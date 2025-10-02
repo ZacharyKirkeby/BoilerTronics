@@ -1,7 +1,8 @@
 using Godot;
 using System;
 
-public partial class TextEditor2 : CodeEdit {
+public partial class TextEditor2 : CodeEdit
+{
 	public override void _Ready()
 	{
 		HighlightCurrentLine = true;
@@ -18,5 +19,5 @@ public partial class TextEditor2 : CodeEdit {
 	{
 		return Text;
 	}
-
+	
 }
