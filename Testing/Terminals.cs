@@ -7,7 +7,6 @@ public partial class Terminals : TabContainer {
 	}
 	private void OnTabSelected(long tab) {
 		GD.Print("Switched to tab: " + tab);
-		// Access the CodeEdit in that tab
 		var codeEdit = GetChild<CodeEdit>((int)tab);
 		GD.Print("Current text: " + codeEdit.Text);
 	}
