@@ -37,8 +37,26 @@ namespace BoilerTronicsObjects.Layers
                 Vector2 pos = obj.GetCurrPos();
                 if (pos.X == loc.X && pos.Y == loc.Y) return obj; // We found the object!!
             }
-            
+
             return null; // object was not found
         }
+
+        public override void _Input(InputEvent @event)
+        {
+            // There should be checks in the above layer to see if we need to handle the click or not
+            // --- Testing Code ---
+
+            // Check if we have a left click event on the layer
+            if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+            {
+                Vector2 globalMousePos = GetViewport().GetMousePosition();
+                Vector2 localMousePos = ToLocal(globalMousePos);
+                Vector2I tileCoords = LocalToMap(localMousePos);
+
+                GD.Print("X: ", tileCoords.X,", Y: ", tileCoords.Y);
+            }
+            // base._Input(@event); // Calling this will pass down the input, we want to absorbe it
+        }
+
     }
 }
