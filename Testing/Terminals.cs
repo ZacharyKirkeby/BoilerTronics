@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 // Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
 public partial class Terminals : TabContainer
@@ -29,7 +30,15 @@ public partial class Terminals : TabContainer
 				return;
 
 			int caretLine = codeEdit.GetCaretLine();
-			string lineText = codeEdit.GetLine(caretLine);
+        	string lineText = codeEdit.GetLine(caretLine);
+
+        	if (lineText.Length > maxLineLength)
+        	{
+            lineText = lineText.Substring(0, maxLineLength);
+            codeEdit.SetLine(caretLine, lineText);
+            int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
+            codeEdit.SetCaretColumn(caretCol);
+        	}
 		}
 	}
 	// presently without a play button the easiest to attach to event is switching tabs
