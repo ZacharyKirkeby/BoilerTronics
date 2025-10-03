@@ -86,6 +86,36 @@ theme = SubResource("Theme_ao4gj")
 theme_override_constants/separation = 50
 alignment = 2
 
+[node name="CodeEdit2" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = true
+wrap_enabled = false
+horizontal_scroll_enabled = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
+metadata/_tab_index = 1
+clear_button_enabled = true
+keep_editing_on_text_submit = false
+
+[node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = true
+wrap_enabled = false
+horizontal_scroll_enabled = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
+metadata/_tab_index = 2
+clear_button_enabled = true
+keep_editing_on_text_submit = false
+
 [node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
 visible = true
 wrap_enabled = false
