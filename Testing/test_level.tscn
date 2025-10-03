@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=4 uid="uid://bi5xoykbg2jdl"]
+[gd_scene load_steps=6 format=4 uid="uid://bi5xoykbg2jdl"]
 
 [ext_resource type="TileSet" uid="uid://djkh3hy34rb6n" path="res://Resources/new_tile_set.tres" id="1_odxnw"]
 [ext_resource type="Texture2D" uid="uid://cudtdkiye54ch" path="res://Resources/big_isometric_tileset64x32.png" id="1_uem1w"]
+[ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
 [ext_resource type="Script" uid="uid://baifu7ayw6u6s" path="res://BoilerTronicsObjects/Layers/Layer.cs" id="2_r4n4m"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0eujj"]
@@ -9,6 +10,9 @@ atlas = ExtResource("1_uem1w")
 region = Rect2(0, 0, 64, 64)
 
 [node name="Node2D" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("2_0eujj")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(230, 377)

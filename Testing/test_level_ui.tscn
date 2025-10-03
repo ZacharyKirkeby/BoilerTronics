@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
 
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="1_ymet6"]
+[ext_resource type="Script" uid="uid://dly0hehlohcxe" path="res://Testing/TestLevelControl.cs" id="2_31yto"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -63,6 +64,8 @@ size_2d_override_stretch = true
 render_target_update_mode = 4
 
 [node name="Level" parent="Control/VFlowContainer/HFlowContainer/SubViewportContainer/SubViewport" instance=ExtResource("1_ymet6")]
+visible = false
+script = ExtResource("2_31yto")
 
 [node name="HFlowContainer2" type="HFlowContainer" parent="Control/VFlowContainer"]
 custom_minimum_size = Vector2(1150, 140)
