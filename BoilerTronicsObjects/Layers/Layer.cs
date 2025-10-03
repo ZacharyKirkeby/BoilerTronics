@@ -13,7 +13,7 @@ namespace BoilerTronicsObjects.Layers
 		public void addObject(PlaceableObject newPlaceable)
 		{
 			if (newPlaceable == null) return;
-			objectList.Add(newPlacabel); // adds the placeable to the list of objects on this layer
+			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
 			numItems++;
 		}
 
