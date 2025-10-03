@@ -5,10 +5,13 @@ public partial class Terminals : TabContainer {
 	public override void _Ready() {
 		this.TabSelected += OnTabSelected;
 	}
-	private void OnTabSelected(long tab) {
+	private void OnTabSelected(long tab)
+	{
 		GD.Print("Switched to tab: " + tab);
 		var codeEdit = GetChild<CodeEdit>((int)tab);
-		GD.Print("Current text: " + codeEdit.Text);
+		String line = codeEdit.Text;
+		GD.Print("Current text: " + line);
+		// reference parser with line
 	}
 
 	public CodeEdit GetCurrentEditor() {
