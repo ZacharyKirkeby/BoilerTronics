@@ -54,6 +54,9 @@ namespace BoilerTronicsObjects.Layers
 				Vector2I tileCoords = LocalToMap(localMousePos);
 
 				GD.Print("X: ", tileCoords.X,", Y: ", tileCoords.Y);
+				
+				//testing; very primative method of moving the screen
+				// this.Position += new Vector2(1, 1);
 			}
 			// base._Input(@event); // Calling this will pass down the input, we want to absorbe it
 		}
