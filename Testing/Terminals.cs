@@ -1,11 +1,14 @@
 using Godot;
 using System;
 
-public partial class Terminals : TabContainer {
+// Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
+public partial class Terminals : TabContainer
+{
 	// realistically nothing should exceed 15 chars but this looks better 
 	private int maxLineLength = 30;
 	public override void _Ready()
 	{
+		// handlers for each child node
 		foreach (Node child in GetChildren())
 		{
 			if (child is CodeEdit codeEdit)
@@ -17,24 +20,18 @@ public partial class Terminals : TabContainer {
 	}
 
 	private void OnCodeEditInput(InputEvent @event, CodeEdit codeEdit)
-    {
-        if (@event is InputEventKey keyEvent && keyEvent.Pressed)
-        {
-            long unicode = keyEvent.Unicode;
-            // Only printable characters
-            if (unicode < 32)
-                return;
+	{
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
+		{
+			long unicode = keyEvent.Unicode;
+			// Only printable characters
+			if (unicode < 32)
+				return;
 
-            int caretLine = codeEdit.GetCaretLine();
-            string lineText = codeEdit.GetLine(caretLine);
-
-            if (lineText.Length >= MaxLineLength)
-            {
-                // Block further input by marking as handled
-                @event.AsTextEvent().Handled = true;
-            }
-        }
-    }
+			int caretLine = codeEdit.GetCaretLine();
+			string lineText = codeEdit.GetLine(caretLine);
+		}
+	}
 	// presently without a play button the easiest to attach to event is switching tabs
 	// this is a simple proof of grabbing text from the editor
 	private void OnTabSelected(long tab)
@@ -44,7 +41,8 @@ public partial class Terminals : TabContainer {
 		GD.Print("Current text: " + codeEdit.Text);
 	}
 
-	public CodeEdit GetCurrentEditor() {
+	public CodeEdit GetCurrentEditor()
+	{
 		return GetChild<CodeEdit>(CurrentTab) as CodeEdit;
 	}
 }
