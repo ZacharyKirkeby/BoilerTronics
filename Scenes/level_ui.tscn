@@ -1,10 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=15 format=3 uid="uid://dp4ghd11yvxhi"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
-[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+[ext_resource type="PackedScene" path="res://Testing/test_level.tscn" id="4_2qe5m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -104,8 +104,7 @@ size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
-scale = Vector2(0.75, 0.7)
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2qe5m")]
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
