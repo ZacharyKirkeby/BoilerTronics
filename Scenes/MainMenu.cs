@@ -1,0 +1,62 @@
+using Godot;
+using System;
+
+public partial class MainMenu : Node2D
+{
+	private int level = 1;
+
+	public override void _Ready()
+	{
+		// Set fullscreen toggle
+		var fullscreenButton = GetNode<Button>("SettingsMenu/VBoxContainer/VBoxContainer2/Fullscreen");
+		fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
+			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
+
+		// Set volume slider
+		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/VBoxContainer2/MainVolSlider");
+		int masterBus = AudioServer.GetBusIndex("Master");
+		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
+		
+	}
+
+	private void _on_new_game_pressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/level_ui.tscn");
+	}
+
+	private void _on_level_select_pressed()
+	{
+		// TODO: implement level select
+	}
+
+	private void _on_settings_pressed()
+	{
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("SettingsMenu").Visible = true;
+	}
+
+	private void _on_back_pressed()
+	{
+		GetNode<Control>("SettingsMenu").Visible = false;
+		GetNode<Control>("MainMenu").Visible = true;
+	}
+
+	private void _on_quit_pressed()
+	{
+		GetTree().Quit();
+	}
+
+	private void _on_fullscreen_toggled(bool toggledOn)
+	{
+		if (toggledOn)
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.ExclusiveFullscreen);
+		else
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
+	}
+
+	private void _on_main_vol_slider_value_changed(float val)
+	{
+		int masterBus = AudioServer.GetBusIndex("Master");
+		AudioServer.SetBusVolumeDb(masterBus, Mathf.LinearToDb(val));
+	}
+}

@@ -2,3 +2,5 @@
 .godot/
 .vscode/
 /android/
+# MacOS File System ignores
+.DS_Store
