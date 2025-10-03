@@ -1,0 +1,264 @@
+[gd_scene load_steps=15 format=3 uid="uid://bqbkpk1u5wpef"]
+
+[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
+[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
+[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
+[ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
+
+[sub_resource type="Theme" id="Theme_ao4gj"]
+Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_xdjqv"]
+Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
+Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
+Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
+bg_color = Color(0.5609549, 0.5609549, 0.56095487, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
+
+[sub_resource type="Theme" id="Theme_2qe5m"]
+ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_2qe5m")
+
+[node name="MainVBox" type="VBoxContainer" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="TerminalLevelSplit" type="HSplitContainer" parent="MainVBox"]
+custom_minimum_size = Vector2(0, 750)
+layout_mode = 2
+
+[node name="TerminalContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme = SubResource("Theme_ao4gj")
+theme_override_constants/separation = 50
+alignment = 2
+
+[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+text = "Level 1: The Beginning"
+horizontal_alignment = 2
+
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+theme_override_constants/icon_max_width = 20
+icon = ExtResource("2_u4a2s")
+icon_alignment = 1
+
+[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
+handle_input_locally = false
+size = Vector2i(1408, 750)
+size_2d_override = Vector2i(1408, 0)
+render_target_update_mode = 4
+
+[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
+scale = Vector2(0.75, 0.7)
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer"]
+custom_minimum_size = Vector2(0, 330)
+layout_mode = 2
+
+[node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+theme = SubResource("Theme_xdjqv")
+theme_override_constants/separation = 0
+
+[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xdjqv")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
+custom_minimum_size = Vector2(1450, 0)
+layout_mode = 2
+theme = SubResource("Theme_2qe5m")
+
+[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="Control" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("2_4mllq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="CenterContainer" type="CenterContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+text = "Step Counter: 0"
+horizontal_alignment = 1
+
+[node name="TimeControls" type="GridContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(225, 225)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button4" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
