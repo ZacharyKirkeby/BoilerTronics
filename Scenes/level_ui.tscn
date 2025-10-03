@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=16 format=3 uid="uid://bqbkpk1u5wpef"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
@@ -12,6 +12,7 @@
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -19,6 +20,7 @@ border_width_bottom = 4
 border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -26,6 +28,7 @@ border_width_bottom = 4
 border_color = Color(1, 1, 1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -38,16 +41,20 @@ Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
 Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
-bg_color = Color(0.5609549, 0.5609549, 0.56095487, 1)
+bg_color = Color(0.3515629, 0.3515629, 0.35156286, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao4gj"]
+bg_color = Color(0.5951542, 0.5951543, 0.5951541, 1)
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
 
 [sub_resource type="Theme" id="Theme_2qe5m"]
+HScrollBar/styles/grabber = SubResource("StyleBoxFlat_ao4gj")
 ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
 
 [node name="Node2D" type="Node2D"]
@@ -56,9 +63,9 @@ script = ExtResource("1_2qe5m")
 [node name="MainVBox" type="VBoxContainer" parent="."]
 offset_right = 1920.0
 offset_bottom = 1080.0
+theme_override_constants/separation = 0
 
 [node name="TerminalLevelSplit" type="HSplitContainer" parent="MainVBox"]
-custom_minimum_size = Vector2(0, 750)
 layout_mode = 2
 
 [node name="TerminalContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit"]
@@ -109,10 +116,11 @@ scale = Vector2(0.75, 0.7)
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer"]
-custom_minimum_size = Vector2(0, 330)
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
@@ -148,7 +156,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 
-[node name="Control" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
@@ -214,6 +222,9 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 localize_numeral_system = false
 texture = ExtResource("2_4mllq")
+
+[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
