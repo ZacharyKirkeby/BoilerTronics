@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bonkq35m2x205"]
+[gd_scene load_steps=2 format=3 uid="uid://s272nmfgb8ok"]
 
-[ext_resource type="Script" uid="uid://cq25lfv8pi3bk" path="res://Testing/ErrorNotice.gd" id="1_bga6k"]
+[ext_resource type="Script" uid="uid://bwx87dkyhg6cn" path="res://Testing/ErrorPopup.cs" id="1_bga6k"]
 
 [node name="ErrorUiPopupTest" type="Node"]
 script = ExtResource("1_bga6k")
