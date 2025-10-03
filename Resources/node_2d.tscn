@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=4 uid="uid://kqjt6i1dtjmn"]
+[gd_scene load_steps=7 format=4 uid="uid://kqjt6i1dtjmn"]
 
+[ext_resource type="Script" uid="uid://btd0s04hog4xq" path="res://BoilerTronicsObjects/GameState/BoilerTronicsLevel.cs" id="1_emd8s"]
 [ext_resource type="TileSet" uid="uid://djkh3hy34rb6n" path="res://Resources/new_tile_set.tres" id="1_fbruw"]
 [ext_resource type="Texture2D" uid="uid://cudtdkiye54ch" path="res://Resources/big_isometric_tileset64x32.png" id="2_emd8s"]
 
@@ -1051,6 +1052,7 @@ tile_size = Vector2i(64, 32)
 sources/0 = SubResource("TileSetAtlasSource_bhlc4")
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_emd8s")
 
 [node name="MovementTileMap" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_l78do")
