@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bihjug1jayvfl"]
+[gd_scene load_steps=0 format=3 uid="uid://bihjug1jayvfl"]
 
 [node name="ClawOutOfBoundsError" type="AcceptDialog"]
 oversampling_override = 1.0

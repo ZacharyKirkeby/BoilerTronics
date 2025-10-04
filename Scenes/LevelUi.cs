@@ -6,7 +6,7 @@ public partial class LevelUi : Node2D
 
 	private Label stepCountLabel;
 	private int stepCount = 0;
-	bool error = true;
+	bool error = false;
 
 	public override void _Ready() {
 		stepCountLabel = GetNode<Label>("%Step Count");
