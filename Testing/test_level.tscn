@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=4 uid="uid://bi5xoykbg2jdl"]
 
-[ext_resource type="TileSet" uid="uid://djkh3hy34rb6n" path="res://Resources/new_tile_set.tres" id="1_odxnw"]
 [ext_resource type="Texture2D" uid="uid://cudtdkiye54ch" path="res://Resources/big_isometric_tileset64x32.png" id="1_uem1w"]
 [ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
 [ext_resource type="Script" uid="uid://baifu7ayw6u6s" path="res://BoilerTronicsObjects/Layers/Layer.cs" id="2_r4n4m"]
+[ext_resource type="TileSet" uid="uid://cijjltc6wtqde" path="res://Resources/objects.tres" id="3_0eujj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0eujj"]
 atlas = ExtResource("1_uem1w")
@@ -21,7 +21,7 @@ texture = SubResource("AtlasTexture_0eujj")
 [node name="TileMap" type="TileMapLayer" parent="."]
 y_sort_enabled = true
 texture_filter = 1
-tile_map_data = PackedByteArray("AAABAP7/AAAIAAgAAAAAAAAAAAAIAAgAAAABAP//AAAIAAgAAAACAP7/AAAIAAgAAAADAP7/AAAIAAgAAAACAP//AAAIAAgAAAABAAAAAAAIAAgAAAAAAP//AAAIAAgAAAD//wAAAAAIAAgAAAANAAAAAAAIAAgAAAASAP7/AAAIAAgAAAAPAAAAAAAIAAgAAAAQAP//AAAIAAgAAAAOAP//AAAIAAgAAAADAAAAAAAGAAkAAAAGAP//AAAGAAkAAAAGAP3/AAAGAAkAAAA=")
-tile_set = ExtResource("1_odxnw")
+tile_map_data = PackedByteArray("AAABAP7/AQAAAAIAAAAAAAAAAQAAAAIAAAABAP//AQAAAAIAAAACAP7/AQAAAAIAAAADAP7/AQAAAAIAAAACAP//AQAAAAIAAAABAAAAAQAAAAIAAAAAAP//AQAAAAIAAAD//wAAAQAAAAIAAAANAAAAAAAIAAgAAAASAP7/AAAIAAgAAAAPAAAAAAAIAAgAAAAQAP//AAAIAAgAAAAOAP//AAAIAAgAAAADAAAAAQAAAAIAAAAGAP//AQAAAAAAAAAGAP3/AAAGAAkAAAACAAEAAQAAAAIAAAADAAEAAQAAAAIAAAAEAAEAAQAAAAIAAAABAAIAAQAAAAIAAAACAAIAAQAAAAIAAAADAAIAAQAAAAIAAAD+/wEAAQAAAAIAAAD//wEAAQAAAAIAAAD+/wIAAQAAAAIAAAD//wIAAQAAAAIAAAAAAAIAAQAAAAIAAAABAAEAAQAAAAIAAAACAAAAAQAAAAIAAAADAP//AQAAAAIAAAAAAAEAAQAAAAIAAAAEAP//AQAAAAIAAAAFAP7/AQAAAAIAAAAEAP7/AQAAAAIAAAAFAP//AQAAAAIAAAAEAAAAAQAAAAIAAAAFAAAAAQAAAAEAAAAHAP7/AQAAAAIAAAAGAP7/AQAAAAIAAAACAP3/AgAAAAAAAAADAP3/AwAAAAAAAAAEAP3/AwAAAAEAAAABAP3/AgAAAAEAAAD/////BAAAAAAAAAA=")
+tile_set = ExtResource("3_0eujj")
 collision_enabled = false
 script = ExtResource("2_r4n4m")
