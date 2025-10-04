@@ -1,72 +1,263 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=15 format=3 uid="uid://bexf663u4e728"]
 
-[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="1_ymet6"]
-[ext_resource type="Script" uid="uid://dly0hehlohcxe" path="res://Testing/TestLevelControl.cs" id="2_31yto"]
+[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_7w7ni"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_btda1"]
+[ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="3_xq3o0"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2yvf5"]
+[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="5_3ihge"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
+
+[sub_resource type="Theme" id="Theme_ao4gj"]
+Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_xdjqv"]
+Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
+Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
+Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
+bg_color = Color(0.5609549, 0.5609549, 0.56095487, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
+
+[sub_resource type="Theme" id="Theme_2qe5m"]
+ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_7w7ni")
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1151.0
-offset_bottom = 648.0
+[node name="MainVBox" type="VBoxContainer" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
 
-[node name="VFlowContainer" type="VFlowContainer" parent="Control"]
-layout_mode = 0
-offset_left = 2.0
-offset_right = 1151.0
-offset_bottom = 645.0
+[node name="TerminalLevelSplit" type="HSplitContainer" parent="MainVBox"]
+custom_minimum_size = Vector2(0, 750)
+layout_mode = 2
 
-[node name="HFlowContainer" type="HFlowContainer" parent="Control/VFlowContainer"]
-layout_direction = 2
+[node name="TerminalContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 
-[node name="TabContainer" type="TabContainer" parent="Control/VFlowContainer/HFlowContainer"]
-custom_minimum_size = Vector2(400, 500)
-layout_direction = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
-current_tab = 3
-drag_to_rearrange_enabled = true
 
-[node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-metadata/_tab_index = 0
 
-[node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer"]
 layout_mode = 2
-metadata/_tab_index = 1
+theme = SubResource("Theme_ao4gj")
+theme_override_constants/separation = 50
+alignment = 2
 
-[node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
+[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
-metadata/_tab_index = 2
+theme_override_fonts/font = ExtResource("2_btda1")
+text = "Level 1: The Beginning"
+horizontal_alignment = 2
 
-[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
-metadata/_tab_index = 3
+theme_override_constants/icon_max_width = 20
+icon = ExtResource("3_xq3o0")
+icon_alignment = 1
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VFlowContainer/HFlowContainer"]
+[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-mouse_target = true
 
-[node name="SubViewport" type="SubViewport" parent="Control/VFlowContainer/HFlowContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
 handle_input_locally = false
-gui_snap_controls_to_pixels = false
-size = Vector2i(746, 500)
-size_2d_override_stretch = true
+size = Vector2i(1408, 750)
+size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="Level" parent="Control/VFlowContainer/HFlowContainer/SubViewportContainer/SubViewport" instance=ExtResource("1_ymet6")]
-visible = false
-script = ExtResource("2_31yto")
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2yvf5")]
 
-[node name="HFlowContainer2" type="HFlowContainer" parent="Control/VFlowContainer"]
-custom_minimum_size = Vector2(1150, 140)
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer"]
+custom_minimum_size = Vector2(0, 330)
+layout_mode = 2
+
+[node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+theme = SubResource("Theme_xdjqv")
+theme_override_constants/separation = 0
+
+[node name="PlaceType1" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xdjqv")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
+custom_minimum_size = Vector2(1450, 0)
+layout_mode = 2
+theme = SubResource("Theme_2qe5m")
+
+[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="Control" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+localize_numeral_system = false
+texture = ExtResource("5_3ihge")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="CenterContainer" type="CenterContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_btda1")
+text = "Step Counter: 0"
+horizontal_alignment = 1
+
+[node name="TimeControls" type="GridContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(225, 225)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button4" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
