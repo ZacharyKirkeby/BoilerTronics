@@ -1,10 +1,13 @@
-[gd_scene load_steps=15 format=3 uid="uid://dp4ghd11yvxhi"]
+[gd_scene load_steps=18 format=3 uid="uid://dp4ghd11yvxhi"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="PackedScene" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="5_htk61"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="6_60vve"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="7_h5pod"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -122,14 +125,17 @@ theme_override_constants/separation = 0
 [node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("5_htk61")
 
 [node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("6_60vve")
 
 [node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("7_h5pod")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
