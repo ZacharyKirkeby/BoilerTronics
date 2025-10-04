@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://6cjch4hanpsj"]
+[gd_scene load_steps=0 format=3 uid="uid://6cjch4hanpsj"]
 
 [node name="ClawInventoryError" type="AcceptDialog"]
 oversampling_override = 1.0

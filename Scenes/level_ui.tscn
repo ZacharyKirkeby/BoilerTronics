@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=15 format=3 uid="uid://c3b5cp7f66j5k"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
@@ -247,12 +247,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
