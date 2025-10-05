@@ -1,7 +1,9 @@
 using Godot;
 using System;
 using System.Collections;
+using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.GameCamera;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -17,6 +19,13 @@ namespace BoilerTronicsObjects.Layers
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
+			// UpdateInternals();
+			/*
+			GD.Print("Placed object at: ", newPlaceable.GetCurrPos().X, " ", newPlaceable.GetCurrPos().Y);
+			GD.Print("source ID: ", newPlaceable.GetSourceID());
+			GD.Print("Atlas Coords: ", newPlaceable.GetAtlasPos().X, " ", newPlaceable.GetAtlasPos().Y);
+			GD.Print("placed object");
+			*/
 			numItems++;
 		}
 
@@ -49,14 +58,15 @@ namespace BoilerTronicsObjects.Layers
 			// Check if we have a left click event on the layer
 			if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
 			{
-				Vector2 globalMousePos = GetViewport().GetMousePosition();
-				Vector2 localMousePos = ToLocal(globalMousePos);
+				Vector2 localMousePos = GetLocalMousePosition();
 				Vector2I tileCoords = LocalToMap(localMousePos);
 
 				GD.Print("X: ", tileCoords.X,", Y: ", tileCoords.Y);
 				
 				//testing; very primative method of moving the screen
 				// this.Position += new Vector2(1, 1);
+				
+				addObject(ObjectFactory.CreateObject(tileCoords, 0, new Vector2I(0, 0)));
 			}
 			// base._Input(@event); // Calling this will pass down the input, we want to absorbe it
 		}
