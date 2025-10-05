@@ -7,14 +7,14 @@ using BoilerTronicsObjects.GameCamera;
 
 namespace BoilerTronicsObjects.Layers
 {
-	public partial class Layer : Godot.TileMapLayer
+	public abstract partial class Layer : Godot.TileMapLayer
 	{
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 													// TODO: add a bit mad for plocable areas
 													// TODO: add a bit mad to show where stuff is already placed
 
-		public void addObject(PlaceableObject newPlaceable)
+		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
@@ -29,7 +29,7 @@ namespace BoilerTronicsObjects.Layers
 			numItems++;
 		}
 
-		public void removeObject(PlaceableObject objectToRemove)
+		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
 			if (!objectList.Contains(objectToRemove)) return;
 			objectList.Remove(objectToRemove); // remove to object form the list
@@ -37,7 +37,7 @@ namespace BoilerTronicsObjects.Layers
 			numItems--;
 		}
 
-		public PlaceableObject findObject(Vector2 loc)
+		public virtual PlaceableObject FindObject(Vector2 loc)
 		{
 			for (int objIndex = 0; objIndex < numItems; objIndex++)
 			{
@@ -52,23 +52,7 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			// There should be checks in the above layer to see if we need to handle the click or not
-			// --- Testing Code ---
-
-			// Check if we have a left click event on the layer
-			if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
-			{
-				Vector2 localMousePos = GetLocalMousePosition();
-				Vector2I tileCoords = LocalToMap(localMousePos);
-
-				GD.Print("X: ", tileCoords.X,", Y: ", tileCoords.Y);
-				
-				//testing; very primative method of moving the screen
-				// this.Position += new Vector2(1, 1);
-				
-				addObject(ObjectFactory.CreateObject(tileCoords, 0, new Vector2I(0, 0)));
-			}
-			// base._Input(@event); // Calling this will pass down the input, we want to absorbe it
+			base._Input(@event);
 		}
 
 	}
