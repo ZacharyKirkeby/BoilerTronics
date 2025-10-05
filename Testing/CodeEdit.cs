@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class TextEditor2 : CodeEdit
+public partial class CodeEdit : Godot.CodeEdit
 {
 	public override void _Ready()
 	{
