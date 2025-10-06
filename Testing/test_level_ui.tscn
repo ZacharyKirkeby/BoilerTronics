@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
+
+[ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 
 [node name="Node2D" type="Node2D"]
 
@@ -26,25 +29,67 @@ layout_direction = 2
 layout_mode = 2
 current_tab = 3
 drag_to_rearrange_enabled = true
+script = ExtResource("1_31yto")
 
-[node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
+wrap_enabled = false
+set_max_length(value: 30)
+horizontal_scroll_enabled = false
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
 metadata/_tab_index = 0
-
-[node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
+clear_button_enabled = true
+keep_editing_on_text_submit = false
 
 [node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
 visible = false
+wrap_enabled = false
+set_max_length(value: 30)
+horizontal_scroll_enabled = false
 layout_mode = 2
-metadata/_tab_index = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+metadata/_tab_index = 1
+clear_button_enabled = true
+keep_editing_on_text_submit = false
 
-[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+[node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+visible = false
+wrap_enabled = false
+set_max_length(value: 30)
+horizontal_scroll_enabled = false
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+metadata/_tab_index = 2
+clear_button_enabled = true
+keep_editing_on_text_submit = false
+
+[node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+layout_mode = 2
+wrap_enabled = false
+horizontal_scroll_enabled = false
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = ""
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
 metadata/_tab_index = 3
+clear_button_enabled = true
+keep_editing_on_text_submit = false
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/VFlowContainer/HFlowContainer"]
 layout_mode = 2
