@@ -9,7 +9,6 @@ using Godot;
 
 public partial class BoilerTronicsGlobalManager : Node
 {
-<<<<<<< HEAD
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 
 	public override void _Ready()
@@ -23,18 +22,3 @@ public partial class BoilerTronicsGlobalManager : Node
 		GlobalManager = this; // get this as the manager
 	}
 }
-=======
-    public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
-
-    public override void _Ready()
-    {
-        // Make sure there only exists on manager
-        if (GlobalManager != null)
-        {
-            // TODO: make error here   
-        }
-
-        GlobalManager = this; // get this as the manager
-    }
-}
->>>>>>> origin/main

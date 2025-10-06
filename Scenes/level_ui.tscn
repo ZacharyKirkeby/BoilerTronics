@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-[gd_scene load_steps=15 format=3 uid="uid://c3b5cp7f66j5k"]
-=======
 [gd_scene load_steps=18 format=3 uid="uid://bqbkpk1u5wpef"]
->>>>>>> origin/main
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
