@@ -12,13 +12,12 @@ namespace BoilerTronicsObjects.Layers
                                                     // TODO: add a bit mad for plocable areas
                                                     // TODO: add a bit mad to show where stuff is already placed
 
-        public void addObject(PlaceableObject newPlaceable)
-        {
-            if (newPlaceable == null) return; // make sure that the object isn't null
-            objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
-            SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
-            numItems++;
-        }
+		public void addObject(PlaceableObject newPlaceable)
+		{
+			if (newPlaceable == null) return;
+			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
+			numItems++;
+		}
 
         public void removeObject(PlaceableObject objectToRemove)
         {
