@@ -1,0 +1,34 @@
+High Level overview of the reduced instruction set assembly
+
+move - mov
+takes l/r/u/d for left, right, up, down
+
+looks like: mov l 
+
+grab - grb
+no parameters
+
+looks like: grb
+
+drop - drp
+no parameters
+
+looks like drp
+
+jump - jmp 
+takes a label
+
+looks like jmp loop_start
+
+labels: text
+
+add/sub/mul/div/mod - self explanatory
+
+write - wrt
+writes to register, rather than using the normal convention of mov since that overlaps
+
+compare - cmp
+takes 2 registers to compare, form of reg1 - reg2
+
+looks like cmp reg1 reg2
+
