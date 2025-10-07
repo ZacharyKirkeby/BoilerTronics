@@ -37,6 +37,10 @@ public partial class LevelUi : Node2D
 			
 			//TODO: dynamic text coloring
 			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+			//Code Highlighting
+			var editor2 = GetNode<CodeEdit>("MainVBox/TerminalLevelSplit/TerminalContainer/CodeEdit2");
+			editor2.HighlightLine(stepCount % editor2.GetLineCount() - 1);
 		}
 		else {
 			//open error notice (exclamation mark) at coords of error
@@ -79,6 +83,8 @@ public partial class LevelUi : Node2D
 	
 	private void _on_reset_button_pressed() {
 		stepCount = 0;
+		var editor2 = GetNode<CodeEdit>("MainVBox/TerminalLevelSplit/TerminalContainer/CodeEdit2");
+		editor2.ClearAllHighlights();
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 		UpdateStepCount();
 		//delete error notice (exclamation mark) if exists/open

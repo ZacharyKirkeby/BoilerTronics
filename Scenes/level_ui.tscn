@@ -1,7 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=18 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
-[ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
@@ -85,8 +85,6 @@ placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 script = ExtResource("2_6tjow")
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 metadata/_tab_index = 0
 
 [node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
@@ -98,8 +96,6 @@ placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 script = ExtResource("2_6tjow")
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 metadata/_tab_index = 1
 
 [node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
@@ -111,8 +107,6 @@ placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 script = ExtResource("2_6tjow")
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 metadata/_tab_index = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
