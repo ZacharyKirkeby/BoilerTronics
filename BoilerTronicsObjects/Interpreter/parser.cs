@@ -3,30 +3,55 @@ using System.Threading;
 using Godot;
 
 namespace Parsing;
+
+using CommandParser;
 public partial class Parser : Node
 {
     private int maxLineLength;
     private int CurrLine;
+    private CommandParser _commandParser = new CommandParser();
 
-    // idk these might be helpful
-    
-
-    public string parseTerminal(string line)
+    // command regex lives here 
+    public override void _Ready()
     {
-        if (line == null)
+        // Movables
+        _commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Move {m.Groups[1].Value}"));
+        _commandParser.Register(@"^\s*drp\s*$", _ => GD.Print("Drop"));
+        _commandParser.Register(@"^\s*grb\s*$", _ => GD.Print("Grab"));
+        _commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Rotate {m.Groups[1].Value}"));
+
+
+        // Arithmatic
+
+        // Registers/Register interaction
+        
+
+        // control flow
+    }
+
+
+    public void ParseGetLine(string terminal, int line)
+    {
+        CurrLine = line;
+        // error handling - i love c#
+        if (string.IsNullOrWhiteSpace(terminal) || line < 0)
         {
-            return "EmptyInput";
+            return;
         }
 
-        string inputLine = line.ToLower();
+        string[] lines = terminal.Split('\n');
+        if (line > lines.Length)
+        {
+            return;
+        }
 
-        // regex 
+        string lineToBeProcessed = lines[line];
+        lineToBeProcessed.ToLower();
 
+        _commandParser.Process(lineToBeProcessed);
 
+        //call parse
 
-
-
-        return "Unrecognized Command";
     }
 
     // parse ig
