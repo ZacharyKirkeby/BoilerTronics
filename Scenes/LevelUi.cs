@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-
+using Parsing;
 public partial class LevelUi : Node2D
 {
 	private TabContainer tabs;
