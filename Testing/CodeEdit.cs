@@ -20,4 +20,22 @@ public partial class CodeEdit : Godot.CodeEdit
 		return Text;
 	}
 	
+	private int lastHighlightedLine = -1;
+	
+	//test for stepping to show current line of execution
+	public void HighlightLine(int lineNumber) {
+		HighlightCurrentLine = false;
+		SetLineBackgroundColor(lastHighlightedLine, new Color(0, 0, 0, 0f));
+		SetLineBackgroundColor(lineNumber, new Color(1, 1, 0, 0.3f));
+		lastHighlightedLine = lineNumber;
+	}
+
+	public void ClearAllHighlights() {
+		for(int i = 0; i < GetLineCount(); i++) {
+			SetLineBackgroundColor(i, new Color(0, 0, 0, 0f));
+		}
+		lastHighlightedLine = -1;
+		HighlightCurrentLine = true;
+	}
+	
 }
