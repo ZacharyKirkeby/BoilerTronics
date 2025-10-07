@@ -3,12 +3,18 @@ using System;
 using System.Collections.Generic;
 
 // Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
+using Parsing;
 public partial class Terminals : TabContainer
 {
 	// realistically nothing should exceed 15 chars but this looks better 
 	private int maxLineLength = 30;
+	// temp vars - remove once run buttons are established
+	public int currentLine = 0;
+	private Parser parser;
+
 	public override void _Ready()
 	{
+		parser = GetNode<Parser>("Parser");
 		// handlers for each child node
 		foreach (Node child in GetChildren())
 		{
@@ -45,9 +51,13 @@ public partial class Terminals : TabContainer
 	// this is a simple proof of grabbing text from the editor
 	private void OnTabSelected(long tab)
 	{
+
 		GD.Print("Switched to tab: " + tab);
 		var codeEdit = GetChild<CodeEdit>((int)tab);
 		GD.Print("Current text: " + codeEdit.Text);
+
+		parser.ParseGetLine(codeEdit.Text, currentLine);
+		currentLine++;
 	}
 
 	public CodeEdit GetCurrentEditor()
@@ -55,8 +65,21 @@ public partial class Terminals : TabContainer
 		return GetChild<CodeEdit>(CurrentTab) as CodeEdit;
 	}
 
+	// case 1 - step
+	// for each terminal
+	// send to parser current line
+	// parser parses
+	// if not a steppable, call getAnother
+	// loop on this
+
 	public void SendToParser()
 	{
-		
+
+	}
+
+	// takes in UUID of a terminal to fetch next line
+	public void GetAnother(string uuid)
+	{
+
 	}
 }
