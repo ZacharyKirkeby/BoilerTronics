@@ -10,6 +10,9 @@ public partial class LevelUi : Node2D
 	private void _on_button_pressed() {
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}
+	private void _on_open_button_pressed() {
+		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
+	}
 	private void _on_movement_pressed() {
 		GetNode<Control>("MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items").Visible = false;
 		GetNode<Control>("MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items").Visible = false;

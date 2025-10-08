@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=39 format=3 uid="uid://bqbkpk1u5wpef"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+[ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="8_iu26y"]
 [ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="10_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="10_iu26y"]
@@ -16,6 +17,126 @@
 
 [sub_resource type="Theme" id="Theme_ao4gj"]
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3didx"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ip32"]
+bg_color = Color(0.54901963, 0.54901963, 0.54901963, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_r0au2"]
+Button/styles/normal = SubResource("StyleBoxFlat_3ip32")
+
+[sub_resource type="Animation" id="Animation_qd36q"]
+resource_name = "tray_close"
+markers = [{
+"color": Color(1, 1, 1, 1),
+"name": &"new_marker",
+"time": 0.0
+}]
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.19999999),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1860, 325), Vector2(1920, 325)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../OpenButton:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1920, 401), Vector2(1912, 401)]
+}
+
+[sub_resource type="Animation" id="Animation_2j1wt"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1860, 325)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../OpenButton:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1912, 401)]
+}
+
+[sub_resource type="Animation" id="Animation_34jgd"]
+resource_name = "tray_open"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.19999999),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1920, 325), Vector2(1860, 325)]
+}
+
+[sub_resource type="Animation" id="Animation_4jcs4"]
+resource_name = "button_open"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../OpenButton:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 0.19908778),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1920, 401), Vector2(1912, 401)]
+}
+
+[sub_resource type="Animation" id="Animation_81d32"]
+resource_name = "button_close"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2j1wt"]
+_data = {
+&"RESET": SubResource("Animation_2j1wt"),
+&"button_close": SubResource("Animation_81d32"),
+&"button_open": SubResource("Animation_4jcs4"),
+&"tray_close": SubResource("Animation_qd36q"),
+&"tray_open": SubResource("Animation_34jgd")
+}
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
 bg_color = Color(0.6039216, 0.6039216, 0.6039216, 1)
@@ -68,7 +189,7 @@ border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
-bg_color = Color(0.41568628, 0.41568628, 0.41568628, 1)
+bg_color = Color(0.6039216, 0.6039216, 0.6039216, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -76,13 +197,31 @@ border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao4gj"]
-bg_color = Color(0.5951542, 0.5951543, 0.5951541, 1)
+bg_color = Color(0.30876946, 0.30876935, 0.3087693, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_34jgd"]
+bg_color = Color(1, 1, 1, 1)
+border_width_top = 4
+border_width_bottom = 3
+border_color = Color(0.8603689, 0.86036927, 0.8603691, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
 
 [sub_resource type="Theme" id="Theme_2qe5m"]
 HScrollBar/styles/grabber = SubResource("StyleBoxFlat_ao4gj")
+HScrollBar/styles/scroll = SubResource("StyleBoxFlat_34jgd")
 ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_81d32"]
+bg_color = Color(0.34781694, 0.34781697, 0.34781682, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4jcs4"]
 bg_color = Color(0.55095845, 0.5509585, 0.55095834, 1)
@@ -150,46 +289,118 @@ highlight_current_line = true
 script = ExtResource("2_6tjow")
 metadata/_tab_index = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+[node name="LevelToolbarContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+[node name="ToolbarPanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer"]
+[node name="Toolbar" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer"]
 layout_mode = 2
 theme = SubResource("Theme_ao4gj")
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Level 1: The Beginning"
 horizontal_alignment = 2
 
-[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 theme_override_constants/icon_max_width = 20
 icon = ExtResource("2_u4a2s")
 icon_alignment = 1
 
-[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+[node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
+script = ExtResource("6_2j1wt")
+
+[node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer"]
+layout_mode = 3
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -60.0
+offset_top = 325.0
+offset_bottom = -525.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3didx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_top = 0.05
+anchor_right = 0.75
+anchor_bottom = 0.95
+offset_left = -4.0
+offset_right = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_r0au2")
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button2" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button3" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray"]
+libraries = {
+&"": SubResource("AnimationLibrary_2j1wt")
+}
+
+[node name="OpenButton" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer"]
+visible = false
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.375
+anchor_right = 1.0
+anchor_bottom = 0.444
+offset_left = -8.0
+offset_top = -4.0
+offset_bottom = 4.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
 layout_mode = 2
 
-[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
+[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/LevelContainer"]
 handle_input_locally = false
 size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
+[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
 scale = Vector2(0.75, 0.7)
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
@@ -482,24 +693,29 @@ texture = ExtResource("2_4mllq")
 [node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+[node name="CounterTimeControlsContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme_override_constants/separation = 30
 
-[node name="CenterContainer" type="CenterContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="Counter Container" type="CenterContainer" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+[node name="Step Counter" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Step Counter: 0"
 horizontal_alignment = 1
 
-[node name="TimeControls" type="GridContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="TimeControlsContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer"]
+custom_minimum_size = Vector2(175, 175)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_81d32")
+
+[node name="TimeControls" type="GridContainer" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer"]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 2
 size_flags_horizontal = 6
@@ -509,28 +725,28 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="Step" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Step" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource("10_2j1wt")
 icon_alignment = 1
 
-[node name="Play" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Play" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource("8_iu26y")
 icon_alignment = 1
 
-[node name="Pause" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Pause" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource("10_iu26y")
 icon_alignment = 1
 
-[node name="Reset" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Reset" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -538,7 +754,9 @@ theme_override_constants/icon_max_width = 40
 icon = ExtResource("11_iu26y")
 icon_alignment = 1
 
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer" method="_on_toggle_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/OpenButton" to="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Movement" to="." method="_on_movement_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Claw" to="." method="_on_claw_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Factory" to="." method="_on_factory_pressed"]
