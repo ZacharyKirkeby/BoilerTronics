@@ -1,4 +1,4 @@
-[gd_scene load_steps=0 format=3 uid="uid://bihjug1jayvfl"]
+[gd_scene format=3 uid="uid://bihjug1jayvfl"]
 
 [node name="ClawOutOfBoundsError" type="AcceptDialog"]
 oversampling_override = 1.0
@@ -6,5 +6,5 @@ title = "Claw Out Of Bounds"
 size = Vector2i(400, 300)
 visible = true
 ok_button_text = "OK"
-dialog_text = "It seems like you attempted to move your claw outside of the factory space! Please check your code terminals to see what is causing this issue."
+dialog_text = "It seems like you attempted to move your claw outside of the factory space! Please check your code terminals to see what is causing this issue and the level to see where it is occuring."
 dialog_autowrap = true
