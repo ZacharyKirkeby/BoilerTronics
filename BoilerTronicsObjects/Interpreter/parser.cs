@@ -14,8 +14,12 @@ public partial class Parser : Node
 	// command regex lives here 
 	public override void _Ready()
 	{
+        // malformed commands - FTODO in S20 - syntax stuff
+        _commandParser.Register(@"^\s*mov\s*$", _ => GD.Print("Invalid move command"));
+        _commandParser.Register(@"^\s*rot\s*$", _ => GD.Print("Invalid Rotate command"));
+
 		// Movables
-		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Command: Move {m.Groups[1].Value}"));
+        _commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Command: Move {m.Groups[1].Value}"));
 		_commandParser.Register(@"^\s*drp\s*$", _ => GD.Print("Command: Drop"));
 		_commandParser.Register(@"^\s*grb\s*$", _ => GD.Print("Command: Grab"));
 		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Command: Rotate {m.Groups[1].Value}"));
