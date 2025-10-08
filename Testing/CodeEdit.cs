@@ -12,7 +12,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
 		currentLine = 0;
-		parser = GetNode<Parser>("Parser");
+		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 
 	}
 
@@ -20,8 +20,8 @@ public partial class CodeEdit : Godot.CodeEdit
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
 		parser.ParseGetLine(Text, currentLine);
-			GD.Print("Called Parser");
-			currentLine++;
+		GD.Print("Called Parser");
+		currentLine++;
 	}
 
 	public string GetCode()
