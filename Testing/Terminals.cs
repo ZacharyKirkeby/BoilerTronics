@@ -15,7 +15,7 @@ public partial class Terminals : TabContainer
 	public override void _Ready()
 	{
 		currentLine = 0;
-		parser = GetNode<Parser>("Parser");
+		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 		// handlers for each child node
 		foreach (Node child in GetChildren())
 		{
