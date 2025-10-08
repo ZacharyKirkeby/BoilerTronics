@@ -48,7 +48,11 @@ public partial class Parser : Node
         string lineToBeProcessed = lines[line];
         lineToBeProcessed.ToLower();
 
-        _commandParser.Process(lineToBeProcessed);
+        if (_commandParser.Process(lineToBeProcessed))
+        {
+            // recurse
+        }
+        ;
 
         //call parse
 

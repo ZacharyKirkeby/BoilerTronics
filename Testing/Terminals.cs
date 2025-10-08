@@ -14,6 +14,7 @@ public partial class Terminals : TabContainer
 
 	public override void _Ready()
 	{
+		currentLine = 0;
 		parser = GetNode<Parser>("Parser");
 		// handlers for each child node
 		foreach (Node child in GetChildren())
@@ -54,10 +55,13 @@ public partial class Terminals : TabContainer
 
 		GD.Print("Switched to tab: " + tab);
 		var codeEdit = GetChild<CodeEdit>((int)tab);
-		GD.Print("Current text: " + codeEdit.Text);
-
-		parser.ParseGetLine(codeEdit.Text, currentLine);
-		currentLine++;
+		if (codeEdit != null)
+		{
+			GD.Print("Current text: " + codeEdit.Text);
+			parser.ParseGetLine(codeEdit.Text, currentLine);
+			GD.Print("Called Parser");
+			currentLine++;
+		}
 	}
 
 	public CodeEdit GetCurrentEditor()
@@ -72,14 +76,4 @@ public partial class Terminals : TabContainer
 	// if not a steppable, call getAnother
 	// loop on this
 
-	public void SendToParser()
-	{
-
-	}
-
-	// takes in UUID of a terminal to fetch next line
-	public void GetAnother(string uuid)
-	{
-
-	}
 }
