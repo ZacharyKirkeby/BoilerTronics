@@ -8,7 +8,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	
 	public abstract class MovementLayerObjects : PlaceableObject {
 		
-		static int layerSourceId = 3;
+		static int layerSourceId = 2;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.

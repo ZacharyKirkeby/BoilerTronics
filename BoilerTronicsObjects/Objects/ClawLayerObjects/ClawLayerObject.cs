@@ -8,7 +8,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 	
 	public abstract class ClawLayerObjects : PlaceableObject {
 		
-		static int layerSourceId = 2;
+		static int layerSourceId = 1;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.

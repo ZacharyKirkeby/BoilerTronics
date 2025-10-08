@@ -22,7 +22,7 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
-            // Change this once UI is further along
+			// Change this once UI is further along
 			if (manager.currSlection == 2)
 			{
 				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
@@ -36,8 +36,9 @@ namespace BoilerTronicsObjects.Layers
 					//testing; very primative method of moving the screen
 					// this.Position += new Vector2(1, 1);
 
-                    // TODO: Pass in correct values here once factory is made
-					AddObject(ObjectFactory.CreateObject(tileCoords, 1, new Vector2I(0, 0)));
+					// TODO: Pass in correct values here once factory is made
+					// TODO: for now, place factory input objects
+					AddObject(ObjectFactory.CreateObject(tileCoords, 0, new Vector2I(0, 0)));
 				}
 				else
 				{
@@ -52,4 +53,3 @@ namespace BoilerTronicsObjects.Layers
 
 	}
 }
-

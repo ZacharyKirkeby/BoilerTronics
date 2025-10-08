@@ -8,7 +8,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	
 	public abstract class FactoryLayerObjects : PlaceableObject {
 		
-		static int layerSourceId = 1;
+		static int layerSourceId = 0;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
