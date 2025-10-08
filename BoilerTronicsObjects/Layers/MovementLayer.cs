@@ -37,7 +37,8 @@ namespace BoilerTronicsObjects.Layers
 					// this.Position += new Vector2(1, 1);
 
 					// TODO: Pass in correct values here once factory is made
-					AddObject(ObjectFactory.CreateObject(tileCoords, 1, new Vector2I(0, 0)));
+					// TODO: for now, place conveyor rotator objects
+					AddObject(ObjectFactory.CreateObject(tileCoords, 2, new Vector2I(0, 2)));
 				}
 				else
 				{
