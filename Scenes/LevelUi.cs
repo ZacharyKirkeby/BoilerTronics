@@ -6,7 +6,7 @@ public partial class LevelUi : Node2D
 
 	private Label stepCountLabel;
 	private int stepCount = 0;
-	bool error = true; //temp boolean to track if an error has occured
+	private bool error = true; //temp boolean to track if an error has occured
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = {"ClawRail","ClawOutOfBounds","ClawCollision","ClawInventory"}; //keep track of current error type
 	private int currError = 2; //current error type identifier (defined by errorTypes array)
@@ -29,18 +29,29 @@ public partial class LevelUi : Node2D
 	private void _on_button_pressed() {
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}
+
+	private void setError(bool err) {
+		error = err;
+	}
+
+	private void removeError() {
+		error = false;
+		currError = -1;
+	}
 	
 	private void _on_step_button_pressed() {
+		stepCount++;
 		if(!error) {
-			stepCount++;
 			UpdateStepCount();
 			
-			//TODO: dynamic text coloring
 			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-			//Code Highlighting
-			var editor2 = GetNode<CodeEdit>("MainVBox/TerminalLevelSplit/TerminalContainer/CodeEdit2");
-			editor2.HighlightLine(stepCount % editor2.GetLineCount() - 1);
+			//code highlighting for each terminal (shows current step)
+			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+			foreach (CodeEdit editor in codeEditors)
+			{
+				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			}
 		}
 		else {
 			//open error notice (exclamation mark) at coords of error
@@ -52,6 +63,13 @@ public partial class LevelUi : Node2D
 				errorNoticeIcon.Position = errorCoords;
 			}
 			PackedScene packedErrorScene = null;
+			
+			//highlight all current lines with error coloring
+			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+			foreach (CodeEdit editor in codeEditors)
+			{
+				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 0, 0, 0.3f));
+			}
 
 			//dynamic error handling
 			switch(currError) {
@@ -68,7 +86,7 @@ public partial class LevelUi : Node2D
 					packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawInventoryError.tscn");
 					break;
 				case -1:
-					break; //should not happen
+					break; //should not happen as error should be set to false
 			}
 			if(packedErrorScene != null) {
 				var instance = packedErrorScene.Instantiate();
@@ -82,11 +100,20 @@ public partial class LevelUi : Node2D
 	}
 	
 	private void _on_reset_button_pressed() {
+		//reset the step counter
 		stepCount = 0;
-		var editor2 = GetNode<CodeEdit>("MainVBox/TerminalLevelSplit/TerminalContainer/CodeEdit2");
-		editor2.ClearAllHighlights();
+
+		//reset highlighting in terminals
+		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+		foreach (CodeEdit editor in codeEditors)
+		{
+			editor.ClearAllHighlights();
+		}
+
+		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 		UpdateStepCount();
+
 		//delete error notice (exclamation mark) if exists/open
 		if(errorNoticeIcon != null) {
 			errorNoticeIcon.QueueFree();
