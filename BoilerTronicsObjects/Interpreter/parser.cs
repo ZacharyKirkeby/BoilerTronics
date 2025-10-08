@@ -15,10 +15,10 @@ public partial class Parser : Node
 	public override void _Ready()
 	{
 		// Movables
-		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Move {m.Groups[1].Value}"));
-		_commandParser.Register(@"^\s*drp\s*$", _ => GD.Print("Drop"));
-		_commandParser.Register(@"^\s*grb\s*$", _ => GD.Print("Grab"));
-		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Rotate {m.Groups[1].Value}"));
+		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Command: Move {m.Groups[1].Value}"));
+		_commandParser.Register(@"^\s*drp\s*$", _ => GD.Print("Command: Drop"));
+		_commandParser.Register(@"^\s*grb\s*$", _ => GD.Print("Command: Grab"));
+		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Command: Rotate {m.Groups[1].Value}"));
 
 
 		// Arithmatic
@@ -41,8 +41,13 @@ public partial class Parser : Node
 		}
 
 		string[] lines = terminal.Split('\n');
-		if (line > lines.Length)
+
+		GD.Print(line, lines.Length.ToString());
+		if (line >= lines.Length)
 		{
+			GD.Print("Split related issue");
+			GD.Print(line);
+			GD.Print(lines);
 			return;
 		}
 

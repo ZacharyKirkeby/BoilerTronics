@@ -21,7 +21,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		GD.Print($"[{Name}] content changed:\n{Text}");
 		parser.ParseGetLine(Text, currentLine);
 		GD.Print("Called Parser");
-		currentLine++;
+		GD.Print(currentLine.ToString());
 	}
 
 	public string GetCode()
