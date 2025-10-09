@@ -103,10 +103,10 @@ public partial class LevelUi : Node2D
 			editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
 		//TODO: check for actual error and use setError to properly display error notices
-		//example
-		/*if(stepCount == 3) {
+		//example error being manually set after third step
+		if(stepCount == 3) {
 			setError(2, "CodeEdit2");
-		}*/
+		}
 		
 		//if error, handle accordingly with popups and code terminal highlighting
 		if(isError) {
