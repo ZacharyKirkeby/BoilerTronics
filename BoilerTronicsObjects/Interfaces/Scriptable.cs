@@ -6,7 +6,7 @@ public abstract partial class Scriptable : Node
 {   
     // Action lets me nest a function call that autofires
     private Dictionary<string, Action<string>> _commandMap;
-    public void ExecCommand(string command, string parameter = null)
+    public void ExecCommand(string command, string parameter = null, string parameter2 = null)
     {
         _commandMap = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase)
         {
@@ -14,12 +14,17 @@ public abstract partial class Scriptable : Node
             { "mov", Move },
             { "rot", Rotate },
             { "drp", _ => Drop() },
-            { "grb", _ => Grab() }
+            { "grb", _ => Grab() },
+            { "wait", _ => Wait() },
+            { "wrt", Write },
+            { "add", Add },
+
         };
 
         Action<string> action;
         if (_commandMap.TryGetValue(command, out action))
         {
+
             action(parameter);
         }
         else
