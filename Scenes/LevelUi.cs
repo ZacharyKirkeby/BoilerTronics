@@ -92,20 +92,22 @@ public partial class LevelUi : Node2D
 	
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
-		stepCount++;
-		UpdateStepCount();
-		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
+		if(!isError) {
+			stepCount++;
+			UpdateStepCount();
+			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-		//update code terminal highlighting to next one regardless of error
-		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-		foreach (CodeEdit editor in codeEditors)
-		{
-			editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-		}
-		//TODO: check for actual error and use setError to properly display error notices
-		//example error being manually set after third step
-		if(stepCount == 3) {
-			setError(2, "CodeEdit2");
+			//update code terminal highlighting to next one regardless of error
+			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+			foreach (CodeEdit editor in codeEditors)
+			{
+				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			}
+			//TODO: check for actual error and use setError to properly display error notices
+			//example error being manually set after third step
+			if(stepCount == 3) {
+				setError(2, "CodeEdit2");
+			}
 		}
 		
 		//if error, handle accordingly with popups and code terminal highlighting
