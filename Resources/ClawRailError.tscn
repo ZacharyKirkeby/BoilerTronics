@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c3341jqo40xga"]
+[gd_scene load_steps=0 format=3 uid="uid://c3341jqo40xga"]
 
 [node name="ClawRailError" type="AcceptDialog"]
 oversampling_override = 1.0
