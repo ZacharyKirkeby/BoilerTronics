@@ -8,7 +8,7 @@ public partial class ObjectPicker : HBoxContainer
 	static int ClawSpriteTable = 1;
 	static int MovementSpriteTable = 2;
 
-	void Update() 
+	public void Update() 
 	{
 		// This should be called when we change the type of object that we are wanting to select
 		// The currSelect in the manager should be set beforehand as it will use that value to change teh sprites it contains
@@ -43,6 +43,19 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
+	Node createBoilerObjectSelector(ImageTexture texture, int posX, int posY) {
+		Control objectController = new Control();
+		objectController.SetSize(new Vector2I(128, 128));
+		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
+		Sprite2D sprite = new Sprite2D();
+		// get texture
+		sprite.Texture = texture;
+		sprite.Scale = new Vector2I(5, 5);
+		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
+		objectController.AddChild(sprite);
+		return objectController;
+	}
+
 	void loadSprites(int source_idx, int posX, int posY) {
 		var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
 		int sourceid = tileSet.GetSourceId(source_idx);
@@ -63,16 +76,8 @@ public partial class ObjectPicker : HBoxContainer
 			var texture = new ImageTexture();
 			texture.SetImage(imageTexture);
 
-			Control objectController = new Control();
-			objectController.SetSize(new Vector2I(128, 128));
-			objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
-			AddChild(objectController);
-			Sprite2D sprite = new Sprite2D();
-			// get texture
-			sprite.Texture = texture;
-			sprite.Scale = new Vector2I(5, 5);
-			sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
-			objectController.AddChild(sprite);
+			AddChild(createBoilerObjectSelector(texture, posX, posY));
+
 			GD.Print(GetChildren());
 		}
 	}
@@ -103,6 +108,8 @@ public partial class ObjectPicker : HBoxContainer
 
 	public override void _Ready()
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.picker = this;
 		// This will allow us to have the default selection set here
 		SetMovement();
 	}

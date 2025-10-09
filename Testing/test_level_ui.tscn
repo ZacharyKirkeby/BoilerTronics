@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bexf663u4e728"]
+[gd_scene load_steps=18 format=3 uid="uid://bexf663u4e728"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_7w7ni"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_btda1"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="6_s62vv"]
 [ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="7_rdo3t"]
 [ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="8_s62vv"]
-[ext_resource type="Texture2D" uid="uid://homjd2pg6vet" path="res://Resources/32x64_claw.png" id="9_rdo3t"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -53,10 +52,6 @@ border_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Theme" id="Theme_2qe5m"]
 ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hww0h"]
-atlas = ExtResource("9_rdo3t")
-region = Rect2(0, 0, 32, 64)
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_7w7ni")
@@ -151,49 +146,14 @@ custom_minimum_size = Vector2(1450, 0)
 layout_mode = 2
 theme = SubResource("Theme_2qe5m")
 
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+[node name="ObjectPicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 script = ExtResource("8_s62vv")
-
-[node name="Control" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(128, 0)
-layout_mode = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker/Control"]
-position = Vector2(128, 196)
-scale = Vector2(5, 5)
-texture = SubResource("AtlasTexture_hww0h")
-
-[node name="Control2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker/Control2"]
-position = Vector2(128, 128)
-scale = Vector2(5, 5)
-texture = SubResource("AtlasTexture_hww0h")
-
-[node name="Control3" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker/Control3"]
-position = Vector2(128, 128)
-scale = Vector2(5, 5)
-texture = SubResource("AtlasTexture_hww0h")
-
-[node name="Control4" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="Sprite2D" type="Sprite2D" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker/Control4"]
-position = Vector2(128, 128)
-scale = Vector2(5, 5)
-texture = SubResource("AtlasTexture_hww0h")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2

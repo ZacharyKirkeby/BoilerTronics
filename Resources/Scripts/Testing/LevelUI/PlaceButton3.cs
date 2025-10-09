@@ -17,5 +17,6 @@ public partial class PlaceButton3 : Button
 		GD.Print("old selection ", manager.currSlection);
 		manager.currSlection = 3;
 		GD.Print("new selection ", manager.currSlection);
+		manager.picker.Update();
 	}
 }
