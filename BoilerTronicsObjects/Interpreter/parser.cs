@@ -14,23 +14,46 @@ public partial class Parser : Node
 	// command regex lives here 
 	public override void _Ready()
 	{
-        // malformed commands - FTODO in S20 - syntax stuff
-        _commandParser.Register(@"^\s*mov\s*$", _ => GD.Print("Invalid move command"));
-        _commandParser.Register(@"^\s*rot\s*$", _ => GD.Print("Invalid Rotate command"));
+		// malformed commands - FTODO in S20 - syntax stuff
+		_commandParser.Register(@"^\s*mov\s*$", mArgs => {
+			GD.Print("Invalid move command");
+		});
+		_commandParser.Register(@"^\s*rot\s*$", rotArgs =>
+		{
+			GD.Print("Invalid Rotate Command");
+
+		});
 
 		// Movables
-        _commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m => GD.Print($"Command: Move {m.Groups[1].Value}"));
-		_commandParser.Register(@"^\s*drp\s*$", _ => GD.Print("Command: Drop"));
-		_commandParser.Register(@"^\s*grb\s*$", _ => GD.Print("Command: Grab"));
+		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
+		{
+			GD.Print($"Command: Move {m.Groups[1].Value}");
+		});
+		_commandParser.Register(@"^\s*drp\s*$", d =>
+		{
+			GD.Print("Command: Drop");
+		});
+		_commandParser.Register(@"^\s*grb\s*$", g =>
+		{
+			GD.Print("Command: Grab");
+		});
 		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Command: Rotate {m.Groups[1].Value}"));
 
 
 		// Arithmatic
 
 		// Registers/Register interaction
-		
+
 
 		// control flow
+
+		// labels need to be stored, and the next line must be advanced
+		// jump maps to labels
+
+		// regex for jump + string:
+			// inside handler - if no match error
+		
+		// 
 	}
 
 
