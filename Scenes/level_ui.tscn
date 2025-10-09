@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=43 format=3 uid="uid://bqbkpk1u5wpef"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
@@ -8,6 +8,9 @@
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
+[ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
+[ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_34jgd"]
+[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_4jcs4"]
 [ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="8_iu26y"]
 [ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="10_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="10_iu26y"]
@@ -36,6 +39,54 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="Theme" id="Theme_r0au2"]
 Button/styles/normal = SubResource("StyleBoxFlat_3ip32")
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_2j1wt"]
+thickness = 2
+
+[sub_resource type="Animation" id="Animation_2j1wt"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1860, 325)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../OpenButton:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1912, 401)]
+}
+
+[sub_resource type="Animation" id="Animation_81d32"]
+resource_name = "button_close"
+
+[sub_resource type="Animation" id="Animation_4jcs4"]
+resource_name = "button_open"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../OpenButton:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 0.19908778),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1920, 401), Vector2(1912, 401)]
+}
 
 [sub_resource type="Animation" id="Animation_qd36q"]
 resource_name = "tray_close"
@@ -69,33 +120,6 @@ tracks/1/keys = {
 "values": [Vector2(1920, 401), Vector2(1912, 401)]
 }
 
-[sub_resource type="Animation" id="Animation_2j1wt"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1860, 325)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../OpenButton:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1912, 401)]
-}
-
 [sub_resource type="Animation" id="Animation_34jgd"]
 resource_name = "tray_open"
 tracks/0/type = "value"
@@ -110,24 +134,6 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(1920, 325), Vector2(1860, 325)]
 }
-
-[sub_resource type="Animation" id="Animation_4jcs4"]
-resource_name = "button_open"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../OpenButton:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.1, 0.19908778),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(1920, 401), Vector2(1912, 401)]
-}
-
-[sub_resource type="Animation" id="Animation_81d32"]
-resource_name = "button_close"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2j1wt"]
 _data = {
@@ -324,6 +330,7 @@ script = ExtResource("6_2j1wt")
 
 [node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer"]
 layout_mode = 3
+anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -357,21 +364,52 @@ theme = SubResource("Theme_r0au2")
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/icon_max_width = 25
+icon = ExtResource("7_34jgd")
+icon_alignment = 1
+expand_icon = true
 
-[node name="Button2" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 25
+text = "?"
 
-[node name="Button3" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/icon_max_width = 25
+icon = ExtResource("8_4jcs4")
+icon_alignment = 1
+expand_icon = true
+
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
 
 [node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+icon = ExtResource("7_2j1wt")
+expand_icon = true
+
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 163.3
+offset_right = -1.0
+offset_bottom = -59.630005
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_2j1wt")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray"]
 libraries = {
