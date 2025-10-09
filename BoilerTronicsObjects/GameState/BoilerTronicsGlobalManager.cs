@@ -11,7 +11,9 @@ public partial class BoilerTronicsGlobalManager : Node
 {
 	/***** Testing vars *****/
 	public int currSlection;
+	public int placingObject;
 	public ObjectPicker picker;
+	public Vector2I objectToPlace;
 	/***** End Testing Vars *****/
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 

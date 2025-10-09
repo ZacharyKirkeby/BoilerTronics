@@ -43,16 +43,10 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, int posX, int posY) {
-		Control objectController = new Control();
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY);
 		objectController.SetSize(new Vector2I(128, 128));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
-		Sprite2D sprite = new Sprite2D();
-		// get texture
-		sprite.Texture = texture;
-		sprite.Scale = new Vector2I(5, 5);
-		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
-		objectController.AddChild(sprite);
 		return objectController;
 	}
 
@@ -76,7 +70,7 @@ public partial class ObjectPicker : HBoxContainer
 			var texture = new ImageTexture();
 			texture.SetImage(imageTexture);
 
-			AddChild(createBoilerObjectSelector(texture, posX, posY));
+			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY));
 
 			GD.Print(GetChildren());
 		}

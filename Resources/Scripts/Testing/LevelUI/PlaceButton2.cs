@@ -17,7 +17,6 @@ public partial class PlaceButton2 : Button
 		GD.Print("old selection ", manager.currSlection);
 		manager.currSlection = 2;
 		GD.Print("new selection ", manager.currSlection);
-		ObjectPicker objPick = GetNode("%ObjectPicker") as ObjectPicker;
-		objPick.Update();
+		manager.picker.Update();
 	}
 }
