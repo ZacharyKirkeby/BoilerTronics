@@ -25,7 +25,7 @@ namespace BoilerTronicsObjects.Layers
 			// Change this once UI is further along
 			if (manager.currSlection == 2)
 			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
 					Vector2 localMousePos = GetLocalMousePosition();
 					Vector2I tileCoords = LocalToMap(localMousePos);
@@ -38,7 +38,11 @@ namespace BoilerTronicsObjects.Layers
 
 					// TODO: Pass in correct values here once factory is made
 					// TODO: for now, place factory input objects
-					AddObject(ObjectFactory.CreateObject(tileCoords, 0, new Vector2I(0, 0)));
+
+					Vector2I atlasCords = manager.objectToPlace;
+					AddObject(ObjectFactory.CreateObject(tileCoords, 0, atlasCords));
+
+					GD.Print("atlas X: ", atlasCords.X, ", atlas Y: ", atlasCords.Y);
 				}
 				else
 				{
@@ -47,6 +51,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 			else
 			{
+				// GD.Print("Recive event 2");
 				base._Input(@event); // pass downward
 			}
 		}

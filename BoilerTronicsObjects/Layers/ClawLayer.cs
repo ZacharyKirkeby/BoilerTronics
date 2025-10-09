@@ -25,7 +25,7 @@ namespace BoilerTronicsObjects.Layers
 			// Change this once UI is further along
 			if (manager.currSlection == 3)
 			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
 					Vector2 localMousePos = GetLocalMousePosition();
 					Vector2I tileCoords = LocalToMap(localMousePos);
@@ -38,7 +38,8 @@ namespace BoilerTronicsObjects.Layers
 
 					// TODO: Pass in correct values here once factory is made
 					// TODO: for now, create basic claw objects
-					AddObject(ObjectFactory.CreateObject(tileCoords, 1, new Vector2I(0, 0)));
+					Vector2I atlasCords = manager.objectToPlace;
+					AddObject(ObjectFactory.CreateObject(tileCoords, 1, atlasCords));
 				}
 				else
 				{

@@ -22,10 +22,11 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
+ 			
 			// Change this once UI is further along
 			if (manager.currSlection == 1)
 			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
 					Vector2 localMousePos = GetLocalMousePosition();
 					Vector2I tileCoords = LocalToMap(localMousePos);
@@ -38,7 +39,8 @@ namespace BoilerTronicsObjects.Layers
 
 					// TODO: Pass in correct values here once factory is made
 					// TODO: for now, place conveyor rotator objects
-					AddObject(ObjectFactory.CreateObject(tileCoords, 2, new Vector2I(0, 2)));
+					Vector2I atlasCords = manager.objectToPlace;
+					AddObject(ObjectFactory.CreateObject(tileCoords, 2, atlasCords));
 				}
 				else
 				{
