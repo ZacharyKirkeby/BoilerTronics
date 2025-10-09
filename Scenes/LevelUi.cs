@@ -6,21 +6,24 @@ public partial class LevelUi : Node2D
 
 	private Label stepCountLabel;
 	private int stepCount = 0;
-	private bool isError = true; //temp boolean to track if an error has occured
+	private bool isError = false; //temp boolean to track if an error has occured
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = {"ClawRail","ClawOutOfBounds","ClawCollision","ClawInventory"}; //keep track of current error type
-	private int currError = 2; //current error type identifier (defined by errorTypes array)
+	private int errorID = -1; //current error type identifier (defined by errorTypes array)
 	private Vector2 errorCoords = new Vector2(700,100);
+	private String errorEditor;
 
 	public override void _Ready() {
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		UpdateStepCount();
 	}
 	
-	public void setError(int err) {
-		if((err >= -1) && (err < 4))
-		currError = err;
+	//set error status as true with errorID and name of terminal causing error
+	public void setError(int errID, String editor) {
+		if((errID >= -1) && (errID < 4))
+		errorID = errID;
 		isError = true;
+		errorEditor = editor;
 	}
 	
 	public void setErrorCoords(int x, int y) {
@@ -33,12 +36,13 @@ public partial class LevelUi : Node2D
 
 	private void removeError() {
 		isError = false;
-		currError = -1;
+		errorID = -1;
 	}
 
-	//displays error (specific error popup, location of error on level ui, code terminals highlighted red)
-	private void handleError(int errorType) {
+	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
+	private void handleError(int errorType, String badEditor) {
 		//open error notice (exclamation mark) at coords of error
+		//TODO: add this to camera2D in actual level window
 		if(errorNoticeIcon == null) {
 			var scene = (PackedScene)ResourceLoader.Load("res://Resources/ErrorNotice.tscn");
 			errorNoticeIcon = scene.Instantiate<Node2D>();
@@ -49,15 +53,20 @@ public partial class LevelUi : Node2D
 
 		PackedScene packedErrorScene = null;
 			
-		//highlight all current lines with error coloring
+		//highlight current line of erroneous terminal red
+		//TODO: ensure name is what we end up differentiating by
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+		CodeEdit terminal = null;
 		foreach (CodeEdit editor in codeEditors)
 		{
-			editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 0, 0, 0.3f));
+			if(editor.Name == badEditor) {
+				terminal = editor;
+			}
 		}
+		terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
 
-		//dynamic error handling
-		switch(currError) {
+		//dynamic error popups based on type of error
+		switch(errorID) {
 			case 0:
 				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawRailError.tscn");
 				break;
@@ -73,6 +82,8 @@ public partial class LevelUi : Node2D
 			case -1:
 				break; //should not happen as error should be set to false
 		}
+		
+		//actually display error notice
 		if(packedErrorScene != null) {
 			var instance = packedErrorScene.Instantiate();
 			GetTree().CurrentScene.AddChild(instance);
@@ -80,21 +91,26 @@ public partial class LevelUi : Node2D
 	}
 	
 	private void _on_step_button_pressed() {
+		//update stepCount regardless of error
 		stepCount++;
-		if(!isError) {
-			UpdateStepCount();
-			
-			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
+		UpdateStepCount();
+		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-			//code highlighting for each terminal (shows current step)
-			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-			foreach (CodeEdit editor in codeEditors)
-			{
-				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-			}
+		//update code terminal highlighting to next one regardless of error
+		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+		foreach (CodeEdit editor in codeEditors)
+		{
+			editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
-		else {
-			handleError(currError);
+		//TODO: check for actual error and use setError to properly display error notices
+		//example
+		/*if(stepCount == 3) {
+			setError(2, "CodeEdit2");
+		}*/
+		
+		//if error, handle accordingly with popups and code terminal highlighting
+		if(isError) {
+			handleError(errorID, errorEditor);
 		}
 	}
 
