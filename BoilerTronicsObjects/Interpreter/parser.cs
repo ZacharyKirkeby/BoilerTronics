@@ -1,10 +1,10 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Godot;
+using CommandParser;
 
 namespace Parsing;
 
-using CommandParser;
 public partial class Parser : Node2D
 {
 	private int maxLineLength;

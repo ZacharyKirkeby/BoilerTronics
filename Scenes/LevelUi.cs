@@ -19,7 +19,7 @@ public partial class LevelUi : Node2D
 	private String errorEditor;
 
 	public override void _Ready() {
-		tabs = GetNode<TabContainer>("TabContainer");
+		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 
 		foreach (Node child in tabs.GetChildren())

@@ -8,7 +8,6 @@
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="Script" uid="uid://csydj2c333ebj" path="res://BoilerTronicsObjects/Interpreter/parser.cs" id="7_htk61"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 

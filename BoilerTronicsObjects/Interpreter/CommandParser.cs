@@ -21,18 +21,20 @@ namespace CommandParser
 			foreach (var (pattern, handler) in _rules)
 			{
 				var match = pattern.Match(input);
+				// regex matches
 				if (match.Success)
 				{
 					handler(match);
 					GD.Print("TESTTESTSTSTSTSTSTSTSTSTSTSTS");
 					return false;
 				}
-				else
+				else // regex fails
 				{
 					//cases for error
 					return true;
 				}
 			}
+			// this does nothing
 			GD.Print($"Unknown command: {input}");
 			return false;
 		}
