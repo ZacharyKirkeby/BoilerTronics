@@ -110,6 +110,11 @@ public partial class Parser : Node2D
     		});
 		}
 
+		_commandParser.Register($@"^\s*wait\s*$", m =>
+		{
+			GD.Print("Command: Wait");
+		});
+
 		// placeholder for anything else
 		_commandParser.Register(@"^\s*\S+.*$", m =>
 		{
