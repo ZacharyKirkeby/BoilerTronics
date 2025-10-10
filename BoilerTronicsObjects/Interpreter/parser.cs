@@ -1,4 +1,6 @@
+using System;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.Threading;
 using Godot;
 
@@ -120,28 +122,43 @@ public partial class Parser : Node2D
 	}
 
 
-	public void ParseGetLine(string terminal, int line)
+	public void ParseGetLine(string terminal, int step)
 	{
 		GD.Print("Made it to Parser");
-		CurrLine = line;
+		//CurrLine = line;
 		// error handling - i love c#
-		if (string.IsNullOrWhiteSpace(terminal) || line < 0)
+		if (string.IsNullOrWhiteSpace(terminal))
 		{
 			return;
 		}
 
-		string[] lines = terminal.Split('\n');
+		 string[] rawLines = terminal.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+		
+		List<string> validLines = new();
 
-		GD.Print(line, lines.Length.ToString());
-		if (line >= lines.Length)
+		foreach (var rawLine in rawLines)
+		{
+			string trimmed = rawLine.Trim();
+			if (string.IsNullOrEmpty(trimmed))
+				continue;
+
+			// Skip label definition
+			if (trimmed.EndsWith(":"))
+				continue;
+
+			validLines.Add(trimmed);
+		}
+
+		CurrLine = step % validLines.Count;
+
+		GD.Print(CurrLine);
+		if (CurrLine >= validLines.Count)
 		{
 			GD.Print("Split related issue");
-			GD.Print(line);
-			GD.Print(lines);
 			return;
 		}
 
-		string lineToBeProcessed = lines[line];
+		string lineToBeProcessed = validLines[CurrLine];
 		lineToBeProcessed.ToLower();
 
 		if (_commandParser.Process(lineToBeProcessed) == true)
