@@ -115,6 +115,7 @@ public partial class Parser : Node2D
 		{
     		GD.Print($"Unknown command: {m.Value}");
 		});
+	}
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
 	// Takes in the current step, derives line number off that
