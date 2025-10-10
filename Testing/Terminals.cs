@@ -41,10 +41,17 @@ public partial class Terminals : TabContainer
 
 			if (lineText.Length > maxLineLength)
 			{
+<<<<<<< HEAD
 				lineText = lineText.Substring(0, maxLineLength);
 				codeEdit.SetLine(caretLine, lineText);
 				int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
 				codeEdit.SetCaretColumn(caretCol);
+=======
+			lineText = lineText.Substring(0, maxLineLength);
+			codeEdit.SetLine(caretLine, lineText);
+			int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
+			codeEdit.SetCaretColumn(caretCol);
+>>>>>>> c6110bcf8b294ac07dcbb1242dac2dd6158c548a
 			}
 		}
 	}
