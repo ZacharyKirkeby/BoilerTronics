@@ -1,0 +1,11 @@
+[gd_scene load_steps=0 format=3 uid="uid://c3341jqo40xga"]
+
+[node name="ClawRailError" type="AcceptDialog"]
+oversampling_override = 1.0
+title = "Claw Off Rail"
+initial_position = 1
+size = Vector2i(400, 300)
+visible = true
+ok_button_text = "OK"
+dialog_text = "It appears that your solution has moved the claw off its rail! Please look over your claw code terminals. Claws will not function unless on a rail. Please check your code terminals to see what is causing this issue and the level to see where it is occuring."
+dialog_autowrap = true
