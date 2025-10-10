@@ -5,7 +5,7 @@ using Godot;
 namespace Parsing;
 
 using CommandParser;
-public partial class Parser : Node
+public partial class Parser : Node2D
 {
 	private int maxLineLength;
 	private int CurrLine;
@@ -15,12 +15,16 @@ public partial class Parser : Node
 	public override void _Ready()
 	{
 		// malformed commands - FTODO in S20 - syntax stuff
-		_commandParser.Register(@"^\s*mov\s*$", mArgs => {
+		_commandParser.Register(@"^\s*mov\s*$", mArgs =>
+		{
 			GD.Print("Invalid move command");
+			//error
 		});
+
 		_commandParser.Register(@"^\s*rot\s*$", rotArgs =>
 		{
 			GD.Print("Invalid Rotate Command");
+			//error
 
 		});
 
@@ -28,31 +32,90 @@ public partial class Parser : Node
 		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
 		{
 			GD.Print($"Command: Move {m.Groups[1].Value}");
+			//func call
 		});
+
 		_commandParser.Register(@"^\s*drp\s*$", d =>
 		{
 			GD.Print("Command: Drop");
+			//func call
 		});
+
 		_commandParser.Register(@"^\s*grb\s*$", g =>
 		{
 			GD.Print("Command: Grab");
+			//func call
 		});
-		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m => GD.Print($"Command: Rotate {m.Groups[1].Value}"));
+
+		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", r =>
+		{
+			GD.Print($"Command: Rotate {r.Groups[1].Value}");
+			//func call
+		});
 
 
 		// Arithmatic
+		_commandParser.Register(@"^\s*add\s+", a =>
+		{
+			// print
+			// check reg exists
+			// func call
+
+		});
+
+		_commandParser.Register(@"^\s*sub\s+", s =>
+		{
+			// print
+			// check reg exists
+			// func call
+
+		});
+
+		_commandParser.Register(@"^\s*mult\s+", m =>
+		{
+			// print
+			// check reg exists
+			// func call
+
+		});
+
+		_commandParser.Register(@"^\s*div\s+", d =>
+		{
+			// print
+			// check reg exists
+			// func call
+
+		});
 
 		// Registers/Register interaction
 
 
 		// control flow
 
+		_commandParser.Register(@"^\s*cmp\s+", d =>
+		{
+			// print
+			// check reg exists
+			// other stuff
+
+		});
+
 		// labels need to be stored, and the next line must be advanced
 		// jump maps to labels
 
 		// regex for jump + string:
+		_commandParser.Register(@"^\s*div\s+", d =>
+		{
+			// print
+			// check label exists
+			// func call
 			// inside handler - if no match error
+
+		});
+
+		// label
 		
+
 		// 
 	}
 
