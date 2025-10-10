@@ -16,26 +16,49 @@ public partial class Parser : Node2D
 	// command regex lives here 
 	public override void _Ready()
 	{
-		// malformed commands - FTODO in S20 - syntax stuff
-		_commandParser.Register(@"^\s*mov\s*$", mArgs =>
-		{
-			GD.Print("Invalid move command");
-			//error
-		});
+		// MOVABLES
 
-		_commandParser.Register(@"^\s*rot\s*$", rotArgs =>
-		{
-			GD.Print("Invalid Rotate Command");
-			//error
-
-		});
-
-		// Movables
+		// mov l | r | u | d
 		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
 		{
 			GD.Print($"Command: Move {m.Groups[1].Value}");
 			//func call
 		});
+
+		// invalid mov arg
+		_commandParser.Register(@"^\s*mov\s+(\S+)\s*$", m =>
+		{
+    		GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
+			// func all
+		});
+
+		// empty mov
+		_commandParser.Register(@"^\s*mov\s*$", m =>
+		{
+    		GD.Print("Malformed Move command, missing argument");
+			// func call
+		});
+
+		// rot l | r
+		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
+		{
+    		GD.Print($"Command: Rotate {m.Groups[1].Value}");
+			// func call
+		});
+
+		// rot with the wrong args
+		_commandParser.Register(@"^\s*rot\s+(\S+)\s*$", m =>
+		{
+    		GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
+			// func call
+		});
+
+		// rot without args
+		_commandParser.Register(@"^\s*rot\s*$", m =>
+		{
+    		GD.Print("Malformed Rotate command, missing argument");
+		});
+
 
 		_commandParser.Register(@"^\s*drp\s*$", d =>
 		{
@@ -43,85 +66,58 @@ public partial class Parser : Node2D
 			//func call
 		});
 
+		// drop with args (bad)
+		_commandParser.Register(@"^\s*drp\s+(\S+)\s*$", m =>
+		{
+    		GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
+			// func call
+		});
+
+
 		_commandParser.Register(@"^\s*grb\s*$", g =>
 		{
 			GD.Print("Command: Grab");
 			//func call
 		});
 
-		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", r =>
+		// grab with args (bad)
+		_commandParser.Register(@"^\s*grb\s+(\S+)\s*$", m =>
 		{
-			GD.Print($"Command: Rotate {r.Groups[1].Value}");
-			//func call
-		});
-
-
-		// Arithmatic
-		_commandParser.Register(@"^\s*add\s+", a =>
-		{
-			// print
-			// check reg exists
+    		GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
 			// func call
-
 		});
 
-		_commandParser.Register(@"^\s*sub\s+", s =>
+		// MATH OPS
+		string[] arith = { "add", "sub", "mult", "div", "cmp" };
+		foreach (var cmd in arith)
 		{
-			// print
-			// check reg exists
-			// func call
+    		// actually correct
+    		_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s+(\S+)\s*$", m =>
+    		{
+        		GD.Print($"Command: {cmd} {m.Groups[1].Value} {m.Groups[2].Value}");
+    		});
 
-		});
+    		// missing arg
+    		_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s*$", m =>
+    		{
+        		GD.Print($"Invalid {cmd} command, missing second argument");
+    		});
 
-		_commandParser.Register(@"^\s*mult\s+", m =>
+    		// no args
+    		_commandParser.Register($@"^\s*{cmd}\s*$", m =>
+    		{
+        		GD.Print($"Malformed {cmd} command, missing arguments");
+    		});
+		}
+
+		// placeholder for anything else
+		_commandParser.Register(@"^\s*\S+.*$", m =>
 		{
-			// print
-			// check reg exists
-			// func call
-
+    		GD.Print($"Unknown command: {m.Value}");
 		});
 
-		_commandParser.Register(@"^\s*div\s+", d =>
-		{
-			// print
-			// check reg exists
-			// func call
-
-		});
-
-		// Registers/Register interaction
-
-
-		// control flow
-
-		_commandParser.Register(@"^\s*cmp\s+", d =>
-		{
-			// print
-			// check reg exists
-			// other stuff
-
-		});
-
-		// labels need to be stored, and the next line must be advanced
-		// jump maps to labels
-
-		// regex for jump + string:
-		_commandParser.Register(@"^\s*div\s+", d =>
-		{
-			// print
-			// check label exists
-			// func call
-			// inside handler - if no match error
-
-		});
-
-		// label
-		
-
-		// 
-	}
-
-
+	// Takes in the terminal text (full text, FTODO can i get just a line?)
+	// Takes in the current step, derives line number off that
 	public void ParseGetLine(string terminal, int step)
 	{
 		GD.Print("Made it to Parser");
