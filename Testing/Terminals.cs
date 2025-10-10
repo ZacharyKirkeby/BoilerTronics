@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 // Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
 using Parsing;
+
 public partial class Terminals : TabContainer
 {
 	// realistically nothing should exceed 15 chars but this looks better on the current
@@ -38,7 +39,6 @@ public partial class Terminals : TabContainer
 				return;
 
 			int caretLine = codeEdit.GetCaretLine();
-			string lineText = codeEdit.GetLine(caretLine);
 			string lineText = codeEdit.GetLine(caretLine);
 
 			if (lineText.Length > maxLineLength)
