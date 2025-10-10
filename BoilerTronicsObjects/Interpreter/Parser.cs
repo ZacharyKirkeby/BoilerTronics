@@ -28,35 +28,35 @@ public partial class Parser : Node2D
 		// invalid mov arg
 		_commandParser.Register(@"^\s*mov\s+(\S+)\s*$", m =>
 		{
-    		GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
+			GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
 			// func all
 		});
 
 		// empty mov
 		_commandParser.Register(@"^\s*mov\s*$", m =>
 		{
-    		GD.Print("Malformed Move command, missing argument");
+			GD.Print("Malformed Move command, missing argument");
 			// func call
 		});
 
 		// rot l | r
 		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
 		{
-    		GD.Print($"Command: Rotate {m.Groups[1].Value}");
+			GD.Print($"Command: Rotate {m.Groups[1].Value}");
 			// func call
 		});
 
 		// rot with the wrong args
 		_commandParser.Register(@"^\s*rot\s+(\S+)\s*$", m =>
 		{
-    		GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
+			GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
 			// func call
 		});
 
 		// rot without args
 		_commandParser.Register(@"^\s*rot\s*$", m =>
 		{
-    		GD.Print("Malformed Rotate command, missing argument");
+			GD.Print("Malformed Rotate command, missing argument");
 		});
 
 
@@ -69,7 +69,7 @@ public partial class Parser : Node2D
 		// drop with args (bad)
 		_commandParser.Register(@"^\s*drp\s+(\S+)\s*$", m =>
 		{
-    		GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
+			GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
 			// func call
 		});
 
@@ -83,31 +83,31 @@ public partial class Parser : Node2D
 		// grab with args (bad)
 		_commandParser.Register(@"^\s*grb\s+(\S+)\s*$", m =>
 		{
-    		GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
+			GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
 			// func call
 		});
 
-		// MATH OPS
+		// MATH OPS + compare
 		string[] arith = { "add", "sub", "mult", "div", "cmp" };
 		foreach (var cmd in arith)
 		{
-    		// actually correct
-    		_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s+(\S+)\s*$", m =>
-    		{
-        		GD.Print($"Command: {cmd} {m.Groups[1].Value} {m.Groups[2].Value}");
-    		});
+			// actually correct
+			_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s+(\S+)\s*$", m =>
+			{
+				GD.Print($"Command: {cmd} {m.Groups[1].Value} {m.Groups[2].Value}");
+			});
 
-    		// missing arg
-    		_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s*$", m =>
-    		{
-        		GD.Print($"Invalid {cmd} command, missing second argument");
-    		});
+			// missing arg
+			_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s*$", m =>
+			{
+				GD.Print($"Invalid {cmd} command, missing second argument");
+			});
 
-    		// no args
-    		_commandParser.Register($@"^\s*{cmd}\s*$", m =>
-    		{
-        		GD.Print($"Malformed {cmd} command, missing arguments");
-    		});
+			// no args
+			_commandParser.Register($@"^\s*{cmd}\s*$", m =>
+			{
+				GD.Print($"Malformed {cmd} command, missing arguments");
+			});
 		}
 
 		_commandParser.Register($@"^\s*wait\s*$", m =>
@@ -115,10 +115,25 @@ public partial class Parser : Node2D
 			GD.Print("Command: Wait");
 		});
 
+		_commandParser.Register($@"^\s*wait\s+(\S+)\s*$", m =>
+		{
+			GD.Print("Malformed Wait Unknown Arg");
+		});
+
+		_commandParser.Register($@"^\s*jmp\s+(\S+)\s*$", m =>
+		{
+			GD.Print("Command: Jump");
+		});
+
+		_commandParser.Register($@"^\s*jump\s*$", m =>
+		{
+			GD.Print("Malformed Jump: Missing Destination");
+		});
+
 		// placeholder for anything else
 		_commandParser.Register(@"^\s*\S+.*$", m =>
 		{
-    		GD.Print($"Unknown command: {m.Value}");
+			GD.Print($"Unknown command: {m.Value}");
 		});
 	}
 
@@ -146,6 +161,7 @@ public partial class Parser : Node2D
 
 			// Skip label definition
 			if (trimmed.EndsWith(":"))
+			// add to label mapping -> dict with label and the first instruction
 				continue;
 
 			validLines.Add(trimmed);
