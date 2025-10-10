@@ -1,7 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=18 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://csydj2c333ebj" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
@@ -273,8 +274,10 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.67481464, 0.67481464, 0.6748146, 0.8627451)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Step Counter: 0"
 horizontal_alignment = 1
@@ -288,24 +291,26 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Step Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button4" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Reset Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
