@@ -159,11 +159,12 @@ public partial class Parser : Node2D
 		}
 
 		string lineToBeProcessed = validLines[CurrLine];
-		lineToBeProcessed.ToLower();
+		lineToBeProcessed = lineToBeProcessed.ToLower();
 
-		if (_commandParser.Process(lineToBeProcessed) == true)
+		if (_commandParser.Process(lineToBeProcessed) == false)
 		{
 			// recurse - idk yet
+			GD.Print("No Match");
 		}
 		;
 

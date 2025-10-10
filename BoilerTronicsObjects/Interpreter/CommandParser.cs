@@ -18,25 +18,20 @@ namespace CommandParser
 
 		public bool Process(string input)
 		{
-			foreach (var (pattern, handler) in _rules)
-			{
-				var match = pattern.Match(input);
-				// regex matches
-				if (match.Success)
-				{
-					handler(match);
-					GD.Print("TESTTESTSTSTSTSTSTSTSTSTSTSTS");
-					return false;
-				}
-				else // regex fails
-				{
-					//cases for error
-					return true;
-				}
-			}
-			// this does nothing
-			GD.Print($"Unknown command: {input}");
-			return false;
+    		foreach (var (pattern, handler) in _rules)
+    		{
+        		var match = pattern.Match(input);
+        		if (match.Success)
+        		{
+            		handler(match);
+            		GD.Print("Matched command");
+            		return true; // success
+        		}
+    		}
+
+    	// None matched
+    	GD.Print($"Unknown command: {input}");
+    	return false; // failure
 		}
 	}
 }
