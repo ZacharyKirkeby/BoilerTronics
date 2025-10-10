@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Godot;
-using CommandParser;
 
 namespace Parsing;
 
@@ -9,7 +8,8 @@ public partial class Parser : Node2D
 {
 	private int maxLineLength;
 	private int CurrLine;
-	private CommandParser _commandParser = new CommandParser();
+	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
+
 
 	// command regex lives here 
 	public override void _Ready()
