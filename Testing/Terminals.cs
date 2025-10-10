@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using Parsing;
 public partial class Terminals : TabContainer
 {
-	// realistically nothing should exceed 15 chars but this looks better 
-	private int maxLineLength = 30;
+	// realistically nothing should exceed 15 chars but this looks better on the current
+	// screen
+	private int maxLineLength = 50;
 	// temp vars - remove once run buttons are established
 	public int currentLine = 0;
 	private Parser parser;
-
 	public override void _Ready()
 	{
 		currentLine = 0;
@@ -27,6 +27,7 @@ public partial class Terminals : TabContainer
 		this.TabSelected += OnTabSelected;
 	}
 
+	// Enforces character length requirements
 	private void OnCodeEditInput(InputEvent @event, CodeEdit codeEdit)
 	{
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
@@ -38,20 +39,14 @@ public partial class Terminals : TabContainer
 
 			int caretLine = codeEdit.GetCaretLine();
 			string lineText = codeEdit.GetLine(caretLine);
+			string lineText = codeEdit.GetLine(caretLine);
 
 			if (lineText.Length > maxLineLength)
 			{
-<<<<<<< HEAD
 				lineText = lineText.Substring(0, maxLineLength);
 				codeEdit.SetLine(caretLine, lineText);
 				int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
 				codeEdit.SetCaretColumn(caretCol);
-=======
-			lineText = lineText.Substring(0, maxLineLength);
-			codeEdit.SetLine(caretLine, lineText);
-			int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
-			codeEdit.SetCaretColumn(caretCol);
->>>>>>> c6110bcf8b294ac07dcbb1242dac2dd6158c548a
 			}
 		}
 	}
@@ -59,9 +54,9 @@ public partial class Terminals : TabContainer
 	// this is a simple proof of grabbing text from the editor
 	private void OnTabSelected(long tab)
 	{
-
 		GD.Print("Switched to tab: " + tab);
 		var codeEdit = GetChild<CodeEdit>((int)tab);
+		String line = codeEdit.Text;
 		if (codeEdit != null)
 		{
 			GD.Print("Current text: " + codeEdit.Text);
@@ -69,6 +64,8 @@ public partial class Terminals : TabContainer
 			GD.Print("Called Parser");
 			currentLine++;
 		}
+		GD.Print("Current text: " + line);
+		// reference parser with line
 	}
 
 	public CodeEdit GetCurrentEditor()

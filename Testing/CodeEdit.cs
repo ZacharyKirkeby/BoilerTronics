@@ -2,15 +2,13 @@ using Godot;
 using System;
 
 using Parsing;
+// whole file is arguably a test file
 public partial class CodeEdit : Godot.CodeEdit
 {
-<<<<<<< HEAD
+	private int lastHighlightedLine = -1;
 	public int currentLine = 0;
 	private Parser parser;
-=======
-	private int lastHighlightedLine = -1;
-	
->>>>>>> c6110bcf8b294ac07dcbb1242dac2dd6158c548a
+
 	public override void _Ready()
 	{
 		AddToGroup("CodeTerminals");
@@ -22,6 +20,7 @@ public partial class CodeEdit : Godot.CodeEdit
 
 	}
 
+	// this is a debug function
 	private void OnTextChanged()
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
@@ -34,9 +33,6 @@ public partial class CodeEdit : Godot.CodeEdit
 	{
 		return Text;
 	}
-<<<<<<< HEAD
-
-=======
 	
 	public int getLastHighlighted() {
 		return lastHighlightedLine;
@@ -86,5 +82,4 @@ public partial class CodeEdit : Godot.CodeEdit
 		HighlightCurrentLine = true;
 	}
 	
->>>>>>> c6110bcf8b294ac07dcbb1242dac2dd6158c548a
 }
