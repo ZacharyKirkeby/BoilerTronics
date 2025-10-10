@@ -5,7 +5,7 @@ using System.Threading;
 using Godot;
 
 namespace Parsing;
-
+// issue is this being lowercase???
 public partial class Parser : Node2D
 {
 	private int maxLineLength;
