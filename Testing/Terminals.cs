@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 
 // Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
-using Parsing;
 
 public partial class Terminals : TabContainer
 {
@@ -12,11 +11,9 @@ public partial class Terminals : TabContainer
 	private int maxLineLength = 50;
 	// temp vars - remove once run buttons are established
 	public int currentLine = 0;
-	private Parser parser;
 	public override void _Ready()
 	{
 		currentLine = 0;
-		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 		// handlers for each child node
 		foreach (Node child in GetChildren())
 		{
@@ -55,17 +52,6 @@ public partial class Terminals : TabContainer
 	private void OnTabSelected(long tab)
 	{
 		GD.Print("Switched to tab: " + tab);
-		var codeEdit = GetChild<CodeEdit>((int)tab);
-		String line = codeEdit.Text;
-		if (codeEdit != null)
-		{
-			GD.Print("Current text: " + codeEdit.Text);
-			parser.ParseGetLine(codeEdit.Text, currentLine);
-			GD.Print("Called Parser");
-			currentLine++;
-		}
-		GD.Print("Current text: " + line);
-		// reference parser with line
 	}
 
 	public CodeEdit GetCurrentEditor()

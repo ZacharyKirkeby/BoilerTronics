@@ -115,7 +115,7 @@ public partial class LevelUi : Node2D
 			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 			foreach (CodeEdit editor in codeEditors)
 			{
-				parser.ParseGetLine(editor.Text, currentLine);
+				parser.ParseGetLine(editor.Text, stepCount);
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			}
 			//TODO: check for actual error and use setError to properly display error notices

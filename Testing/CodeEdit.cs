@@ -1,13 +1,11 @@
 using Godot;
 using System;
 
-using Parsing;
 // whole file is arguably a test file
 public partial class CodeEdit : Godot.CodeEdit
 {
 	private int lastHighlightedLine = -1;
 	public int currentLine = 0;
-	private Parser parser;
 
 	public override void _Ready()
 	{
@@ -16,17 +14,12 @@ public partial class CodeEdit : Godot.CodeEdit
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
 		currentLine = 0;
-		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
-
 	}
 
 	// this is a debug function
 	private void OnTextChanged()
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
-		parser.ParseGetLine(Text, currentLine);
-		GD.Print("Called Parser");
-		GD.Print(currentLine.ToString());
 	}
 
 	public string GetCode()
