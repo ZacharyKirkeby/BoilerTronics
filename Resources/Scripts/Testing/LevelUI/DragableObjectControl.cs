@@ -6,8 +6,9 @@ public partial class DragableObjectControl : Control {
 	
 	Sprite2D sprite;
 	Vector2I atlasCords;
+	int selection;
 
-	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY) {
+	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
 		sprite = new Sprite2D();
 		// get texture
 		sprite.Texture = texture;
@@ -15,6 +16,7 @@ public partial class DragableObjectControl : Control {
 		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
 		AddChild(sprite);
 		this.atlasCords = atlasCords;
+		this.selection = selection;
 	}
 
 	public override void _GuiInput(InputEvent @event)
@@ -28,7 +30,8 @@ public partial class DragableObjectControl : Control {
 			GD.Print("Created new dragable:", draggable);
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.objectToPlace = atlasCords;
-			// manager.placingObject = 1;
+			manager.placingObject = 1;
+			manager.currSlection = selection;
 		}
 		else
 		{
