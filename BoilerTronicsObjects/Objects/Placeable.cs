@@ -7,10 +7,9 @@ namespace BoilerTronicsObjects.Placeable
 	public abstract class PlaceableObject
 	{
 		// Values used to keep track of the position of the object and what sprite it is
-		
-		int OGX { get; set; }			// Original locations
+		int OGX { get; set; }
 		int OGY { get; set; }
-		private int CurrX;				// Current locations
+		private int CurrX;
 		private int CurrY;
 		int sourceId { get; init; }               // This is the id of the tile map that the sprite belongs to
 		Vector2I atlasPos { get; init; }          // Posistion on the atlas that the sprite is at
@@ -27,6 +26,7 @@ namespace BoilerTronicsObjects.Placeable
 			if (sourceId != -1) {
 				this.sourceId = sourceId;
 			}
+
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
 		}
