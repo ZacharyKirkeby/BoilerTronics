@@ -8,20 +8,20 @@ public partial class ObjectPicker : HBoxContainer
 	static int ClawSpriteTable = 1;
 	static int MovementSpriteTable = 2;
 
-	public void Update() 
+	public void Update(int selection) 
 	{
 		// This should be called when we change the type of object that we are wanting to select
 		// The currSelect in the manager should be set beforehand as it will use that value to change teh sprites it contains
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		switch (manager.currSlection) {
+		switch (selection) {
 			case 1: // Movement
-				SetMovement();
+				SetMovement(selection);
 				break;
 			case 2: // Factory
-				SetFactory();
+				SetFactory(selection);
 				break;
 			case 3: // Claw
-				SetClaw();
+				SetClaw(selection);
 				break;
 			default:
 				break;
@@ -43,14 +43,14 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY);
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection);
 		objectController.SetSize(new Vector2I(128, 128));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
 	}
 
-	void loadSprites(int source_idx, int posX, int posY) {
+	void loadSprites(int source_idx, int posX, int posY, int selection) {
 		var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
 		int sourceid = tileSet.GetSourceId(source_idx);
 
@@ -70,34 +70,34 @@ public partial class ObjectPicker : HBoxContainer
 			var texture = new ImageTexture();
 			texture.SetImage(imageTexture);
 
-			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY));
+			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
 
 			GD.Print(GetChildren());
 		}
 	}
 
-	void SetClaw()
+	void SetClaw(int selection)
 	{
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of claw layer elements
-		loadSprites(ClawSpriteTable, 128, 196);		
+		loadSprites(ClawSpriteTable, 128, 196, selection);
 	}
 
-	void SetFactory()
+	void SetFactory(int selection)
 	{
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of factory layer elements
-		loadSprites(FactorySpriteTable, 128, 128);		
+		loadSprites(FactorySpriteTable, 128, 128, selection);
 	}
 
-	void SetMovement()
+	void SetMovement(int selection)
 	{
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of movement layer elements
-		loadSprites(MovementSpriteTable, 128, 128);		
+		loadSprites(MovementSpriteTable, 128, 128, selection);		
 	}
 
 	public override void _Ready()
@@ -105,6 +105,6 @@ public partial class ObjectPicker : HBoxContainer
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.picker = this;
 		// This will allow us to have the default selection set here
-		SetMovement();
+		SetMovement(1);
 	}
 }

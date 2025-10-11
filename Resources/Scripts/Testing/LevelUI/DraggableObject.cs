@@ -38,8 +38,6 @@ public partial class DraggableObject : Node2D {
 
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
-
-			manager.placingObject = 0;
 		}
 
 		// Always pass downward

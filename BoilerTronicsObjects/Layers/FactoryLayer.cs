@@ -23,30 +23,74 @@ namespace BoilerTronicsObjects.Layers
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
 			// Change this once UI is further along
+			// GD.Print("Selection: ", manager.currSlection, "| placing: ", manager.placingObject);
 			if (manager.currSlection == 2)
 			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
-				{
-					Vector2 localMousePos = GetLocalMousePosition();
-					Vector2I tileCoords = LocalToMap(localMousePos);
+				if (manager.placingObject == 1) {
+					if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
+					{
+						Vector2 localMousePos = GetLocalMousePosition();
+						Vector2I tileCoords = LocalToMap(localMousePos);
 
-					GD.Print("Factory layer is pressed");
-					GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
+						GD.Print("Factory layer is pressed");
+						GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 
-					//testing; very primative method of moving the screen
-					// this.Position += new Vector2(1, 1);
+						Vector2I atlasCords = manager.objectToPlace;
+						AddObject(ObjectFactory.CreateObject(tileCoords, 0, atlasCords));
 
-					// TODO: Pass in correct values here once factory is made
-					// TODO: for now, place factory input objects
+						GD.Print("atlas X: ", atlasCords.X, ", atlas Y: ", atlasCords.Y);
+						manager.objectToPlace = new Vector2I(-1, -1);
+						manager.placingObject = 0;
+					}
+					else
+					{
+						base._Input(@event); // pass downward
+					}
+				} else {
+					// Left mouse click on a spot where an object exitsts
+					if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+						Vector2 localMousePos = GetLocalMousePosition();
+						Vector2I tileCoords = LocalToMap(localMousePos);
+						
+						PlaceableObject obj = FindObject(tileCoords);
 
-					Vector2I atlasCords = manager.objectToPlace;
-					AddObject(ObjectFactory.CreateObject(tileCoords, 0, atlasCords));
+						// we don't went to do anything if we can;t find anything there
+						if (obj == null) {
+							base._Input(@event);
+							return;
+						}
 
-					GD.Print("atlas X: ", atlasCords.X, ", atlas Y: ", atlasCords.Y);
-				}
-				else
-				{
-					base._Input(@event); // pass downward
+						RemoveObject(obj);
+
+						var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+						int sourceid = tileSet.GetSourceId(obj.GetSourceID());
+
+						TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+						// get the tile
+						var tile = tileSetSource.GetTileTextureRegion(obj.GetAtlasPos());
+						var fullTexture = tileSetSource.Texture.GetImage();
+						var imageTexture = fullTexture.GetRegion(tile);
+						var texture = new ImageTexture();
+						texture.SetImage(imageTexture);
+
+						Sprite2D sprite = new Sprite2D();
+						// get texture
+						sprite.Texture = texture;
+						sprite.Scale = new Vector2I(5, 5);
+						sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
+
+						var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, obj.GetAtlasPos());
+
+						SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
+						subView.AddChild(draggable);
+						GD.Print("Created new dragable:", draggable);
+						manager.objectToPlace = obj.GetAtlasPos();
+
+						manager.placingObject = 1;
+					} else {
+						base._Input(@event); // pass downward
+					}
 				}
 			}
 			else
@@ -55,6 +99,5 @@ namespace BoilerTronicsObjects.Layers
 				base._Input(@event); // pass downward
 			}
 		}
-
 	}
 }
