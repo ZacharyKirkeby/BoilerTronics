@@ -15,5 +15,6 @@ public partial class PlaceButton3 : Button
 		// GD.Print("test3");
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.picker.Update(3);
+		manager.currSlection = 3;
 	}
 }
