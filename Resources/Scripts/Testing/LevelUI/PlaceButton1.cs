@@ -14,5 +14,6 @@ public partial class PlaceButton1 : Button
 		// DO STUFF HERE
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.picker.Update(1);
+		manager.currSlection = 1;
 	}
 }

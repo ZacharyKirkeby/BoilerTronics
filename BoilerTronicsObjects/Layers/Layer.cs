@@ -20,12 +20,10 @@ namespace BoilerTronicsObjects.Layers
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
-			/*
 			GD.Print("Placed object at: ", newPlaceable.GetCurrPos().X, " ", newPlaceable.GetCurrPos().Y);
 			GD.Print("source ID: ", newPlaceable.GetSourceID());
 			GD.Print("Atlas Coords: ", newPlaceable.GetAtlasPos().X, " ", newPlaceable.GetAtlasPos().Y);
 			GD.Print("placed object");
-			*/
 			numItems++;
 		}
 

@@ -44,8 +44,10 @@ namespace BoilerTronicsObjects.Placeable
 		// move the OG posistion of the object
 		public void MoveObject(int newX, int newY)
 		{
-			OGX = newX;
-			OGY = newY;
+			this.OGX = newX;
+			this.OGY = newY;
+			this.CurrX = this.OGX;
+			this.CurrY = this.OGY;
 		}
 
 		public Vector2I GetPos()

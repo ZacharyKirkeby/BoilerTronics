@@ -38,6 +38,14 @@ namespace BoilerTronicsObjects.Layers
 							// reset so we don't place accidently
 							manager.objectToPlace = new Vector2I(-1, -1);
 							manager.placingObject = 0;
+
+							if (manager.objectToMove != null) {
+								AddObject(manager.objectToMove); // move the object back to it's original position
+								manager.objectToMove = null;
+							}
+
+							// Check and see if we were moving
+							
 							base._Input(@event);
 							return;
 						}
@@ -45,10 +53,19 @@ namespace BoilerTronicsObjects.Layers
 						GD.Print("Factory layer is pressed");
 						GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 
-						Vector2I atlasCords = manager.objectToPlace;
-						AddObject(ObjectFactory.CreateObject(tileCoords, 2, atlasCords));
+						obj = manager.objectToMove;
 
-						GD.Print("atlas X: ", atlasCords.X, ", atlas Y: ", atlasCords.Y);
+						if (obj == null) {
+							Vector2I atlasCords = manager.objectToPlace;
+							AddObject(ObjectFactory.CreateObject(tileCoords, 2, atlasCords));
+						} else {
+							obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
+							Vector2I newPos = obj.GetPos();
+							AddObject(obj); // place object
+						}
+
+						// reset to prevent multiple placements
+						manager.objectToMove = null;
 						manager.objectToPlace = new Vector2I(-1, -1);
 						manager.placingObject = 0;
 					}
@@ -96,6 +113,7 @@ namespace BoilerTronicsObjects.Layers
 						subView.AddChild(draggable);
 						GD.Print("Created new dragable:", draggable);
 						manager.objectToPlace = obj.GetAtlasPos();
+						manager.objectToMove = obj; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 						manager.placingObject = 1;
 					} else {
@@ -109,6 +127,5 @@ namespace BoilerTronicsObjects.Layers
 				base._Input(@event); // pass downward
 			}
 		}
-
 	}
 }
