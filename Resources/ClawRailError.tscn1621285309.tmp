@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3341jqo40xga"]
+
+[ext_resource type="Script" uid="uid://d110ilfbkrrhg" path="res://Resources/accept_dialog.gd" id="1_b2a1r"]
+
+[node name="ClawRailError" type="Window"]
+oversampling_override = 1.0
+position = Vector2i(0, 36)
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+oversampling_override = 1.0
+title = "Claw Off Rail"
+initial_position = 1
+size = Vector2i(400, 300)
+visible = true
+ok_button_text = "OK"
+script = ExtResource("1_b2a1r")

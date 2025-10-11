@@ -6,4 +6,3 @@ public partial class TestLevel : Node2D
 {
 
 }
-

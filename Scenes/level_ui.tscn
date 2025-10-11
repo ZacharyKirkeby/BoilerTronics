@@ -1,7 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://dp4ghd11yvxhi"]
+[gd_scene load_steps=18 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
+[ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
@@ -12,6 +15,7 @@
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -19,6 +23,7 @@ border_width_bottom = 4
 border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -26,6 +31,7 @@ border_width_bottom = 4
 border_color = Color(1, 1, 1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
+bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -38,16 +44,20 @@ Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
 Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
-bg_color = Color(0.5609549, 0.5609549, 0.56095487, 1)
+bg_color = Color(0.3515629, 0.3515629, 0.35156286, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ao4gj"]
+bg_color = Color(0.5951542, 0.5951543, 0.5951541, 1)
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
 
 [sub_resource type="Theme" id="Theme_2qe5m"]
+HScrollBar/styles/grabber = SubResource("StyleBoxFlat_ao4gj")
 ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
 
 [node name="Node2D" type="Node2D"]
@@ -56,18 +66,49 @@ script = ExtResource("1_2qe5m")
 [node name="MainVBox" type="VBoxContainer" parent="."]
 offset_right = 1920.0
 offset_bottom = 1080.0
+theme_override_constants/separation = 0
 
 [node name="TerminalLevelSplit" type="HSplitContainer" parent="MainVBox"]
-custom_minimum_size = Vector2(0, 750)
 layout_mode = 2
 
-[node name="TerminalContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit"]
-custom_minimum_size = Vector2(500, 0)
-layout_mode = 2
-
-[node name="TextEdit" type="TextEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+[node name="TerminalContainer" type="TabContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 size_flags_horizontal = 3
+current_tab = 0
+drag_to_rearrange_enabled = true
+script = ExtResource("1_31yto")
+
+[node name="CodeEdit2" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
+metadata/_tab_index = 0
+
+[node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
+metadata/_tab_index = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("2_6tjow")
+metadata/_tab_index = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
@@ -108,10 +149,11 @@ render_target_update_mode = 4
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer"]
-custom_minimum_size = Vector2(0, 330)
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
@@ -147,7 +189,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
 
-[node name="Control" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
@@ -214,6 +256,9 @@ size_flags_vertical = 4
 localize_numeral_system = false
 texture = ExtResource("2_4mllq")
 
+[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
+layout_mode = 2
+
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
@@ -225,8 +270,10 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.67481464, 0.67481464, 0.6748146, 0.8627451)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Step Counter: 0"
 horizontal_alignment = 1
@@ -240,24 +287,26 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Step Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button4" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+[node name="Reset Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
