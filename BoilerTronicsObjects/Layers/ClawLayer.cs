@@ -32,6 +32,16 @@ namespace BoilerTronicsObjects.Layers
 						Vector2 localMousePos = GetLocalMousePosition();
 						Vector2I tileCoords = LocalToMap(localMousePos);
 
+						// make sure nothing is there already
+						PlaceableObject obj = FindObject(tileCoords);
+						if (obj != null) {
+							// reset so we don't place accidently
+							manager.objectToPlace = new Vector2I(-1, -1);
+							manager.placingObject = 0;
+							base._Input(@event);
+							return;
+						}
+
 						GD.Print("Factory layer is pressed");
 						GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 
