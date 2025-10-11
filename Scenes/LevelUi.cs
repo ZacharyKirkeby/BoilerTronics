@@ -10,7 +10,7 @@ public partial class LevelUi : Node2D
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = {"ClawRail","ClawOutOfBounds","ClawCollision","ClawInventory"}; //keep track of current error type
 	private int errorID = -1; //current error type identifier (defined by errorTypes array)
-	private Vector2 errorCoords = new Vector2(700,100);
+	private Vector2 errorCoords = new Vector2(100,200);
 	private String errorEditor;
 
 	public override void _Ready() {
@@ -38,18 +38,31 @@ public partial class LevelUi : Node2D
 		isError = false;
 		errorID = -1;
 	}
+	
+	//be able to call for error popup from this script
+	private void ShowErrorNotice(Vector2 position) {
+		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		camera.SpawnErrorSprite(position);
+	}
+	
+	//be able to call for error popup removal from this script
+	private void ClearErrorNotice() {
+		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		camera.RemoveErrorSprite();
+	}
 
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
 	private void handleError(int errorType, String badEditor) {
 		//open error notice (exclamation mark) at coords of error
 		//TODO: add this to camera2D in actual level window
-		if(errorNoticeIcon == null) {
+		/*if(errorNoticeIcon == null) {
 			var scene = (PackedScene)ResourceLoader.Load("res://Resources/ErrorNotice.tscn");
 			errorNoticeIcon = scene.Instantiate<Node2D>();
 			AddChild(errorNoticeIcon);
 		}
 		//TODO: replace example coords with actual (make dynamic)
-		errorNoticeIcon.Position = errorCoords;
+		errorNoticeIcon.Position = errorCoords;*/
+		ShowErrorNotice(errorCoords);
 
 		PackedScene packedErrorScene = null;
 			
@@ -136,10 +149,11 @@ public partial class LevelUi : Node2D
 		UpdateStepCount();
 
 		//delete error notice (exclamation mark) if exists/open
-		if(errorNoticeIcon != null) {
+		/*if(errorNoticeIcon != null) {
 			errorNoticeIcon.QueueFree();
 			errorNoticeIcon = null;
-		}
+		}*/
+		ClearErrorNotice();
 		
 		removeError();
 	}
