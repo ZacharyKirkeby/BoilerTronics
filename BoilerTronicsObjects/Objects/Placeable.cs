@@ -4,7 +4,7 @@ using BoilerTronicsObjects.Layers;
 
 namespace BoilerTronicsObjects.Placeable
 {
-	public abstract class PlaceableObject
+	public class PlaceableObject
 	{
 		// Values used to keep track of the position of the object and what sprite it is
 		int OGX { get; set; }
