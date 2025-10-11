@@ -75,7 +75,11 @@ namespace BoilerTronicsObjects.Layers
 					}
 				} else {
 					// Left mouse click on a spot where an object exitsts
-					if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+					if (!(@event is InputEventMouseButton buttonEvent)) {
+						base._Input(@event);
+						return;
+					}
+					if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
 						Vector2 localMousePos = GetLocalMousePosition();
 						Vector2I tileCoords = LocalToMap(localMousePos);
 						
@@ -116,6 +120,13 @@ namespace BoilerTronicsObjects.Layers
 						manager.objectToMove = obj; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 						manager.placingObject = 1;
+					} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
+						// We want to delete
+						Vector2 localMousePos = GetLocalMousePosition();
+						Vector2I tileCoords = LocalToMap(localMousePos);
+						
+						PlaceableObject obj = FindObject(tileCoords);
+						if (obj != null) RemoveObject(obj);
 					} else {
 						base._Input(@event); // pass downward
 					}
