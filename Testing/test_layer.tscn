@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=4 uid="uid://c7jrpnssgt8cu"]
+
+[ext_resource type="TileSet" path="res://Resources/new_tile_set.tres" id="1_odxnw"]
+[ext_resource type="Script" uid="uid://baifu7ayw6u6s" path="res://BoilerTronicsObjects/Layers/Layer.cs" id="2_r4n4m"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="TileMap" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+texture_filter = 1
+position = Vector2(219, 124)
+tile_map_data = PackedByteArray("AAABAP7/AAAIAAgAAAAAAAAAAAAIAAgAAAABAP//AAAIAAgAAAACAP7/AAAIAAgAAAADAP7/AAAIAAgAAAACAP//AAAIAAgAAAABAAAAAAAIAAgAAAAAAP//AAAIAAgAAAD//wAAAAAIAAgAAAANAAAAAAAIAAgAAAASAP7/AAAIAAgAAAAPAAAAAAAIAAgAAAAQAP//AAAIAAgAAAAOAP//AAAIAAgAAAA=")
+tile_set = ExtResource("1_odxnw")
+script = ExtResource("2_r4n4m")

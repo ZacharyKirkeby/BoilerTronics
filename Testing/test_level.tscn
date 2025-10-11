@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=4 uid="uid://bi5xoykbg2jdl"]
+[gd_scene load_steps=6 format=4 uid="uid://bryroj3e2my4u"]
 
 [ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
 [ext_resource type="TileSet" uid="uid://cijjltc6wtqde" path="res://Resources/objects.tres" id="3_0eujj"]
