@@ -1,24 +1,14 @@
-[gd_scene load_steps=19 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=18 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_28flt"]
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu.cs" id="1_yhxw7"]
 [ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_1ehe0"]
 [ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Scenes/menubuttonhover.tres" id="3_ce3w2"]
+[ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Scenes/buttontheme.tres" id="3_trj04"]
 [ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="5_yhxw7"]
 [ext_resource type="Texture2D" uid="uid://b65q7unusmxur" path="res://Resources/Icons/podium.png" id="6_trj04"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="7_16hvj"]
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="8_vr1f0"]
-
-[sub_resource type="FontVariation" id="FontVariation_28flt"]
-base_font = ExtResource("1_28flt")
-
-[sub_resource type="Theme" id="Theme_48xlc"]
-Button/colors/font_color = Color(0, 0, 0, 1)
-Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
-Button/fonts/font = SubResource("FontVariation_28flt")
-Button/styles/focus = ExtResource("2_1ehe0")
-Button/styles/hover = ExtResource("3_ce3w2")
-Button/styles/normal = ExtResource("2_1ehe0")
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -85,7 +75,7 @@ vertical_alignment = 1
 offset_top = 375.0
 offset_right = 1920.0
 offset_bottom = 955.0
-theme = SubResource("Theme_48xlc")
+theme = ExtResource("3_trj04")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="MainMenu"]
 layout_mode = 2
