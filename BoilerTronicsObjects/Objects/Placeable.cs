@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using BoilerTronicsObjects.Layers;
 
 namespace BoilerTronicsObjects.Placeable
@@ -69,6 +70,27 @@ namespace BoilerTronicsObjects.Placeable
 		{
 			CurrX = OGX;
 			CurrY = OGY;
+		}
+		
+		// should always return false, unless overriden by child object
+		public bool Scriptable() {
+			return false;
+		}
+		
+		// a generic "save" function used to serialize per object information
+		// note: this is very "lazy" for now!
+		public Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			// reminder: Vector2 is not supported by json! Must be isolated to composite (x, y) coordinates
+			return new Godot.Collections.Dictionary<string, Variant>()
+			{
+				{ "OGX", OGX },
+				{ "OGY", OGY },
+				{ "sourceId", sourceId },
+				{ "atlasPosX", atlasPos.X },
+				{ "atlasPosY", atlasPos.Y },
+				{ "altTitle", "null" },
+			};
 		}
 	}
 }

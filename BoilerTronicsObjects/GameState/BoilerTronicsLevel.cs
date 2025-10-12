@@ -2,6 +2,7 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Placeable;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -91,6 +92,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// Get manager
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
+		// update manager to hold current level's dimensions (to be used w save system)
+		manager.SetLevelDimensions(new Vector2I(x, y));
+		
 		manager.layerFloor = CreateFloorLayer();
 		manager.layerFactory = CreateFactoryLayer();
 		manager.layerClaw = CreateClawLayer();
@@ -111,6 +115,7 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	public override void _Draw() {
 		
+		// Draws the border of the tile map
 		// only draw if corners have been determined
 		if (c1 != null) {
 			DrawLine(c1, c2, Colors.Green, 3.0f);

@@ -30,9 +30,13 @@ public partial class LevelUi : Node2D
 		errorCoords = new Vector2(x,y);
 	}
 	
+	// return to main menu button
 	private void _on_button_pressed() {
 		
 		// TODO: trigger autosave here!
+		// Get manager
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.SaveLevel();
 		
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}
@@ -86,7 +90,7 @@ public partial class LevelUi : Node2D
 				break; //should not happen as error should be set to false
 		}
 		
-		//actually display error notice
+		// actually display error notice
 		if(packedErrorScene != null) {
 			var instance = packedErrorScene.Instantiate();
 			GetTree().CurrentScene.AddChild(instance);

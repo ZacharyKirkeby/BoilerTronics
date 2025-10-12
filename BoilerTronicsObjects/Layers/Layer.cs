@@ -9,10 +9,15 @@ namespace BoilerTronicsObjects.Layers
 {
 	public partial class Layer : Godot.TileMapLayer
 	{
-		static int startX = 100;
-		static int startY = 100;
+		// default layer dimensions, if left unspecified
+		static int startX = 10;
+		static int startY = 10;
+		
 		PlaceableObject[,] tiles;
 		bool[,] editableTiles;
+		
+		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
+		// Avoid using in the future!
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
@@ -20,25 +25,15 @@ namespace BoilerTronicsObjects.Layers
 													// TODO: add a bit mad for plocable areas
 													// TODO: add a bit mad to show where stuff is already placed
 
+		static Vector2I grabbedObjectScaling = new Vector2I(1, 1);
+
 		// note: this can't really be called by the child objects!
 		public Layer(int x, int y) {
-			tiles = new PlaceableObject[x, y];
-			editableTiles = new bool[x, y];
-			maxX = x - 1;
-			maxY = y - 1;
+			RedefineLayer(x, y);
 		}
 
 		public Layer() {
-			tiles = new PlaceableObject[startX, startY];
-			editableTiles = new bool[startX, startY];
-			maxX = 99;
-			maxY = 99;
-
-			for (int x = 0; x <= maxX; x++) {
-				for (int y = 0; y <= maxY; y++) {
-					editableTiles[x, y] = true;
-				}
-			}
+			RedefineLayer(startX, startY);
 		}
 		
 		// basically reconstructs the layer
@@ -58,13 +53,26 @@ namespace BoilerTronicsObjects.Layers
 			
 			// reset visuals
 			Clear();
-			
 
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
 					editableTiles[x, y] = true;
 				}
 			}
+		}
+		
+		// TODO: return this data safely rather than just returning the address
+		public PlaceableObject[,] exportTiles() {
+			return tiles;
+		}
+		public bool[,] exportEditableTiles() {
+			return editableTiles;
+		}
+		public ArrayList exportObjectList() {
+			return objectList;
+		}
+		public Vector2I exportDimensions() {
+			return new Vector2I(maxX, maxY);
 		}
 		
 		public void SetEditable(bool[,] editableTable) {
@@ -199,7 +207,7 @@ namespace BoilerTronicsObjects.Layers
 					Sprite2D sprite = new Sprite2D();
 					// get texture
 					sprite.Texture = texture;
-					sprite.Scale = new Vector2I(5, 5);
+					sprite.Scale = grabbedObjectScaling;
 					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
 
 					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos.GetAtlasPos());
