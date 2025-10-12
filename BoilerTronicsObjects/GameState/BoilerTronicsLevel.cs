@@ -1,6 +1,7 @@
 // This will be the script for the level scene
 using Godot;
 using System;
+using System.Collections;
 using BoilerTronicsObjects.Layers;
 
 public partial class BoilerTronicsLevel : Node2D
@@ -13,6 +14,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public ClawLayer cLayer;
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
+	ArrayList objectList = new ArrayList(); // List of runnable Objects
 	
 	private void CreateMovementLayer() {
 		mLayer = new MovementLayer();

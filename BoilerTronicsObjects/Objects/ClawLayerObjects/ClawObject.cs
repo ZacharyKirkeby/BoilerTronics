@@ -16,34 +16,46 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Runnable Interface
 		public void Step() {
+			// TODO: Implement
 		}
 
 		public void RegisterSteppable() {
+			// TODO: Implement
 		}
 
 		public void UnRegisterSteppable() {
+			// TODO: Implement
+		}
+
+		public void Reset() {
+			// TODO: Implement
 		}
 
 		// Scriptable interface
 
 		// Methods to get commands and execute commands
 		public string GetNextCommand() {
+			// TODO: Implement
 			return null;
 		}
 
 		public ScriptableCommand GetCommand(string commandWord) {
+			// TODO: Implement
 			return null;
 		}
 
 		// Methods to deal with terminals
 		public CodeEdit GetTerminal() {
+			// TODO: Implement
 			return null;
 		}
 
 		public void CreateTerminal() {
+			// TODO: Implement
 		}
 
 		public void DestroyTerminal() {
+			// TODO: Implement
 		}
 
 		// Command methods
