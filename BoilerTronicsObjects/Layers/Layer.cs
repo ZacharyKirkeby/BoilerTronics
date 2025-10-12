@@ -15,8 +15,6 @@ namespace BoilerTronicsObjects.Layers
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
-													// TODO: add a bit mad for plocable areas
-													// TODO: add a bit mad to show where stuff is already placed
 
 		public Layer(int x, int y) {
 			tiles = new PlaceableObject[x, y];

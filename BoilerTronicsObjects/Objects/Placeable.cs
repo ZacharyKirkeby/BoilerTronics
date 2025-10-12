@@ -21,7 +21,7 @@ namespace BoilerTronicsObjects.Placeable
 			this.OGY = OGY;
 			this.CurrX = OGX;
 			this.CurrY = OGY;
-			
+
 			// pass in invalid -1 value to disable this setter
 			if (sourceId != -1) {
 				this.sourceId = sourceId;
