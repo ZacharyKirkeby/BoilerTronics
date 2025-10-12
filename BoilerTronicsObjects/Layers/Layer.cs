@@ -38,6 +38,16 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		public void SetEditable(bool[,] editableTable) {
+			if (!(editableTable.Length == (maxX + 1) * (maxY + 1))) return; // makes sure that the label has the same numbe of elements
+
+			for (int x = 0; x <= maxX; x++) {
+				for (int y = 0; y <= maxY; y++) {
+					editableTiles[x, y] = editableTable[x, y];
+				}
+			}
+		}
+
 		public bool CheckValidPos(int X, int Y)
 		{
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
@@ -56,6 +66,7 @@ namespace BoilerTronicsObjects.Layers
 			tiles[pos.X, pos.Y] = newPlaceable;
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
+			GD.Print("Added object");
 			numItems++;
 		}
 

@@ -14,6 +14,40 @@ public partial class LevelConstructor : Node2D
 
 	TileSet tileset;
 	
+	private void CreateMovementLayer() {
+		mLayer = new MovementLayer();
+		mLayer.TileSet = tileset;
+		AddChild(mLayer);
+		// Place in elements here!
+	}
+
+	private void CreateRailLayer() {
+		rLayer = new RailLayer();
+		rLayer.TileSet = tileset;
+		AddChild(rLayer);
+		// Place in elements here!
+	}
+
+	private void CreateClawLayer() {
+		cLayer = new ClawLayer();
+		cLayer.TileSet = tileset;
+		AddChild(cLayer);
+		// Place in elements here!
+	}
+
+	private void CreateFactoryLayer() {
+		fLayer = new FactoryLayer();
+		fLayer.TileSet = tileset;
+		AddChild(fLayer);
+		// Place in elements here!
+	}
+
+	private void CreateFloorLayer() {
+		flLayer = new FloorLayer();
+		flLayer.TileSet = tileset;
+		AddChild(flLayer);
+		// Place in elements here!
+	}
 
 	public override void _Ready()
 	{
@@ -23,11 +57,11 @@ public partial class LevelConstructor : Node2D
 		x = 20;
 		y = 20;
 		
-		mLayer = FindChild("MovementLayer") as MovementLayer;
-		rLayer = FindChild("RailLayer") as RailLayer;
-		cLayer = FindChild("ClawLayer") as ClawLayer;
-		fLayer = FindChild("FactoryLayer") as FactoryLayer;
-		flLayer = FindChild("FloorLayer") as FloorLayer;
+		CreateFloorLayer();
+		CreateFactoryLayer();
+		CreateClawLayer();
+		CreateRailLayer();
+		CreateMovementLayer();
 
 		base._Ready();
 	}
