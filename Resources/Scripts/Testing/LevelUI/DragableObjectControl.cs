@@ -7,12 +7,13 @@ public partial class DragableObjectControl : Control {
 	Sprite2D sprite;
 	Vector2I atlasCords;
 	int selection;
+	static Vector2I visibleObjectScaling = new Vector2I(5, 5);
 
 	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
 		sprite = new Sprite2D();
 		// get texture
 		sprite.Texture = texture;
-		sprite.Scale = new Vector2I(5, 5);
+		sprite.Scale = visibleObjectScaling;
 		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
 		AddChild(sprite);
 		this.atlasCords = atlasCords;

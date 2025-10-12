@@ -18,8 +18,10 @@ public partial class BoilerTronicsGlobalManager : Node
 	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
-	public BoilerTronicsSaveState saveState;
 	/***** End Testing Vars *****/
+	
+	/* Save Data Vars: */
+	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
 	/* Hold addresses to the layer objects; required for the save function! */
 	public Layer 	layerClaw;
@@ -44,5 +46,13 @@ public partial class BoilerTronicsGlobalManager : Node
 	public BoilerTronicsGlobalManager GetManager()
 	{
 		return GlobalManager;
+	}
+	
+	public void SaveLevel() {
+		saveState.SaveData(this);
+	}
+	
+	public void SetLevelDimensions(Vector2I max) {
+		saveState.SetLevelDimensions (max);
 	}
 }
