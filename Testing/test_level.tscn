@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://bi5xoykbg2jdl"]
 
-[ext_resource type="Script" uid="uid://bq51j6tmqqhv7" path="res://Resources/Scripts/Testing/Level/LevelConstructor.cs" id="1_yoi66"]
+[ext_resource type="Script" uid="uid://cv7krxdsxh1i3" path="res://BoilerTronicsObjects/GameState/BoilerTronicsLevel.cs" id="1_56cbs"]
 [ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
 
 [node name="Node2D" type="Node2D"]
-script = ExtResource("1_yoi66")
+script = ExtResource("1_56cbs")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("2_0eujj")
