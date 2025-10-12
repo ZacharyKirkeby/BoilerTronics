@@ -16,7 +16,10 @@ public partial class BoilerTronicsGlobalManager : Node
 	public ObjectPicker picker;
 	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
+	public BoilerTronicsLevel currLevel;
+	public BoilerTronicsSaveState saveState;
 	/***** End Testing Vars *****/
+
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 
 	public override void _Ready()
