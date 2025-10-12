@@ -12,13 +12,13 @@ namespace BoilerTronicsObjects.Layers
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			// TODO: add code to verify that this is the correct type of object
-			AddObject(newPlaceable);
+			base.AddObject(newPlaceable);
 		}
 
 		public override void RemoveObject(PlaceableObject objectToRemove)
 		{
 			// TODO: add code to verify that this is the correct type of object
-			RemoveObject(objectToRemove);
+			base.RemoveObject(objectToRemove);
 		}
 
 		public override void _Input(InputEvent @event)
