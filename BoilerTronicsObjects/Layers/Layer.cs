@@ -10,6 +10,7 @@ namespace BoilerTronicsObjects.Layers
 	public partial class Layer : Godot.TileMapLayer
 	{
 		PlaceableObject[,] tiles;
+		bool[,] editableTiles;
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
@@ -18,14 +19,22 @@ namespace BoilerTronicsObjects.Layers
 													// TODO: add a bit mad to show where stuff is already placed
 		public Layer(int x, int y) {
 			tiles = new PlaceableObject[x, y];
+			editableTiles = new bool[x, y];
 			maxX = x - 1;
 			maxY = y - 1;
 		}
 
 		public Layer() {
 			tiles = new PlaceableObject[100, 100];
+			editableTiles = new bool[100, 100];
 			maxX = 99;
 			maxY = 99;
+
+			for (int x = 0; x <= maxX; x++) {
+				for (int y = 0; y <= maxY; y++) {
+					editableTiles[x, y] = true;
+				}
+			}
 		}
 
 		public bool CheckValidPos(int X, int Y)
@@ -42,6 +51,7 @@ namespace BoilerTronicsObjects.Layers
 			if (!CheckValidPos(pos.X, pos.Y)) return;
 
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
+			if (!editableTiles[pos.X, pos.Y]) return;
 			tiles[pos.X, pos.Y] = newPlaceable;
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
@@ -54,6 +64,7 @@ namespace BoilerTronicsObjects.Layers
 			objectList.Remove(objectToRemove); // remove to object form the list
 			EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
 			Vector2I pos = objectToRemove.GetPos();
+			if (!editableTiles[pos.X, pos.Y]) return;
 			tiles[pos.X, pos.Y] = null; // remove from the tiles
 			numItems--;
 		}
@@ -127,6 +138,8 @@ namespace BoilerTronicsObjects.Layers
 					if (objAtPos == null) {
 						return;
 					}
+
+					if (!editableTiles[tileCoords.X, tileCoords.Y]) return;
 
 					RemoveObject(objAtPos);
 
