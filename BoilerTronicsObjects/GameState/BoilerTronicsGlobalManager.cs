@@ -7,6 +7,7 @@
 
 using Godot;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Layers;
 
 public partial class BoilerTronicsGlobalManager : Node
 {
@@ -19,6 +20,13 @@ public partial class BoilerTronicsGlobalManager : Node
 	public BoilerTronicsLevel currLevel;
 	public BoilerTronicsSaveState saveState;
 	/***** End Testing Vars *****/
+	
+	/* Hold addresses to the layer objects; required for the save function! */
+	public Layer 	layerClaw;
+	public Layer 	layerFactory;
+	public Layer 	layerFloor;
+	public Layer 	layerMovement;
+	public Layer 	layerRail;
 
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 

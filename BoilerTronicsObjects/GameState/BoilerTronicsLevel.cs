@@ -14,49 +14,70 @@ public partial class BoilerTronicsLevel : Node2D
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
 	
-	private void CreateMovementLayer() {
+	// store all four corners of the placement grid
+	private Vector2 c1;
+	private Vector2 c2;
+	private Vector2 c3;
+	private Vector2 c4;
+	
+	private Layer CreateMovementLayer() {
 		mLayer = new MovementLayer();
+		mLayer.RedefineLayer(x, y);
 		// mLayer = new MovementLayer(x, y);
 		mLayer.TileSet = tileset;
 		AddChild(mLayer);
 		// Place in elements here!
 		// This will be gotten from the save state in the global manager
+		// TODO: load from save here
+		return mLayer;
 	}
 
-	private void CreateRailLayer() {
+	private Layer CreateRailLayer() {
 		rLayer = new RailLayer();
+		rLayer.RedefineLayer(x, y);
 		// rLayer = new RailLayer(x, y);
 		rLayer.TileSet = tileset;
 		AddChild(rLayer);
 		// Place in elements here!
 		// This will be gotten from the save state in the global manager
+		// TODO: load from save here
+		return rLayer;
 	}
 
-	private void CreateClawLayer() {
+	private Layer CreateClawLayer() {
 		cLayer = new ClawLayer();
+		cLayer.RedefineLayer(x, y);
 		// cLayer = new ClawLayer(x, y);
 		cLayer.TileSet = tileset;
 		AddChild(cLayer);
 		// Place in elements here!
 		// This will be gotten from the save state in the global manager
+		// TODO: load from save here
+		return cLayer;
 	}
 
-	private void CreateFactoryLayer() {
+	private Layer CreateFactoryLayer() {
 		fLayer = new FactoryLayer();
+		fLayer.RedefineLayer(x, y);
 		// fLayer = new FactoryLayer(x, y);
 		fLayer.TileSet = tileset;
 		AddChild(fLayer);
 		// Place in elements here!
 		// This will be gotten from the save state in the global manager
+		// TODO: load from save here
+		return fLayer;
 	}
 
-	private void CreateFloorLayer() {
+	private Layer CreateFloorLayer() {
 		flLayer = new FloorLayer();
+		flLayer.RedefineLayer(x, y);
 		// flLayer = new FloorLayer(x, y);
 		flLayer.TileSet = tileset;
 		AddChild(flLayer);
 		// Place in elements here!
 		// This will be gotten from the save state in the global manager
+		// TODO: load from save here
+		return flLayer;
 	}
 
 	public override void _Ready()
@@ -67,12 +88,35 @@ public partial class BoilerTronicsLevel : Node2D
 		x = 20;
 		y = 20;
 		
-		CreateFloorLayer();
-		CreateFactoryLayer();
-		CreateClawLayer();
-		CreateRailLayer();
-		CreateMovementLayer();
+		// Get manager
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		manager.layerFloor = CreateFloorLayer();
+		manager.layerFactory = CreateFactoryLayer();
+		manager.layerClaw = CreateClawLayer();
+		manager.layerRail = CreateRailLayer();
+		manager.layerMovement = CreateMovementLayer();
+		
+		// store four corners of the floor layer
+		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
+		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
+		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
+		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		
+		// draw a rectangle representing the boundaries of the placement grid (sorta)
+		QueueRedraw();
 
 		base._Ready();
+	}
+	
+	public override void _Draw() {
+		
+		// only draw if corners have been determined
+		if (c1 != null) {
+			DrawLine(c1, c2, Colors.Green, 3.0f);
+			DrawLine(c2, c3, Colors.Green, 3.0f);
+			DrawLine(c3, c4, Colors.Green, 3.0f);
+			DrawLine(c4, c1, Colors.Green, 3.0f);
+		}
 	}
 }

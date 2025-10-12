@@ -7,7 +7,7 @@ namespace BoilerTronicsObjects.Layers
 {
 	// public partial class MovementLayer(int x, int y) : Layer(x, y)
 	public partial class MovementLayer : Layer
-	{
+	{		
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			// TODO: add code to verify that this is the correct type of object

@@ -9,6 +9,8 @@ namespace BoilerTronicsObjects.Layers
 {
 	public partial class Layer : Godot.TileMapLayer
 	{
+		static int startX = 100;
+		static int startY = 100;
 		PlaceableObject[,] tiles;
 		bool[,] editableTiles;
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
@@ -18,6 +20,7 @@ namespace BoilerTronicsObjects.Layers
 													// TODO: add a bit mad for plocable areas
 													// TODO: add a bit mad to show where stuff is already placed
 
+		// note: this can't really be called by the child objects!
 		public Layer(int x, int y) {
 			tiles = new PlaceableObject[x, y];
 			editableTiles = new bool[x, y];
@@ -26,8 +29,8 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		public Layer() {
-			tiles = new PlaceableObject[100, 100];
-			editableTiles = new bool[100, 100];
+			tiles = new PlaceableObject[startX, startY];
+			editableTiles = new bool[startX, startY];
 			maxX = 99;
 			maxY = 99;
 
@@ -37,7 +40,33 @@ namespace BoilerTronicsObjects.Layers
 				}
 			}
 		}
+		
+		// basically reconstructs the layer
+		// mainly used because Layer(x, y) doesn't work unless the child object explicitly calls only that constructor (?)
+		// x, y are # of cells on the respective axis
+		public void RedefineLayer(int newX, int newY) {
+			
+			tiles = new PlaceableObject[newX, newY];
+			editableTiles = new bool[newX, newY];
+			maxX = newX - 1;
+			maxY = newY - 1;
+			
+			// clear objects (let garbage collector handle the objects)
+			// TODO: potential memory leak here or?
+			objectList = new ArrayList();
+			numItems = 0;
+			
+			// reset visuals
+			Clear();
+			
 
+			for (int x = 0; x <= maxX; x++) {
+				for (int y = 0; y <= maxY; y++) {
+					editableTiles[x, y] = true;
+				}
+			}
+		}
+		
 		public void SetEditable(bool[,] editableTable) {
 			if (!(editableTable.Length == (maxX + 1) * (maxY + 1))) return; // makes sure that the label has the same numbe of elements
 
