@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
@@ -24,7 +25,16 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			// add a check to make sure that we are only trying to place claws
-			MouseInput(@event, 3, 1);
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
+				MouseInput(@event, 3, 1);
+				GD.Print("Claw");
+			}
+			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+				// We always wnt to try to move
+				GD.Print("Claw");
+				MouseInput(@event, 3, 1);
+			}
 			base._Input(@event);
 		}
 	}

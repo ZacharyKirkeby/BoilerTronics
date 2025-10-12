@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
@@ -24,7 +25,16 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			// add a check to make sure that we are only trying to place floors
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			// MouseInput(@event, 2, 0);
+			if (manager.objectToMove is FloorTileObject || manager.objectToPlace == new Vector2I(0, 2)) {
+				MouseInput(@event, 2, 0);
+				GD.Print("Floor");
+			}
+			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+				// We always wnt to try to move
+				MouseInput(@event, 2, 0);
+			}
 			base._Input(@event);
 		}
 	}
