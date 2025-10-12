@@ -24,7 +24,7 @@ public partial class BoilerTronicsGlobalManager : Node
 
 	public override void _Ready()
 	{
-		// Make sure there only exists on manager
+		// Make sure there only exists one manager
 		if (GlobalManager != null)
 		{
 			// TODO: make error here   
