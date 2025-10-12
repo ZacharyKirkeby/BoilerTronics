@@ -12,14 +12,26 @@ namespace BoilerTronicsObjects.Layers
 		PlaceableObject[,] tiles;
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
+		int maxX;
+		int maxY;
 													// TODO: add a bit mad for plocable areas
 													// TODO: add a bit mad to show where stuff is already placed
 		public Layer(int x, int y) {
 			tiles = new PlaceableObject[x, y];
+			maxX = x - 1;
+			maxY = y - 1;
 		}
 
 		public Layer() {
 			tiles = new PlaceableObject[100, 100];
+			maxX = 99;
+			maxY = 99;
+		}
+
+		public bool CheckValidPos(int X, int Y)
+		{
+			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			return true;
 		}
 
 		public virtual void AddObject(PlaceableObject newPlaceable)
@@ -27,14 +39,12 @@ namespace BoilerTronicsObjects.Layers
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			Vector2I pos = newPlaceable.GetPos();
 			if (FindObject(pos) != null) return;
+			if (!CheckValidPos(pos.X, pos.Y)) return;
+
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
 			tiles[pos.X, pos.Y] = newPlaceable;
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
-			GD.Print("Placed object at: ", newPlaceable.GetCurrPos().X, " ", newPlaceable.GetCurrPos().Y);
-			GD.Print("source ID: ", newPlaceable.GetSourceID());
-			GD.Print("Atlas Coords: ", newPlaceable.GetAtlasPos().X, " ", newPlaceable.GetAtlasPos().Y);
-			GD.Print("placed object");
 			numItems++;
 		}
 
@@ -50,15 +60,14 @@ namespace BoilerTronicsObjects.Layers
 
 		public virtual PlaceableObject FindObject(Vector2I loc)
 		{
+			if (!CheckValidPos(loc.X, loc.Y) ) return null;
 			return tiles[loc.X, loc.Y];
 		}
 
 		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
 		{
-			GD.Print("Input");
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
-				GD.Print("Not button event");
 				base._Input(@event);
 				return;
 			}
@@ -71,20 +80,15 @@ namespace BoilerTronicsObjects.Layers
 			Vector2I tileCoords = LocalToMap(localMousePos);
 			PlaceableObject objAtPos = FindObject(tileCoords);
 
-			// Change this once UI is further along
-			// GD.Print("Selection: ", manager.currSlection, "| placing: ", manager.placingObject);
-			if (manager.currSlection != targetSel)
-			{
-				GD.Print("Not curr sel ", "Target: ", targetSel, "Curr: ", manager.currSlection);
-				return;
-			}
+			if (manager.currSlection != targetSel) return;
 
 			if (manager.placingObject == 1) {
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
 					// make sure nothing is there already
-					if (objAtPos != null) {
+					if (objAtPos != null || !CheckValidPos(tileCoords.X, tileCoords.Y)) {
 						// reset so we don't place accidently
+						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 						manager.objectToPlace = new Vector2I(-1, -1);
 						manager.placingObject = 0;
 
@@ -96,8 +100,6 @@ namespace BoilerTronicsObjects.Layers
 						return;
 					}
 
-					GD.Print("Factory layer is pressed");
-					GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 
 					// This will happen if we are mopving an object
 					PlaceableObject obj = manager.objectToMove;
@@ -150,7 +152,6 @@ namespace BoilerTronicsObjects.Layers
 
 					SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 					subView.AddChild(draggable);
-					GD.Print("Created new dragable:", draggable);
 					manager.objectToPlace = objAtPos.GetAtlasPos();
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 

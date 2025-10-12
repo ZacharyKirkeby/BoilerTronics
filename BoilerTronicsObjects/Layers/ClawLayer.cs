@@ -23,7 +23,6 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			GD.Print("Claw Input");
 			MouseInput(@event, 3, 1);
 			base._Input(@event);
 		}
