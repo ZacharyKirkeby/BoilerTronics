@@ -17,6 +17,7 @@ namespace BoilerTronicsObjects.Layers
 		int maxY;
 													// TODO: add a bit mad for plocable areas
 													// TODO: add a bit mad to show where stuff is already placed
+
 		public Layer(int x, int y) {
 			tiles = new PlaceableObject[x, y];
 			editableTiles = new bool[x, y];

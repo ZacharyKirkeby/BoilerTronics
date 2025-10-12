@@ -7,43 +7,27 @@ public partial class LevelConstructor : Node2D
 	int x;
 	int y;
 	MovementLayer mLayer;
-	// RailLayer rLayer;
+	RailLayer rLayer;
 	ClawLayer cLayer;
 	FactoryLayer fLayer;
-	// FloorLayer flLayer;
+	FloorLayer flLayer;
+
+	TileSet tileset;
 	
-	private void CreateMovement() {
-
-	}
-
-	private void CreateRail() {
-
-	}
-	
-	private void CreateClaw() {
-
-	}
-
-	private void CreateFactory() {
-
-	}
-
-	private void CreateFloor() {
-
-	}
 
 	public override void _Ready()
 	{
 		// Create all of the diffrent layers and read in the corresponding data from the manager
 		// Temp, this will be replaced by a read from the global manager's game state
+		tileset = GD.Load<TileSet>("res://Resources/objects.tres");
 		x = 20;
 		y = 20;
-
-		CreateMovement();
-		CreateRail();
-		CreateClaw();
-		CreateFactory();
-		CreateFloor();
+		
+		mLayer = FindChild("MovementLayer") as MovementLayer;
+		rLayer = FindChild("RailLayer") as RailLayer;
+		cLayer = FindChild("ClawLayer") as ClawLayer;
+		fLayer = FindChild("FactoryLayer") as FactoryLayer;
+		flLayer = FindChild("FloorLayer") as FloorLayer;
 
 		base._Ready();
 	}
