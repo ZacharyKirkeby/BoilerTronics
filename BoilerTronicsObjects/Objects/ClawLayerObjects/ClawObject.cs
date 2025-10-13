@@ -1,6 +1,7 @@
 // TODO: implement in more detail
 using Godot;
 using System;
+using System.Linq;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -11,12 +12,17 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 	public class ClawObject : ClawLayerObjects, Scriptable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
+		private PlaceableObject heldObject = null;
+
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 
 		// Runnable Interface
 		public void Step() {
-			// TODO: Implement
+			string[] cmdAndArgs = GetNextCommand(); // get command and args from interrupter
+			ScriptableCommand cmd = GetCommand(cmdAndArgs[0]); // get command
+			string[] cmdArgs = cmdAndArgs.Skip(1).ToArray(); // isolate args
+			cmd(cmdArgs); // run command
 		}
 
 		public void RegisterSteppable() {
@@ -28,13 +34,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Reset() {
-			// TODO: Implement
+			base.ResetPos();
+			heldObject = null;
+			// Maybe need to make a call to our codeEdit/interrputer?
 		}
 
 		// Scriptable interface
 
 		// Methods to get commands and execute commands
-		public string GetNextCommand() {
+		public string[] GetNextCommand() {
 			// TODO: Implement
 			return null;
 		}
@@ -56,6 +64,20 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void DestroyTerminal() {
 			// TODO: Implement
+		}
+
+		// functions that we can use via commands
+
+		public void MoveCommand(params object[] args)
+		{
+		}
+
+		public void GrabCommand(params object[] args)
+		{
+		}
+
+		public void DropCommand(params object[] args)
+		{
 		}
 
 		// Command methods

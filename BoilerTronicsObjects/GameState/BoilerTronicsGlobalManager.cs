@@ -33,8 +33,13 @@ public partial class BoilerTronicsGlobalManager : Node
 		GlobalManager = this; // get this as the manager
 	}
 
-	public BoilerTronicsGlobalManager GetManager()
-	{
-		return GlobalManager;
+	// This will allow for the step button to interact with the backend of the game
+	public void Step() {
+		return;
+	}
+
+	// This will tell the backend to reset
+	public void Reset() {
+		return;
 	}
 }
