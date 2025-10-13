@@ -12,9 +12,11 @@ public partial class LevelUi : Node2D
 	private int errorID = -1; //current error type identifier (defined by errorTypes array)
 	private Vector2 errorCoords = new Vector2(100,200);
 	private String errorEditor;
+	private Button stepButton;
 
 	public override void _Ready() {
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
+		stepButton = GetNode<Button>("%Step Button");
 		UpdateStepCount();
 	}
 	
@@ -105,6 +107,7 @@ public partial class LevelUi : Node2D
 	
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
+		stepButton.Disabled = true;
 		if(!isError) {
 			stepCount++;
 			UpdateStepCount();
@@ -127,6 +130,7 @@ public partial class LevelUi : Node2D
 		if(isError) {
 			handleError(errorID, errorEditor);
 		}
+		stepButton.Disabled = false;
 	}
 
 	private void UpdateStepCount() {
