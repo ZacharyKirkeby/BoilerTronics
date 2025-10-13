@@ -2,11 +2,11 @@ using Godot;
 using System;
 
 namespace BoilerTronicsObjects.Interfaces {
-	public delegate void ScriptableCommand(); // allows us to have method/function pointers
+	public delegate void ScriptableCommand(string[] args); // allows us to have method/function pointers
 
 	interface Scriptable {
 		// Methods to get commands and execute commands
-		string GetNextCommand(); // Steps the object
+		string[] GetNextCommand(); // Steps the object
 		ScriptableCommand GetCommand(string commandWord); // Gets the function that the command points to
 
 		// Methods to deal with terminals

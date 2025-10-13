@@ -97,16 +97,16 @@ public partial class LevelUi : Node2D
 			UpdateStepCount();
 			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
+			// Tell the global manager that we are stepping
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.Step();
+
 			//update code terminal highlighting to next one regardless of error
 			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+
 			foreach (CodeEdit editor in codeEditors)
 			{
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-			}
-			//TODO: check for actual error and use setError to properly display error notices
-			//example error being manually set after third step
-			if(stepCount == 3) {
-				setError(2, "CodeEdit2");
 			}
 		}
 		
@@ -123,6 +123,10 @@ public partial class LevelUi : Node2D
 	private void _on_reset_button_pressed() {
 		//reset the step counter
 		stepCount = 0;
+
+		// Tell the global manager that we are resetting
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.Reset();
 
 		//reset highlighting in terminals
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");

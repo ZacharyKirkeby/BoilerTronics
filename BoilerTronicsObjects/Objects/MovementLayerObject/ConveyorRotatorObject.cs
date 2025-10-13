@@ -10,7 +10,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
 
-		public string GetNextCommand() {
+		public string[] GetNextCommand() {
 			// TODO: Implement
 			return null;
 		}
