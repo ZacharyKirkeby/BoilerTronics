@@ -70,5 +70,21 @@ namespace BoilerTronicsObjects.Placeable
 			CurrX = OGX;
 			CurrY = OGY;
 		}
+
+		public Texture GetTexture()
+		{
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
+
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+
+			return texture;
+		}
 	}
 }
