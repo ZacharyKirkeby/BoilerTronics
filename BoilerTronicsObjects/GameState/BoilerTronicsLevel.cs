@@ -141,11 +141,19 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw = CreateClawLayer();
 		manager.layerRail = CreateRailLayer();
 		manager.layerMovement = CreateMovementLayer();
+
+		// Set Z-index
 		manager.layerFloor.ZIndex = 0;
 		manager.layerFactory.ZIndex = 1;
 		manager.layerClaw.ZIndex = 2;
 		manager.layerRail.ZIndex = 3;
 		manager.layerMovement.ZIndex = 4;
+
+		// Shift layers
+		manager.layerClaw.Position = new Vector2(0, -32);
+		manager.layerRail.Position = new Vector2(0, -32);
+		manager.layerMovement.Position = new Vector2(0, -32);
+
 		
 		if (loadedSave) {
 			// attempt to reconstruct level based off the loaded information: update layers
