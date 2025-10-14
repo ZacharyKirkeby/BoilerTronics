@@ -1,13 +1,13 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Objects;
-using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
 {
 	// public partial class ClawLayer(int x, int y) : Layer(x, y)
-	public partial class ClawLayer : Layer
+	public partial class FloorLayer : Layer
 	{
 
 		public override void AddObject(PlaceableObject newPlaceable)
@@ -24,16 +24,16 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			// add a check to make sure that we are only trying to place claws
+			// add a check to make sure that we are only trying to place floors
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
-				MouseInput(@event, 3, 1);
-				GD.Print("Claw");
+			// MouseInput(@event, 2, 0);
+			if (manager.objectToMove is FloorTileObject || manager.objectToPlace == new Vector2I(0, 2)) {
+				MouseInput(@event, 2, 0);
+				GD.Print("Floor");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				GD.Print("Claw");
-				MouseInput(@event, 3, 1);
+				MouseInput(@event, 2, 0);
 			}
 			base._Input(@event);
 		}
