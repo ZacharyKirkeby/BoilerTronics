@@ -9,6 +9,9 @@ namespace BoilerTronicsObjects.Layers
 {
 	public partial class Layer : Godot.TileMapLayer
 	{
+		// if false, then should block all drag attempts
+		public static bool allowDrag = true;
+		
 		// default layer dimensions, if left unspecified
 		static int startX = 10;
 		static int startY = 10;
@@ -193,7 +196,9 @@ namespace BoilerTronicsObjects.Layers
 				}
 			} else {
 				// Left mouse click on a spot where an object exitsts
-				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+				// Handles creating a new draggable object when clicking on a tile
+				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
+					&& allowDrag) {
 
 					// we don't went to do anything if we can;t find anything there
 					if (objAtPos == null) {
