@@ -28,11 +28,13 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void RegisterSteppable() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
 		}
 
 		public void UnRegisterSteppable() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
 		}
 
 		public void Reset() {
@@ -85,6 +87,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		// Command methods
 		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
+			RegisterSteppable(); // Registers this as a runnable with the level state
 		} // create object
 	}
 }

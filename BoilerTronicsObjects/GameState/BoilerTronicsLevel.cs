@@ -158,6 +158,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
 
+		// For stepping and level interactions
+		manager.currLevel = this;
+
 		base._Ready();
 	}
 
@@ -201,6 +204,7 @@ public partial class BoilerTronicsLevel : Node2D
 
 	// Steps through all runnables
 	public void Step() {
+		GD.Print("Step");
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
