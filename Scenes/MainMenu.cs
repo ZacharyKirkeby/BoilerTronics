@@ -33,7 +33,7 @@ public partial class MainMenu : Node2D
 
 	private void _on_level_select_pressed()
 	{
-		// TODO: implement level select
+		GetTree().ChangeSceneToFile("res://Scenes/level_select.tscn");
 	}
 
 	private void _on_settings_pressed()
