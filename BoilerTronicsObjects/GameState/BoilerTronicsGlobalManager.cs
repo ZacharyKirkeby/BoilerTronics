@@ -17,7 +17,15 @@ public partial class BoilerTronicsGlobalManager : Node
 	private int[] levelIDs = [0, 0]; // sets the range of viable level IDs: [min, max]
 	private int levelID = 0;
 	private int[] levelLoadSlots = [0, 2]; // sets the range of viable level saves: [min, max]
-	private int levelLoadSlot = -1;	// -1 means autosave, other valid save info above
+	private int levelLoadSlot = -1;	// -1 means load actual default level setup, -2 means autosave
+	
+	// TODO:
+	// For current demo, when pressing "New Game" for the very first time, this loads 'level0'
+	// But every time after (i.e. return to main menu, click "New Game" again), this will now instead load an autosave
+	// With current implementation, exiting from 'level0' will automatically generate an autosave;
+	// therefore, while yes save data is saved locally on one's machine, the autosave more or less acts as a session-only save.
+	// This is controlled by the above values! (i.e. (0, -1) means that system autoloads level 0)
+	// (and after loading a level properly, game manager sets values to (0, -2) i.e. system will load autosaves)
 	
 	// getters for above; setters handled separately
 	public int GetLevelID() { return levelID; }
@@ -62,17 +70,23 @@ public partial class BoilerTronicsGlobalManager : Node
 	
 	
 	/* SAVE STUFF */
+	
 	// set level IDs and etc
 	// returns if operation was successful (TODO error handling by user functions)
+	// example calls:
+	// autosave: SetTargetLevelSave(0, -2);
+	// level 0, default level: SetTargetLevelSave(0, -1);
+	// level 0, save slot 0: SetTargetLevelSave(0, 0);
 	public bool SetTargetLevelSave(int inId, int inSlot) {
 		// check if save slot is in bounds
-		// -1 is autosave
-		if (inSlot != -1 && 
+		// -1 is default level save
+		if (inSlot != -1 && inSlot != -2 &&
 			(inSlot < levelLoadSlots[0] || inSlot > levelLoadSlots[1])) {
 			return false;
 		}
 		
 		// check if level Id is in bounds
+		// -1 is autosave
 		if (inId < levelIDs[0] || inId > levelIDs[1]) {
 			return false;
 		}
@@ -92,9 +106,15 @@ public partial class BoilerTronicsGlobalManager : Node
 	public void SaveLevel() {
 		string saveLocation;
 		
+		// if trying to save onto an actual level slot, error!
+		if (levelLoadSlot == -1) {
+			GD.Print("ERROR: trying to save over a base level!");
+			return;
+		}
+		
 		// determine save load locations
 		// for actual levels, load levels progamatically!
-		if (levelLoadSlot == -1) {
+		if (levelLoadSlot == -2) {
 			saveLocation = "auto";
 		} else {
 			// level save location example:
@@ -111,14 +131,25 @@ public partial class BoilerTronicsGlobalManager : Node
 		
 		// determine save load locations
 		// for actual levels, load levels progamatically!
-		if (levelLoadSlot == -1) {
+		if (levelLoadSlot == -2) {
+			// autosave
 			saveLocation = "auto";
 		} else {
 			// level save location example:
 			// dir/level0/save0.sav
 			saveLocation = "level" + levelID + "/save" + levelLoadSlot;
 		}
-		bool res = saveState.LoadData(this, saveLocation);
+		bool res;
+		if (levelLoadSlot != -1) {
+			// load save data
+			res = saveState.LoadSaveData(this, saveLocation);
+		} else {
+			// load level data
+			GD.Print("attempting to load level data, level#: " + levelID);
+			res = saveState.LoadLevelData(this, levelID);
+			// default back to autosave after loading a level
+			levelLoadSlot = -2;
+		}
 		if (res) {
 			// if load was successful, then update global manager if needed
 			// TODO
@@ -132,11 +163,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	// keeping values properly hidden at the time. Oh well.
 	// TODO: revisit entire save system sometime later.
 	public ArrayList GetSaveObjectList(string layer) {
-		GD.Print("get save objlist: " + layer);
+		//GD.Print("get save objlist: " + layer);
 		return saveState.GetObjectList(layer);
 	}
 	public Vector2I[] GetSaveProtectedTiles(string layer) {
-		GD.Print("get save proctiles: " + layer);
+		//GD.Print("get save proctiles: " + layer);
 		return saveState.GetProtectedTiles(layer);
 	}
 	

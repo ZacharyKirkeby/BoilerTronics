@@ -24,7 +24,7 @@ public class BoilerTronicsSaveState
 	int save_slot = -1; // count from 0-2 for any given level save; autosave will have a '-1' save slot
 	// TODO: handle errors if save_slot is OOB!
 	
-	int level_id = 0; // id for which level this save is referring tod; // id for which level this save is referring to
+	int level_id = 0; // id for which level this save is referring to
 	
 	private Vector2I levelDimensions;
 	private LayerInfo liClaw = new LayerInfo();
@@ -144,10 +144,27 @@ public class BoilerTronicsSaveState
 		SaveLine(saveFile, "railLayer", liRail.SerializeData());
 	}
 	
+	// load level data; automatically generate the save data info, given the level ID
+	// input should be handled automatically by the global manager
+	// returns success of loading the save data
+	public bool LoadLevelData(BoilerTronicsGlobalManager manager, int levelId) {
+		string SavePath = "res://Resources/Levels/level" + levelId + ".save";
+		return LoadData(manager, SavePath);
+	}
+	
+	
+	// load save data; automatically generate the save data info, given the directory and etc
+	// input should be handled automatically by the global manager
+	// returns success of loading the save data
+	public bool LoadSaveData(BoilerTronicsGlobalManager manager, string SaveLocationName) {
+		string SavePath = "user://" + SaveLocationName + ".save";
+		return LoadData(manager, SavePath);
+	}
+	
 	// given a save location, load the data from that save and save that into our private data objects
 	// returns success of loading the file
-	public bool LoadData(BoilerTronicsGlobalManager manager, string SaveLocationName) {
-		string SavePath = "user://" + SaveLocationName + ".save";
+	private bool LoadData(BoilerTronicsGlobalManager manager, string SavePath) {
+		
 		if (!FileAccess.FileExists(SavePath)) {return false;} // not valid save location
 		
 		// open up save data
@@ -173,7 +190,7 @@ public class BoilerTronicsSaveState
 			var nodeData = new Godot.Collections.Dictionary<string, Variant>((Godot.Collections.Dictionary)json.Data);
 			foreach (var (key, value) in nodeData)
 			{
-				GD.Print("loading: " + key + "\nvalue: " + value);
+				// GD.Print("loading: " + key + "\nvalue: " + value);
 				// cast 'value' into 'node'
 				Godot.Collections.Dictionary<string, Variant> node = (Godot.Collections.Dictionary<string, Variant>) value;
 				
