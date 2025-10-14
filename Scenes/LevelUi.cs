@@ -12,8 +12,13 @@ public partial class LevelUi : Node2D
 	private int errorID = -1; //current error type identifier (defined by errorTypes array)
 	private Vector2 errorCoords = new Vector2(700,100);
 	private String errorEditor;
+	
+	// automatically define the global manager so we don't need to keep redefining it and etc
+	static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 	public override void _Ready() {
+		
+		// manager.SetDraggable(false); // debug; testing script
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		UpdateStepCount();
 	}
@@ -33,9 +38,9 @@ public partial class LevelUi : Node2D
 	// return to main menu button
 	private void _on_button_pressed() {
 		
-		// TODO: trigger autosave here!
 		// Get manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		// set save data info to autosave
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
