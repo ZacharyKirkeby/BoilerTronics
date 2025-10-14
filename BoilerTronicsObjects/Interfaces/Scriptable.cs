@@ -1,40 +1,44 @@
+using Godot;
 using System;
 using System.Collections.Generic;
-using Godot;
-// this may be changed
+
 public abstract partial class Scriptable : Node
-{   
-    // Action lets me nest a function call that autofires
-    private Dictionary<string, Action<string>> _commandMap;
-    public void ExecCommand(string command, string parameter = null, string parameter2 = null)
+{
+    private readonly Dictionary<string, Action<string, string>> _commandMap;
+
+    public Scriptable()
     {
-        _commandMap = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase)
+        _commandMap = new Dictionary<string, Action<string, string>>(StringComparer.OrdinalIgnoreCase)
         {
-            // the instructions/mapping
-            { "mov", Move },
-            { "rot", Rotate },
-            { "drp", _ => Drop() },
-            { "grb", _ => Grab() },
-            { "wait", _ => Wait() },
-            { "wrt", Write },
-            { "add", Add },
+            { "mov", (a, _) => Move(a) },
+            { "rot", (a, _) => Rotate(a) },
+            { "wrt", (a, _) => Write(a) },
 
+            { "drp", (_, _) => Drop() },
+            { "grb", (_, _) => Grab() },
+            { "wait", (_, _) => Wait() },
+
+            { "add", (a, b) => Add(a, b) },
+            { "sub", (a, b) => Subtract(a, b) },
+            { "mul", (a, b) => Multiply(a, b) },
+            { "div", (a, b) => Divide(a, b) },
+            { "cmp", (a, b) => Compare(a, b) },
         };
+    }
 
-        Action<string> action;
-        if (_commandMap.TryGetValue(command, out action))
+    public void ExecCommand(string command, string param1 = null, string param2 = null)
+    {
+        if (_commandMap.TryGetValue(command, out var action))
         {
-
-            action(parameter);
+            action(param1, param2);
         }
         else
         {
-            // this literally shouldn't be able to happen
-            GD.Print($"Unknown command: {command}");
+            GD.PrintErr($"Unknown command: {command}");
         }
     }
 
-    // dummy functions idk how ts getting implemented
+    // Abstract operations
     protected abstract void Move(string direction);
     protected abstract void Rotate(string direction);
     protected abstract void Drop();
@@ -46,6 +50,4 @@ public abstract partial class Scriptable : Node
     protected abstract void Multiply(string reg1, string reg2);
     protected abstract void Divide(string reg1, string reg2);
     protected abstract void Compare(string reg1, string reg2);
-
-
 }
