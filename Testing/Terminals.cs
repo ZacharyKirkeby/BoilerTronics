@@ -30,15 +30,15 @@ public partial class Terminals : TabContainer
 				return;
 
 			int caretLine = codeEdit.GetCaretLine();
-        	string lineText = codeEdit.GetLine(caretLine);
+			string lineText = codeEdit.GetLine(caretLine);
 
-        	if (lineText.Length > maxLineLength)
-        	{
-            lineText = lineText.Substring(0, maxLineLength);
-            codeEdit.SetLine(caretLine, lineText);
-            int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
-            codeEdit.SetCaretColumn(caretCol);
-        	}
+			if (lineText.Length > maxLineLength)
+			{
+			lineText = lineText.Substring(0, maxLineLength);
+			codeEdit.SetLine(caretLine, lineText);
+			int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
+			codeEdit.SetCaretColumn(caretCol);
+			}
 		}
 	}
 	// presently without a play button the easiest to attach to event is switching tabs
