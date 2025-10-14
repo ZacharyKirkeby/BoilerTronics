@@ -6,9 +6,20 @@
 //      - Keep track of the user's progression
 
 using Godot;
+using BoilerTronicsObjects.Placeable;
 
 public partial class BoilerTronicsGlobalManager : Node
 {
+	/***** Testing vars *****/
+	public int currSlection;
+	public int placingObject;
+	public ObjectPicker picker;
+	public Vector2I objectToPlace;
+	public PlaceableObject objectToMove;
+	public BoilerTronicsLevel currLevel;
+	public BoilerTronicsSaveState saveState;
+	/***** End Testing Vars *****/
+
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 
 	public override void _Ready()
@@ -20,5 +31,10 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 
 		GlobalManager = this; // get this as the manager
+	}
+
+	public BoilerTronicsGlobalManager GetManager()
+	{
+		return GlobalManager;
 	}
 }
