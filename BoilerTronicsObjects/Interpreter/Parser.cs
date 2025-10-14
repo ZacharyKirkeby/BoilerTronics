@@ -17,9 +17,15 @@ public partial class Parser : Node2D
 	private readonly Dictionary<string, int> _registers = new();
 
 	// for line adjustment for jumps
-	
+
 	public override void _Ready()
 	{
+		// el registers
+		_registers["r0"] = 0;
+		_registers["r1"] = 0;
+		_registers["r2"] = 0;
+		_registers["cmp"] = 0;
+
 		// MOVABLES
 
 		// mov l | r | u | d
@@ -109,52 +115,42 @@ public partial class Parser : Node2D
 		string[] arith = { "add", "sub", "mult", "div", "cmp" };
 		foreach (var cmd in arith)
 		{
-			// actually correct
-			_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s+(\S+)\s*$", m =>
+			// correct usage
+			_commandParser.Register($@"^\s*{cmd}\s+(r[0-2])\s+(r[0-2])\s*$", m =>
 			{
 				string reg1 = m.Groups[1].Value.ToLower();
 				string reg2 = m.Groups[2].Value.ToLower();
 
-				if (!_registers.ContainsKey(reg1) || !_registers.ContainsKey(reg2))
-				{
-					GD.Print($"Invalid register(s) in {cmd}: {reg1}, {reg2}");
-					return;
-				}
-
 				switch (cmd)
 				{
-					case "add":
-						_registers[reg1] += _registers[reg2];
-						break;
-					case "sub":
-						_registers[reg1] -= _registers[reg2];
-						break;
-					case "mult":
-						_registers[reg1] *= _registers[reg2];
-						break;
+					case "add": _registers["r0"] = _registers[reg1] + _registers[reg2]; break;
+					case "sub": _registers["r0"] = _registers[reg1] - _registers[reg2]; break;
+					case "mult": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
 					case "div":
 						if (_registers[reg2] == 0)
 						{
 							GD.Print("Divide by zero error");
 							return;
 						}
-						_registers[reg1] /= _registers[reg2];
+						_registers["r0"] = _registers[reg1] / _registers[reg2];
 						break;
 					case "cmp":
-						GD.Print($"Compare: {_registers[reg1]} vs {_registers[reg2]}");
+						int cmpResult = _registers[reg1] == _registers[reg2] ? 0 :
+										_registers[reg1] < _registers[reg2] ? -1 : 1;
+						_registers["cmp"] = cmpResult;
 						break;
 				}
 
-				GD.Print($"Command: {cmd} {reg1} {reg2} => {_registers[reg1]}");
+				GD.Print($"Command: {cmd} {reg1} {reg2} => R0={_registers["r0"]}, R1={_registers["r1"]}, R2={_registers["r2"]}, CMP={_registers["cmp"]}");
 			});
 
-			// missing arg
-			_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s*$", m =>
+			// missing second argument
+			_commandParser.Register($@"^\s*{cmd}\s+(r[0-2])\s*$", m =>
 			{
 				GD.Print($"Invalid {cmd} command, missing second argument");
 			});
 
-			// no args
+			// no arguments
 			_commandParser.Register($@"^\s*{cmd}\s*$", m =>
 			{
 				GD.Print($"Malformed {cmd} command, missing arguments");
