@@ -79,7 +79,7 @@ public class BoilerTronicsSaveState
 		
 		// note: some formatting adopted from "https://docs.godotengine.org/en/stable/tutorials/io/saving_games.html"
 		string SavePath = "user://" + SaveLocationName + ".save";
-		if (!FileAccess.FileExists(SavePath)) {return;} // not valid save location
+		// if (!FileAccess.FileExists(SavePath)) {return;} // not valid save location
 		
 		// TODO: should implement in such a way that safely copies over the information, but that'll be done later.
 		// Just don't forget to do this! (security reasons, etc -- although who would try to hack this game via .dll injection and etc? Who knows.)
