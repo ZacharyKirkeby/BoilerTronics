@@ -13,11 +13,27 @@ public partial class LevelUi : Node2D
 	private Vector2 errorCoords = new Vector2(100,200);
 	private String errorEditor;
 	private Button stepButton;
+	private Node errorSceneInstance;
 
 	public override void _Ready() {
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		stepButton = GetNode<Button>("%Step Button");
 		UpdateStepCount();
+		
+		//run tests
+		var autoTest = new ErrorTest();
+		AddChild(autoTest);;
+	}
+	
+	public void RemoveErrorScene() {
+		if(IsInstanceValid(errorSceneInstance)) {
+			errorSceneInstance.QueueFree();
+			errorSceneInstance = null;
+			GD.Print("Error scene removed.");
+		}
+		else {
+			GD.Print("Error scene failed to removed.");
+		}
 	}
 	
 	//set error status as true with errorID and name of terminal causing error
@@ -100,11 +116,21 @@ public partial class LevelUi : Node2D
 		
 		//actually display error notice
 		if(packedErrorScene != null) {
-			var instance = packedErrorScene.Instantiate();
-			GetTree().CurrentScene.AddChild(instance);
+			errorSceneInstance = packedErrorScene.Instantiate();
+			GetTree().CurrentScene.AddChild(errorSceneInstance);
 		}
 	}
 	
+	//called in test script to have access to auto stepping
+	public void simulateStep() {
+		_on_step_button_pressed();
+	}
+	
+	public void simulateReset() {
+		_on_reset_button_pressed();
+	}
+	
+	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
 		stepButton.Disabled = true;
