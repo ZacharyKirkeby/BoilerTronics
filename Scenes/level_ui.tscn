@@ -1,13 +1,15 @@
-[gd_scene load_steps=19 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=21 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
-[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
-[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
-[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="7_ai2e2"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="7_h5pod"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="8_iu26y"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="9_qd36q"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -15,7 +17,6 @@
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -23,7 +24,6 @@ border_width_bottom = 4
 border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -31,14 +31,13 @@ border_width_bottom = 4
 border_color = Color(1, 1, 1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
-[sub_resource type="Theme" id="Theme_xdjqv"]
+[sub_resource type="Theme" id="Theme_2j1wt"]
 Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
 Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
 Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
@@ -145,8 +144,7 @@ size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
-scale = Vector2(0.75, 0.7)
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2qe5m")]
 
 [node name="Parser" type="Node2D" parent="MainVBox/TerminalLevelSplit"]
 script = ExtResource("7_htk61")
@@ -162,20 +160,23 @@ theme_override_constants/separation = 0
 [node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
-theme = SubResource("Theme_xdjqv")
+theme = SubResource("Theme_2j1wt")
 theme_override_constants/separation = 0
 
-[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType1" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("7_h5pod")
 
-[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("8_iu26y")
 
-[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("9_qd36q")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -186,82 +187,14 @@ custom_minimum_size = Vector2(1450, 0)
 layout_mode = 2
 theme = SubResource("Theme_2qe5m")
 
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+[node name="ObjectPicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
-
-[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-layout_mode = 2
+script = ExtResource("7_ai2e2")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2

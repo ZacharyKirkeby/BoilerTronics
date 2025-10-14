@@ -21,7 +21,12 @@ namespace BoilerTronicsObjects.Placeable
 			this.OGY = OGY;
 			this.CurrX = OGX;
 			this.CurrY = OGY;
-			this.sourceId = sourceId;
+			
+			// pass in invalid -1 value to disable this setter
+			if (sourceId != -1) {
+				this.sourceId = sourceId;
+			}
+
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
 		}
@@ -39,8 +44,10 @@ namespace BoilerTronicsObjects.Placeable
 		// move the OG posistion of the object
 		public void MoveObject(int newX, int newY)
 		{
-			OGX = newX;
-			OGY = newY;
+			this.OGX = newX;
+			this.OGY = newY;
+			this.CurrX = this.OGX;
+			this.CurrY = this.OGY;
 		}
 
 		public Vector2I GetPos()
