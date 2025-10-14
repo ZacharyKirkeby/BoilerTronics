@@ -11,8 +11,8 @@ public partial class MovingObject : Area2D {
 	Vector2I TargetPos; // This is the target grid position
 	Vector2 CurrGlobalPos;
 	Vector2 TargetGlobalPos;
-	PlaceableObject obj; // Object that is moving
-	Layer layer; // Layer that object belongs to
+	public PlaceableObject obj; // Object that is moving
+	public Layer layer; // Layer that object belongs to
 	bool collided = false;
 
 	bool move = true;

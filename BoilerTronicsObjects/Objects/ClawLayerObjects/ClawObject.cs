@@ -19,6 +19,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Runnable Interface
 		public void Step() {
+			GD.Print("Test");
+			return;
 			string[] cmdAndArgs = GetNextCommand(); // get command and args from interrupter
 			ScriptableCommand cmd = GetCommand(cmdAndArgs[0]); // get command
 			string[] cmdArgs = cmdAndArgs.Skip(1).ToArray(); // isolate args
