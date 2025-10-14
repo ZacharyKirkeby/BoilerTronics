@@ -43,6 +43,8 @@ public partial class LevelUi : Node2D
 		sbe.SetCornerRadiusAll(20);
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
+		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
+		UpdateStepCount();
 		// manager.SetDraggable(false); // debug; testing script
 	}
 	
