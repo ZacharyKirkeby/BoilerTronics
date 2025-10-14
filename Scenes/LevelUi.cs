@@ -120,7 +120,7 @@ public partial class LevelUi : Node2D
 			}
 			//TODO: check for actual error and use setError to properly display error notices
 			//example error being manually set after third step
-			if(stepCount == 3) {
+			if(stepCount == 10) {
 				setError(2, "CodeEdit2");
 			}
 		}

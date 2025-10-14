@@ -21,8 +21,15 @@ takes a label
 looks like jmp loop_start
 
 labels: text
+any kind of word followed by a colon
 
-add/sub/mul/div/mod - self explanatory
+looks like loop_start:
+
+add/sub/mul/div - add, subtract, multiply, divide
+command plus two registers
+looks like add r1 r2
+
+By default result is stored to r0
 
 write - wrt
 writes to register, rather than using the normal convention of mov since that overlaps
@@ -31,4 +38,10 @@ compare - cmp
 takes 2 registers to compare, form of reg1 - reg2
 
 looks like cmp reg1 reg2
+
+Registers:
+
+r0 - default store, math operations store the results to r0
+r1, r2: general purpose registers
+cmp - where compare flags are stored
 

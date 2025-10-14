@@ -13,9 +13,11 @@ public partial class Parser : Node2D
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
 	// for now this is how the labels and jumps will be handled
 	private readonly Dictionary<string, int> _labelMap = new();
+	// register mapping
+	private readonly Dictionary<string, int> _registers = new();
 
-
-	// command regex lives here 
+	// for line adjustment for jumps
+	
 	public override void _Ready()
 	{
 		// MOVABLES
@@ -89,6 +91,20 @@ public partial class Parser : Node2D
 			// func call
 		});
 
+		_commandParser.Register(@"^\s*wrt\s+(\w+)\s+(-?\d+)\s*$", m =>
+		{
+			string reg = m.Groups[1].Value.ToLower();
+			int val = int.Parse(m.Groups[2].Value);
+			_registers[reg] = val;
+			GD.Print($"Write: {reg} = {val}");
+		});
+
+		_commandParser.Register(@"^\s*wrt\s+(\w+)\s*$", m =>
+			GD.Print($"Malformed Write: Missing value for register {m.Groups[1].Value}"));
+
+		_commandParser.Register(@"^\s*wrt\s*$", _ =>
+			GD.Print("Malformed Write: Missing register and value"));
+
 		// MATH OPS + compare
 		string[] arith = { "add", "sub", "mult", "div", "cmp" };
 		foreach (var cmd in arith)
@@ -96,7 +112,40 @@ public partial class Parser : Node2D
 			// actually correct
 			_commandParser.Register($@"^\s*{cmd}\s+(\S+)\s+(\S+)\s*$", m =>
 			{
-				GD.Print($"Command: {cmd} {m.Groups[1].Value} {m.Groups[2].Value}");
+				string reg1 = m.Groups[1].Value.ToLower();
+				string reg2 = m.Groups[2].Value.ToLower();
+
+				if (!_registers.ContainsKey(reg1) || !_registers.ContainsKey(reg2))
+				{
+					GD.Print($"Invalid register(s) in {cmd}: {reg1}, {reg2}");
+					return;
+				}
+
+				switch (cmd)
+				{
+					case "add":
+						_registers[reg1] += _registers[reg2];
+						break;
+					case "sub":
+						_registers[reg1] -= _registers[reg2];
+						break;
+					case "mult":
+						_registers[reg1] *= _registers[reg2];
+						break;
+					case "div":
+						if (_registers[reg2] == 0)
+						{
+							GD.Print("Divide by zero error");
+							return;
+						}
+						_registers[reg1] /= _registers[reg2];
+						break;
+					case "cmp":
+						GD.Print($"Compare: {_registers[reg1]} vs {_registers[reg2]}");
+						break;
+				}
+
+				GD.Print($"Command: {cmd} {reg1} {reg2} => {_registers[reg1]}");
 			});
 
 			// missing arg
@@ -179,6 +228,9 @@ public partial class Parser : Node2D
 		if (validLines.Count == 0) { return; }
 		CurrLine = step % validLines.Count;
 
+		// update UI about current line
+		// TODO - get this to actually work
+
 		// FTODO - REMOVE
 		GD.Print(CurrLine);
 
@@ -196,6 +248,7 @@ public partial class Parser : Node2D
 			if (newLine >= 0 && newLine < validLines.Count)
 			{
 				CurrLine = newLine;
+				 // update UI for jump target
 			}
 			else
 			{
@@ -229,7 +282,4 @@ public partial class Parser : Node2D
 		GD.PrintErr($"Undefined label: {label}");
 		return false;
 	}
-
-
-
 }
