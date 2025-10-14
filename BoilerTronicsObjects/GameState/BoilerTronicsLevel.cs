@@ -1,6 +1,8 @@
 // This will be the script for the level scene
 using Godot;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
 
@@ -80,6 +82,23 @@ public partial class BoilerTronicsLevel : Node2D
 		// TODO: load from save here
 		return flLayer;
 	}
+	
+	// Given a target layer, a list of Placeables, and a Vector2I array of protected tiles, update the layer!
+	// Should only be used when loading info
+	private void UpdateLayer(Layer input, ArrayList objects, Vector2I[] protectedTiles) {
+		// place all objects
+		foreach(PlaceableObject obj in objects)
+		{
+			input.AddObject(obj);
+		}
+		
+		// enable protected tiles
+		foreach(Vector2I pos in protectedTiles)
+		{
+			bool success = input.SetTileEditable(pos, true);
+			// TODO: create error if this coordinate was bad?
+		}
+	}
 
 	public override void _Ready()
 	{
@@ -92,6 +111,19 @@ public partial class BoilerTronicsLevel : Node2D
 		// Get manager
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
+		// if successful, then generate level
+		// if not, then ignore and make a new save (kinda)
+		// TODO: for specific levels, load specific saves corresponding to what the level should be at a baseline!
+		bool loadedSave = manager.LoadLevel();
+		
+		if (loadedSave) {
+			// reconstruct level based off the information loaded: load metadata
+			// assume that the save state already knows the current level state and etc!
+			Vector2I dim = manager.GetLevelDimensions();
+			x = dim.X;
+			y = dim.Y;
+		}
+		
 		// update manager to hold current level's dimensions (to be used w save system)
 		manager.SetLevelDimensions(new Vector2I(x, y));
 		
@@ -100,6 +132,16 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw = CreateClawLayer();
 		manager.layerRail = CreateRailLayer();
 		manager.layerMovement = CreateMovementLayer();
+		
+		if (loadedSave) {
+			// attempt to reconstruct level based off the loaded information: update layers
+			// TODO: does not properly
+			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
+		}
 		
 		// store four corners of the floor layer
 		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));

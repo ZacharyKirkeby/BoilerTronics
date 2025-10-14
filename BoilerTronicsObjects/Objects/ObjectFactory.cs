@@ -16,6 +16,7 @@ namespace BoilerTronicsObjects.Objects
 		
 		
 		// note: as of the current implementation, this isn't really a good factory in the strictest sense
+		// TODO: implement version that accepts alt titles
 		public static PlaceableObject CreateObject(Vector2I originPos, int sourceId, Vector2I atlasPos) {			
 			// TODO: creator/main factory function
 			// given which "sourceId" (i.e. which atlas map to pull from) -- this will determine the object's layer
