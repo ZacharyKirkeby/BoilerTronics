@@ -21,6 +21,13 @@ public partial class MainMenu : Node2D
 
 	private void _on_new_game_pressed()
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// load the default level for level 0
+		// manager.SetTargetLevelSave(0, -1);
+		
+		// load autosave
+		// manager.SetTargetLevelSave(0, -2);
 		GetTree().ChangeSceneToFile("res://Scenes/level_ui.tscn");
 	}
 

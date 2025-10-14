@@ -37,7 +37,7 @@ public partial class LevelUi : Node2D
 		// Get manager
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// set save data info to autosave
-		manager.SetTargetLevelSave(0, -1);
+		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
 		
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");

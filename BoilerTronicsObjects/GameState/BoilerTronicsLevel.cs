@@ -102,7 +102,9 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public override void _Ready()
 	{
-		// Create all of the diffrent layers and read in the corresponding data from the manager
+		GD.Print("Generating Level...");
+		
+		// Create all of the different layers and read in the corresponding data from the manager
 		// Temp, this will be replaced by a read from the global manager's game state
 		tileset = GD.Load<TileSet>("res://Resources/objects.tres");
 		x = 20;
