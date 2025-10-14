@@ -85,6 +85,18 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		public void Reset() {
+			foreach (PlaceableObject obj in objectList) {
+				Vector2I OldPos =  obj.GetPos();
+				tiles[OldPos.X, OldPos.Y] = null;
+				EraseCell(OldPos); // erase object from the map
+				obj.ResetPos();
+				Vector2I NewPos = obj.GetPos();
+				tiles[NewPos.X, NewPos.Y] = obj;
+				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+			}
+		}
+
 		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
 		{
 			// make sure that this is a mouse event

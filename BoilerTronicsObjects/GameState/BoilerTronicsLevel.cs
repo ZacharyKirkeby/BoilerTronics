@@ -3,18 +3,22 @@ using Godot;
 using System;
 using System.Collections;
 using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
 
 public partial class BoilerTronicsLevel : Node2D
 {
 	int x;
 	int y;
+	double deltaTime = 100.0; // time we want it to take to move objects
 	TileSet tileset;
 	public MovementLayer mLayer;
 	public RailLayer rLayer;
 	public ClawLayer cLayer;
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
-	ArrayList objectList = new ArrayList(); // List of runnable Objects
+	ArrayList runnableList = new ArrayList(); // List of runnable Objects
+	ArrayList movingList = new ArrayList(); // List of objects that are currently moving
 	
 	private void CreateMovementLayer() {
 		mLayer = new MovementLayer();
@@ -76,5 +80,57 @@ public partial class BoilerTronicsLevel : Node2D
 		CreateMovementLayer();
 
 		base._Ready();
+	}
+
+	public void Reset() {
+		// Reset all layers
+		mLayer.Reset();
+		rLayer.Reset();
+		cLayer.Reset();
+		fLayer.Reset();
+		flLayer.Reset();
+		
+		// Loop through moving objects
+			// Reset object
+			// Add back to it's layer
+	}
+
+	/* Handle runnable objects */
+
+	// Steps through all runnables
+	public void Step() {
+		foreach (PlaceableObject obj in runnableList) {
+			if (!(obj is Runnable)) continue; // error here?
+			Runnable rObj = (Runnable)obj;
+			rObj.Step();
+		}
+	}
+
+	public void RegisterRunnable(PlaceableObject obj) {
+		// Add error checks later
+		if (!(obj is Runnable)) return;
+		if (runnableList.Contains(obj)) return;
+		runnableList.Add(obj);
+	}
+
+	public void UnRegisterRunnable(PlaceableObject obj) {
+		// Add error checks later
+		if (!(obj is Runnable)) return;
+		if (!(runnableList.Contains(obj))) return;
+		runnableList.Remove(obj);
+	}
+	
+	/* Handle Moving Objects */
+	public void RegisterMoving(MovingObject mObj) {
+		movingList.Add(mObj);
+	}
+
+	public void UnRegisterMoving(MovingObject mObj) {
+		movingList.Remove(mObj);
+	}
+
+	public void MovingCollisionReport(MovingObject mObj) {
+		// This will cause an error
+
 	}
 }
