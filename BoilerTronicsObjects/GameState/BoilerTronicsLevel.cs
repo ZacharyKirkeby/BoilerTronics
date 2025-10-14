@@ -193,11 +193,12 @@ public partial class BoilerTronicsLevel : Node2D
 			obj.ResetPos();
 			// Add back to it's layer
 			layer.AddObject(obj);
-			// Remove from movingList
-			movingList.Remove(mObj);
 			// Free object
 			mObj.QueueFree();
 		}
+		
+		// Empty moving list
+		this.movingList.Clear();
 	}
 
 	/* Handle runnable objects */

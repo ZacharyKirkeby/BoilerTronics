@@ -11,8 +11,6 @@ public partial class MovingObject : Area2D {
 	Vector2I TargetPos; // This is the target grid position
 	Vector2 CurrGlobalPos;
 	Vector2 TargetGlobalPos;
-	CollisionShape2D Shape;
-	Sprite2D Sprite;
 	public PlaceableObject obj; // Object that is moving
 	public Layer layer; // Layer that object belongs to
 	bool collided = false;
@@ -28,14 +26,12 @@ public partial class MovingObject : Area2D {
 		this.obj = obj;
 		this.layer = layer;
 
-		Vector2I pos = obj.GetCurrPos();
+		Vector2I pos = obj.GetPos();
 		GD.Print("POS: ", pos);
 
 		this.TargetPos = pos + mov;
 		GD.Print("TARGET POS: ", TargetPos);
 		this.TargetDelta = time;
-
-		// Why trhe fuck does this work??? IDK why we need to divide then multiply by 2, but we need to :D
 
 		Vector2 currLocalPos = layer.MapToLocal(pos) / 2;
 
@@ -48,7 +44,7 @@ public partial class MovingObject : Area2D {
 		this.TargetGlobalPos = targetLocalPos;
 		GD.Print("TARGET GLOBAL POS: ", TargetGlobalPos);
 
-		this.PosDelta = (TargetGlobalPos - CurrGlobalPos); // Calculate the amount we need to move
+		this.PosDelta = (TargetGlobalPos - CurrGlobalPos) * 2; // Calculate the amount we need to move
 		GD.Print("POS DELTA: ", PosDelta);
 
 		this.Position = CurrGlobalPos;
@@ -56,26 +52,24 @@ public partial class MovingObject : Area2D {
 
 	public override void _Ready() {
 		GD.Print("Ready!");
-		this.layer.RemoveObject(this.obj);
 		// Create collision object 2d
-		this.Shape = new CollisionShape2D();
+		CollisionShape2D shape = new CollisionShape2D();
 
 		// Create collision circle 2d
-		Shape.Shape = new CircleShape2D();
-		CircleShape2D circle = Shape.Shape as CircleShape2D;
-		circle.Radius = 2; // 32 pixels (height of the objects)
+		CircleShape2D circle = new CircleShape2D();
+		circle.Radius = 1; // 32 pixels (height of the objects)
 
-		this.AddChild(Shape);
-		Shape.ZIndex = layer.ZIndex;
+		shape.Shape = circle;
+
+		this.AddChild(shape);
 
 		// Create sprite
-		Sprite = new Sprite2D();
-		Sprite.Texture = this.obj.GetTexture() as Texture2D;
-		Sprite.Offset = new Vector2(0, 24);
-		// Sprite.Scale = new Vector2(10, 10);
+		Sprite2D sprite = new Sprite2D();
+		sprite.Texture = this.obj.GetTexture() as Texture2D;
+		sprite.Scale = new Vector2(1, 1);
+		// sprite.Position = this.CurrGlobalPos;
 
-		this.AddChild(Sprite);
-		Sprite.ZIndex = layer.ZIndex;
+		this.AddChild(sprite);
 
 		GD.Print("Children: ", this.GetChildren());
 		GD.Print("POS: ", this.Position);
@@ -100,7 +94,7 @@ public partial class MovingObject : Area2D {
 		if (this.TotalDelta >= this.TargetDelta) {
 			// We done
 			// Move the object internally
-			obj.MoveCurrPos(TargetPos.X, TargetPos.Y);
+			obj.MoveObject(TargetPos.X, TargetPos.Y);
 			// Place the object back on the layer
 			layer.AddObject(obj);
 			// De-register object from the game state
@@ -114,14 +108,19 @@ public partial class MovingObject : Area2D {
 		Vector2 CurrPos = this.Position;
 		CurrPos += this.PosDelta * ((float) (delta/TargetDelta)); // Calculate new pos for this step
 		this.Position = CurrPos; // set new pos
-		Shape.Position = CurrPos;
-		Sprite.Position = CurrPos;
+
+		GD.Print("POS: ", this.Position);
 
 		base._Process(delta);
 	}
 
+	public override void _Draw() {
+		DrawCircle(this.Position, 5, Colors.Red);
+		
+		base._Draw();
+	}
+
 	public void Collison(Node2D body) {
-		GD.Print("Ouch!");
 		if (collided) return; // Don't do anything if this is already handled
 		collided = true; // Set flag for this collision
 		// We have collided with something else, this is a problem and shouldn't happen :(
