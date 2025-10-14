@@ -20,6 +20,10 @@ public partial class DragableObjectControl : Control {
 		this.selection = selection;
 	}
 
+	public override void _Ready() {
+		CustomMinimumSize = new Vector2(256, 256);
+	}
+
 	public override void _GuiInput(InputEvent @event)
 	{
 		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
