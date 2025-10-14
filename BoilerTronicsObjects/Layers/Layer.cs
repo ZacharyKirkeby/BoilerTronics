@@ -84,6 +84,18 @@ namespace BoilerTronicsObjects.Layers
 				}
 			}
 		}
+		
+		// given coordinates, set a specific coordinate to 'value'
+		// returns if operation was successful
+		public bool SetTileEditable(Vector2I coordinates, bool value) {
+			// check if OOB
+			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
+			if (coordinates.X < 0 || coordinates.Y < maxY) { return false; }
+			
+			// if not OOB, then set value
+			editableTiles[coordinates.X, coordinates.Y] = value;
+			return true;
+		}
 
 		public bool CheckValidPos(int X, int Y)
 		{
