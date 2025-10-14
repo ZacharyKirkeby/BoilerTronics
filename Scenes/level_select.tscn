@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://dbk5umv3gfk4f"]
+[gd_scene load_steps=9 format=3 uid="uid://dbk5umv3gfk4f"]
 
 [ext_resource type="Script" uid="uid://b37pk4svv1syi" path="res://Scenes/LevelSelect.cs" id="1_lx4vd"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_2sqnl"]
 [ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Scenes/buttontheme.tres" id="3_72w8f"]
+[ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="4_2sqnl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0b8dh"]
 bg_color = Color(6.160736e-06, 0.64677376, 0.90816486, 1)
@@ -12,6 +13,12 @@ thickness = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chbko"]
 bg_color = Color(5.7756904e-07, 0.41124302, 0.20597282, 1)
+
+[sub_resource type="Theme" id="Theme_72w8f"]
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/font_sizes/font_size = 25
+Button/fonts/font = ExtResource("2_2sqnl")
+Button/styles/normal = ExtResource("4_2sqnl")
 
 [node name="LevelSelect" type="Node2D"]
 script = ExtResource("1_lx4vd")
@@ -71,5 +78,44 @@ size_flags_vertical = 3
 theme_override_font_sizes/font_size = 75
 text = "Back"
 
+[node name="Window" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Load Save"
+initial_position = 1
+size = Vector2i(1000, 600)
+visible = false
+
+[node name="SaveContainer" type="HBoxContainer" parent="Window"]
+custom_minimum_size = Vector2(900, 300)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_72w8f")
+theme_override_constants/separation = 30
+
+[node name="Save 0" type="Button" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save 1"
+
+[node name="Save 1" type="Button" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save 2"
+
+[node name="Save 2" type="Button" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save 3"
+
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
