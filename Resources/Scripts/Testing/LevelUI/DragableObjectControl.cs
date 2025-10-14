@@ -4,6 +4,9 @@ using System;
 // this script will be 
 public partial class DragableObjectControl : Control {
 	
+	// if false, then should block all drag attempts
+	public static bool allowDrag = true;
+	
 	Sprite2D sprite;
 	Vector2I atlasCords;
 	int selection;
@@ -22,7 +25,8 @@ public partial class DragableObjectControl : Control {
 
 	public override void _GuiInput(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed
+			&& allowDrag)
 		{
 			// We want to spawn a new draggable object and pass in all the correct values
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, atlasCords);
