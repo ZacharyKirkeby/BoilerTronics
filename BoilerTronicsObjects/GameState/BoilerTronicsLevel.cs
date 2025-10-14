@@ -91,8 +91,19 @@ public partial class BoilerTronicsLevel : Node2D
 		flLayer.Reset();
 		
 		// Loop through moving objects
+		foreach (MovingObject mObj in movingList) {
+			// Get object and layer
+			PlaceableObject obj = mObj.obj;
+			Layer layer = mObj.layer;
 			// Reset object
+			obj.ResetPos();
 			// Add back to it's layer
+			layer.AddObject(obj);
+			// Remove from movingList
+			movingList.Remove(mObj);
+			// Free object
+			mObj.QueueFree();
+		}
 	}
 
 	/* Handle runnable objects */
@@ -132,5 +143,9 @@ public partial class BoilerTronicsLevel : Node2D
 	public void MovingCollisionReport(MovingObject mObj) {
 		// This will cause an error
 
+		// Halt all other movement
+		foreach (MovingObject obj in movingList) {
+			obj.Halt();
+		}
 	}
 }
