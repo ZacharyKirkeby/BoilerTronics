@@ -99,7 +99,7 @@ public partial class LevelUi : Node2D
 
 			// Tell the global manager that we are stepping
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.Step();
+			manager.currLevel.Step();
 
 			//update code terminal highlighting to next one regardless of error
 			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
@@ -126,7 +126,7 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.Reset();
+		manager.currLevel.Reset();
 
 		//reset highlighting in terminals
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");

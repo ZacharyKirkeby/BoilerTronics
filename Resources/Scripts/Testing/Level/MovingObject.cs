@@ -20,32 +20,32 @@ public partial class MovingObject : Area2D {
 	public MovingObject(PlaceableObject obj, Vector2I pos, Vector2I mov, Layer layer, float time) {
 		float xd = mov.X;
 		float yd = mov.Y;
-		// We may also need to set th position of the object globally
+		// We may also need to set the position of the object globally
 
 		this.TargetPos = pos + mov;
 		this.TargetDelta = time;
 
 		Vector2 localCurrPos = layer.ToLocal(pos);
-		Vector2 globalCurrPos = layer.ToLocal(localCurrPos);
+		Vector2 globalCurrPos = layer.ToGlobal(localCurrPos);
 
 		this.CurrGlobalPos = globalCurrPos;
 
 		Vector2 localTargetPos = layer.ToLocal(this.TargetPos);
-		Vector2 globalTargetPos = layer.ToLocal(localTargetPos);
+		Vector2 globalTargetPos = layer.ToGlobal(localTargetPos);
 
 		this.TargetGlobalPos = globalTargetPos;
 
-		this.PosDelta = this.TargetGlobalPos - this.CurrGlobalPos; // Calculate the amout we need to move
+		this.PosDelta = this.TargetGlobalPos - this.CurrGlobalPos; // Calculate the amount we need to move
 
 		this.Position = CurrGlobalPos;
 	}
 
 	public override void _Ready() {
-		// Create collison object 2d
+		// Create collision object 2d
 		CollisionShape2D shape = new CollisionShape2D();
 		shape.Position = this.CurrGlobalPos;
 
-		// Create collison circle 2d
+		// Create collision circle 2d
 		CircleShape2D circle = new CircleShape2D();
 		circle.Radius = 32; // 32 pixels (height of the objects)
 
@@ -61,6 +61,8 @@ public partial class MovingObject : Area2D {
 		this.AddChild(sprite);
 
 		// Register with the GameState (For resets and errors and such)
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.RegisterMoving(this);
 
 		// add event for when we detect a collision
 		AreaEntered += Collison;
@@ -82,7 +84,8 @@ public partial class MovingObject : Area2D {
 			// Place the object back on the layer
 			layer.AddObject(obj);
 			// De-register object from the game state
-
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterMoving(this);
 			// Destroy this object
 			this.QueueFree();
 		}
@@ -101,7 +104,8 @@ public partial class MovingObject : Area2D {
 		// We have collided with something else, this is a problem and shouldn't happen :(
 		// This will trigger an error and then halt all movement
 		// Send something to the game state (TBD)
-
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.MovingCollisionReport(this);
 	}
 
 	public void Halt() {
