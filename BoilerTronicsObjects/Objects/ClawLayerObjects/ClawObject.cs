@@ -20,6 +20,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		// Runnable Interface
 		public void Step() {
 			GD.Print("Test");
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+			MovingObject mObj = new MovingObject(this, new Vector2I(1,0), manager.currLevel.cLayer, 1);
+			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+
 			return;
 			string[] cmdAndArgs = GetNextCommand(); // get command and args from interrupter
 			ScriptableCommand cmd = GetCommand(cmdAndArgs[0]); // get command

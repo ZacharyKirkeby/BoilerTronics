@@ -50,6 +50,11 @@ namespace BoilerTronicsObjects.Placeable
 			this.CurrX = this.OGX;
 			this.CurrY = this.OGY;
 		}
+		
+		public void MoveCurrPos(int newX, int newY) {
+			this.CurrX = newX;
+			this.CurrY = newY;
+		}
 
 		public Vector2I GetPos()
 		{
@@ -83,6 +88,7 @@ namespace BoilerTronicsObjects.Placeable
 			var fullTexture = tileSetSource.Texture.GetImage();
 			var imageTexture = fullTexture.GetRegion(tile);
 			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
 
 			return texture;
 		}
