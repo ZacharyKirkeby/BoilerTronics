@@ -6,8 +6,7 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
 {
-	// public partial class ClawLayer(int x, int y) : Layer(x, y)
-	public partial class ClawLayer : Layer
+	public partial class RailLayer : Layer
 	{
 
 		public override void AddObject(PlaceableObject newPlaceable)
@@ -24,15 +23,16 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			// add a check to make sure that we are only trying to place claws
+			// add a check to make sure that we are only trying to place rails (not claws)
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
+
+			// MouseInput(@event, 3, 1);
+			if (!(manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0))) {
 				MouseInput(@event, 3, 1);
-				GD.Print("Claw");
+				GD.Print("Rail");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				GD.Print("Claw");
 				MouseInput(@event, 3, 1);
 			}
 			base._Input(@event);
