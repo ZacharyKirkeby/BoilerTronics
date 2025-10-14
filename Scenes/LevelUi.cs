@@ -22,12 +22,9 @@ public partial class LevelUi : Node2D
 		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 
-		foreach (Node child in tabs.GetChildren())
-		{
-			if (child is CodeEdit editor)
-				editors.Add(editor);
-				// NOTE: ADD/REMOVE OF TERMINALS NEEDS TO ALSO UPDATE THIS VAR
-		}
+		var container = tabs.GetChild<TabContainer>(0); // adjust if needed
+		editors = container.GetEditors();
+		
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		UpdateStepCount();
 	}
