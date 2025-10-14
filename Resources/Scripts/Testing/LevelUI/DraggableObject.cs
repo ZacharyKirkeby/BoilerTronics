@@ -11,6 +11,7 @@ public partial class DraggableObject : Node2D {
 		this.mouse_offset = mouse_offset;
 		// Copy Sprite and make it a child
 		sprite = spritToDrag.Duplicate() as Sprite2D;
+		sprite.Scale = new Vector2I(1, 1);
 		AddChild(sprite);
 	}
 

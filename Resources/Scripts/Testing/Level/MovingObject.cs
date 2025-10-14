@@ -5,12 +5,15 @@ using BoilerTronicsObjects.Layers;
 
 public partial class MovingObject : Area2D {
 
-	Vector2 PosDelta;
-	double TotalDelta;
-	double TargetDelta;
-	Vector2I TargetPos;
-	PlaceableObject obj;
-	Layer layer;
+	Vector2 PosDelta; // amount we need to move (relative to global position)
+	double TotalDelta; // Total time that has elapsed
+	double TargetDelta; // Time that we want the movement to take
+	Vector2I TargetPos; // This is the target grid position
+	Vector2 CurrGlobalPos;
+	Vector2 TargetGlobalPos;
+	PlaceableObject obj; // Object that is moving
+	Layer layer; // Layer that object belongs to
+	bool collided = false;
 
 	bool move = true;
 
@@ -22,17 +25,29 @@ public partial class MovingObject : Area2D {
 		this.TargetPos = pos + mov;
 		this.TargetDelta = time;
 
-		this.PosDelta = new Vector2((float) ((Math.Sqrt(3.0) / 2) * (xd - yd)), ((-1 / 2) * (xd + yd))); // this will convert layer coord to movement
-		// We also will need to multiply this by some lenght, unsure what that is atm
+		Vector2 localCurrPos = layer.ToLocal(pos);
+		Vector2 globalCurrPos = layer.ToLocal(localCurrPos);
+
+		this.CurrGlobalPos = globalCurrPos;
+
+		Vector2 localTargetPos = layer.ToLocal(this.TargetPos);
+		Vector2 globalTargetPos = layer.ToLocal(localTargetPos);
+
+		this.TargetGlobalPos = globalTargetPos;
+
+		this.PosDelta = this.TargetGlobalPos - this.CurrGlobalPos; // Calculate the amout we need to move
+
+		this.Position = CurrGlobalPos;
 	}
 
 	public override void _Ready() {
 		// Create collison object 2d
 		CollisionShape2D shape = new CollisionShape2D();
+		shape.Position = this.CurrGlobalPos;
 
 		// Create collison circle 2d
 		CircleShape2D circle = new CircleShape2D();
-		circle.Radius = 1; // This will be some set value (TBD)
+		circle.Radius = 32; // 32 pixels (height of the objects)
 
 		shape.Shape = circle;
 
@@ -41,14 +56,13 @@ public partial class MovingObject : Area2D {
 		// Create sprite
 		Sprite2D sprite = new Sprite2D();
 		sprite.Texture = this.obj.GetTexture() as Texture2D;
-
-		// Add some other configs her for the sprite
+		sprite.Position = this.CurrGlobalPos;
 
 		this.AddChild(sprite);
 
 		// Register with the GameState (For resets and errors and such)
 
-		// add event for when we detect a collison
+		// add event for when we detect a collision
 		AreaEntered += Collison;
 	}
 
@@ -82,12 +96,15 @@ public partial class MovingObject : Area2D {
 	}
 
 	public void Collison(Node2D body) {
-		// We have collided with somthing else, this is a problem and shouldn't happen :(
-		// Somthing bad need to happen
-		// Send somthing to the game state
+		if (collided) return; // Don't do anything if this is already handled
+		collided = true; // Set flag for this collision
+		// We have collided with something else, this is a problem and shouldn't happen :(
+		// This will trigger an error and then halt all movement
+		// Send something to the game state (TBD)
+
 	}
 
-	public void Hault() {
+	public void Halt() {
 		// make this flag false so that stop moving
 		move = false;
 	}
