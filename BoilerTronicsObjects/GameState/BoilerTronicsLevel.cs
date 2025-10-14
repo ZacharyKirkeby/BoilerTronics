@@ -116,6 +116,9 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// Get manager
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		// For stepping and level interactions
+		manager.currLevel = this;
 		
 		// if successful, then generate level
 		// if not, then ignore and make a new save (kinda)
@@ -157,9 +160,6 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
-
-		// For stepping and level interactions
-		manager.currLevel = this;
 
 		base._Ready();
 	}
