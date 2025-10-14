@@ -68,6 +68,12 @@ public partial class BoilerTronicsGlobalManager : Node
 		return GlobalManager;
 	}
 	
+	// Sets whether or not DraggableObjects are allowed to be created and dragged.
+	public void SetDraggable(bool toggle) {
+		DragableObjectControl.allowDrag = toggle;
+		Layer.allowDrag = toggle;
+	}
+	
 	
 	/* SAVE STUFF */
 	

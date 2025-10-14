@@ -22,8 +22,9 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
-	
-	public override void _Ready() {
+
+	public override void _Ready()
+	{
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
 		saveOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Save 1");
 		saveTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Save 2");
@@ -42,14 +43,17 @@ public partial class LevelUi : Node2D
 		sbe.SetCornerRadiusAll(20);
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
-		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		UpdateStepCount();
+		// manager.SetDraggable(false); // debug; testing script
 	}
 	
+	// automatically define the global manager so we don't need to keep redefining it and etc
+	static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	
 	//set error status as true with errorID and name of terminal causing error
-	public void setError(int errID, String editor) {
-		if((errID >= -1) && (errID < 4))
-		errorID = errID;
+	public void setError(int errID, String editor)
+	{
+		if ((errID >= -1) && (errID < 4))
+			errorID = errID;
 		isError = true;
 		errorEditor = editor;
 	}
@@ -61,9 +65,9 @@ public partial class LevelUi : Node2D
 	// return to main menu button
 	private void _on_button_pressed() {
 		
-		// TODO: trigger autosave here!
 		// Get manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		// set save data info to autosave
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
