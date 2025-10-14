@@ -85,6 +85,7 @@ namespace BoilerTronicsObjects.Placeable
 			var texture = new ImageTexture();
 
 			return texture;
+		}
 		
 		// should always return false, unless overriden by child object
 		public bool Scriptable() {

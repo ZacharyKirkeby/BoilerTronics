@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 using Godot;
 using System;
 
