@@ -29,7 +29,7 @@ namespace BoilerTronicsObjects.Layers
 			// MouseInput(@event, 2, 0);
 			if (manager.objectToMove is FloorTileObject || manager.objectToPlace == new Vector2I(0, 2)) {
 				MouseInput(@event, 2, 0);
-				GD.Print("Floor");
+				// GD.Print("Floor");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
 				// We always wnt to try to move

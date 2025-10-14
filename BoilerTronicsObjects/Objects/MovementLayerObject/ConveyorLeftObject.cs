@@ -10,6 +10,11 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 	public class ConveyorLeftObject : MovementLayerObjects, Scriptable, Runnable {
 
+		static Vector2I objectAtlasPos = new Vector2I(0, 0);
+
+		public ConveyorLeftObject(int OGX, int OGY, int altTitle = 0) 
+		: base(OGX, OGY, objectAtlasPos, altTitle) {}
+
 		public string[] GetNextCommand() {
 			// TODO: Implement
 			return null;
@@ -48,12 +53,5 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void UnRegisterSteppable() {
 			// TODO: Implement
 		}
-		
-		static Vector2I objectAtlasPos = new Vector2I(0, 0);
-		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
-		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
-		
-		public ConveyorLeftObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, objectAtlasPos, altTitle) {}
 	}
 }

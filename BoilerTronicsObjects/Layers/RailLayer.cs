@@ -29,7 +29,7 @@ namespace BoilerTronicsObjects.Layers
 			// MouseInput(@event, 3, 1);
 			if (!(manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0))) {
 				MouseInput(@event, 3, 1);
-				GD.Print("Rail");
+				// GD.Print("Rail");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
