@@ -11,6 +11,8 @@ public partial class Parser : Node2D
 	private int maxLineLength;
 	private int CurrLine;
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
+	// for now this is how the labels and jumps will be handled
+	private readonly Dictionary<string, int> _labelMap = new();
 
 
 	// command regex lives here 
@@ -149,27 +151,37 @@ public partial class Parser : Node2D
 			return;
 		}
 
-		 string[] rawLines = terminal.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-		
-		List<string> validLines = new();
+		string[] rawLines = terminal.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-		foreach (var rawLine in rawLines)
+		List<string> validLines = new();
+		_labelMap.Clear();
+
+		// parses and builds label map - so i can process jumps
+		// smh i shouldnt have allowed jumps
+		for (int i = 0; i < rawLines.Length; i++)
 		{
-			string trimmed = rawLine.Trim();
+			string trimmed = rawLines[i].Trim();
 			if (string.IsNullOrEmpty(trimmed))
 				continue;
 
-			// Skip label definition
+			// labels
 			if (trimmed.EndsWith(":"))
-			// add to label mapping -> dict with label and the first instruction
+			{
+				string label = trimmed.TrimEnd(':').Trim().ToLower();
+				if (!_labelMap.ContainsKey(label))
+					_labelMap[label] = validLines.Count;
 				continue;
+			}
 
 			validLines.Add(trimmed);
 		}
-
+		// error handling -> if theres nothing just stop
+		if (validLines.Count == 0) { return; }
 		CurrLine = step % validLines.Count;
 
+		// FTODO - REMOVE
 		GD.Print(CurrLine);
+
 		if (CurrLine >= validLines.Count)
 		{
 			GD.Print("Split related issue");
@@ -179,36 +191,44 @@ public partial class Parser : Node2D
 		string lineToBeProcessed = validLines[CurrLine];
 		lineToBeProcessed = lineToBeProcessed.ToLower();
 
-		if (_commandParser.Process(lineToBeProcessed) == false)
+		if (HandleJump(lineToBeProcessed, out int newLine))
 		{
-			// recurse - idk yet
-			GD.Print("No Match");
+			if (newLine >= 0 && newLine < validLines.Count)
+			{
+				CurrLine = newLine;
+			}
+			else
+			{
+				GD.Print($"Invalid jump target: {lineToBeProcessed}");
+			}
+			return;
 		}
-		;
 
-		//call parse
-
+		if (!_commandParser.Process(lineToBeProcessed))
+		{
+			GD.Print($"Unknown or malformed command: {lineToBeProcessed}");
+		}
 	}
+	
+	private bool HandleJump(string line, out int newLine)
+	{
+		newLine = -1;
 
-	// parse ig
-	// verify we get input here and #19 is prob bing chilling
+		var match = System.Text.RegularExpressions.Regex.Match(line, @"^\s*jmp\s+(\w+)\s*$");
+		if (!match.Success)
+			return false;
 
-	//downward parsing, from simplest to complex
+		string label = match.Groups[1].Value.ToLower();
+		if (_labelMap.TryGetValue(label, out int targetIndex))
+		{
+			newLine = targetIndex;
+			GD.Print($"Jumping to label '{label}' at line {targetIndex}");
+			return true;
+		}
 
-	// grb
-
-	// drp
-
-	// jmp reg1 reg2
-
-	// wrt reg
-
-	// wait
-
-	// rotate: rot ^(l|r)?
-
-	// Move: mov ^(l|r|u|d)?
-
+		GD.PrintErr($"Undefined label: {label}");
+		return false;
+	}
 
 
 
