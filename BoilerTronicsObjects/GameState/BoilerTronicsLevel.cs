@@ -19,8 +19,8 @@ public partial class BoilerTronicsLevel : Node2D
 	public ClawLayer cLayer;
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
-	ArrayList runnableList = new ArrayList(); // List of runnable Objects
-	ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
+	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
 	
 	// store all four corners of the placement grid
 	private Vector2 c1;
