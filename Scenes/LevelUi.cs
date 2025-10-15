@@ -274,7 +274,8 @@ public partial class LevelUi : Node2D
 
 			foreach (CodeEdit editor in codeEditors)
 			{
-				parser.ParseGetLine(editor.Text, stepCount, editor.Name);
+				// NOTE - FUNNY STUFF
+				parser.ParseGetLine(null, null, editor.Text, stepCount, editor.Name);
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			}
 		}
@@ -361,7 +362,7 @@ public partial class LevelUi : Node2D
 				errorLabel.OffsetBottom = -4;
 
 				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
-				
+
 				// Highlight error line
 				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f));
 
