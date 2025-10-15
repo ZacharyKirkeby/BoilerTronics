@@ -21,6 +21,7 @@ public partial class LevelUi : Node2D
 	public override void _Ready() {
 		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
+		parser.ErrorRaised += OnParserErrorRaised;
 
 		//var container = tabs.GetChild<TabContainer>(0); // adjust if needed
 		
@@ -112,7 +113,7 @@ public partial class LevelUi : Node2D
 			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 			foreach (CodeEdit editor in codeEditors)
 			{
-				parser.ParseGetLine(editor.Text, stepCount);
+				parser.ParseGetLine(editor.Text, stepCount, editor.Name);
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			}
 			//TODO: check for actual error and use setError to properly display error notices
@@ -131,8 +132,9 @@ public partial class LevelUi : Node2D
 	private void UpdateStepCount() {
 		stepCountLabel.Text = "Step Count: " + stepCount;
 	}
-	
-	private void _on_reset_button_pressed() {
+
+	private void _on_reset_button_pressed()
+	{
 		//reset the step counter
 		stepCount = 0;
 
@@ -148,11 +150,19 @@ public partial class LevelUi : Node2D
 		UpdateStepCount();
 
 		//delete error notice (exclamation mark) if exists/open
-		if(errorNoticeIcon != null) {
+		if (errorNoticeIcon != null)
+		{
 			errorNoticeIcon.QueueFree();
 			errorNoticeIcon = null;
 		}
-		
+
 		removeError();
+	}
+
+	private void OnParserErrorRaised(int lineNumber, string message, string editorName)
+	{
+		// TODO
+		setError(1, editorName);
+		setErrorCoords(700, 100);
 	}
 }
