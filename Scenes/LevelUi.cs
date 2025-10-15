@@ -63,9 +63,6 @@ public partial class LevelUi : Node2D
 		manager.currLevel.P = parser;
 	}
 
-	// automatically define the global manager so we don't need to keep redefining it and etc
-	static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
 	//set error status as true with errorID and name of terminal causing error
 	public void setError(int errID, String editor)
 	{
