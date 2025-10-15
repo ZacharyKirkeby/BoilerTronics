@@ -16,16 +16,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, objectAtlasPos, altTitle) {}
 
-		public string[] GetNextCommand() {
-			// TODO: Implement
-			return null;
-		}
-
-		public ScriptableCommand GetCommand(string commandWord) {
-			// TODO: Implement
-			return null;
-		}
-
 		public void CreateTerminal() {
 			// TODO: Implement
 		}
@@ -41,6 +31,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void Step() {
 			// TODO: Implement
+			// Make a call to the parser
 		}
 
 		public void Reset() {
@@ -53,6 +44,23 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void UnRegisterSteppable() {
 			// TODO: Implement
+		}
+
+		// Methods that we can use via commands
+		public void Move(string[] args) {
+			// return error
+		}
+
+		public void Grab(string[] args) {
+			// return error
+		}
+
+		public void Drop(string[] args) {
+			// return error
+		}
+
+		public void Rotate(string[] args) {
+			// Rotate rail object below us
 		}
 	}
 }
