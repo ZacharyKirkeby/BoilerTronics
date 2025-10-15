@@ -8,13 +8,88 @@ using BoilerTronicsObjects.Interfaces;
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable{
 		
-		ArrayList convList = new ArrayList(); // List of conveyor objects
+		public ArrayList convList = new ArrayList(); // List of conveyor objects
 		private CodeEdit E;
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
-		private int dir;
+		public int dir;
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
+		}
+
+		// Add to conveyor group
+		public void AddConveyor(ConveyorObject conv) {
+			if (conv == null) return;
+			else if (conv.GetDir() != dir) return; // Make sure it's the correct
+			convList.Add(conv);
+			// VerifyGroup(); // Not needed, conveyors will only be added if they are adjacent
+		}
+
+		// Remove from conveyor group
+		public void RemoveConveyor(ConveyorObject conv) {
+			if (conv == null) return;
+			convList.Remove(conv);
+			VerifyGroup();
+		}
+
+		// Verify Group
+		public void VerifyGroup() {
+			ArrayList converyorGroupList = new ArrayList();
+
+			ArrayList seenConveyors = new ArrayList();
+
+			foreach (PlaceableObject obj in convList) {
+				if (!(obj is ConveyorObject cObj)) continue; // make sure we don't look at things that are not conveyors
+				else if (seenConveyors.Contains(cObj)) continue; // make sure we don't look at things we've seen before
+
+				ArrayList convGroup = new ArrayList();
+
+				Stack convStack = new Stack();
+
+				convStack.Push(cObj);
+
+				ArrayList Connected;
+
+				while (convStack.Count != 0) {
+					cObj = convStack.Pop() as ConveyorObject;
+
+					seenConveyors.Add(cObj);
+					convGroup.Add(cObj);
+
+					Connected = cObj.GetConnections(); // These will all be the same direction
+
+					foreach (ConveyorObject connObj in Connected) {
+						if (!(seenConveyors.Contains(connObj))) convStack.Push(connObj); // If we haven't seen it, add it to the stack
+					}
+				}
+				
+				converyorGroupList.Add(convGroup);
+			}
+			
+			if (converyorGroupList.Count != 1) {
+				// We need to split or we need to remove the group
+				// Handle this later
+				GD.Print("We should split");
+			}
+		}
+
+		// Split Group
+		public void SplitGroup() {
+			// TODO
+		}
+
+		// Combine Group
+		public void CombineGroup(ConveyorGroup g) {
+			// Add all convs from g to our list
+			if (g.dir != this.dir) return;
+
+			foreach (ConveyorObject obj in g.convList) {
+				this.convList.Add(obj);
+			}
+		}
+
+		public bool Contains(ConveyorObject c) {
+			return convList.Contains(c);
 		}
 
 

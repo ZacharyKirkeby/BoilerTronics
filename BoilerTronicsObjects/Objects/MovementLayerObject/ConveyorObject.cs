@@ -60,26 +60,28 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 		}
 
-		public ArrayList getConnections() {
+		public ArrayList GetConnections() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			Vector2I v1;
 			Vector2I v2;
 
-			if (this.direction == ConveyorObject.Right) {
+			if (this.direction == ConveyorObject.Left) {
 				v1 = new Vector2I(1, -1);
 				v2 = new Vector2I(-1, 1);
 			} else {
-				v1 = new Vector2I(0, 1);
-				v2 = new Vector2I(1, 0);
+				v1 = new Vector2I(1, 0);
+				v2 = new Vector2I(-1, 0);
 			}
 
 			ArrayList retList = new ArrayList();
 			
 			PlaceableObject obj1 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v1);
-			if (obj1 != null) retList.Add(obj1);
+			GD.Print(obj1);
+			if (obj1 != null && obj1 is ConveyorObject cObj1 && cObj1.GetDir() == this.GetDir()) retList.Add(obj1);
 
 			PlaceableObject obj2 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v2);
-			if (obj2 != null) retList.Add(obj2);
+			GD.Print(obj2);
+			if (obj2 != null && obj2 is ConveyorObject cObj2 && cObj2.GetDir() == this.GetDir()) retList.Add(obj2);
 
 			return retList;
 		}
