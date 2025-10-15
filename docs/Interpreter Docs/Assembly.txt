@@ -39,6 +39,9 @@ takes 2 registers to compare, form of reg1 - reg2
 
 looks like cmp reg1 reg2
 
+wait - wait
+does nothing
+
 Registers:
 
 r0 - default store, math operations store the results to r0
