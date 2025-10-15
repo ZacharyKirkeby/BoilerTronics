@@ -103,7 +103,10 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// a generic "save" function used to serialize per object information
 		// note: this is very "lazy" for now!
-		public Godot.Collections.Dictionary<string, Variant> Save()
+		// TODO: at some point, refactor to "Serialize" or something
+		// this is otherwise a poorly named function!
+		// "virtual" is used to allow this to be overridden by children methods
+		public virtual Godot.Collections.Dictionary<string, Variant> Save()
 		{
 			// reminder: Vector2 is not supported by json! Must be isolated to composite (x, y) coordinates
 			return new Godot.Collections.Dictionary<string, Variant>()

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;	// get Scriptable interface
 using BoilerTronicsObjects.Data;
 using BoilerTronicsObjects.Objects; // get object factory
 
@@ -309,7 +310,21 @@ public class BoilerTronicsSaveState
 			Vector2I atlasPos = new Vector2I((int) targetObj["atlasPosX"], (int) targetObj["atlasPosY"]);
 			
 			// create object, add to array list
-			listObj.Add(ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos));
+			PlaceableObject target = ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos);
+			
+			// TODO: if object is scriptable, attempt to load terminal code
+			if (target is Scriptable) {
+				string terminalCode;
+				
+				if (targetObj.ContainsKey("terminalCode")) {
+					// if loaded string exists, then load as appropriate
+					terminalCode = (string) targetObj["terminalCode"];
+					
+					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
+					// process: use 'GetTerminal()' to get the CodeEdit terminal, and load in appropriate string and etc
+				}
+			}
+			listObj.Add(target);
 		}
 		// GD.Print("finished reading objects from file");
 		// update layer's objectList
