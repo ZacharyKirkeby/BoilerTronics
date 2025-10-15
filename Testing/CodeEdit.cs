@@ -85,9 +85,26 @@ public partial class CodeEdit : Godot.CodeEdit
 				}
 				
 				if (correspondingObject is ConveyorGroup) {
-					// TODO: what if the object is a ConveyorGroup object?
+					// what if the object is a ConveyorGroup object?
 					// need to write exception given that the ConveyorGroup object is extremely distinct
+					// does not behave like normal PlaceableObject objects
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
+					
+					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
+					// Get the first item from the ConveyorGroup's list
+					PlaceableObject obj = (PlaceableObject) ((ConveyorGroup) correspondingObject).convList[0];
+					
+					// if that doesn't work, just give up.
+					if (obj == null) {
+						GD.Print("CodeEdit: ConveyorGroup associated with terminal has no ConveyorObject objects!");
+						return;
+					}
+					
+					layer = obj.GetParentLayer();
+					if (layer != null) {
+						layer.HighlightTile(true, obj.GetCurrPos());
+						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+					}
 				}
 			}
 		} else {
