@@ -4,32 +4,57 @@ using System.Collections;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Layers
 {
 	public partial class Layer : Godot.TileMapLayer
 	{
+		// if false, then should block all drag attempts
+		public static bool allowDrag = true;
+		
+		// default layer dimensions, if left unspecified
+		static int startX = 10;
+		static int startY = 10;
+		
 		PlaceableObject[,] tiles;
 		bool[,] editableTiles;
+		
+		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
+		// Avoid using in the future!
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
-													// TODO: add a bit mad for plocable areas
-													// TODO: add a bit mad to show where stuff is already placed
 
+		static Vector2I grabbedObjectScaling = new Vector2I(1, 1);
+
+		// note: this can't really be called by the child objects!
 		public Layer(int x, int y) {
-			tiles = new PlaceableObject[x, y];
-			editableTiles = new bool[x, y];
-			maxX = x - 1;
-			maxY = y - 1;
+			RedefineLayer(x, y);
 		}
 
 		public Layer() {
-			tiles = new PlaceableObject[100, 100];
-			editableTiles = new bool[100, 100];
-			maxX = 99;
-			maxY = 99;
+			RedefineLayer(startX, startY);
+		}
+		
+		// basically reconstructs the layer
+		// mainly used because Layer(x, y) doesn't work unless the child object explicitly calls only that constructor (?)
+		// x, y are # of cells on the respective axis
+		public void RedefineLayer(int newX, int newY) {
+			
+			tiles = new PlaceableObject[newX, newY];
+			editableTiles = new bool[newX, newY];
+			maxX = newX - 1;
+			maxY = newY - 1;
+			
+			// clear objects (let garbage collector handle the objects)
+			// TODO: potential memory leak here or?
+			objectList = new ArrayList();
+			numItems = 0;
+			
+			// reset visuals
+			Clear();
 
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
@@ -37,7 +62,21 @@ namespace BoilerTronicsObjects.Layers
 				}
 			}
 		}
-
+		
+		// TODO: return this data safely rather than just returning the address
+		public PlaceableObject[,] exportTiles() {
+			return tiles;
+		}
+		public bool[,] exportEditableTiles() {
+			return editableTiles;
+		}
+		public ArrayList exportObjectList() {
+			return objectList;
+		}
+		public Vector2I exportDimensions() {
+			return new Vector2I(maxX, maxY);
+		}
+		
 		public void SetEditable(bool[,] editableTable) {
 			if (!(editableTable.Length == (maxX + 1) * (maxY + 1))) return; // makes sure that the label has the same numbe of elements
 
@@ -46,6 +85,18 @@ namespace BoilerTronicsObjects.Layers
 					editableTiles[x, y] = editableTable[x, y];
 				}
 			}
+		}
+		
+		// given coordinates, set a specific coordinate to 'value'
+		// returns if operation was successful
+		public bool SetTileEditable(Vector2I coordinates, bool value) {
+			// check if OOB
+			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
+			if (coordinates.X < 0 || coordinates.Y < maxY) { return false; }
+			
+			// if not OOB, then set value
+			editableTiles[coordinates.X, coordinates.Y] = value;
+			return true;
 		}
 
 		public bool CheckValidPos(int X, int Y)
@@ -87,6 +138,18 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		public void Reset() {
+			foreach (PlaceableObject obj in objectList) {
+				Vector2I OldPos =  obj.GetPos();
+				tiles[OldPos.X, OldPos.Y] = null;
+				EraseCell(OldPos); // erase object from the map
+				obj.ResetPos();
+				Vector2I NewPos = obj.GetPos();
+				tiles[NewPos.X, NewPos.Y] = obj;
+				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+			}
+		}
+
 		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
 		{
 			// make sure that this is a mouse event
@@ -97,6 +160,8 @@ namespace BoilerTronicsObjects.Layers
 
 			// Get manager
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
+
+			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
 
 			// Get coords of event
 			Vector2 localMousePos = GetLocalMousePosition();
@@ -144,7 +209,9 @@ namespace BoilerTronicsObjects.Layers
 				}
 			} else {
 				// Left mouse click on a spot where an object exitsts
-				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+				// Handles creating a new draggable object when clicking on a tile
+				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
+					&& allowDrag) {
 
 					// we don't went to do anything if we can;t find anything there
 					if (objAtPos == null) {
@@ -170,7 +237,7 @@ namespace BoilerTronicsObjects.Layers
 					Sprite2D sprite = new Sprite2D();
 					// get texture
 					sprite.Texture = texture;
-					sprite.Scale = new Vector2I(5, 5);
+					sprite.Scale = grabbedObjectScaling;
 					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
 
 					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos.GetAtlasPos());
@@ -184,6 +251,8 @@ namespace BoilerTronicsObjects.Layers
 				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
+					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
+					if (objAtPos is Scriptable sObj) sObj.DestroyTerminal();
 				}
 			}
 		}
