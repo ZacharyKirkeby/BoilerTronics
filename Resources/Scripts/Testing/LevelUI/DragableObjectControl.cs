@@ -27,6 +27,11 @@ public partial class DragableObjectControl : Control {
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, atlasCords);
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
+			// spawn terminal perhap?
+			if (typeof(Scriptable).IsAssignableFrom(draggable.GetType()))
+            {
+				GD.Print("Can have terminal");
+            }
 			GD.Print("Created new dragable:", draggable);
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.objectToPlace = atlasCords;
