@@ -4,6 +4,7 @@ using System.Collections;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -25,8 +26,6 @@ namespace BoilerTronicsObjects.Layers
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
-													// TODO: add a bit mad for plocable areas
-													// TODO: add a bit mad to show where stuff is already placed
 
 		static Vector2I grabbedObjectScaling = new Vector2I(1, 1);
 
@@ -139,6 +138,18 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		public void Reset() {
+			foreach (PlaceableObject obj in objectList) {
+				Vector2I OldPos =  obj.GetPos();
+				tiles[OldPos.X, OldPos.Y] = null;
+				EraseCell(OldPos); // erase object from the map
+				obj.ResetPos();
+				Vector2I NewPos = obj.GetPos();
+				tiles[NewPos.X, NewPos.Y] = obj;
+				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+			}
+		}
+
 		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
 		{
 			// make sure that this is a mouse event
@@ -149,6 +160,8 @@ namespace BoilerTronicsObjects.Layers
 
 			// Get manager
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
+
+			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
 
 			// Get coords of event
 			Vector2 localMousePos = GetLocalMousePosition();
@@ -238,6 +251,7 @@ namespace BoilerTronicsObjects.Layers
 				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
+					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
 				}
 			}
 		}

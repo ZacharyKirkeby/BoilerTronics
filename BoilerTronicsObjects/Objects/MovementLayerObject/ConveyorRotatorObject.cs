@@ -1,29 +1,58 @@
-// TODO: implement in more detail
 using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
-using BoilerTronicsObjects.Scriptable;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorRotatorObject : MovementLayerObjects, ScriptableObject {
-		
+	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
+
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, objectAtlasPos, altTitle) {}
-		
-		
-		// TODO: scriptable functions
-		public bool Move(Vector2 movementVector) {
-			return false;
+
+		public string[] GetNextCommand() {
+			// TODO: Implement
+			return null;
 		}
-		public bool Grab() {
-			return false;
+
+		public ScriptableCommand GetCommand(string commandWord) {
+			// TODO: Implement
+			return null;
+		}
+
+		public void CreateTerminal() {
+			// TODO: Implement
+		}
+
+		public CodeEdit GetTerminal() {
+			// TODO: Implement
+			return null;
+		}
+
+		public void DestroyTerminal() {
+			// TODO: Implement
+		}
+
+		public void Step() {
+			// TODO: Implement
+		}
+
+		public void Reset() {
+			// TODO: Implement
+		}
+		
+		public void RegisterSteppable() {
+			// TODO: Implement
+		}
+
+		public void UnRegisterSteppable() {
+			// TODO: Implement
 		}
 	}
 }
