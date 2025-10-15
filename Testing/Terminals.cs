@@ -30,7 +30,7 @@ public partial class Terminals : TabContainer
 		manager.terminalContainer = this;
 	}
 
-	public CodeEdit AddEditor(string initialText = "")
+	public CodeEdit AddEditor(string initialText = "Your Solution Here")
 	{
 		CodeEdit newEditor = new CodeEdit();
 		newEditor.Text = initialText;

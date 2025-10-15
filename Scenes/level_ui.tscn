@@ -89,38 +89,6 @@ current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("1_31yto")
 
-[node name="CodeEdit2" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 0
-
-[node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 1
-
-[node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 2
-
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 
