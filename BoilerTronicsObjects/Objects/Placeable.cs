@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using BoilerTronicsObjects.Layers;
 
 namespace BoilerTronicsObjects.Placeable
@@ -11,9 +12,9 @@ namespace BoilerTronicsObjects.Placeable
 		int OGY { get; set; }
 		private int CurrX;
 		private int CurrY;
-		int sourceId { get; init; }               // This is the id of the tile map that the sprite belongs to
-		Vector2I atlasPos { get; init; }          // Posistion on the atlas that the sprite is at
-		int altTitle { get; init; }               // This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
+		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
+		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
+		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
 		public PlaceableObject(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0)
 		{
@@ -21,7 +22,7 @@ namespace BoilerTronicsObjects.Placeable
 			this.OGY = OGY;
 			this.CurrX = OGX;
 			this.CurrY = OGY;
-			
+
 			// pass in invalid -1 value to disable this setter
 			if (sourceId != -1) {
 				this.sourceId = sourceId;
@@ -49,6 +50,11 @@ namespace BoilerTronicsObjects.Placeable
 			this.CurrX = this.OGX;
 			this.CurrY = this.OGY;
 		}
+		
+		public void MoveCurrPos(int newX, int newY) {
+			this.CurrX = newX;
+			this.CurrY = newY;
+		}
 
 		public Vector2I GetPos()
 		{
@@ -65,10 +71,59 @@ namespace BoilerTronicsObjects.Placeable
 			return atlasPos;
 		}
 
-		public void ResetPos()
+		public void SetAtlasPos(Vector2I newAtlas)
+		{
+			this.atlasPos = newAtlas;
+		}
+
+		public virtual void ResetPos()
 		{
 			CurrX = OGX;
 			CurrY = OGY;
+		}
+
+		public Texture GetTexture()
+		{
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
+
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
+		}
+		
+		// should always return false, unless overriden by child object
+		// NOTE: this should be very redundant, given that "is interface" exists!
+		// I (Ethen) didn't do enough research at the time;
+		// consider this as redundant!
+		public bool Scriptable() {
+			return false;
+		}
+		
+		// a generic "save" function used to serialize per object information
+		// note: this is very "lazy" for now!
+		// TODO: at some point, refactor to "Serialize" or something
+		// this is otherwise a poorly named function!
+		// "virtual" is used to allow this to be overridden by children methods
+		public virtual Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			// reminder: Vector2 is not supported by json! Must be isolated to composite (x, y) coordinates
+			return new Godot.Collections.Dictionary<string, Variant>()
+			{
+				{ "OGX", OGX },
+				{ "OGY", OGY },
+				{ "sourceId", sourceId },
+				{ "atlasPosX", atlasPos.X },
+				{ "atlasPosY", atlasPos.Y },
+				{ "altTitle", "null" },
+			};
 		}
 	}
 }
