@@ -31,7 +31,8 @@ public partial class Terminals : TabContainer
 		
 		// run terminal selected functionality
 		// TODO: but does this actually work?
-		GetCurrentEditor().TerminalSelected();
+		CodeEdit curr = GetCurrentEditor();
+		if (curr != null) { curr.TerminalSelected();}
 	}
 
 	public CodeEdit AddEditor(string initialText = "Your Solution Here")
@@ -71,8 +72,12 @@ public partial class Terminals : TabContainer
 	// Enforces character length requirements
 	private void OnCodeEditInput(InputEvent @event, CodeEdit codeEdit)
 	{
+		
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
 		{
+			// TODO: inefficient call if this runs every time the terminal at all updates!
+			UpdateSelectedTerminal();
+		
 			long unicode = keyEvent.Unicode;
 			// Only printable characters
 			if (unicode < 32)
@@ -91,21 +96,38 @@ public partial class Terminals : TabContainer
 		}
 	}
 
+	// when a new tab is selected, run
 	private void OnTabSelected(long tab)
 	{
 		GD.Print("Switched to tab: " + tab);
 		
-		
+		UpdateSelectedTerminal();
+	}
+	
+	// update selected terminal; important for corresponding object highlighting!
+	public void UpdateSelectedTerminal() {
 		// run terminal selected functionality
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
 		// if last selected terminal exists, tell it to stop highlighting
-		if (manager.lastSelectedTerminal != null) {
-			manager.lastSelectedTerminal.StopHighlighting();
-		}
+		// if (manager.lastSelectedTerminal != null) {
+			// manager.lastSelectedTerminal.StopHighlighting();
+		// }
 		
 		// update last selected terminal
-		manager.lastSelectedTerminal = GetCurrentEditor();
+		// manager.lastSelectedTerminal = GetCurrentEditor();
+		
+		// Tells all layers to stop highlighting
+		Vector2I dummy = new Vector2I(0, 0);
+		
+		// TODO: INEFFICIENT:
+		// tells all layers to disable highlighting
+		// TODO: make some basic data field in the global manager that'll keep track of the last selected highlighted layer or something like that
+		if (manager.layerClaw != null) { manager.layerClaw.HighlightTile(false, dummy); }
+		if (manager.layerFactory != null) {manager.layerFactory.HighlightTile(false, dummy); }
+		if (manager.layerFloor != null) {manager.layerFloor.HighlightTile(false, dummy); }
+		if (manager.layerMovement != null) {manager.layerMovement.HighlightTile(false, dummy); }
+		if (manager.layerRail != null) {manager.layerRail.HighlightTile(false, dummy); }
 		
 		// call terminal's "just got selected" function
 		GetCurrentEditor().TerminalSelected();

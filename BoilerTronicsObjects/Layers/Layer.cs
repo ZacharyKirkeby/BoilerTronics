@@ -10,7 +10,10 @@ namespace BoilerTronicsObjects.Layers
 {
 	public partial class Layer : Godot.TileMapLayer
 	{
+		static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		// if false, then should block all drag attempts
+		// NOTE: Currently unused; separate code already restricts dragging to when steps aren't running.
 		public static bool allowDrag = true;
 		
 		// default layer dimensions, if left unspecified
@@ -27,7 +30,12 @@ namespace BoilerTronicsObjects.Layers
 		int maxX;
 		int maxY;
 
+		// General scaling for a given grabbed object
 		static Vector2I grabbedObjectScaling = new Vector2I(1, 1);
+		
+		// Private bool to conditionally highlight a given tile
+		private bool highlighting;
+		private Vector2I highlightTarget;
 
 		// note: this can't really be called by the child objects!
 		public Layer(int x, int y) {
@@ -149,6 +157,48 @@ namespace BoilerTronicsObjects.Layers
 				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
 			}
 		}
+		
+		// Given a bool to enable/disable a single tile highlight and a Vector2I for the map coordinates of the specified tile,
+		// enable/disable tile highlighting. If "highlight" is set to 'false', disables highlights automatically, regardless of the value of 'loc'.
+		public void HighlightTile(bool highlight, Vector2I loc) {
+			
+			highlighting = highlight;
+			
+			if (highlight) {
+				highlightTarget = loc;
+			}
+			QueueRedraw();
+		}
+		
+		public override void _Draw() {
+			// GD.Print("Layer: trying to draw");
+			// GD.Print("Highlight Position: ", highlightTarget);
+			if (highlighting) {
+				Vector2 localPos = MapToLocal(highlightTarget);
+				// TODO: draw efficiently
+				// for now, just create an array of Vector2
+				Godot.Collections.Array coordinates = new Godot.Collections.Array();
+				
+				// generate a polygonal shape
+				coordinates.Add(new Vector2(-20, -10));
+				coordinates.Add(new Vector2(0, -20));
+				coordinates.Add(new Vector2(20, -10));
+				
+				coordinates.Add(new Vector2(20, 10));
+				coordinates.Add(new Vector2(0, 20));
+				coordinates.Add(new Vector2(-20, 10));
+				
+				Color drawColor = Colors.Green;
+				float lineWeight = 3.0f;
+				
+				// draw connecting from 'i-1' to 'i'
+				for (int i = 1; i < coordinates.Count; i++) {
+					DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
+				}
+				// draw from 'maxI' to 'minI'
+				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+			}
+		}
 
 		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
 		{
@@ -159,7 +209,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			// Get manager
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
+			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
 
 			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
 
@@ -206,6 +256,10 @@ namespace BoilerTronicsObjects.Layers
 					manager.objectToMove = null;
 					manager.objectToPlace = new Vector2I(-1, -1);
 					manager.placingObject = 0;
+					
+					// queue redraw for highlighting after moving an object
+					// QueueRedraw();
+					manager.terminalContainer.UpdateSelectedTerminal();
 				}
 			} else {
 				// Left mouse click on a spot where an object exitsts
