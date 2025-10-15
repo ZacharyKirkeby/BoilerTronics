@@ -1,18 +1,22 @@
 using Godot;
 using System;
 
+// whole file is arguably a test file
 public partial class CodeEdit : Godot.CodeEdit
 {
 	private int lastHighlightedLine = -1;
-	
+	public int currentLine = 0;
+
 	public override void _Ready()
 	{
 		AddToGroup("CodeTerminals");
 		HighlightCurrentLine = true;
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
+		currentLine = 0;
 	}
 
+	// this is a debug function
 	private void OnTextChanged()
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");

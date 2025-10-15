@@ -1,9 +1,14 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
+using Parsing;
 public partial class LevelUi : Node2D
 {
-
+	private int currentLine = 0;
+	private TabContainer tabs;
+	private Parser parser;
+	private List<CodeEdit> editors = new();
 	private Label stepCountLabel;
 	private int stepCount = 0;
 	private bool isError = false; //temp boolean to track if an error has occured
@@ -25,6 +30,9 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
+		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
+		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
+		parser.ErrorRaised += OnParserErrorRaised;
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
 		saveOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Save 1");
 		saveTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Save 2");
@@ -232,6 +240,7 @@ public partial class LevelUi : Node2D
 
 			foreach (CodeEdit editor in codeEditors)
 			{
+				parser.ParseGetLine(editor.Text, stepCount, editor.Name);
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			}
 		}
@@ -245,8 +254,9 @@ public partial class LevelUi : Node2D
 	private void UpdateStepCount() {
 		stepCountLabel.Text = "Step Count: " + stepCount;
 	}
-	
-	private void _on_reset_button_pressed() {
+
+	private void _on_reset_button_pressed()
+	{
 		//reset the step counter
 		stepCount = 0;
 
@@ -266,11 +276,19 @@ public partial class LevelUi : Node2D
 		UpdateStepCount();
 
 		//delete error notice (exclamation mark) if exists/open
-		if(errorNoticeIcon != null) {
+		if (errorNoticeIcon != null)
+		{
 			errorNoticeIcon.QueueFree();
 			errorNoticeIcon = null;
 		}
-		
+
 		removeError();
+	}
+
+	private void OnParserErrorRaised(int lineNumber, string message, string editorName)
+	{
+		// TODO
+		setError(1, editorName);
+		setErrorCoords(700, 100);
 	}
 }
