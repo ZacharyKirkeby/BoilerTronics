@@ -17,6 +17,8 @@ public partial class MainMenu : Node2D
 		int masterBus = AudioServer.GetBusIndex("Master");
 		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
 		
+		
+		
 	}
 
 	private void _on_new_game_pressed()
@@ -41,10 +43,16 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("SettingsMenu").Visible = true;
 	}
+	
+	private void _on_profile_pressed() {
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("ProfileMenu").Visible = true;
+	}
 
 	private void _on_back_pressed()
 	{
 		GetNode<Control>("SettingsMenu").Visible = false;
+		GetNode<Control>("ProfileMenu").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
 	}
 
