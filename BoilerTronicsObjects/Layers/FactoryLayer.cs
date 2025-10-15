@@ -1,12 +1,15 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
 {
+	// public partial class FactoryLayer(int x, int y) : Layer(x, y)
 	public partial class FactoryLayer : Layer
 	{
+
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			// TODO: add code to verify that this is the correct type of object
@@ -21,40 +24,17 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
-			// Change this once UI is further along
-			if (manager.currSlection == 2)
-			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
-				{
-					Vector2 localMousePos = GetLocalMousePosition();
-					Vector2I tileCoords = LocalToMap(localMousePos);
-
-					GD.Print("Factory layer is pressed");
-					GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-
-					//testing; very primative method of moving the screen
-					// this.Position += new Vector2(1, 1);
-
-					// TODO: Pass in correct values here once factory is made
-					// TODO: for now, place factory input objects
-
-					Vector2I atlasCords = manager.objectToPlace;
-					AddObject(ObjectFactory.CreateObject(tileCoords, 0, atlasCords));
-
-					GD.Print("atlas X: ", atlasCords.X, ", atlas Y: ", atlasCords.Y);
-				}
-				else
-				{
-					base._Input(@event); // pass downward
-				}
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// make sure that it is not a floor
+			if (!(manager.objectToMove is FloorTileObject || manager.objectToPlace == new Vector2I(0, 2))) {
+				MouseInput(@event, 2, 0);
+				GD.Print("Factory");
 			}
-			else
-			{
-				// GD.Print("Recive event 2");
-				base._Input(@event); // pass downward
+			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+				// We always wnt to try to move
+				MouseInput(@event, 2, 0);
 			}
+			base._Input(@event);
 		}
-
 	}
 }
