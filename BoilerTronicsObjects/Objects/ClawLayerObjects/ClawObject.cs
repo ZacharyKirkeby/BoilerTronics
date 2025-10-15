@@ -44,19 +44,19 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods to deal with terminals
 		public CodeEdit GetTerminal() {
-			// TODO: Implement
-			return null;
+			return E;
 		}
 
 		public void CreateTerminal() {
-			// TODO: Implement
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
 			E.Name = "Claw";
 		}
 
 		public void DestroyTerminal() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.terminalContainer.RemoveEditor(E);
+			E = null;
 		}
 
 		// Methods that we can use via commands
