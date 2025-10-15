@@ -6,6 +6,7 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using Parsing;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
@@ -21,6 +22,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.P.ParseGetLine(E.Text, manager.currLevel.StepCount, E.Name);
+			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void RegisterSteppable() {

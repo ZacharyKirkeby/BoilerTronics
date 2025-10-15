@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using Parsing;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -21,6 +22,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public FloorLayer flLayer;
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+	public Parser P;
 	
 	// store all four corners of the placement grid
 	private Vector2 c1;
