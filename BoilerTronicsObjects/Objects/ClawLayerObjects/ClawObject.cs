@@ -19,7 +19,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Runnable Interface
 		public void Step() {
-			GD.Print("Test");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			MovingObject mObj = new MovingObject(this, new Vector2I(1,0), manager.currLevel.cLayer, 1);
@@ -94,5 +93,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 		} // create object
+
+		~ClawObject() {
+			DestroyTerminal(); // Destries the terminal for this scriptable
+		}
 	}
 }
