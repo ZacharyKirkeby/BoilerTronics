@@ -123,7 +123,7 @@ public partial class Parser : Node2D
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing Register", editorName);
 
 		// MATH OPS + compare
-		string[] arith = { "add", "sub", "mult", "div", "cmp" };
+		string[] arith = { "add", "sub", "mul", "div", "cmp" };
 		foreach (var cmd in arith)
 		{
 			// correct usage
@@ -136,7 +136,7 @@ public partial class Parser : Node2D
 				{
 					case "add": _registers["r0"] = _registers[reg1] + _registers[reg2]; break;
 					case "sub": _registers["r0"] = _registers[reg1] - _registers[reg2]; break;
-					case "mult": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
+					case "mul": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
 					case "div":
 						if (_registers[reg2] == 0)
 						{
