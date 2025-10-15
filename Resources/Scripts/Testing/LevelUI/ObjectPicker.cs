@@ -72,7 +72,7 @@ public partial class ObjectPicker : HBoxContainer
 
 			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
 
-			GD.Print(GetChildren());
+			// GD.Print(GetChildren());
 		}
 	}
 

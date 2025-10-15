@@ -28,12 +28,13 @@ namespace BoilerTronicsObjects.Layers
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
 				MouseInput(@event, 3, 1);
-				GD.Print("Claw");
+				// GD.Print("Claw");
 			}
-			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
 				GD.Print("Claw");
 				MouseInput(@event, 3, 1);
+				return;
 			}
 			base._Input(@event);
 		}
