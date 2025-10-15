@@ -82,21 +82,22 @@ public partial class LevelUi : Node2D
 		saveZero.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
 		saveOne.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
 		saveTwo.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
-		if (FileAccess.FileExists("user://level" + manager.GetLevelID() + "/save0.save")) {
+		
+		if (manager.CheckSaveData(manager.GetLevelID(), 0)) {
 			full_theme(saveZero);
 			clearZero.Visible = true;
 		} else {
 			empty_theme(saveZero);
 			clearZero.Visible = false;
 		}
-		if (FileAccess.FileExists("user://level" + manager.GetLevelID() + "/save1.save")) {
+		if (manager.CheckSaveData(manager.GetLevelID(), 1)) {
 			full_theme(saveOne);
 			clearOne.Visible = true;
 		} else {
 			empty_theme(saveOne);
 			clearOne.Visible = false;
 		}
-		if (FileAccess.FileExists("user://level" + manager.GetLevelID() + "/save2.save")) {
+		if (manager.CheckSaveData(manager.GetLevelID(), 2)) {
 			full_theme(saveTwo);
 			clearTwo.Visible = true;
 		} else {
