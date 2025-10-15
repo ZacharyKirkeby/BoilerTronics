@@ -44,7 +44,7 @@ public partial class Parser : Node2D
 
 			//regex collection to string array
 			GroupCollection groups = m.Groups;
-    		string[] values = new string[groups.Count];
+			string[] values = new string[groups.Count];
 			for (int i = 0; i < groups.Count; i++)
 			{
 				values[i] = groups[i].Value;
@@ -76,7 +76,7 @@ public partial class Parser : Node2D
 			// func call
 			//regex collection to string array
 			GroupCollection groups = m.Groups;
-    		string[] values = new string[groups.Count];
+			string[] values = new string[groups.Count];
 			for (int i = 0; i < groups.Count; i++)
 			{
 				values[i] = groups[i].Value;
@@ -108,7 +108,7 @@ public partial class Parser : Node2D
 
 			//regex collection to string array
 			GroupCollection groups = d.Groups;
-    		string[] values = new string[groups.Count];
+			string[] values = new string[groups.Count];
 			for (int i = 0; i < groups.Count; i++)
 			{
 				values[i] = groups[i].Value;
@@ -132,7 +132,7 @@ public partial class Parser : Node2D
 			//func call
 			//regex collection to string array
 			GroupCollection groups = g.Groups;
-    		string[] values = new string[groups.Count];
+			string[] values = new string[groups.Count];
 			for (int i = 0; i < groups.Count; i++)
 			{
 				values[i] = groups[i].Value;
@@ -252,7 +252,7 @@ public partial class Parser : Node2D
 		{
 			scriptObject = (Scriptable)obj;
 			currEditor = codeEdit;
-        }
+		}
 		//GD.Print("Made it to Parser");
 		//CurrLine = line;
 		editorName = editor;
