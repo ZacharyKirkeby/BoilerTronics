@@ -35,6 +35,7 @@ namespace BoilerTronicsObjects.Layers
 				// We always wnt to try to move
 				GD.Print("Rail");
 				MouseInput(@event, 3, 1);
+				return;
 			}
 			base._Input(@event);
 		}

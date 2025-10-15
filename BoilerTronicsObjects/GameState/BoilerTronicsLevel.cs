@@ -11,6 +11,7 @@ public partial class BoilerTronicsLevel : Node2D
 {
 	int x;
 	int y;
+	public int StepCount;
 	double deltaTime = 100.0; // time we want it to take to move objects
 	TileSet tileset;
 	public MovementLayer mLayer;
@@ -212,6 +213,8 @@ public partial class BoilerTronicsLevel : Node2D
 			mObj.QueueFree();
 		}
 		
+		StepCount = 0;
+
 		// Empty moving list
 		this.movingList.Clear();
 	}
@@ -226,6 +229,7 @@ public partial class BoilerTronicsLevel : Node2D
 			Runnable rObj = (Runnable)obj;
 			rObj.Step();
 		}
+		StepCount++;
 	}
 
 	public void RegisterRunnable(PlaceableObject obj) {
