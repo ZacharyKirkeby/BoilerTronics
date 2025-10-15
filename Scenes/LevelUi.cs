@@ -273,6 +273,9 @@ public partial class LevelUi : Node2D
 			// on first step button press, trigger an autosave!
 			if (stepCount == 0) {
 				manager.SaveAutosave();
+				
+				// also stop all highlighting
+				manager.terminalContainer.ClearHighlightedObjects();
 			}
 			
 			stepCount++;
@@ -328,6 +331,9 @@ public partial class LevelUi : Node2D
 				existing.QueueFree();
 			}
 		}
+		
+		// reset terminal's highlighted objects
+		manager.terminalContainer.UpdateSelectedTerminal();
 
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));

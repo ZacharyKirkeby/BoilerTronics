@@ -29,6 +29,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
 			E.Name = "Rotator";
+			
+			E.SetCorrespondingObject(this);
 		}
 
 		public void DestroyTerminal() {

@@ -1,11 +1,7 @@
-[gd_scene load_steps=26 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=25 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
-[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
-[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
-[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
-[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
@@ -88,7 +84,6 @@ layout_mode = 2
 [node name="TerminalContainer" type="TabContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 size_flags_horizontal = 3
-current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("1_31yto")
 
