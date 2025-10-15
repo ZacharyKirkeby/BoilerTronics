@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Layers;
 
 public partial class MovingObject : Area2D {
@@ -101,6 +102,11 @@ public partial class MovingObject : Area2D {
 			// We done
 			// Move the object internally
 			obj.MoveCurrPos(TargetPos.X, TargetPos.Y);
+
+			if (obj is ClawObject cObj) {
+				cObj.moving = false;
+			}
+
 			// Place the object back on the layer
 			layer.AddObject(obj);
 			// De-register object from the game state
