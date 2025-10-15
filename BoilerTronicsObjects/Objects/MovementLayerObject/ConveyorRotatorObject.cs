@@ -10,37 +10,41 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
+		CodeEdit E;
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, objectAtlasPos, altTitle) {}
 
-		public string[] GetNextCommand() {
-			// TODO: Implement
-			return null;
-		}
-
-		public ScriptableCommand GetCommand(string commandWord) {
-			// TODO: Implement
-			return null;
+		// Methods to deal with terminals
+		public CodeEdit GetTerminal() {
+			return E;
 		}
 
 		public void CreateTerminal() {
-			// TODO: Implement
-		}
-
-		public CodeEdit GetTerminal() {
-			// TODO: Implement
-			return null;
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			E = manager.terminalContainer.AddEditor();
+			E.Name = "Claw";
 		}
 
 		public void DestroyTerminal() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.terminalContainer.RemoveEditor(E);
+			E = null;
+		}
+
+		public void SetScript(string script) {
+			E.Text = script;
+		}
+
+		public string GetScript() {
+			return E.Text;
 		}
 
 		public void Step() {
 			// TODO: Implement
+			// Make a call to the parser
 		}
 
 		public void Reset() {
@@ -53,6 +57,23 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void UnRegisterSteppable() {
 			// TODO: Implement
+		}
+
+		// Methods that we can use via commands
+		public void Move(string[] args) {
+			// return error
+		}
+
+		public void Grab(string[] args) {
+			// return error
+		}
+
+		public void Drop(string[] args) {
+			// return error
+		}
+
+		public void Rotate(string[] args) {
+			// Rotate rail object below us
 		}
 	}
 }

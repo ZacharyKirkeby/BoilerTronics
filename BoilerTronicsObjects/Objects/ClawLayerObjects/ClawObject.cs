@@ -13,22 +13,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
+		private CodeEdit E;
 
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 
 		// Runnable Interface
 		public void Step() {
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-			MovingObject mObj = new MovingObject(this, new Vector2I(1,0), manager.currLevel.cLayer, 1);
-			manager.currLevel.cLayer.GetParent().AddChild(mObj);
-
-			return;
-			string[] cmdAndArgs = GetNextCommand(); // get command and args from interrupter
-			ScriptableCommand cmd = GetCommand(cmdAndArgs[0]); // get command
-			string[] cmdArgs = cmdAndArgs.Skip(1).ToArray(); // isolate args
-			cmd(cmdArgs); // run command
+			// Make a call to the parser
 		}
 
 		public void RegisterSteppable() {
@@ -49,43 +41,77 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Scriptable interface
 
-		// Methods to get commands and execute commands
-		public string[] GetNextCommand() {
-			// TODO: Implement
-			return null;
-		}
-
-		public ScriptableCommand GetCommand(string commandWord) {
-			// TODO: Implement
-			return null;
-		}
 
 		// Methods to deal with terminals
 		public CodeEdit GetTerminal() {
-			// TODO: Implement
-			return null;
+			return E;
 		}
 
 		public void CreateTerminal() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			E = manager.terminalContainer.AddEditor();
+			E.Name = "Claw";
 		}
 
 		public void DestroyTerminal() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.terminalContainer.RemoveEditor(E);
+			E = null;
 		}
 
-		// functions that we can use via commands
-
-		public void MoveCommand(params object[] args)
-		{
+		public void SetScript(string script) {
+			E.Text = script;
 		}
 
-		public void GrabCommand(params object[] args)
-		{
+		public string GetScript() {
+			return E.Text;
 		}
 
-		public void DropCommand(params object[] args)
-		{
+		// Methods that we can use via commands
+		public void Move(string[] args) {
+			// TODO: check movement vectors
+			if (args == null) return;
+			else if (args[0] != "mov") return; // Not the correct command
+			else if (args.Length != 2) return;
+
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			Vector2I MoveVector;
+
+			switch (args[1]) {
+				case "u":
+					MoveVector = new Vector2I(1, 0);
+					break;
+				case "d":
+					MoveVector = new Vector2I(-1, 0);
+					break;
+				case "r":
+					MoveVector = new Vector2I(0, 1);
+					break;
+				case "l":
+					MoveVector = new Vector2I(0, -1);
+					break;
+				default:
+					return; // not a valid arg
+			}
+
+			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
+			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+
+			return;
+		}
+
+		public void Grab(string[] args) {
+			GD.Print("Grab func called");
+			return; // TODO: implement fully
+		}
+
+		public void Drop(string[] args) {
+			GD.Print("Drop func called");
+			return; // TODO: implement fully
+		}
+
+		public void Rotate(string[] args) {
+			return; // Throw error
 		}
 
 		// Command methods

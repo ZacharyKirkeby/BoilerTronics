@@ -38,8 +38,9 @@ public partial class BoilerTronicsGlobalManager : Node
 	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
+	public Terminals terminalContainer;
 	/***** End Testing Vars *****/
-	
+
 	/* Save Data Vars: */
 	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
@@ -212,7 +213,9 @@ public partial class BoilerTronicsGlobalManager : Node
 	public void SetLevelDimensions(Vector2I max) {
 		saveState.SetLevelDimensions(max);
 	}
-	public Vector2I GetLevelDimensions() {
+	public Vector2I GetLevelDimensions()
+	{
 		return saveState.GetLevelDimensions();
 	}
+	
 }
