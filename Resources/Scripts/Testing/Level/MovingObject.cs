@@ -51,7 +51,7 @@ public partial class MovingObject : Area2D {
 		this.PosDelta = (TargetGlobalPos - CurrGlobalPos); // Calculate the amount we need to move
 		GD.Print("POS DELTA: ", PosDelta);
 
-		this.Position = CurrGlobalPos;
+		this.Position = CurrGlobalPos + layer.Position / 2;
 	}
 
 	public override void _Ready() {
