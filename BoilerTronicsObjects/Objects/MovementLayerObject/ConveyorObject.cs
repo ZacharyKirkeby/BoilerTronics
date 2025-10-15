@@ -23,7 +23,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.mLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
 		}
 
-		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, LeftObjectAtlasPos, altTitle) {
+		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
 			if (dir != ConveyorObject.Right || dir != ConveyorObject.Left) return; // Error
 
 			if (dir == ConveyorObject.Right) {
@@ -40,6 +40,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void ChangeDir(int newDir) {
 			if (newDir != ConveyorObject.Right || newDir != ConveyorObject.Left) return;
 			direction = newDir;
+
+			if (newDir == ConveyorObject.Right) {
+				this.SetAtlasPos(RightObjectAtlasPos);
+			} else {
+				this.SetAtlasPos(LeftObjectAtlasPos);
+			}
 
 			UpdateSprite();
 		}
