@@ -16,6 +16,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
 
+		public bool moving = false; // used for error checking since the claw can move via multiple methods
+
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 
@@ -76,40 +78,48 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
-			GD.Print("move");
-			GD.Print(args);
-			GD.Print(args[0]);
-			GD.Print(args.Length);
-
 			// TODO: check movement vectors
-			if (args == null) return;
+			if (args == null) return; // Error, no command
 			// else if (args[0] != "mov") return; // Not the correct command
-			else if (args.Length != 2) return;
+			else if (args.Length != 2) return; // Error, invalid args
+			else if (this.moving) return; // Error, already moving
 
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			Vector2I MoveVector;
+			int targetDir;
 
 			switch (args[1]) {
 				case "u":
 					MoveVector = new Vector2I(1, -1);
+					targetDir = TrackObject.Left;
 					GD.Print("up");
 					break;
 				case "d":
 					MoveVector = new Vector2I(-1, 1);
+					targetDir = TrackObject.Left;
 					GD.Print("down");
 					break;
 				case "r":
 					MoveVector = new Vector2I(1, 0);
+					targetDir = TrackObject.Right;
 					GD.Print("right");
 					break;
 				case "l":
 					MoveVector = new Vector2I(-1, 0);
+					targetDir = TrackObject.Right;
 					GD.Print("left");
 					break;
 				default:
 					GD.Print("invaid");
 					return; // not a valid arg
 			}
+
+			// Check to make sure we are on a track and the track is the correct orientation
+			PlaceableObject currObj = manager.currLevel.rLayer.FindObject(this.GetPos());
+			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir) return; // Error: rail we are on is either none existant or the wrong direction
+			// Check to make sure we are going to a track and that track is the correct orientation
+			PlaceableObject targetObj = manager.currLevel.rLayer.FindObject(this.GetPos() + MoveVector);
+			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir) return; // Error: rail we are going to is either none existant or the wrong direction
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
