@@ -69,19 +69,19 @@ namespace BoilerTronicsObjects.Objects
 					break;
 				case 100:
 					//railleftdefault
-					target = new TrackLeftObject(x, y, 0);
+					target = new TrackObject(x, y, 0, 0);
 					break;
 				case 101:
 					//railrightdefault
-					target = new TrackRightObject(x, y, 0);
+					target = new TrackObject(x, y, 1, 0);
 					break;
 				case 150:
 					//conveyorleftdefault
-					target = new ConveyorLeftObject(x, y, 0);
+					target = new ConveyorObject(x, y, 0, 0);
 					break;
 				case 151:
 					//conveyorrightdefault
-					target = new ConveyorRightObject(x, y, 0);
+					target = new ConveyorObject(x, y, 1, 0);
 					break;
 				case 152:
 					//rotatordefault

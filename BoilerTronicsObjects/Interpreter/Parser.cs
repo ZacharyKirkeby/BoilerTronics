@@ -1,8 +1,12 @@
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Threading;
 using Godot;
+using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Placeable;
+using System.Text.RegularExpressions;
 
 namespace Parsing;
 // issue is this being lowercase???
@@ -16,6 +20,8 @@ public partial class Parser : Node2D
 	private readonly Dictionary<string, int> _labelMap = new();
 	// register mapping
 	private readonly Dictionary<string, int> _registers = new();
+	private Scriptable scriptObject;
+	private CodeEdit currEditor;
 
 	// for line adjustment for jumps
 	[Signal]
@@ -35,7 +41,16 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
 		{
 			GD.Print($"Command: Move {m.Groups[1].Value}");
-			//func call
+
+			//regex collection to string array
+			GroupCollection groups = m.Groups;
+			string[] values = new string[groups.Count];
+			for (int i = 0; i < groups.Count; i++)
+			{
+				values[i] = groups[i].Value;
+			}
+			// function call
+			if ( scriptObject != null) scriptObject.Move(values);
 		});
 
 		// invalid mov arg
@@ -59,6 +74,15 @@ public partial class Parser : Node2D
 		{
 			GD.Print($"Command: Rotate {m.Groups[1].Value}");
 			// func call
+			//regex collection to string array
+			GroupCollection groups = m.Groups;
+			string[] values = new string[groups.Count];
+			for (int i = 0; i < groups.Count; i++)
+			{
+				values[i] = groups[i].Value;
+			}
+			// function call
+			if ( scriptObject != null) scriptObject.Rotate(values);
 		});
 
 		// rot with the wrong args
@@ -81,6 +105,16 @@ public partial class Parser : Node2D
 		{
 			GD.Print("Command: Drop");
 			//func call
+
+			//regex collection to string array
+			GroupCollection groups = d.Groups;
+			string[] values = new string[groups.Count];
+			for (int i = 0; i < groups.Count; i++)
+			{
+				values[i] = groups[i].Value;
+			}
+			// function call
+			if ( scriptObject != null) scriptObject.Drop(values);
 		});
 
 		// drop with args (bad)
@@ -96,6 +130,15 @@ public partial class Parser : Node2D
 		{
 			GD.Print("Command: Grab");
 			//func call
+			//regex collection to string array
+			GroupCollection groups = g.Groups;
+			string[] values = new string[groups.Count];
+			for (int i = 0; i < groups.Count; i++)
+			{
+				values[i] = groups[i].Value;
+			}
+			// function call
+			if ( scriptObject != null) scriptObject.Grab(values);
 		});
 
 		// grab with args (bad)
@@ -116,14 +159,14 @@ public partial class Parser : Node2D
 
 		_commandParser.Register(@"^\s*wrt\s+(\w+)\s*$", m =>
 			GD.Print($"Malformed Write: Missing value for register {m.Groups[1].Value}"));
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing value", editorName);
+		EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing value", editorName);
 
 		_commandParser.Register(@"^\s*wrt\s*$", _ =>
 			GD.Print("Malformed Write: Missing register and value"));
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing Register", editorName);
+		EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing Register", editorName);
 
 		// MATH OPS + compare
-		string[] arith = { "add", "sub", "mult", "div", "cmp" };
+		string[] arith = { "add", "sub", "mul", "div", "cmp" };
 		foreach (var cmd in arith)
 		{
 			// correct usage
@@ -136,7 +179,7 @@ public partial class Parser : Node2D
 				{
 					case "add": _registers["r0"] = _registers[reg1] + _registers[reg2]; break;
 					case "sub": _registers["r0"] = _registers[reg1] - _registers[reg2]; break;
-					case "mult": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
+					case "mul": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
 					case "div":
 						if (_registers[reg2] == 0)
 						{
@@ -203,8 +246,13 @@ public partial class Parser : Node2D
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
 	// Takes in the current step, derives line number off that
-	public void ParseGetLine(string terminal, int step, string editor)
+	public void ParseGetLine(PlaceableObject obj, CodeEdit codeEdit, string terminal, int step, string editor)
 	{
+		if ((obj is Scriptable))
+		{
+			scriptObject = (Scriptable)obj;
+			currEditor = codeEdit;
+		}
 		//GD.Print("Made it to Parser");
 		//CurrLine = line;
 		editorName = editor;
@@ -259,7 +307,7 @@ public partial class Parser : Node2D
 			if (newLine >= 0 && newLine < validLines.Count)
 			{
 				CurrLine = newLine;
-				 // update UI for jump target
+				// update UI for jump target
 			}
 			else
 			{
@@ -273,7 +321,7 @@ public partial class Parser : Node2D
 			GD.Print($"Unknown or malformed command: {lineToBeProcessed}");
 		}
 	}
-	
+
 	private bool HandleJump(string line, out int newLine)
 	{
 		newLine = -1;
@@ -292,5 +340,30 @@ public partial class Parser : Node2D
 
 		GD.PrintErr($"Undefined label: {label}");
 		return false;
+	}
+
+	public int GetFirstValidLineAfterLabel(string labelName, List<string> lines)
+	{
+		for (int i = 0; i < lines.Count; i++)
+		{
+			string line = lines[i]?.Trim();
+
+			//find label:
+			if (line != null && line.Equals(labelName + ":"))
+			{
+				//get next valid line
+				for (int j = i + 1; j < lines.Count; j++)
+				{
+					string nextLine = lines[j]?.Trim();
+					//don't highlight empty lines or label lines
+					if (!string.IsNullOrWhiteSpace(nextLine) && !nextLine.EndsWith(":"))
+					{
+						return j;
+					}
+				}
+			}
+		}
+		//return -1 if not found
+		return -1;
 	}
 }

@@ -28,12 +28,16 @@ public partial class Terminals : TabContainer
 
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.terminalContainer = this;
+		
+		// run terminal selected functionality
+		// TODO: but does this actually work?
+		GetCurrentEditor().TerminalSelected();
 	}
 
-	public CodeEdit AddEditor(string initialText = "")
+	public CodeEdit AddEditor(string initialText = "Your Solution Here")
 	{
 		CodeEdit newEditor = new CodeEdit();
-		newEditor.Text = initialText;
+		newEditor.PlaceholderText = initialText;
 		AddChild(newEditor);
 		editors.Add(newEditor);
 		newEditor.AddToGroup("CodeTerminals");
@@ -87,11 +91,24 @@ public partial class Terminals : TabContainer
 		}
 	}
 
-	// presently without a play button the easiest to attach to event is switching tabs
-	// this is a simple proof of grabbing text from the editor
 	private void OnTabSelected(long tab)
 	{
 		GD.Print("Switched to tab: " + tab);
+		
+		
+		// run terminal selected functionality
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// if last selected terminal exists, tell it to stop highlighting
+		if (manager.lastSelectedTerminal != null) {
+			manager.lastSelectedTerminal.StopHighlighting();
+		}
+		
+		// update last selected terminal
+		manager.lastSelectedTerminal = GetCurrentEditor();
+		
+		// call terminal's "just got selected" function
+		GetCurrentEditor().TerminalSelected();
 	}
 
 	public CodeEdit GetCurrentEditor()
