@@ -23,17 +23,23 @@ public partial class DragableObjectControl : Control {
 		this.selection = selection;
 	}
 
+	public override void _Ready() {
+		CustomMinimumSize = new Vector2(256, 256);
+	}
+
 	public override void _GuiInput(InputEvent @event)
 	{
 		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed
 			&& allowDrag)
 		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager.currLevel.StepCount != 0) return; // Don't allow placement while we are stepping
+
 			// We want to spawn a new draggable object and pass in all the correct values
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, atlasCords);
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
 			GD.Print("Created new dragable:", draggable);
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.objectToPlace = atlasCords;
 			manager.placingObject = 1;
 			manager.currSlection = selection;

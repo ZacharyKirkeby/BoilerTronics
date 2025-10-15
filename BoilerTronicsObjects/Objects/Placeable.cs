@@ -22,7 +22,7 @@ namespace BoilerTronicsObjects.Placeable
 			this.OGY = OGY;
 			this.CurrX = OGX;
 			this.CurrY = OGY;
-			
+
 			// pass in invalid -1 value to disable this setter
 			if (sourceId != -1) {
 				this.sourceId = sourceId;
@@ -50,6 +50,11 @@ namespace BoilerTronicsObjects.Placeable
 			this.CurrX = this.OGX;
 			this.CurrY = this.OGY;
 		}
+		
+		public void MoveCurrPos(int newX, int newY) {
+			this.CurrX = newX;
+			this.CurrY = newY;
+		}
 
 		public Vector2I GetPos()
 		{
@@ -70,6 +75,22 @@ namespace BoilerTronicsObjects.Placeable
 		{
 			CurrX = OGX;
 			CurrY = OGY;
+		}
+		public Texture GetTexture()
+		{
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
+
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
 		}
 		
 		// should always return false, unless overriden by child object
