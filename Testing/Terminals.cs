@@ -107,7 +107,7 @@ public partial class Terminals : TabContainer
 	// update selected terminal; important for corresponding object highlighting!
 	public void UpdateSelectedTerminal() {
 		// run terminal selected functionality
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		
 		// if last selected terminal exists, tell it to stop highlighting
 		// if (manager.lastSelectedTerminal != null) {
@@ -117,7 +117,15 @@ public partial class Terminals : TabContainer
 		// update last selected terminal
 		// manager.lastSelectedTerminal = GetCurrentEditor();
 		
-		// Tells all layers to stop highlighting
+		ClearHighlightedObjects();
+		
+		// call terminal's "just got selected" function
+		GetCurrentEditor().TerminalSelected();
+	}
+	
+	// tells all layers to stop highlighting objects
+	public void ClearHighlightedObjects() {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		Vector2I dummy = new Vector2I(0, 0);
 		
 		// TODO: INEFFICIENT:
@@ -128,9 +136,6 @@ public partial class Terminals : TabContainer
 		if (manager.layerFloor != null) {manager.layerFloor.HighlightTile(false, dummy); }
 		if (manager.layerMovement != null) {manager.layerMovement.HighlightTile(false, dummy); }
 		if (manager.layerRail != null) {manager.layerRail.HighlightTile(false, dummy); }
-		
-		// call terminal's "just got selected" function
-		GetCurrentEditor().TerminalSelected();
 	}
 
 	public CodeEdit GetCurrentEditor()
