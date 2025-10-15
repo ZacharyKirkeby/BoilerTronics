@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=49 format=3 uid="uid://bqbkpk1u5wpef"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
@@ -188,7 +188,6 @@ border_color = Color(0, 0, 0, 1)
 bg_color = Color(0.47843137, 0.47843137, 0.47843137, 1)
 border_width_left = 4
 border_width_top = 2
-border_width_right = 1
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
 
@@ -247,9 +246,35 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r0au2"]
+bg_color = Color(0.54901963, 0.54901963, 0.54901963, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q1sto"]
+bg_color = Color(0.36078432, 0.36078432, 0.36078432, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="Theme" id="Theme_81d32"]
 Button/constants/icon_max_width = 50
+Button/styles/focus = SubResource("StyleBoxFlat_4jcs4")
+Button/styles/hover = SubResource("StyleBoxFlat_r0au2")
 Button/styles/normal = SubResource("StyleBoxFlat_4jcs4")
+Button/styles/pressed = SubResource("StyleBoxFlat_q1sto")
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_2qe5m")
@@ -312,12 +337,13 @@ visible = false
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu"]
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.709
+anchor_top = 0.70900005
 anchor_right = 0.5
-anchor_bottom = 0.709
+anchor_bottom = 0.814
 offset_left = -200.0
-offset_top = -204.0
+offset_top = -204.00006
 offset_right = 200.0
+offset_bottom = -6.1035156e-05
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("12_qd36q")
@@ -332,7 +358,7 @@ text = "Exit Menu"
 horizontal_alignment = 1
 
 [node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 125)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
 [node name="SaveButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
@@ -341,11 +367,84 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Save"
 
+[node name="Level Statistics" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Statistics"
+
 [node name="ExitButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
 custom_minimum_size = Vector2(400, 100)
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Exit"
+
+[node name="Level Statistics Menu" type="Window" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 800)
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.316
+anchor_right = 0.5
+anchor_bottom = 0.68
+offset_left = -200.0
+offset_top = -204.00006
+offset_right = 200.0
+offset_bottom = -6.1035156e-05
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("12_qd36q")
+theme_override_constants/separation = 50
+
+[node name="Level Statistics" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.69411767)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 14
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 75
+text = "Level Statistics"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="Highest Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 25
+text = "Highest Score: 100"
+horizontal_alignment = 1
+
+[node name="Previous Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 25
+text = "Previous Score: 100"
+horizontal_alignment = 1
+
+[node name="Lines Ran" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 25
+text = "Lines Ran: 5"
+horizontal_alignment = 1
+
+[node name="Time Played" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_xdjqv")
+theme_override_font_sizes/font_size = 25
+text = "Time Played: 0 hrs"
+horizontal_alignment = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 script = ExtResource("6_2j1wt")
@@ -562,6 +661,7 @@ columns = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 0
 icon = ExtResource("10_2j1wt")
 icon_alignment = 1
 
@@ -569,6 +669,7 @@ icon_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 0
 icon = ExtResource("16_3ip32")
 icon_alignment = 1
 
@@ -576,6 +677,7 @@ icon_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 0
 icon = ExtResource("10_iu26y")
 icon_alignment = 1
 
@@ -583,6 +685,7 @@ icon_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+focus_mode = 0
 theme_override_constants/icon_max_width = 40
 icon = ExtResource("11_iu26y")
 icon_alignment = 1
@@ -661,7 +764,9 @@ text = "Clear"
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics" to="." method="_on_level_statistics_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu" to="." method="_on_level_statistics_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]

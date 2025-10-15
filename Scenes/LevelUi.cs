@@ -99,7 +99,14 @@ public partial class LevelUi : Node2D
 	private void _on_exit_menu_close_requested() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = false;
 	}
-
+	
+	private void _on_level_statistics_menu_close_requested() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = false;
+	}
+	
+	private void _on_level_statistics_pressed() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
+	}
 	private void _on_save_button_pressed() {
 		
 		// Don't allow saving while stepping!
