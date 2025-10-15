@@ -15,5 +15,7 @@ namespace BoilerTronicsObjects.Interfaces {
 		void CreateTerminal(); // Registers the runnable object with the global manager
 		CodeEdit GetTerminal(); // Get the terminal that has all the code for this object
 		void DestroyTerminal(); // Unregisters the runnable object with the global manager
+		void SetScript(string script); // sets the text of the code edit
+		string GetScript(); // sets the text of the code edit
 	}
 }

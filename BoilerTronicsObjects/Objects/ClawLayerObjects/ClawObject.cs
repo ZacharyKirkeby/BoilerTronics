@@ -59,6 +59,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			E = null;
 		}
 
+		public void SetScript(string script) {
+			E.Text = script;
+		}
+
+		public string GetScript() {
+			return E.Text;
+		}
+
 		// Methods that we can use via commands
 		public void Move(string[] args) {
 			// TODO: check movement vectors
