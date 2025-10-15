@@ -67,19 +67,25 @@ public class BoilerTronicsSaveState
 	
 	// quick easy way to do autosaves; may not be needed
 	public void SaveAutosave(BoilerTronicsGlobalManager manager) {
-		 SaveDataTo(manager, "auto");
+		 SaveDataTo(manager, "", "auto");
 	}
 	
 	// note: "Save Location" is based off the base save directory
 	// i.e. '%user%/AppData/Roaming/Godot/app_userdata/[game name]/SaveLocationName'
-	// example for autosave: "auto".save
-	// example for level specific save: "level#/save0".save
-	public void SaveDataTo(BoilerTronicsGlobalManager manager, string SaveLocationName) {
+	// note: 'fileName' should also have the slash beforehand!
+	// note2: 'directory' should contain all directories/subdirectories up until the actual save file itself
+	//
+	// example for autosave: dir = "", fileName = "auto".save
+	// example for level specific save: dir: "level#", fileName: "/save0".save
+	// TODO: no longer using the 'using' keyword for the save file, need to double check that no memory leaks are created!
+	public void SaveDataTo(BoilerTronicsGlobalManager manager, string directory, string fileName) {
 		// lazy; import public data straight from manager
 		
 		// note: some formatting adopted from "https://docs.godotengine.org/en/stable/tutorials/io/saving_games.html"
-		string SavePath = "user://" + SaveLocationName + ".save";
-		if (!FileAccess.FileExists(SavePath)) {return;} // not valid save location
+		string DirectoryPath = "user://" + directory;
+		string SavePath = DirectoryPath + fileName + ".save";
+		GD.Print("SaveState: Trying to save to ", SavePath);
+		// if (!FileAccess.FileExists(SavePath)) {return;} // not valid save location
 		
 		// TODO: should implement in such a way that safely copies over the information, but that'll be done later.
 		// Just don't forget to do this! (security reasons, etc -- although who would try to hack this game via .dll injection and etc? Who knows.)
@@ -124,8 +130,34 @@ public class BoilerTronicsSaveState
 		
 		// by default saved in '%user%/AppData/Roaming/Godot/app_userdata/[game name]'
 		// TODO: have a distinct file save system for saving autosaves, level saves, etc
-		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
+		var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
 		// 'using' keyword means that this is automatically disposed of when going out of scope
+		
+		// if we can't open the file, then try and make the directory
+		// and then try to open the file again
+		if (saveFile == null) {
+			GD.Print("Could not save, err: ", FileAccess.GetOpenError());
+			GD.Print("Trying to create (recursive) directory(s) instead:");
+			
+			var dirSuccess = DirAccess.MakeDirRecursiveAbsolute(DirectoryPath);
+			
+			// if 'ERROR' == 0, then good. else, not so good.
+			if (dirSuccess != 0) {
+				GD.Print("Failed to make recursive directory(s): " + DirectoryPath);
+				return;
+			}
+			
+			// try again
+			saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
+			
+			if (saveFile == null) {
+				GD.Print("Could not save, err: ", FileAccess.GetOpenError());
+				GD.Print("Aborting save process.");
+				return;
+			} else {
+				GD.Print("Successfully created recursive directories and save file. Continue saving process now.");
+			}
+		}
 		
 		Godot.Collections.Dictionary<string, Variant> metadata = 
 			new Godot.Collections.Dictionary<string, Variant>()
@@ -135,6 +167,10 @@ public class BoilerTronicsSaveState
 				{ "saveSlot", save_slot },
 			};
 		
+		// GD.Print("mapSize: " + metadata["mapSize"]);
+		// GD.Print("levelId: " + metadata["levelId"]);
+		// GD.Print("saveSlot: " + metadata["saveSlot"]);
+		
 		// now: save important information line-by-line!
 		SaveLine(saveFile, "metadata", metadata);
 		SaveLine(saveFile, "clawLayer", liClaw.SerializeData());
@@ -142,6 +178,8 @@ public class BoilerTronicsSaveState
 		SaveLine(saveFile, "floorLayer", liFloor.SerializeData());
 		SaveLine(saveFile, "movementlayer", liMovement.SerializeData());
 		SaveLine(saveFile, "railLayer", liRail.SerializeData());
+		
+		((FileAccess) saveFile).Close();
 	}
 	
 	// load level data; automatically generate the save data info, given the level ID
@@ -357,6 +395,7 @@ public class BoilerTronicsSaveState
 	
 	// save a single line to a the provided file
 	public void SaveLine(FileAccess saveFile, string name, Variant obj) {
+		GD.Print("Saving ", name);
 		 saveFile.StoreLine(Json.Stringify(GenerateLine(name, obj)));
 	}
 	

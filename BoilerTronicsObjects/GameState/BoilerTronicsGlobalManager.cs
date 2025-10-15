@@ -73,6 +73,12 @@ public partial class BoilerTronicsGlobalManager : Node
 		return;
 	}
 	
+	// Sets whether or not DraggableObjects are allowed to be created and dragged.
+	public void SetDraggable(bool toggle) {
+		DragableObjectControl.allowDrag = toggle;
+		Layer.allowDrag = toggle;
+	}
+	
 	
 	/* SAVE STUFF */
 	
@@ -109,7 +115,8 @@ public partial class BoilerTronicsGlobalManager : Node
 	
 	// saves level based off the currently set global manager values
 	public void SaveLevel() {
-		string saveLocation;
+		string saveName;
+		string saveDirectory = "";
 		
 		// if trying to save onto an actual level slot, error!
 		if (levelLoadSlot == -1) {
@@ -120,13 +127,14 @@ public partial class BoilerTronicsGlobalManager : Node
 		// determine save load locations
 		// for actual levels, load levels progamatically!
 		if (levelLoadSlot == -2) {
-			saveLocation = "auto";
+			saveName = "auto";
 		} else {
 			// level save location example:
 			// dir/level0/save0.sav
-			saveLocation = "level" + levelID + "/save" + levelLoadSlot;
+			saveDirectory = "level" + levelID;
+			saveName = "/save" + levelLoadSlot;
 		}
-		saveState.SaveDataTo(this, saveLocation);
+		saveState.SaveDataTo(this, saveDirectory, saveName);
 	}
 
 	// loads level based off the currently set global manager values
@@ -161,6 +169,30 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 		return res;
 	}
+	
+	// given the provided ID/load slot inputs, check if a given save file exists
+	// returns 'true' if level exists, else return 'false'
+	public bool CheckSaveData(int inLevelID, int inLevelLoadSlot) {
+		string saveLocation;
+		
+		// determine save load locations
+		// for actual levels, load levels progamatically!
+		if (inLevelLoadSlot == -2) {
+			// autosave
+			saveLocation = "auto";
+		} else {
+			// level save location example:
+			// dir/level0/save0.sav
+			saveLocation = "level" + inLevelID + "/save" + inLevelLoadSlot + ".save";
+		}
+		return FileAccess.FileExists("user://" + saveLocation);
+	}
+	
+	// given the current levelId, levelLoadSlot, check if a given save file exists
+	public bool CheckSaveData() {
+		return CheckSaveData(levelID, levelLoadSlot);
+	}
+	
 	
 	// get loading-specific data per layer
 	// YES I KNOW that using strings to determine layer is not nice

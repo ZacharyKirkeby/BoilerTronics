@@ -4,6 +4,9 @@ using System;
 // this script will be 
 public partial class DragableObjectControl : Control {
 	
+	// if false, then should block all drag attempts
+	public static bool allowDrag = true;
+	
 	Sprite2D sprite;
 	Vector2I atlasCords;
 	int selection;
@@ -26,7 +29,8 @@ public partial class DragableObjectControl : Control {
 
 	public override void _GuiInput(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed)
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed
+			&& allowDrag)
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			if (manager.currLevel.StepCount != 0) return; // Don't allow placement while we are stepping
