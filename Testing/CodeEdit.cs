@@ -14,6 +14,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	
 	// important vars for highlighting objects!
 	private PlaceableObject correspondingObject;
+	private Layer highlightedLayer;
 	private bool highlightingObject = false;
 
 	public override void _Ready()
@@ -23,6 +24,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
 		currentLine = 0;
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// if new terminal is created, then the CurrentEditor() should be this terminal
+		// call and update terminal container accordingly
+		if (manager.terminalContainer.GetCurrentEditor() == this) {
+			manager.terminalContainer.UpdateSelectedTerminal();
+		}
 	}
 
 	// this is a debug function
@@ -38,6 +46,10 @@ public partial class CodeEdit : Godot.CodeEdit
 	public void TerminalSelected() {
 		GD.Print("terminal selected");
 		
+		TryHighlightingObject();
+	}
+	
+	public void TryHighlightingObject() {
 		if (correspondingObject != null && (correspondingObject is Scriptable)) {
 			// highlight corresponding object
 			
@@ -57,9 +69,17 @@ public partial class CodeEdit : Godot.CodeEdit
 	
 	// function to stop highlighting and etc
 	public void StopHighlighting() {
-		if (correspondingObject != null && highlightingObject) {
-			GD.Print("TODO: stop highlighting object");
-		}
+		// TODO: does not seem to work properly? The below values don't seem to be saved properly
+		// Behavior of when a CodeEdit terminal is de-selected is unknown...
+		
+		// GD.Print("CodeEdit: Trying to stop highlighting");
+		// only stop highlighting if needed!
+		// if (correspondingObject != null && highlightingObject) {
+			// if (highlightedLayer != null) {
+				// GD.Print("CodeEdit: Sent stop highlighting request to layer");
+				// highlightedLayer.HighlightTile(false, new Vector2I(0, 0));
+			// }
+		// }
 	}
 	
 	// terrible little helper function
@@ -86,9 +106,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		
 		// else: try and highlight the object!
 		// (TODO)
-		GD.Print("found target:", target);
+		// GD.Print("found target:", target);
+		highlightedLayer = layer;
+		layer.HighlightTile(true, target.GetCurrPos());
+		
 		return true;
 	}
+	
 	
 	// sets internal object to point to input
 	// mainly just used for the "highlight terminal's corresponding object" functionality
@@ -186,6 +210,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		}
 		lastHighlightedLine = -1;
 		HighlightCurrentLine = true;
+	}
+	
+	public override void _Input(InputEvent @event) {
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left) {
+			// TerminalSelected();
+		}
+		base._Input(@event);
 	}
 	
 }
