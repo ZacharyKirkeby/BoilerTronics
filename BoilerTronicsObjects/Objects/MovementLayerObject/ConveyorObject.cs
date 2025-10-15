@@ -56,7 +56,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (!(obj is TrackObject tObj)) return;
 
 			// Otherwise move it based on the input vector
-			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.cLayer, 1);
+			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 		}
 

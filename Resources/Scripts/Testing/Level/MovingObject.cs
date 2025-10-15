@@ -122,11 +122,12 @@ public partial class MovingObject : Area2D {
 
 	public void Collison(Node2D body) {
 		GD.Print("Ouch!");
+		if (body is MovingObject mBody && mBody.layer != this.layer) return; // we only wnat to colide thing on the same layer
+
 		if (collided) return; // Don't do anything if this is already handled
 		collided = true; // Set flag for this collision
 		// We have collided with something else, this is a problem and shouldn't happen :(
 		// This will trigger an error and then halt all movement
-		// Send something to the game state (TBD)
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.MovingCollisionReport(this);
 	}
