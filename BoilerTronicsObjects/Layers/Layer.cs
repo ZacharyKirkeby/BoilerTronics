@@ -252,6 +252,7 @@ namespace BoilerTronicsObjects.Layers
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
 					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
+					if (objAtPos is Scriptable sObj) sObj.DestroyTerminal();
 				}
 			}
 		}
