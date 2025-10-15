@@ -278,4 +278,24 @@ public partial class Parser : Node2D
 		GD.PrintErr($"Undefined label: {label}");
 		return false;
 	}
+
+	public int GetFirstValidLineAfterLabel(string labelName, List<string> lines) {
+		for (int i = 0; i < lines.Count; i++) {
+			string line = lines[i]?.Trim();
+
+			//find label:
+			if (line != null && line.Equals(labelName + ":")) {
+				//get next valid line
+				for (int j = i + 1; j < lines.Count; j++) {
+					string nextLine = lines[j]?.Trim();
+					//don't highlight empty lines or label lines
+					if (!string.IsNullOrWhiteSpace(nextLine) && !nextLine.EndsWith(":")) {
+						return j;
+					}
+				}
+			}
+		}
+		//return -1 if not found
+		return -1;
+	}
 }
