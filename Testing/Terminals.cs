@@ -3,26 +3,65 @@ using System;
 using System.Collections.Generic;
 
 // Tab container is the parent for all the terminals, use this to control / spawn / kill all terminals
-
 public partial class Terminals : TabContainer
 {
-	// realistically nothing should exceed 15 chars but this looks better on the current
-	// screen
+	// realistically nothing should exceed 15 chars but this looks better on the current screen
 	private int maxLineLength = 50;
 	// temp vars - remove once run buttons are established
 	public int currentLine = 0;
+
+	// dynamic list of editors
+	private List<CodeEdit> editors = new();
+
 	public override void _Ready()
 	{
 		currentLine = 0;
-		// handlers for each child node
+
+		// attach input handlers to any existing child editors
 		foreach (Node child in GetChildren())
 		{
 			if (child is CodeEdit codeEdit)
-			{
-				codeEdit.GuiInput += (InputEvent @event) => OnCodeEditInput(@event, codeEdit);
-			}
+				RegisterEditor(codeEdit);
 		}
+
 		this.TabSelected += OnTabSelected;
+
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.terminalContainer = this;
+	}
+
+	public CodeEdit AddEditor(string initialText = "Your Solution Here")
+	{
+		CodeEdit newEditor = new CodeEdit();
+		newEditor.Text = initialText;
+		AddChild(newEditor);
+		editors.Add(newEditor);
+		newEditor.AddToGroup("CodeTerminals");
+		RegisterEditor(newEditor);
+		
+		return newEditor;
+	}
+
+	public void RemoveEditor(CodeEdit editor)
+	{
+		if (editors.Contains(editor))
+		{
+			editors.Remove(editor);
+			editor.QueueFree();
+		}
+	}
+
+	public void RemoveAllEditors()
+	{
+		foreach (CodeEdit editor in editors)
+			editor.QueueFree();
+		editors.Clear();
+	}
+
+	// attaches the input handler to enforce max line length
+	private void RegisterEditor(CodeEdit codeEdit)
+	{
+		codeEdit.GuiInput += (InputEvent @event) => OnCodeEditInput(@event, codeEdit);
 	}
 
 	// Enforces character length requirements
@@ -47,6 +86,7 @@ public partial class Terminals : TabContainer
 			}
 		}
 	}
+
 	// presently without a play button the easiest to attach to event is switching tabs
 	// this is a simple proof of grabbing text from the editor
 	private void OnTabSelected(long tab)
@@ -59,11 +99,8 @@ public partial class Terminals : TabContainer
 		return GetChild<CodeEdit>(CurrentTab) as CodeEdit;
 	}
 
-	// case 1 - step
-	// for each terminal
-	// send to parser current line
-	// parser parses
-	// if not a steppable, call getAnother
-	// loop on this
-
+	public List<CodeEdit> GetAllEditors()
+	{
+		return editors;
+	}
 }

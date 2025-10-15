@@ -10,6 +10,7 @@ public partial class Parser : Node2D
 {
 	private int maxLineLength;
 	private int CurrLine;
+	private string editorName;
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
 	// for now this is how the labels and jumps will be handled
 	private readonly Dictionary<string, int> _labelMap = new();
@@ -17,6 +18,8 @@ public partial class Parser : Node2D
 	private readonly Dictionary<string, int> _registers = new();
 
 	// for line adjustment for jumps
+	[Signal]
+	public delegate void ErrorRaisedEventHandler(int lineNumber, string message, string editorName);
 
 	public override void _Ready()
 	{
@@ -39,6 +42,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*mov\s+(\S+)\s*$", m =>
 		{
 			GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Move Argument", editorName);
 			// func all
 		});
 
@@ -46,6 +50,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*mov\s*$", m =>
 		{
 			GD.Print("Malformed Move command, missing argument");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Move Missing Argument", editorName);
 			// func call
 		});
 
@@ -60,6 +65,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*rot\s+(\S+)\s*$", m =>
 		{
 			GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Rotate Argument", editorName);
 			// func call
 		});
 
@@ -67,6 +73,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*rot\s*$", m =>
 		{
 			GD.Print("Malformed Rotate command, missing argument");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Rotate Argument", editorName);
 		});
 
 
@@ -80,6 +87,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*drp\s+(\S+)\s*$", m =>
 		{
 			GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Drop Argument", editorName);
 			// func call
 		});
 
@@ -94,6 +102,7 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*grb\s+(\S+)\s*$", m =>
 		{
 			GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Grab Argument", editorName);
 			// func call
 		});
 
@@ -107,9 +116,11 @@ public partial class Parser : Node2D
 
 		_commandParser.Register(@"^\s*wrt\s+(\w+)\s*$", m =>
 			GD.Print($"Malformed Write: Missing value for register {m.Groups[1].Value}"));
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing value", editorName);
 
 		_commandParser.Register(@"^\s*wrt\s*$", _ =>
 			GD.Print("Malformed Write: Missing register and value"));
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing Register", editorName);
 
 		// MATH OPS + compare
 		string[] arith = { "add", "sub", "mult", "div", "cmp" };
@@ -130,6 +141,7 @@ public partial class Parser : Node2D
 						if (_registers[reg2] == 0)
 						{
 							GD.Print("Divide by zero error");
+							EmitSignal(SignalName.ErrorRaised, CurrLine, "Divide By Zero Error", editorName);
 							return;
 						}
 						_registers["r0"] = _registers[reg1] / _registers[reg2];
@@ -148,12 +160,14 @@ public partial class Parser : Node2D
 			_commandParser.Register($@"^\s*{cmd}\s+(r[0-2])\s*$", m =>
 			{
 				GD.Print($"Invalid {cmd} command, missing second argument");
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Second Argument", editorName);
 			});
 
 			// no arguments
 			_commandParser.Register($@"^\s*{cmd}\s*$", m =>
 			{
 				GD.Print($"Malformed {cmd} command, missing arguments");
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Arguments", editorName);
 			});
 		}
 
@@ -165,6 +179,7 @@ public partial class Parser : Node2D
 		_commandParser.Register($@"^\s*wait\s+(\S+)\s*$", m =>
 		{
 			GD.Print("Malformed Wait Unknown Arg");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Wait", editorName);
 		});
 
 		_commandParser.Register($@"^\s*jmp\s+(\S+)\s*$", m =>
@@ -175,21 +190,24 @@ public partial class Parser : Node2D
 		_commandParser.Register($@"^\s*jump\s*$", m =>
 		{
 			GD.Print("Malformed Jump: Missing Destination");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Jump: Missing Destination", editorName);
 		});
 
 		// placeholder for anything else
 		_commandParser.Register(@"^\s*\S+.*$", m =>
 		{
 			GD.Print($"Unknown command: {m.Value}");
+			EmitSignal(SignalName.ErrorRaised, CurrLine, "Unknown Command", editorName);
 		});
 	}
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
 	// Takes in the current step, derives line number off that
-	public void ParseGetLine(string terminal, int step)
+	public void ParseGetLine(string terminal, int step, string editor)
 	{
-		GD.Print("Made it to Parser");
+		//GD.Print("Made it to Parser");
 		//CurrLine = line;
+		editorName = editor;
 		// error handling - i love c#
 		if (string.IsNullOrWhiteSpace(terminal))
 		{
@@ -226,9 +244,6 @@ public partial class Parser : Node2D
 
 		// update UI about current line
 		// TODO - get this to actually work
-
-		// FTODO - REMOVE
-		GD.Print(CurrLine);
 
 		if (CurrLine >= validLines.Count)
 		{

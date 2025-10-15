@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using BoilerTronicsObjects.Layers;
 
 namespace BoilerTronicsObjects.Placeable
@@ -21,7 +22,12 @@ namespace BoilerTronicsObjects.Placeable
 			this.OGY = OGY;
 			this.CurrX = OGX;
 			this.CurrY = OGY;
-			this.sourceId = sourceId;
+
+			// pass in invalid -1 value to disable this setter
+			if (sourceId != -1) {
+				this.sourceId = sourceId;
+			}
+
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
 		}
@@ -39,8 +45,15 @@ namespace BoilerTronicsObjects.Placeable
 		// move the OG posistion of the object
 		public void MoveObject(int newX, int newY)
 		{
-			OGX = newX;
-			OGY = newY;
+			this.OGX = newX;
+			this.OGY = newY;
+			this.CurrX = this.OGX;
+			this.CurrY = this.OGY;
+		}
+		
+		public void MoveCurrPos(int newX, int newY) {
+			this.CurrX = newX;
+			this.CurrY = newY;
 		}
 
 		public Vector2I GetPos()
@@ -62,6 +75,43 @@ namespace BoilerTronicsObjects.Placeable
 		{
 			CurrX = OGX;
 			CurrY = OGY;
+		}
+		public Texture GetTexture()
+		{
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
+
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
+		}
+		
+		// should always return false, unless overriden by child object
+		public bool Scriptable() {
+			return false;
+		}
+		
+		// a generic "save" function used to serialize per object information
+		// note: this is very "lazy" for now!
+		public Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			// reminder: Vector2 is not supported by json! Must be isolated to composite (x, y) coordinates
+			return new Godot.Collections.Dictionary<string, Variant>()
+			{
+				{ "OGX", OGX },
+				{ "OGY", OGY },
+				{ "sourceId", sourceId },
+				{ "atlasPosX", atlasPos.X },
+				{ "atlasPosY", atlasPos.Y },
+				{ "altTitle", "null" },
+			};
 		}
 	}
 }
