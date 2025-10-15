@@ -9,6 +9,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 	public class TrackObject : ClawLayerObjects {
 		
 		int direction; // 0 = left; 1 = right;
+		int OGdir;
 
 		public const int Left = 0;
 		public const int Right = 1;
@@ -18,29 +19,20 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public TrackObject(int OGX, int OGY, int dir, int altTitle = 0) 
 		: base(OGX, OGY, dir == TrackObject.Right ? TrackObject.RightObjectAtlasPos : TrackObject.LeftObjectAtlasPos, altTitle) {
-			if (dir != TrackObject.Right || dir != TrackObject.Left) return; // Error
-
-			if (dir == TrackObject.Right) {
-				this.SetAtlasPos(TrackObject.RightObjectAtlasPos);
-			} else {
-				this.SetAtlasPos(TrackObject.LeftObjectAtlasPos);
-			}
+			if (dir != TrackObject.Right && dir != TrackObject.Left) return; // Error
 
 			direction = dir;
-			
-			UpdateSprite();
+			OGdir = dir;
 		}
+
 		private void UpdateSprite() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			manager.currLevel.rLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
 		}
 
-		public void ChangeDir(int newDir) {
-			if (newDir != TrackObject.Right || newDir != TrackObject.Left) return;
-			direction = newDir;
-			
-			if (newDir == TrackObject.Right) {
+		private void updateAtlas() {
+			if (direction == TrackObject.Right) {
 				this.SetAtlasPos(TrackObject.RightObjectAtlasPos);
 			} else {
 				this.SetAtlasPos(TrackObject.LeftObjectAtlasPos);
@@ -49,8 +41,20 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			UpdateSprite();
 		}
 
+		public void ChangeDir(int newDir) {
+			if (newDir != TrackObject.Right && newDir != TrackObject.Left) return;
+			this.direction = newDir;
+			updateAtlas();
+		}
+
 		public int GetDir() {
 			return direction;
+		}
+
+		public override void ResetPos() {
+			this.direction = this.OGdir;
+			base.ResetPos();
+			updateAtlas();
 		}
 	}
 }

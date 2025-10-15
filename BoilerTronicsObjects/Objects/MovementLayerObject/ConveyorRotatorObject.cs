@@ -2,6 +2,7 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -14,8 +15,10 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, objectAtlasPos, altTitle) {}
+		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
+			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
+			RegisterSteppable(); // Registers this as a runnable with the level state
+		} // create object
 
 		// Methods to deal with terminals
 		public CodeEdit GetTerminal() {
@@ -25,7 +28,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
-			E.Name = "Claw";
+			E.Name = "Rotator";
 		}
 
 		public void DestroyTerminal() {
@@ -43,37 +46,72 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		public void Step() {
-			// TODO: Implement
 			// Make a call to the parser
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.P.ParseGetLine(E.Text, manager.currLevel.StepCount, E.Name);
+			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			Rotate([""]);
 		}
 
 		public void Reset() {
-			// TODO: Implement
+			base.ResetPos();
 		}
-		
+
 		public void RegisterSteppable() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
 		}
 
 		public void UnRegisterSteppable() {
-			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
 		}
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
-			// return error
+			return; // Throw error
 		}
 
 		public void Grab(string[] args) {
-			// return error
+			return; // Throw error
 		}
 
 		public void Drop(string[] args) {
-			// return error
+			return; // Throw error
 		}
 
 		public void Rotate(string[] args) {
 			// Rotate rail object below us
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// Get track obj on rail layer
+			PlaceableObject rail = manager.currLevel.rLayer.FindObject(this.GetPos());
+			GD.Print("Rail:", rail);
+			if (rail == null) return; // Can't rotate if there's no rail
+			if (!(rail is TrackObject tObj)) return; // This is not a rail object
+			GD.Print("tObj:", tObj);
+
+			// Change its position
+			int currdir = tObj.GetDir();
+			GD.Print("currDir:", currdir);
+			switch (currdir) {
+				case 0:
+					tObj.ChangeDir(1);
+					break;
+				case 1:
+					tObj.ChangeDir(0);
+					break;
+			}
+
+			GD.Print("newDir:", tObj.GetDir());
+		}
+
+		// Override 'save' function to also return a script's information
+		public override Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
+			res["terminalCode"] = GetScript();
+			return res;
 		}
 	}
 }

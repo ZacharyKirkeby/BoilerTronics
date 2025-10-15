@@ -223,7 +223,6 @@ public partial class BoilerTronicsLevel : Node2D
 
 	// Steps through all runnables
 	public void Step() {
-		GD.Print("Step");
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
