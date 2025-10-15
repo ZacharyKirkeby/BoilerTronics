@@ -22,8 +22,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser
+			GD.Print("Claw step");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.currLevel.P.ParseGetLine(E.Text, manager.currLevel.StepCount, E.Name);
+			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
 
@@ -75,9 +76,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
+			GD.Print("move");
+			GD.Print(args);
+			GD.Print(args[0]);
+			GD.Print(args.Length);
+
 			// TODO: check movement vectors
 			if (args == null) return;
-			else if (args[0] != "mov") return; // Not the correct command
+			// else if (args[0] != "mov") return; // Not the correct command
 			else if (args.Length != 2) return;
 
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -85,18 +91,23 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 			switch (args[1]) {
 				case "u":
-					MoveVector = new Vector2I(1, 0);
+					MoveVector = new Vector2I(1, -1);
+					GD.Print("up");
 					break;
 				case "d":
-					MoveVector = new Vector2I(-1, 0);
+					MoveVector = new Vector2I(-1, 1);
+					GD.Print("down");
 					break;
 				case "r":
-					MoveVector = new Vector2I(0, 1);
+					MoveVector = new Vector2I(1, 0);
+					GD.Print("right");
 					break;
 				case "l":
-					MoveVector = new Vector2I(0, -1);
+					MoveVector = new Vector2I(-1, 0);
+					GD.Print("left");
 					break;
 				default:
+					GD.Print("invaid");
 					return; // not a valid arg
 			}
 
