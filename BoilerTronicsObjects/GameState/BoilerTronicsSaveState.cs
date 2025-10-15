@@ -137,14 +137,14 @@ public class BoilerTronicsSaveState
 		// if we can't open the file, then try and make the directory
 		// and then try to open the file again
 		if (saveFile == null) {
-			GD.Print("Could not save, err: ", FileAccess.GetOpenError());
-			GD.Print("Trying to create (recursive) directory(s) instead:");
+			GD.Print("SaveState: Could not save, err: ", FileAccess.GetOpenError());
+			GD.Print("SaveState: Trying to create (recursive) directory(s) instead:");
 			
 			var dirSuccess = DirAccess.MakeDirRecursiveAbsolute(DirectoryPath);
 			
 			// if 'ERROR' == 0, then good. else, not so good.
 			if (dirSuccess != 0) {
-				GD.Print("Failed to make recursive directory(s): " + DirectoryPath);
+				GD.Print("SaveState: Failed to make recursive directory(s): " + DirectoryPath);
 				return;
 			}
 			
@@ -152,11 +152,11 @@ public class BoilerTronicsSaveState
 			saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
 			
 			if (saveFile == null) {
-				GD.Print("Could not save, err: ", FileAccess.GetOpenError());
-				GD.Print("Aborting save process.");
+				GD.Print("SaveState: Could not save, err: ", FileAccess.GetOpenError());
+				GD.Print("SaveState: Aborting save process.");
 				return;
 			} else {
-				GD.Print("Successfully created recursive directories and save file. Continue saving process now.");
+				GD.Print("SaveState: Successfully created recursive directories and save file. Continue saving process now.");
 			}
 		}
 		
@@ -219,7 +219,7 @@ public class BoilerTronicsSaveState
 			var parseResult = json.Parse(jsonString);
 			if (parseResult != Error.Ok)
 			{
-				GD.Print($"JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at line {json.GetErrorLine()}");
+				GD.Print($"SaveState: JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at line {json.GetErrorLine()}");
 				continue;
 			}
 			
@@ -293,7 +293,7 @@ public class BoilerTronicsSaveState
 		// array of 2d arrays representing a protected coordinate
 		Godot.Collections.Array uneditableTiles = (Godot.Collections.Array) input["uneditableTiles"];
 		// GD.Print("established 'objects', 'uneditableTiles'");
-		GD.Print("objects count: " + objects.Count + ", protected tiles count: " + uneditableTiles.Count);
+		GD.Print("SaveState: objects count: " + objects.Count + ", protected tiles count: " + uneditableTiles.Count);
 		
 		// handle objects first:
 		// iterate through array and create the Placeable objects
@@ -320,8 +320,11 @@ public class BoilerTronicsSaveState
 					// if loaded string exists, then load as appropriate
 					terminalCode = (string) targetObj["terminalCode"];
 					
+					
 					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
-					// process: use 'GetTerminal()' to get the CodeEdit terminal, and load in appropriate string and etc
+					
+					((Scriptable) target).SetScript(terminalCode);
+					GD.Print("SaveState: successfully loaded terminal code");
 				}
 			}
 			listObj.Add(target);
