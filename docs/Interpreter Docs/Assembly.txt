@@ -5,6 +5,11 @@ takes l/r/u/d for left, right, up, down
 
 looks like: mov l 
 
+rotate - rot
+takes l/r for left, right
+
+looks like: rot l
+
 grab - grb
 no parameters
 
