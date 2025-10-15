@@ -380,7 +380,7 @@ public partial class LevelUi : Node2D
 				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
 
 				// Highlight error line
-				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f));
+				editor.HighlightLine(lineNumber--, new Color(1, 0, 0, 0.25f));
 
 				//TODO - delete
 				GD.Print($"[ParserError] {editorName}: Line {lineNumber} -> {message}");
