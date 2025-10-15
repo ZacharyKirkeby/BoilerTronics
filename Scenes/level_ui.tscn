@@ -1,5 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://cjypehapfq0tu"]
 
+[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
