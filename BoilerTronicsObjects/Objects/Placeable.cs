@@ -94,6 +94,9 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		
 		// should always return false, unless overriden by child object
+		// NOTE: this should be very redundant, given that "is interface" exists!
+		// I (Ethen) didn't do enough research at the time;
+		// consider this as redundant!
 		public bool Scriptable() {
 			return false;
 		}
