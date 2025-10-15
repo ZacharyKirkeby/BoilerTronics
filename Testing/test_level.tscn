@@ -1,36 +1,10 @@
-[gd_scene load_steps=6 format=4 uid="uid://bryroj3e2my4u"]
+[gd_scene load_steps=3 format=3 uid="uid://bi5xoykbg2jdl"]
 
+[ext_resource type="Script" uid="uid://cv7krxdsxh1i3" path="res://BoilerTronicsObjects/GameState/BoilerTronicsLevel.cs" id="1_56cbs"]
 [ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
-[ext_resource type="TileSet" uid="uid://cijjltc6wtqde" path="res://Resources/objects.tres" id="3_0eujj"]
-[ext_resource type="Script" uid="uid://bv2aomou3s01m" path="res://BoilerTronicsObjects/Layers/MovementLayer.cs" id="4_0eujj"]
-[ext_resource type="Script" uid="uid://f1hskbi7vgaf" path="res://BoilerTronicsObjects/Layers/ClawLayer.cs" id="4_83wf7"]
-[ext_resource type="Script" uid="uid://bf1wqkkjl1v80" path="res://BoilerTronicsObjects/Layers/FactoryLayer.cs" id="5_xei80"]
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_56cbs")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("2_0eujj")
-
-[node name="FactoryLayer" type="TileMapLayer" parent="."]
-y_sort_enabled = true
-texture_filter = 1
-tile_map_data = PackedByteArray("AAAAAAAAAAAAAAIAAAABAAAAAAAAAAIAAAACAAAAAAAAAAIAAAADAAAAAAAAAAEAAAABAP//AAAAAAIAAAACAP//AAAAAAIAAAADAP//AAAAAAIAAAAEAP//AAAAAAAAAAA=")
-tile_set = ExtResource("3_0eujj")
-collision_enabled = false
-script = ExtResource("5_xei80")
-
-[node name="ClawLayer" type="TileMapLayer" parent="."]
-y_sort_enabled = true
-texture_filter = 1
-tile_map_data = PackedByteArray("AAADAP//AQAAAAAAAAA=")
-tile_set = ExtResource("3_0eujj")
-collision_enabled = false
-script = ExtResource("4_83wf7")
-
-[node name="MovementLayer" type="TileMapLayer" parent="."]
-y_sort_enabled = true
-texture_filter = 1
-tile_map_data = PackedByteArray("AAADAP//AgAAAAEAAAA=")
-tile_set = ExtResource("3_0eujj")
-collision_enabled = false
-script = ExtResource("4_0eujj")

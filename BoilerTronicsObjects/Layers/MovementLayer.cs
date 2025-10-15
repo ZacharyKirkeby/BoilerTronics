@@ -5,6 +5,7 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Layers
 {
+	// public partial class MovementLayer(int x, int y) : Layer(x, y)
 	public partial class MovementLayer : Layer
 	{
 		public override void AddObject(PlaceableObject newPlaceable)
@@ -21,37 +22,8 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
- 			
-			// Change this once UI is further along
-			if (manager.currSlection == 1)
-			{
-				if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
-				{
-					Vector2 localMousePos = GetLocalMousePosition();
-					Vector2I tileCoords = LocalToMap(localMousePos);
-
-					GD.Print("Movement layer is pressed");
-					GD.Print("X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-
-					//testing; very primative method of moving the screen
-					// this.Position += new Vector2(1, 1);
-
-					// TODO: Pass in correct values here once factory is made
-					// TODO: for now, place conveyor rotator objects
-					Vector2I atlasCords = manager.objectToPlace;
-					AddObject(ObjectFactory.CreateObject(tileCoords, 2, atlasCords));
-				}
-				else
-				{
-					base._Input(@event); // pass downward
-				}
-			}
-			else
-			{
-				base._Input(@event); // pass downward
-			}
+			MouseInput(@event, 1, 2);
+			base._Input(@event);
 		}
-
 	}
 }
