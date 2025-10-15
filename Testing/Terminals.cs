@@ -30,9 +30,9 @@ public partial class Terminals : TabContainer
 		manager.terminalContainer = this;
 		
 		// run terminal selected functionality
-		// TODO: but does this actually work?
-		CodeEdit curr = GetCurrentEditor();
-		if (curr != null) { curr.TerminalSelected();}
+		// didn't work in the first place, causes problems; disabled.
+		// CodeEdit curr = GetCurrentEditor();
+		// if (curr != null) { curr.TerminalSelected();}
 	}
 
 	public CodeEdit AddEditor(string initialText = "Your Solution Here")
