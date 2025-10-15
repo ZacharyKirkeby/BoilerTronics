@@ -9,6 +9,9 @@ public partial class LevelUi : Node2D
 	private TabContainer tabs;
 	private Parser parser;
 	private List<CodeEdit> editors = new();
+	// automatically define the global manager so we don't need to keep redefining it and etc
+	static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
 	private Label stepCountLabel;
 	private int stepCount = 0;
 	private bool isError = false; //temp boolean to track if an error has occured
@@ -56,8 +59,6 @@ public partial class LevelUi : Node2D
 		// manager.SetDraggable(false); // debug; testing script
 	}
 	
-	// automatically define the global manager so we don't need to keep redefining it and etc
-	static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 	
 	//set error status as true with errorID and name of terminal causing error
 	public void setError(int errID, String editor)
@@ -86,7 +87,12 @@ public partial class LevelUi : Node2D
 	}
 	private void _on_save_button_pressed() {
 		
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// Don't allow saving while stepping!
+		// TODO: visually indicate that system cannot save	
+		if (manager.currLevel.StepCount != 0) {
+			return;
+		}
+		
 		saveZero.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
 		saveOne.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
 		saveTwo.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
@@ -226,8 +232,14 @@ public partial class LevelUi : Node2D
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
 		if(!isError) {
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
+			
+			// on first step button press, trigger an autosave!
+			if (stepCount == 0) {
+				manager.SaveAutosave();
+			}
+			
 			stepCount++;
 			UpdateStepCount();
 			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
