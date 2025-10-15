@@ -7,7 +7,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorRightObject : MovementLayerObjects, Scriptable, Runnable {
+	public class ConveyorRightObject : MovementLayerObjects {
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 1);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -15,44 +15,5 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		
 		public ConveyorRightObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, objectAtlasPos, altTitle) {}
-
-		public string[] GetNextCommand() {
-			// TODO: Implement
-			return null;
-		}
-
-		public ScriptableCommand GetCommand(string commandWord) {
-			// TODO: Implement
-			return null;
-		}
-
-		public void CreateTerminal() {
-			// TODO: Implement
-		}
-
-		public CodeEdit GetTerminal() {
-			// TODO: Implement
-			return null;
-		}
-
-		public void DestroyTerminal() {
-			// TODO: Implement
-		}
-
-		public void Step() {
-			// TODO: Implement
-		}
-
-		public void Reset() {
-			// TODO: Implement
-		}
-		
-		public void RegisterSteppable() {
-			// TODO: Implement
-		}
-
-		public void UnRegisterSteppable() {
-			// TODO: Implement
-		}
 	}
 }
