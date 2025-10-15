@@ -218,12 +218,13 @@ public partial class LevelUi : Node2D
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
 		if(!isError) {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
 			stepCount++;
 			UpdateStepCount();
 			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
 			// Tell the global manager that we are stepping
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.Step();
 
 			//update code terminal highlighting to next one regardless of error
