@@ -15,6 +15,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
+			CreateTerminal();
+			RegisterSteppable();
 		}
 
 		// Add to conveyor group
@@ -67,9 +69,40 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			}
 			
 			if (converyorGroupList.Count != 1) {
+				GD.Print("Split");
 				// We need to split or we need to remove the group
-				// Handle this later
-				GD.Print("We should split");
+				// Find the group with the most (this will be the one that we keep_
+				int currMax = -1;
+				ArrayList keepList = new ArrayList();
+
+				foreach (ArrayList group in converyorGroupList) {
+					GD.Print("Group Count: ", group.Count);
+					if (group.Count > currMax) {
+						currMax = group.Count;
+						keepList = group;
+					}
+				}
+
+				if (keepList.Count == 0) return;
+
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+				// For all the other groups
+				foreach (ArrayList group in converyorGroupList) {
+					if (group != keepList) {
+						// Create new Group
+						ConveyorGroup newGroup = new ConveyorGroup(0, 0, dir);
+
+						// Add all nodes to that group
+						// Remove those nodes from us
+						foreach (ConveyorObject cObj in group) {
+							GD.Print("Adding item: ", cObj);
+							newGroup.AddConveyor(cObj);
+							manager.currLevel.mLayer.ConvGroupList.Add(newGroup);
+							this.convList.Remove(cObj);
+						}
+					}
+				}
 			}
 		}
 

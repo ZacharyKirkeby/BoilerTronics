@@ -11,7 +11,7 @@ namespace BoilerTronicsObjects.Layers
 	public partial class MovementLayer : Layer
 	{		
 
-		private ArrayList ConvGroupList;
+		public ArrayList ConvGroupList;
 
 		public MovementLayer(int x, int y) : base(x,y) {
 			ConvGroupList = new ArrayList(); // Create a list of groups
