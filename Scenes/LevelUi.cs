@@ -80,7 +80,7 @@ public partial class LevelUi : Node2D
 	}
 
 	// return to main menu button
-	private void _on_button_pressed()
+	private void _on_exit_button_pressed()
 	{
 
 		// Get manager
@@ -91,6 +91,13 @@ public partial class LevelUi : Node2D
 		manager.SaveLevel();
 
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
+	}
+
+	private void _on_settings_button_pressed() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = true;
+	}
+	private void _on_exit_menu_close_requested() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = false;
 	}
 
 	private void _on_save_button_pressed() {
