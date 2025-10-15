@@ -24,7 +24,10 @@ public partial class Terminals : TabContainer
                 RegisterEditor(codeEdit);
         }
 
-        this.TabSelected += OnTabSelected;
+		this.TabSelected += OnTabSelected;
+
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.terminalContainer = this;
     }
 
     public CodeEdit AddEditor(string initialText = "")
@@ -34,7 +37,8 @@ public partial class Terminals : TabContainer
         AddChild(newEditor);
         editors.Add(newEditor);
         newEditor.AddToGroup("CodeTerminals");
-        RegisterEditor(newEditor);
+		RegisterEditor(newEditor);
+		
         return newEditor;
     }
 
