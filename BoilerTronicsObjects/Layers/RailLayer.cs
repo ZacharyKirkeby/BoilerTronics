@@ -31,8 +31,9 @@ namespace BoilerTronicsObjects.Layers
 				MouseInput(@event, 3, 1);
 				// GD.Print("Rail");
 			}
-			else if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()) {
+			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
+				GD.Print("Rail");
 				MouseInput(@event, 3, 1);
 			}
 			base._Input(@event);
