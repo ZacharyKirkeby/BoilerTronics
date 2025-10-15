@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -44,6 +45,36 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public int GetDir() {
 			return direction;
+		}
+
+		public void Move(Vector2I vec) {
+			// Get the rail below us
+			// If there is none return
+			// Otherwise move it based on the input vector
+		}
+
+		public ArrayList getConnections() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			Vector2I v1;
+			Vector2I v2;
+
+			if (this.direction == ConveyorObject.Right) {
+				v1 = new Vector2I(1, -1);
+				v2 = new Vector2I(-1, 1);
+			} else {
+				v1 = new Vector2I(0, 1);
+				v2 = new Vector2I(1, 0);
+			}
+
+			ArrayList retList = new ArrayList();
+			
+			PlaceableObject obj1 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v1);
+			if (obj1 != null) retList.Add(obj1);
+
+			PlaceableObject obj2 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v2);
+			if (obj2 != null) retList.Add(obj2);
+
+			return retList;
 		}
 	}
 }
