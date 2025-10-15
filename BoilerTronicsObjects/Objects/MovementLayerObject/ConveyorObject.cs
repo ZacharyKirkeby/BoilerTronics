@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections;
 using BoilerTronicsObjects.Layers;
-using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -49,8 +49,15 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void Move(Vector2I vec) {
 			// Get the rail below us
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			PlaceableObject obj = manager.currLevel.rLayer.FindObject(this.GetCurrPos());
 			// If there is none return
+			if (obj == null) return;
+			if (!(obj is TrackObject tObj)) return;
+
 			// Otherwise move it based on the input vector
+			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.cLayer, 1);
+			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 		}
 
 		public ArrayList getConnections() {
