@@ -4,6 +4,7 @@ using System.Collections;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -157,6 +158,8 @@ namespace BoilerTronicsObjects.Layers
 			// Get manager
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
 
+			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
+
 			// Get coords of event
 			Vector2 localMousePos = GetLocalMousePosition();
 			Vector2I tileCoords = LocalToMap(localMousePos);
@@ -243,6 +246,7 @@ namespace BoilerTronicsObjects.Layers
 				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
+					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
 				}
 			}
 		}

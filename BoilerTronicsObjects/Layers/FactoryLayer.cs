@@ -33,6 +33,7 @@ namespace BoilerTronicsObjects.Layers
 			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
 				MouseInput(@event, 2, 0);
+				return;
 			}
 			base._Input(@event);
 		}
