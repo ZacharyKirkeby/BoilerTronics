@@ -33,9 +33,10 @@ namespace BoilerTronicsObjects.Layers
 		{
 			base.AddObject(newPlaceable);
 
-			GD.Print("Test");
-
+			// if the new placeable object is a ConveyorObject, insert them into the ConveyorGroup
 			if (newPlaceable is ConveyorObject cObj) {
+				GD.Print("MovementLayer: Inserting into Conveyor");
+				
 				ArrayList conns = cObj.GetConnections();
 
 				GD.Print("cons: ", conns.Count);

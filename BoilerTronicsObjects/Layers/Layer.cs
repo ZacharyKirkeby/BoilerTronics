@@ -126,6 +126,10 @@ namespace BoilerTronicsObjects.Layers
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
 			GD.Print("Added object");
+			
+			// update placeable's parent layer info
+			newPlaceable.SetParentLayer(this);
+			
 			numItems++;
 		}
 
