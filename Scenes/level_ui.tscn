@@ -1,17 +1,19 @@
-[gd_scene load_steps=43 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=45 format=3 uid="uid://bqbkpk1u5wpef"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
-[ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
-[ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
-[ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
+[ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_34jgd"]
+[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="7_ai2e2"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="7_h5pod"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_4jcs4"]
-[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="8_iu26y"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="8_iu26y"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="9_qd36q"]
 [ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="10_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="10_iu26y"]
 [ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="11_iu26y"]
@@ -168,7 +170,7 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
-[sub_resource type="Theme" id="Theme_xdjqv"]
+[sub_resource type="Theme" id="Theme_2j1wt"]
 Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
 Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
 Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
@@ -295,40 +297,40 @@ highlight_current_line = true
 script = ExtResource("2_6tjow")
 metadata/_tab_index = 2
 
-[node name="LevelToolbarContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 
-[node name="ToolbarPanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
+[node name="ToolbarPanelContainer" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
-[node name="Toolbar" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer"]
+[node name="Toolbar" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ToolbarPanelContainer"]
 layout_mode = 2
 theme = SubResource("Theme_ao4gj")
 theme_override_constants/separation = 10
 alignment = 2
 
-[node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
+[node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ToolbarPanelContainer/Toolbar"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
+[node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ToolbarPanelContainer/Toolbar"]
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Level 1: The Beginning"
 horizontal_alignment = 2
 
-[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar"]
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ToolbarPanelContainer/Toolbar"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 theme_override_constants/icon_max_width = 20
 icon = ExtResource("2_u4a2s")
 icon_alignment = 1
 
-[node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
+[node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 script = ExtResource("6_2j1wt")
 
-[node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer"]
+[node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer"]
 layout_mode = 3
 anchors_preset = 11
 anchor_left = 1.0
@@ -340,7 +342,7 @@ offset_bottom = -525.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray"]
+[node name="Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -349,7 +351,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_3didx")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -364,7 +366,7 @@ theme = SubResource("Theme_r0au2")
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/icon_max_width = 25
@@ -372,7 +374,7 @@ icon = ExtResource("7_34jgd")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -380,7 +382,7 @@ theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "?"
 
-[node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/icon_max_width = 25
@@ -388,17 +390,17 @@ icon = ExtResource("8_4jcs4")
 icon_alignment = 1
 expand_icon = true
 
-[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 icon = ExtResource("7_2j1wt")
 expand_icon = true
 
-[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel"]
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -411,12 +413,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_2j1wt")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray"]
 libraries = {
 &"": SubResource("AnimationLibrary_2j1wt")
 }
 
-[node name="OpenButton" type="Button" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer"]
+[node name="OpenButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer"]
 visible = false
 anchors_preset = -1
 anchor_left = 1.0
@@ -429,17 +431,16 @@ offset_bottom = 4.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer"]
+[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 layout_mode = 2
 
-[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/LevelContainer"]
+[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
 handle_input_locally = false
 size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/LevelToolbarContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
-scale = Vector2(0.75, 0.7)
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2qe5m")]
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
@@ -452,284 +453,53 @@ theme_override_constants/separation = 0
 [node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
-theme = SubResource("Theme_xdjqv")
+theme = SubResource("Theme_2j1wt")
 theme_override_constants/separation = 0
 
-[node name="Movement" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType1" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_iu26y")
 text = "Movement"
+script = ExtResource("7_h5pod")
 
-[node name="Claw" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_qd36q")
-text = "Claw"
+text = "Factory"
+script = ExtResource("8_iu26y")
 
-[node name="Factory" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2j1wt")
-text = "Factory"
+text = "Claw"
+script = ExtResource("9_qd36q")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_xdjqv")
 
-[node name="Movement Items" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
 custom_minimum_size = Vector2(1450, 0)
 layout_mode = 2
 theme = SubResource("Theme_2qe5m")
 
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items"]
+[node name="ObjectPicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
-
-[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Movement Items/ResourcePicker"]
-layout_mode = 2
-
-[node name="Claw Items" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
-visible = false
-custom_minimum_size = Vector2(1450, 0)
-layout_mode = 2
-theme = SubResource("Theme_2qe5m")
-
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items"]
-clip_contents = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 50
-
-[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Claw Items/ResourcePicker"]
-layout_mode = 2
-
-[node name="Factory Items" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
-visible = false
-custom_minimum_size = Vector2(1450, 0)
-layout_mode = 2
-theme = SubResource("Theme_2qe5m")
-
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items"]
-clip_contents = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 50
-
-[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/Factory Items/ResourcePicker"]
-layout_mode = 2
+script = ExtResource("7_ai2e2")
 
 [node name="CounterTimeControlsContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -742,8 +512,10 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
-[node name="Step Counter" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container"]
+[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container"]
+unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.67481464, 0.67481464, 0.6748146, 0.8627451)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Step Counter: 0"
 horizontal_alignment = 1
@@ -763,28 +535,27 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="Step" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+[node name="Step Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource("10_2j1wt")
 icon_alignment = 1
 
-[node name="Play" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+[node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-icon = ExtResource("8_iu26y")
 icon_alignment = 1
 
-[node name="Pause" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+[node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 icon = ExtResource("10_iu26y")
 icon_alignment = 1
 
-[node name="Reset" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+[node name="Reset Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -792,9 +563,8 @@ theme_override_constants/icon_max_width = 40
 icon = ExtResource("11_iu26y")
 icon_alignment = 1
 
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/ToolbarPanelContainer/Toolbar/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer" method="_on_toggle_button_pressed"]
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/OpenButton" to="MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer" method="_on_open_button_pressed"]
-[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Movement" to="." method="_on_movement_pressed"]
-[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Claw" to="." method="_on_claw_pressed"]
-[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CategoryPicker/Factory" to="." method="_on_factory_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ToolbarPanelContainer/Toolbar/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_toggle_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_open_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
