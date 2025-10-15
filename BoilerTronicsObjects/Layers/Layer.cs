@@ -72,6 +72,7 @@ namespace BoilerTronicsObjects.Layers
 		}
 		
 		// TODO: return this data safely rather than just returning the address
+		// TODO: refactor to properly follow C# syntax
 		public PlaceableObject[,] exportTiles() {
 			return tiles;
 		}

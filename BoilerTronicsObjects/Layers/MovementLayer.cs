@@ -28,15 +28,20 @@ namespace BoilerTronicsObjects.Layers
 
 			return null;
 		}
+		
 
+		// if the new placeable object is a ConveyorObject, insert them into the ConveyorGroup
+		// ConveyorGroups are "lines" of rails; if grouped together, this makes handling scripting and etc much more reasonable
+		// Note: ConveyorGroups must also specifically update the heads of each list to hold also hold a reference to this group's CodeEdit
+		// Note: what happens when we merge together two objects that already have contents in their terminals? Does one just take precedent? Probably yes
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			base.AddObject(newPlaceable);
 
-			// if the new placeable object is a ConveyorObject, insert them into the ConveyorGroup
 			if (newPlaceable is ConveyorObject cObj) {
 				GD.Print("MovementLayer: Inserting into Conveyor");
 				
+				// get ArrayList of adjacent objectes
 				ArrayList conns = cObj.GetConnections();
 
 				GD.Print("cons: ", conns.Count);
@@ -46,10 +51,19 @@ namespace BoilerTronicsObjects.Layers
 					ConveyorGroup conveyorGroup = new ConveyorGroup(0, 0, cObj.GetDir());
 					conveyorGroup.AddConveyor(cObj);
 					ConvGroupList.Add(conveyorGroup);
+					
+					// update the head of the ConveyorGroup to hold the terminal information
+					((ConveyorObject) cObj).SetTerminal(conveyorGroup.GetTerminal());
+					
 				} else if (conns.Count == 1) {
 					// Add to group
 					ConveyorGroup group = GetGroup(conns[0] as ConveyorObject);
 					group.AddConveyor(cObj);
+					
+					// update the head of the ConveyorGroup to hold the terminal information, clears everything else
+					// this might be excessive as this iterates through the whole group, cleans everything up
+					// before then setting the head. 'AddConveyor' should only ever add to tail? but just to be safe I guess.
+					group.ResetContentsTerminal();
 				} else {
 					// Count = 2
 					// Combine groups (smaller to larger)
@@ -65,6 +79,9 @@ namespace BoilerTronicsObjects.Layers
 						g2.UnRegisterSteppable();
 						g2.DestroyTerminal();
 						ConvGroupList.Remove(g2);
+						
+						// update the head of the ConveyorGroup to hold the terminal information, clears everything else
+						g1.ResetContentsTerminal();
 					} else {
 						// Combine
 						g2.AddConveyor(cObj);
@@ -74,6 +91,9 @@ namespace BoilerTronicsObjects.Layers
 						g1.UnRegisterSteppable();
 						g1.DestroyTerminal();
 						ConvGroupList.Remove(g1);
+						
+						// update the head of the ConveyorGroup to hold the terminal information, clears everything else
+						g2.ResetContentsTerminal();
 					}
 				}
 			}

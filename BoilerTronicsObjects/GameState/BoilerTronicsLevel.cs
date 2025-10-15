@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;	// MovementLayer
 using Parsing;
 
 public partial class BoilerTronicsLevel : Node2D
@@ -166,6 +167,12 @@ public partial class BoilerTronicsLevel : Node2D
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
+			
+			// handle ConveyorGroup case
+			MovementLayer movement = (MovementLayer) manager.layerMovement;
+			foreach (ConveyorGroup obj in movement.ConvGroupList) {
+				obj.LoadTerminal();
+			}
 		}
 		
 		// store four corners of the floor layer
