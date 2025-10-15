@@ -22,8 +22,8 @@ public partial class LevelUi : Node2D
 		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
 
-		var container = tabs.GetChild<TabContainer>(0); // adjust if needed
-		editors = container.GetEditors();
+		//var container = tabs.GetChild<TabContainer>(0); // adjust if needed
+		
 		
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		UpdateStepCount();
