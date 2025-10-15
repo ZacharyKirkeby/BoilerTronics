@@ -37,7 +37,7 @@ public partial class Terminals : TabContainer
 	public CodeEdit AddEditor(string initialText = "Your Solution Here")
 	{
 		CodeEdit newEditor = new CodeEdit();
-		newEditor.Text = initialText;
+		newEditor.PlaceholderText = initialText;
 		AddChild(newEditor);
 		editors.Add(newEditor);
 		newEditor.AddToGroup("CodeTerminals");

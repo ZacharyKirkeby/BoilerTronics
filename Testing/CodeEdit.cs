@@ -117,28 +117,67 @@ public partial class CodeEdit : Godot.CodeEdit
 			return;
 		}
 
-		int lineToHighlight = lineNumber % totalLines;
-		for (int i = 0; i < totalLines; i++)
-		{
-			string currLineText = GetLine(lineToHighlight);
+		int lineToHighlight = Math.Max(0, lineNumber);
 
-			//check if valid code line
-			if (!string.IsNullOrWhiteSpace(currLineText) && !currLineText.Contains(":")) {
-				break;
+		//invalid line count
+		if (lineToHighlight >= totalLines) {
+			return;
+		}
+
+		while (lineToHighlight < totalLines) {
+			string curr = GetLine(lineToHighlight);
+			if (string.IsNullOrWhiteSpace(curr) || curr.Trim().EndsWith(":")) {
+				lineToHighlight++;
+				continue;
 			}
-			lineToHighlight = (lineToHighlight + 1) % totalLines;
+			string trimmedLine = curr.Trim();
+			if (trimmedLine.StartsWith("jmp ")) {
+				//get label "name"
+				string label = trimmedLine.Substring(4).Trim();
+				int target = FindNextLineAfterLabel(label);
+				if (target >= 0) {
+					lineToHighlight = target;
+					break;
+				}
+				else {
+					break;
+				}
+			}
+			break;
+		}
+
+		// if we've run past the last line while skipping, do nothing
+		if (lineToHighlight >= totalLines) {
+			return;
 		}
 
 		SetLineBackgroundColor(lineToHighlight, color);
 		lastHighlightedLine = lineToHighlight;
+		QueueRedraw();
 	}
-	
-	/*public void HighlightErrorLine(int lineNumber) {
-		HighlightCurrentLine = false;
-		SetLineBackgroundColor(lastHighlightedLine, new Color(0, 0, 0, 0f));
-		SetLineBackgroundColor(lineNumber, new Color(1, 0, 0, 0.3f));
-		lastHighlightedLine = lineNumber;
-	}*/
+
+	private int FindNextLineAfterLabel(string labelName) {
+		int total = GetLineCount();
+		if (total == 0) {
+			return -1;
+		}
+
+		for (int i = 0; i < total; i++) {
+			var line = GetLine(i)?.Trim();
+			if (line != null && line.Equals(labelName + ":")) {
+				//find first line after label
+				for (int j = i + 1; j < total; j++) {
+					var next = GetLine(j);
+					if (!string.IsNullOrWhiteSpace(next) && !next.Trim().EndsWith(":")) {
+						return j;
+					}
+				}
+				return -1; //if no line to highlight after
+			}
+		}
+
+		return -1; //no corresponding label found
+	}
 
 	//clears all highlighting for all terminals (when reset button pressed)
 	public void ClearAllHighlights() {
