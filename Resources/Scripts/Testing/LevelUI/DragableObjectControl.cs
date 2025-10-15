@@ -40,10 +40,7 @@ public partial class DragableObjectControl : Control {
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
 			// spawn terminal perhap?
-			if (typeof(Scriptable).IsAssignableFrom(draggable.GetType()))
-            {
-				GD.Print("Can have terminal");
-            }
+			
 			GD.Print("Created new dragable:", draggable);
 			manager.objectToPlace = atlasCords;
 			manager.placingObject = 1;
