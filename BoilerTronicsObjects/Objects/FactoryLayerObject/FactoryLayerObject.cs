@@ -3,10 +3,11 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	
-	public abstract class FactoryLayerObjects : PlaceableObject {
+	public abstract class FactoryLayerObjects : PlaceableObject, Movable {
 		
 		static int layerSourceId = 0;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
@@ -14,6 +15,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// objects will have identical sourceIds.
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
+
+		public PlaceableObject PickUp() {
+			return null;
+		}
+		
+		public void Place() {
+		}
 		
 		public FactoryLayerObjects(int OGX, int OGY, Vector2I atlasPos, int altTitle) 
 		: base(OGX, OGY, layerSourceId, atlasPos, altTitle) {}
