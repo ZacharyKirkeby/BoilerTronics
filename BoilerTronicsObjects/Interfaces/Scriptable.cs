@@ -2,8 +2,6 @@ using Godot;
 using System;
 
 namespace BoilerTronicsObjects.Interfaces {
-	public delegate void ScriptableCommand(string[] args); // allows us to have method/function pointers
-
 	interface Scriptable {
 		// Methods for the commands that the parser will try to run
 		void Move(string[] args); // u d l r

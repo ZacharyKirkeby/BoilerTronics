@@ -24,21 +24,13 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
-			if (dir != ConveyorObject.Right || dir != ConveyorObject.Left) return; // Error
-
-			if (dir == ConveyorObject.Right) {
-				this.SetAtlasPos(RightObjectAtlasPos);
-			} else {
-				this.SetAtlasPos(LeftObjectAtlasPos);
-			}
+			if (dir != ConveyorObject.Right && dir != ConveyorObject.Left) return; // Error
 
 			direction = dir;
-			
-			UpdateSprite();
 		}
 
 		public void ChangeDir(int newDir) {
-			if (newDir != ConveyorObject.Right || newDir != ConveyorObject.Left) return;
+			if (newDir != ConveyorObject.Right && newDir != ConveyorObject.Left) return;
 			direction = newDir;
 
 			if (newDir == ConveyorObject.Right) {

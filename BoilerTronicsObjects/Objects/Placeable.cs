@@ -76,11 +76,12 @@ namespace BoilerTronicsObjects.Placeable
 			this.atlasPos = newAtlas;
 		}
 
-		public void ResetPos()
+		public virtual void ResetPos()
 		{
 			CurrX = OGX;
 			CurrY = OGY;
 		}
+
 		public Texture GetTexture()
 		{
 			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
