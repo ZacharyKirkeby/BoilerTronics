@@ -167,12 +167,10 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		// store four corners of the floor layer
-		/*
 		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
 		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
-		*/
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();

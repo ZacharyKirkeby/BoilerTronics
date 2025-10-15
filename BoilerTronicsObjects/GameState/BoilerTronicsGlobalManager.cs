@@ -41,6 +41,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	public Terminals terminalContainer;
 	/***** End Testing Vars *****/
 
+	// TODO:
+	// keeps track of the last selected terminal
+	// will make un-highlighting corresponding objects marginally easier
+	public CodeEdit lastSelectedTerminal;
+
 	/* Save Data Vars: */
 	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	

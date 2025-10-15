@@ -51,6 +51,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
 			E.Name = "Claw";
+			
+			E.SetCorrespondingObject(this);
 		}
 
 		public void DestroyTerminal() {
