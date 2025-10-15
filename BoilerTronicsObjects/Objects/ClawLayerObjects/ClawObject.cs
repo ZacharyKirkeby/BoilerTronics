@@ -78,13 +78,16 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
-			// TODO: check movement vectors
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
 			if (args == null) return; // Error, no command
 			// else if (args[0] != "mov") return; // Not the correct command
 			else if (args.Length != 2) return; // Error, invalid args
-			else if (this.moving) return; // Error, already moving
+			else if (this.moving) {
+				// Error, already moving
+				manager.currLevel.MovingCollisionReport(null);
+			}
 
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			Vector2I MoveVector;
 			int targetDir;
 

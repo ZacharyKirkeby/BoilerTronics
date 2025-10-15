@@ -55,9 +55,20 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (obj == null) return;
 			if (!(obj is TrackObject tObj)) return;
 
-			// Otherwise move it based on the input vector
+			// Move track
 			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+
+			// Move claw if there exists one
+			obj = manager.currLevel.cLayer.FindObject(this.GetCurrPos());
+			if (obj == null) return;
+			if (!(obj is ClawObject cObj)) return;
+			if (cObj.moving) manager.currLevel.MovingCollisionReport(null);
+
+			// Move track
+			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, 1);
+			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
+			cObj.moving = true;
 		}
 
 		public ArrayList GetConnections() {
