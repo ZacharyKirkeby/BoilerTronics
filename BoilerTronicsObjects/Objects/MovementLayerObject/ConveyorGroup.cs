@@ -1,28 +1,27 @@
-// TODO: implement in more detail
 using Godot;
 using System;
-using System.Linq;
-using BoilerTronicsObjects.Layers;
-using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using System.Collections;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
-using Parsing;
 
-namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
-
-	public class ClawObject : ClawLayerObjects, Scriptable, Runnable {
+namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
+	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable{
 		
-		static Vector2I objectAtlasPos = new Vector2I(0, 0);
-		private PlaceableObject heldObject = null;
+		ArrayList convList = new ArrayList(); // List of conveyor objects
 		private CodeEdit E;
+		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
+		private int dir;
 
-		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
-		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
+		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
+			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
+		}
+
 
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser
-			GD.Print("Claw step");
+			GD.Print("Conveyor");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
@@ -39,9 +38,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Reset() {
-			base.ResetPos();
-			heldObject = null;
-			// Maybe need to make a call to our codeEdit/interrputer?
+			// Loop through elements in group and reset (shouldn't do anything)
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
 		}
 
 		// Scriptable interface
@@ -55,7 +55,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
-			E.Name = "Claw";
+			E.Name = "Conveyor";
 			
 			E.SetCorrespondingObject(this);
 		}
@@ -76,12 +76,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
-			GD.Print("move");
-			GD.Print(args);
-			GD.Print(args[0]);
-			GD.Print(args.Length);
-
-			// TODO: check movement vectors
 			if (args == null) return;
 			// else if (args[0] != "mov") return; // Not the correct command
 			else if (args.Length != 2) return;
@@ -111,43 +105,26 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 					return; // not a valid arg
 			}
 
-			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
-			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+			// Loop through the objects in our list and call move with the vector passed in
+			foreach (PlaceableObject obj in convList) {
+				if (!(obj is ConveyorObject cObj)) continue;
+				cObj.Move(MoveVector);
+			}
 
 			return;
 		}
 
 		public void Grab(string[] args) {
-			GD.Print("Grab func called");
-			return; // TODO: implement fully
+			return; // Throw error
 		}
 
 		public void Drop(string[] args) {
-			GD.Print("Drop func called");
-			return; // TODO: implement fully
+			return; // Throw error
 		}
 
 		public void Rotate(string[] args) {
 			return; // Throw error
 		}
 
-		// Command methods
-		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
-			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
-			RegisterSteppable(); // Registers this as a runnable with the level state
-		} // create object
-
-		~ClawObject() {
-			DestroyTerminal(); // Destries the terminal for this scriptable
-		}
-		
-		// Override 'save' function to also return a script's information
-		public override Godot.Collections.Dictionary<string, Variant> Save()
-		{
-			Godot.Collections.Dictionary<string, Variant> res = base.Save();
-			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
-			res["terminalCode"] = GetScript();
-			return res;
-		}
 	}
 }

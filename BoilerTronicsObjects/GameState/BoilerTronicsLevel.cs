@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using Parsing;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -21,6 +22,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public FloorLayer flLayer;
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+	public Parser P;
 	
 	// store all four corners of the placement grid
 	private Vector2 c1;
@@ -167,12 +169,10 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		// store four corners of the floor layer
-		/*
 		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
 		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
-		*/
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
@@ -223,7 +223,6 @@ public partial class BoilerTronicsLevel : Node2D
 
 	// Steps through all runnables
 	public void Step() {
-		GD.Print("Step");
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
