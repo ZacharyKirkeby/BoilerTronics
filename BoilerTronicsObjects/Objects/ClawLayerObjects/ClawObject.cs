@@ -50,6 +50,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void CreateTerminal() {
 			// TODO: Implement
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			E = manager.terminalContainer.AddEditor();
+			E.Name = "Claw";
 		}
 
 		public void DestroyTerminal() {
@@ -58,22 +61,49 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Methods that we can use via commands
 		public void Move(string[] args) {
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// TODO: check movement vectors
+			if (args == null) return;
+			else if (args[0] != "mov") return; // Not the correct command
+			else if (args.Length != 2) return;
 
-			MovingObject mObj = new MovingObject(this, new Vector2I(1,0), manager.currLevel.cLayer, 1);
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			Vector2I MoveVector;
+
+			switch (args[1]) {
+				case "u":
+					MoveVector = new Vector2I(1, 0);
+					break;
+				case "d":
+					MoveVector = new Vector2I(-1, 0);
+					break;
+				case "r":
+					MoveVector = new Vector2I(0, 1);
+					break;
+				case "l":
+					MoveVector = new Vector2I(0, -1);
+					break;
+				default:
+					return; // not a valid arg
+			}
+
+			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 
 			return;
 		}
 
 		public void Grab(string[] args) {
+			GD.Print("Grab func called");
+			return; // TODO: implement fully
 		}
 
 		public void Drop(string[] args) {
+			GD.Print("Drop func called");
+			return; // TODO: implement fully
 		}
 
 		public void Rotate(string[] args) {
-			// return error
+			return; // Throw error
 		}
 
 		// Command methods
