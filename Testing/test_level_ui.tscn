@@ -1,114 +1,243 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5l1g2k8geg2o"]
+[gd_scene load_steps=17 format=3 uid="uid://bexf663u4e728"]
 
-[ext_resource type="Script" uid="uid://deqoje83np6ik" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_7w7ni"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_btda1"]
+[ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_s62vv"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="3_rdo3t"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2yvf5"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="5_xpvbc"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="6_s62vv"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="7_rdo3t"]
+[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="8_s62vv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Theme" id="Theme_xdjqv"]
+Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
+Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
+Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xdjqv"]
+bg_color = Color(0.5609549, 0.5609549, 0.56095487, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_u4a2s"]
+
+[sub_resource type="Theme" id="Theme_2qe5m"]
+ScrollContainer/styles/panel = SubResource("StyleBoxEmpty_u4a2s")
 
 [node name="Node2D" type="Node2D"]
+script = ExtResource("1_7w7ni")
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 1151.0
-offset_bottom = 648.0
+[node name="MainVBox" type="VBoxContainer" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
 
-[node name="VFlowContainer" type="VFlowContainer" parent="Control"]
-layout_mode = 0
-offset_left = 2.0
-offset_right = 1151.0
-offset_bottom = 645.0
+[node name="TerminalLevelSplit" type="HSplitContainer" parent="MainVBox"]
+custom_minimum_size = Vector2(0, 750)
+layout_mode = 2
 
-[node name="HFlowContainer" type="HFlowContainer" parent="Control/VFlowContainer"]
-layout_direction = 2
+[node name="TerminalContainer" type="TabContainer" parent="MainVBox/TerminalLevelSplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+drag_to_rearrange_enabled = true
+script = ExtResource("2_s62vv")
+
+[node name="CodeEdit2" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("3_rdo3t")
+metadata/_tab_index = 0
+
+[node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("3_rdo3t")
+metadata/_tab_index = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+placeholder_text = "Enter Solution Code Here"
+scroll_smooth = true
+highlight_current_line = true
+script = ExtResource("3_rdo3t")
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
+layout_mode = 2
+
+[node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
+handle_input_locally = false
+size = Vector2i(1408, 750)
+size_2d_override = Vector2i(1408, 0)
+render_target_update_mode = 4
+
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2yvf5")]
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer"]
+custom_minimum_size = Vector2(0, 330)
+layout_mode = 2
+
+[node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+theme = SubResource("Theme_xdjqv")
+theme_override_constants/separation = 0
+
+[node name="PlaceType1" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("5_xpvbc")
+
+[node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("6_s62vv")
+
+[node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("7_rdo3t")
+
+[node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xdjqv")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer"]
+custom_minimum_size = Vector2(1450, 0)
+layout_mode = 2
+theme = SubResource("Theme_2qe5m")
+
+[node name="ObjectPicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+script = ExtResource("8_s62vv")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/separation = 30
+
+[node name="CenterContainer" type="CenterContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.67481464, 0.67481464, 0.6748146, 0.8627451)
+theme_override_fonts/font = ExtResource("2_btda1")
+text = "Step Counter: 0"
+horizontal_alignment = 1
+
+[node name="TimeControls" type="GridContainer" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(225, 225)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TabContainer" type="TabContainer" parent="Control/VFlowContainer/HFlowContainer"]
-custom_minimum_size = Vector2(400, 500)
-layout_direction = 2
+[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
-current_tab = 3
-drag_to_rearrange_enabled = true
-script = ExtResource("1_31yto")
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="CodeEdit" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-visible = false
-wrap_enabled = false
-set_max_length(value: 30)
-horizontal_scroll_enabled = false
+[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Button4" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control_VFlowContainer_HFlowContainer_TabContainer#CodeEdit" type="CodeEdit" parent="."]
+visible = false
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 metadata/_tab_index = 0
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 
-[node name="CodeEdit2" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+[node name="Control_VFlowContainer_HFlowContainer_TabContainer#CodeEdit2" type="CodeEdit" parent="."]
 visible = false
-wrap_enabled = false
-set_max_length(value: 30)
-horizontal_scroll_enabled = false
-layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 metadata/_tab_index = 1
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 
-[node name="CodeEdit3" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
+[node name="Control_VFlowContainer_HFlowContainer_TabContainer#CodeEdit3" type="CodeEdit" parent="."]
 visible = false
-wrap_enabled = false
-set_max_length(value: 30)
-horizontal_scroll_enabled = false
-layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 metadata/_tab_index = 2
-clear_button_enabled = true
-keep_editing_on_text_submit = false
 
-[node name="CodeEdit4" type="CodeEdit" parent="Control/VFlowContainer/HFlowContainer/TabContainer"]
-layout_mode = 2
-wrap_enabled = false
-horizontal_scroll_enabled = false
+[node name="Control_VFlowContainer_HFlowContainer_TabContainer#CodeEdit4" type="CodeEdit" parent="."]
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = ""
 placeholder_text = "Enter Solution Code Here"
 scroll_smooth = true
 highlight_current_line = true
 metadata/_tab_index = 3
-clear_button_enabled = true
-keep_editing_on_text_submit = false
-
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/VFlowContainer/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-horizontal_scroll_mode = 2
-vertical_scroll_mode = 2
-
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-stretch = true
-mouse_target = true
-
-[node name="SubViewport" type="SubViewport" parent="Control/VFlowContainer/HFlowContainer/ScrollContainer/SubViewportContainer"]
-handle_input_locally = false
-gui_snap_controls_to_pixels = false
-size = Vector2i(738, 492)
-size_2d_override_stretch = true
-render_target_update_mode = 4
-
-[node name="HFlowContainer2" type="HFlowContainer" parent="Control/VFlowContainer"]
-custom_minimum_size = Vector2(1150, 140)
-layout_mode = 2

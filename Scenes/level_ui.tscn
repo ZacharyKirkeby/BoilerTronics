@@ -1,21 +1,37 @@
-[gd_scene load_steps=19 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=25 format=3 uid="uid://cjypehapfq0tu"]
 
+[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
 [ext_resource type="PackedScene" uid="uid://oluvf880mleu" path="res://Scenes/main_menu.tscn" id="1_gw16p"]
 [ext_resource type="Texture2D" uid="uid://c0rnph8uppebg" path="res://Resources/icon.svg" id="2_4mllq"]
-[ext_resource type="Script" uid="uid://byi81xnip1u26" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
+[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="2_6tjow"]
 [ext_resource type="Texture2D" uid="uid://w3xtknnxdmrj" path="res://Resources/Icons/home.png" id="2_u4a2s"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="Script" uid="uid://cy350sm4spfa0" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="Texture2D" uid="uid://8chqv3jttmav" path="res://Resources/Icons/save.png" id="5_iu26y"]
+[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="7_ai2e2"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="7_h5pod"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="8_iu26y"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="9_qd36q"]
+[ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Scenes/buttontheme.tres" id="12_qd36q"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
 [sub_resource type="Theme" id="Theme_ao4gj"]
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qd36q"]
+border_width_right = 1
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2j1wt"]
+border_width_left = 1
+border_color = Color(0, 0, 0, 1)
+corner_detail = 1
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -23,7 +39,6 @@ border_width_bottom = 4
 border_color = Color(4.2595716e-06, 0.55452555, 1.92523e-07, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gw16p"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -31,14 +46,13 @@ border_width_bottom = 4
 border_color = Color(1, 1, 1, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mllq"]
-bg_color = Color(0.3529412, 0.3529412, 0.3529412, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0, 0, 0, 1)
 
-[sub_resource type="Theme" id="Theme_xdjqv"]
+[sub_resource type="Theme" id="Theme_2j1wt"]
 Button/styles/focus = SubResource("StyleBoxFlat_52dyq")
 Button/styles/hover = SubResource("StyleBoxFlat_gw16p")
 Button/styles/normal = SubResource("StyleBoxFlat_4mllq")
@@ -78,38 +92,6 @@ current_tab = 0
 drag_to_rearrange_enabled = true
 script = ExtResource("1_31yto")
 
-[node name="CodeEdit2" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 0
-
-[node name="CodeEdit3" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 1
-
-[node name="CodeEdit" type="CodeEdit" parent="MainVBox/TerminalLevelSplit/TerminalContainer"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-placeholder_text = "Enter Solution Code Here"
-scroll_smooth = true
-highlight_current_line = true
-script = ExtResource("2_6tjow")
-metadata/_tab_index = 2
-
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 
@@ -129,10 +111,23 @@ theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Level 1: The Beginning"
 horizontal_alignment = 2
 
-[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="SaveButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 theme_override_constants/icon_max_width = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_qd36q")
+icon = ExtResource("5_iu26y")
+icon_alignment = 1
+
+[node name="Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+theme_override_constants/icon_max_width = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_2j1wt")
 icon = ExtResource("2_u4a2s")
 icon_alignment = 1
 
@@ -145,8 +140,7 @@ size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="MainMenu" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("1_gw16p")]
-scale = Vector2(0.75, 0.7)
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2qe5m")]
 
 [node name="Parser" type="Node2D" parent="MainVBox/TerminalLevelSplit"]
 script = ExtResource("7_htk61")
@@ -162,20 +156,23 @@ theme_override_constants/separation = 0
 [node name="CategoryPicker" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
-theme = SubResource("Theme_xdjqv")
+theme = SubResource("Theme_2j1wt")
 theme_override_constants/separation = 0
 
-[node name="Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType1" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("7_h5pod")
 
-[node name="Button2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("8_iu26y")
 
-[node name="Button3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
+[node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("9_qd36q")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -186,82 +183,14 @@ custom_minimum_size = Vector2(1450, 0)
 layout_mode = 2
 theme = SubResource("Theme_2qe5m")
 
-[node name="ResourcePicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+[node name="ObjectPicker" type="HBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
-
-[node name="Padding" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect2" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect3" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect4" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect5" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect6" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect7" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="TextureRect8" type="TextureRect" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-localize_numeral_system = false
-texture = ExtResource("2_4mllq")
-
-[node name="Padding2" type="Control" parent="MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ResourcePicker"]
-layout_mode = 2
+script = ExtResource("7_ai2e2")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -311,6 +240,85 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[node name="Window" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Save File"
+initial_position = 1
+size = Vector2i(1000, 600)
+visible = false
+
+[node name="SaveContainer" type="HBoxContainer" parent="Window"]
+custom_minimum_size = Vector2(900, 300)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("12_qd36q")
+theme_override_constants/separation = 30
+
+[node name="Save0Cont" type="VBoxContainer" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 0" type="Button" parent="Window/SaveContainer/Save0Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 1"
+
+[node name="Clear 0" type="Button" parent="Window/SaveContainer/Save0Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[node name="Save1Cont" type="VBoxContainer" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 1" type="Button" parent="Window/SaveContainer/Save1Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 2"
+
+[node name="Clear 1" type="Button" parent="Window/SaveContainer/Save1Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[node name="Save2Cont" type="VBoxContainer" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 2" type="Button" parent="Window/SaveContainer/Save2Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 3"
+
+[node name="Clear 2" type="Button" parent="Window/SaveContainer/Save2Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/VBoxContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
+[connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
+[connection signal="pressed" from="Window/SaveContainer/Save0Cont/Save 0" to="." method="_on_save_0_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/Save0Cont/Clear 0" to="." method="_on_clear_0_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/Save1Cont/Save 1" to="." method="_on_save_1_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/Save1Cont/Clear 1" to="." method="_on_clear_1_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/Save2Cont/Save 2" to="." method="_on_save_2_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/Save2Cont/Clear 2" to="." method="_on_clear_2_pressed"]
