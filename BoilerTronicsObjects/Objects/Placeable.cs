@@ -12,9 +12,9 @@ namespace BoilerTronicsObjects.Placeable
 		int OGY { get; set; }
 		private int CurrX;
 		private int CurrY;
-		int sourceId { get; init; }               // This is the id of the tile map that the sprite belongs to
-		Vector2I atlasPos { get; init; }          // Posistion on the atlas that the sprite is at
-		int altTitle { get; init; }               // This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
+		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
+		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
+		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
 		public PlaceableObject(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0)
 		{
@@ -69,6 +69,11 @@ namespace BoilerTronicsObjects.Placeable
 		public Vector2I GetAtlasPos()
 		{
 			return atlasPos;
+		}
+
+		public void SetAtlasPos(Vector2I newAtlas)
+		{
+			this.atlasPos = newAtlas;
 		}
 
 		public void ResetPos()

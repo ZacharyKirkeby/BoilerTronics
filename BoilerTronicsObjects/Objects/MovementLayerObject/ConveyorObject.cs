@@ -1,0 +1,41 @@
+using Godot;
+using System;
+using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
+
+namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
+
+	public class ConveyorObject : MovementLayerObjects {
+
+		int direction; // 0 = left; 1 = right;
+
+		public const int Left = 0;
+		public const int Right = 1;
+
+		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
+		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
+
+		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, LeftObjectAtlasPos, altTitle) {
+			if (dir != ConveyorObject.Right || dir != ConveyorObject.Left) return; // Error
+
+			if (dir == ConveyorObject.Right) {
+				this.SetAtlasPos(RightObjectAtlasPos);
+			} else {
+				this.SetAtlasPos(LeftObjectAtlasPos);
+			}
+
+			direction = dir;
+		}
+
+		public void ChangeDir(int newDir) {
+			if (newDir != ConveyorObject.Right || newDir != ConveyorObject.Left) return;
+			direction = newDir;
+		}
+
+		public int GetDir() {
+			return direction;
+		}
+	}
+}

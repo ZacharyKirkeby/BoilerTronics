@@ -54,6 +54,8 @@ public partial class LevelUi : Node2D
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		UpdateStepCount();
 		// manager.SetDraggable(false); // debug; testing script
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.P = parser;
 	}
 	
 	// automatically define the global manager so we don't need to keep redefining it and etc
@@ -238,11 +240,14 @@ public partial class LevelUi : Node2D
 			//update code terminal highlighting to next one regardless of error
 			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 
+			/*
+			 * This will be moved into the step function of the scriptable objects
 			foreach (CodeEdit editor in codeEditors)
 			{
 				parser.ParseGetLine(editor.Text, stepCount, editor.Name);
 				editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			}
+			*/
 		}
 		
 		//if error, handle accordingly with popups and code terminal highlighting
