@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cds64h45ujwjt"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://cds64h45ujwjt"]
 
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_kc1xk"]
 [ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_deck4"]
@@ -7,23 +7,12 @@
 [sub_resource type="FontVariation" id="FontVariation_28flt"]
 base_font = ExtResource("1_kc1xk")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kc1xk"]
-bg_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-
 [resource]
 Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
 Button/fonts/font = SubResource("FontVariation_28flt")
 Button/styles/focus = ExtResource("2_deck4")
 Button/styles/hover = ExtResource("3_03lbr")
 Button/styles/normal = ExtResource("2_deck4")
-Button/styles/pressed = SubResource("StyleBoxFlat_kc1xk")
+Button/styles/pressed = ExtResource("2_deck4")
