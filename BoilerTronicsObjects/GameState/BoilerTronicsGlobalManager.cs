@@ -38,7 +38,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
-	public TabContainer terminalContainer;
+	public Terminals terminalContainer;
 	/***** End Testing Vars *****/
 
 	/* Save Data Vars: */
