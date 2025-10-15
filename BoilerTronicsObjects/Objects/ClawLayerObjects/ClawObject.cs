@@ -124,12 +124,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			DestroyTerminal(); // Destries the terminal for this scriptable
 		}
 		
-		// Override 'save' function to also return CodeEdit terminal information
+		// Override 'save' function to also return a script's information
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
-			Godot.Collections.Dictionary<string, Variant> res = Save();
-			GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
-			// res["terminalCode"] == (CodeEdit.GetText())
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
+			res["terminalCode"] = GetScript();
 			return res;
 		}
 	}
