@@ -1,0 +1,54 @@
+High Level overview of the reduced instruction set assembly
+
+move - mov
+takes l/r/u/d for left, right, up, down
+
+looks like: mov l 
+
+rotate - rot
+takes l/r for left, right
+
+looks like: rot l
+
+grab - grb
+no parameters
+
+looks like: grb
+
+drop - drp
+no parameters
+
+looks like drp
+
+jump - jmp 
+takes a label
+
+looks like jmp loop_start
+
+labels: text
+any kind of word followed by a colon
+
+looks like loop_start:
+
+add/sub/mul/div - add, subtract, multiply, divide
+command plus two registers
+looks like add r1 r2
+
+By default result is stored to r0
+
+write - wrt
+writes to register, rather than using the normal convention of mov since that overlaps
+
+compare - cmp
+takes 2 registers to compare, form of reg1 - reg2
+
+looks like cmp reg1 reg2
+
+wait - wait
+does nothing
+
+Registers:
+
+r0 - default store, math operations store the results to r0
+r1, r2: general purpose registers
+cmp - where compare flags are stored

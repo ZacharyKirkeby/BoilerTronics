@@ -1,8 +1,9 @@
-[gd_scene format=3 uid="uid://76d7hirhj48x"]
+[gd_scene format=3 uid="uid://bihjug1jayvfl"]
 
 [node name="ClawOutOfBoundsError" type="AcceptDialog"]
 oversampling_override = 1.0
 title = "Claw Out Of Bounds"
+initial_position = 2
 size = Vector2i(400, 300)
 visible = true
 ok_button_text = "OK"

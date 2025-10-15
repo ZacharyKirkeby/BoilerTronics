@@ -7,7 +7,7 @@ public partial class ErrorTest : Node
 	
 	public async override void _Ready() {
 		GD.Print("Automatic Error Tests Started");
-
+		await ToSignal(GetTree().CreateTimer(10.0f), "timeout");
 		levelUi = GetTree().CurrentScene as LevelUi;
 		ClawCollisionText();
 		await ToSignal(GetTree().CreateTimer(2.0f), "timeout");
