@@ -193,18 +193,22 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 			switch (args[1]) {
 				case "u":
+					if (this.dir == ConveyorObject.Right) return; // add error message
 					MoveVector = new Vector2I(1, -1);
 					GD.Print("up");
 					break;
 				case "d":
+					if (this.dir == ConveyorObject.Right) return; // add error message
 					MoveVector = new Vector2I(-1, 1);
 					GD.Print("down");
 					break;
 				case "r":
+					if (this.dir == ConveyorObject.Left) return; // add error message
 					MoveVector = new Vector2I(1, 0);
 					GD.Print("right");
 					break;
 				case "l":
+					if (this.dir == ConveyorObject.Left) return; // add error message
 					MoveVector = new Vector2I(-1, 0);
 					GD.Print("left");
 					break;
