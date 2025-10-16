@@ -266,7 +266,15 @@ public partial class BoilerTronicsLevel : Node2D
 		// This will cause an error
 		var ui = GetTree().CurrentScene as LevelUi;
 		int tileSize = 16;
-		var clawObj = mObj.obj as ClawObject;
+
+		// Halt all other movement
+		foreach (MovingObject obj in movingList) {
+			obj.Halt();
+		}
+
+		if (mObj == null) return;
+
+		// var clawObj = mObj.obj as ClawObject;
 		String editorName = "not found";
 		 if (mObj.obj is Scriptable scriptableObj) {
 			editorName = scriptableObj.GetTerminal()?.Name ?? "Unknown";
@@ -277,10 +285,5 @@ public partial class BoilerTronicsLevel : Node2D
 		Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
 		Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
 		ui.setErrorCoords(pixelPosWithOffset);
-
-		// Halt all other movement
-		foreach (MovingObject obj in movingList) {
-			obj.Halt();
-		}
 	}
 }
