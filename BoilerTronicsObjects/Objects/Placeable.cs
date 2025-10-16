@@ -16,6 +16,9 @@ namespace BoilerTronicsObjects.Placeable
 		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
+		// store the parent layer
+		private Layer parentLayer;
+
 		public PlaceableObject(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0)
 		{
 			this.OGX = OGX;
@@ -30,6 +33,15 @@ namespace BoilerTronicsObjects.Placeable
 
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
+		}
+		
+		// set parent layer info; mainly useful for the terminal highlighting mechanism
+		public Layer GetParentLayer() {
+			return parentLayer;
+		}
+		public void SetParentLayer(Layer input) {
+			if (input == null) { return; }
+			parentLayer = input;
 		}
 
 		public Vector2I GetOGPos()

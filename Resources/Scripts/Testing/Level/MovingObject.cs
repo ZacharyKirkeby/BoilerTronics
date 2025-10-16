@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Layers;
 
 public partial class MovingObject : Area2D {
@@ -101,6 +102,11 @@ public partial class MovingObject : Area2D {
 			// We done
 			// Move the object internally
 			obj.MoveCurrPos(TargetPos.X, TargetPos.Y);
+
+			if (obj is ClawObject cObj) {
+				cObj.moving = false;
+			}
+
 			// Place the object back on the layer
 			layer.AddObject(obj);
 			// De-register object from the game state
@@ -122,11 +128,12 @@ public partial class MovingObject : Area2D {
 
 	public void Collison(Node2D body) {
 		GD.Print("Ouch!");
+		if (body is MovingObject mBody && mBody.layer != this.layer) return; // we only wnat to colide thing on the same layer
+
 		if (collided) return; // Don't do anything if this is already handled
 		collided = true; // Set flag for this collision
 		// We have collided with something else, this is a problem and shouldn't happen :(
 		// This will trigger an error and then halt all movement
-		// Send something to the game state (TBD)
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.MovingCollisionReport(this);
 	}
