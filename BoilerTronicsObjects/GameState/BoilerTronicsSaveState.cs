@@ -7,6 +7,7 @@ using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;	// get Scriptable interface
 using BoilerTronicsObjects.Data;
 using BoilerTronicsObjects.Objects; // get object factory
+using BoilerTronicsObjects.Objects.MovementLayerObjects;	// ConveyorObject; essential exception to the norm that must be handled! (ConveyorGroup)
 
 // NOTE TO SELF: c# apparently doesn't catch/immediately crash null pointer errors. fun.
 
@@ -312,7 +313,8 @@ public class BoilerTronicsSaveState
 			// create object, add to array list
 			PlaceableObject target = ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos);
 			
-			// TODO: if object is scriptable, attempt to load terminal code
+			// if object is scriptable, attempt to load terminal code
+			// TODO: implement similar functionality for ConveyorObject!
 			if (target is Scriptable) {
 				string terminalCode;
 				
@@ -326,7 +328,21 @@ public class BoilerTronicsSaveState
 					((Scriptable) target).SetScript(terminalCode);
 					GD.Print("SaveState: successfully loaded terminal code");
 				}
+			} else if (target is ConveyorObject) {
+				string conveyorCode;
+				
+				if (targetObj.ContainsKey("conveyorCode")) {
+					// if loaded string exists, then load as appropriate
+					conveyorCode = (string) targetObj["conveyorCode"];
+					
+					
+					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
+					
+					((ConveyorObject) target).SetToLoadText(conveyorCode);
+					GD.Print("SaveState: successfully loaded terminal code -- conveyor variant");
+				}
 			}
+			
 			listObj.Add(target);
 		}
 		// GD.Print("finished reading objects from file");
@@ -414,7 +430,7 @@ public class BoilerTronicsSaveState
 	// save a single line to a the provided file
 	public void SaveLine(FileAccess saveFile, string name, Variant obj) {
 		GD.Print("Saving ", name);
-		 saveFile.StoreLine(Json.Stringify(GenerateLine(name, obj)));
+		saveFile.StoreLine(Json.Stringify(GenerateLine(name, obj)));
 	}
 	
 	// generate essential data structure for a given layer
