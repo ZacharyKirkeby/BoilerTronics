@@ -84,6 +84,7 @@ public partial class LevelUi : Node2D
 	//set error status as true with errorID and name of terminal causing error
 	public void setError(int errID, String editor)
 	{
+		GD.Print("errid = " + errID);
 		if ((errID >= -1) && (errID < 4))
 			errorID = errID;
 		isError = true;
@@ -219,6 +220,7 @@ public partial class LevelUi : Node2D
 	{
 		isError = false;
 		errorID = -1;
+		stepButton.Disabled = false;
 	}
 	
 	//be able to call for error popup from this script
