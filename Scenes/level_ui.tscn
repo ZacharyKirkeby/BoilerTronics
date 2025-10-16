@@ -1,9 +1,9 @@
-[gd_scene load_steps=49 format=3 uid="uid://bqbkpk1u5wpef"]
+[gd_scene load_steps=49 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="4_2qe5m"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="5_q1sto"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
@@ -658,6 +658,7 @@ theme_override_constants/v_separation = 10
 columns = 2
 
 [node name="Step Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
