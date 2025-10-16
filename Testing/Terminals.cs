@@ -74,7 +74,12 @@ public partial class Terminals : TabContainer
 	{
 		
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
-		{
+		{			
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager.currLevel.StepCount != 0) {
+				
+				return;
+			} 
 			// TODO: inefficient call if this runs every time the terminal at all updates!
 			UpdateSelectedTerminal();
 		
@@ -146,5 +151,13 @@ public partial class Terminals : TabContainer
 	public List<CodeEdit> GetAllEditors()
 	{
 		return editors;
+	}
+	
+	// set all sub editors editable or not
+	public void SetEditorsEditable(bool val) {
+		foreach (CodeEdit panel in editors) {
+			GD.Print("Terminals: set ", panel, " editable to ", val);
+			panel.SetEditable(val);
+		}
 	}
 }
