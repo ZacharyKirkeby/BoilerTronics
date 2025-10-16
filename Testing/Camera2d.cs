@@ -11,6 +11,9 @@ namespace BoilerTronicsObjects.GameCamera {
 		private Vector2 maxZoom = new Vector2((float) 3.0, (float) 3.0);
 		private Vector2 minZoom = new Vector2((float) 0.5, (float) 0.5);
 		
+		private Vector2 errorPosition = new Vector2(150,500);
+		private Sprite2D errorSprite;
+
 		// general zoom function to zoom specifically at the mouse; TODO
 		public void zoomToTarget(Vector2 zoomTarget) {
 			
@@ -72,5 +75,33 @@ namespace BoilerTronicsObjects.GameCamera {
 					this.Position += eventMouseMotion.GetScreenRelative() * -1 / this.GetZoom().X;//new Vector2(5, 5);
 				}
 			}
+			
+		public void SpawnErrorSprite(Vector2 errorPosition) {
+			//remove sprite if already there
+			if (errorSprite != null && IsInstanceValid(errorSprite)) {
+				errorSprite.QueueFree();
+				errorSprite = null;
+			}
+
+			errorSprite = new Sprite2D();
+			errorSprite.Texture = GD.Load<Texture2D>("res://Resources/exclamation.png");
+			errorSprite.Position = errorPosition;
+			
+			errorSprite.ZIndex = 1000;      
+			errorSprite.ZAsRelative = false;
+			
+			//scale down
+			errorSprite.Scale = new Vector2(0.15f, 0.15f);
+
+			//have error notice display on level ui
+			this.GetParent().AddChild(errorSprite);
+		}
+		
+		public void RemoveErrorSprite() {
+			if (errorSprite != null && IsInstanceValid(errorSprite)) {
+				errorSprite.QueueFree();
+				errorSprite = null;
+			}
+		}
 	}
 }
