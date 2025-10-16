@@ -18,7 +18,7 @@ public partial class LevelUi : Node2D
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = { "ClawRail", "ClawOutOfBounds", "ClawCollision", "ClawInventory" }; //keep track of current error type
 	private int errorID = -1; //current error type identifier (defined by errorTypes array)
-	private Vector2 errorCoords = new Vector2(700, 100);
+	private Vector2I errorCoords = new Vector2I(300,200);
 	private String errorEditor;
 	private StyleBoxFlat sbf = new StyleBoxFlat();
 	private StyleBoxFlat sbe = new StyleBoxFlat();
@@ -30,6 +30,9 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
+	private Button stepButton;
+	private Node errorSceneInstance;
+	private bool stepDisabled = false;
 
 	public override void _Ready()
 	{
@@ -57,26 +60,43 @@ public partial class LevelUi : Node2D
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
+		stepButton = GetNode<Button>("%Step Button");
 		UpdateStepCount();
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.P = parser;
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
+		
+		//run tests
+		var autoTest = new ErrorTest();
+		//AddChild(autoTest);;
+	}
+	
+	public void RemoveErrorScene() {
+		if(IsInstanceValid(errorSceneInstance)) {
+			errorSceneInstance.QueueFree();
+			errorSceneInstance = null;
+			GD.Print("Error scene removed.");
+		}
+		else {
+			GD.Print("Error scene failed to removed.");
+		}
 	}
 
 	//set error status as true with errorID and name of terminal causing error
 	public void setError(int errID, String editor)
 	{
+		GD.Print("errid = " + errID);
 		if ((errID >= -1) && (errID < 4))
 			errorID = errID;
 		isError = true;
 		errorEditor = editor;
 	}
 
-	public void setErrorCoords(int x, int y)
+	public void setErrorCoords(Vector2I coords)
 	{
-		errorCoords = new Vector2(x, y);
+		errorCoords = coords;
 	}
 
 	// return to main menu button
@@ -217,6 +237,20 @@ public partial class LevelUi : Node2D
 	{
 		isError = false;
 		errorID = -1;
+		//stepButton.Disabled = false;
+		stepDisabled = false;
+	}
+	
+	//be able to call for error popup from this script
+	private void ShowErrorNotice(Vector2 position) {
+		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		camera.SpawnErrorSprite(position);
+	}
+	
+	//be able to call for error popup removal from this script
+	private void ClearErrorNotice() {
+		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		camera.RemoveErrorSprite();
 	}
 
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
@@ -224,14 +258,14 @@ public partial class LevelUi : Node2D
 	{
 		//open error notice (exclamation mark) at coords of error
 		//TODO: add this to camera2D in actual level window
-		if (errorNoticeIcon == null)
-		{
+		/*if(errorNoticeIcon == null) {
 			var scene = (PackedScene)ResourceLoader.Load("res://Resources/ErrorNotice.tscn");
 			errorNoticeIcon = scene.Instantiate<Node2D>();
 			AddChild(errorNoticeIcon);
 		}
 		//TODO: replace example coords with actual (make dynamic)
-		errorNoticeIcon.Position = errorCoords;
+		errorNoticeIcon.Position = errorCoords;*/
+		ShowErrorNotice(errorCoords);
 
 		PackedScene packedErrorScene = null;
 
@@ -269,18 +303,30 @@ public partial class LevelUi : Node2D
 			case -1:
 				break; //should not happen as error should be set to false
 		}
-
-		// actually display error notice
-		if (packedErrorScene != null)
-		{
-			var instance = packedErrorScene.Instantiate();
-			GetTree().CurrentScene.AddChild(instance);
+		
+		//actually display error notice
+		if(packedErrorScene != null) {
+			errorSceneInstance = packedErrorScene.Instantiate();
+			GetTree().CurrentScene.AddChild(errorSceneInstance);
 		}
 	}
-
-	private void _on_step_button_pressed()
-	{
+	
+	//called in test script to have access to auto stepping
+	public void simulateStep() {
+		_on_step_button_pressed();
+	}
+	
+	public void simulateReset() {
+		_on_reset_button_pressed();
+	}
+	
+	//called in test script to have access to auto resetting
+	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
+		//if (stepButton.Disabled) return;
+		//if(stepDisabled) return;
+		stepDisabled = true;
+		//stepButton.Disabled = true;
 		if (!isError)
 		{
 			// Tell the global manager that we are stepping
@@ -323,6 +369,8 @@ public partial class LevelUi : Node2D
 		{
 			handleError(errorID, errorEditor);
 		}
+		//stepButton.Disabled = false;
+		stepDisabled = false;
 	}
 
 	private void UpdateStepCount()
@@ -360,12 +408,12 @@ public partial class LevelUi : Node2D
 		UpdateStepCount();
 
 		//delete error notice (exclamation mark) if exists/open
-		if (errorNoticeIcon != null)
-		{
+		/*if(errorNoticeIcon != null) {
 			errorNoticeIcon.QueueFree();
 			errorNoticeIcon = null;
-		}
-
+		}*/
+		ClearErrorNotice();
+		
 		removeError();
 	}
 
