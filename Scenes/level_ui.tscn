@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="5_q1sto"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
@@ -722,7 +722,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 1"
+text = "Save 0"
 
 [node name="Clear 0" type="Button" parent="Window/SaveContainer/Save0Cont"]
 custom_minimum_size = Vector2(150, 50)
@@ -738,7 +738,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 2"
+text = "Save 1"
 
 [node name="Clear 1" type="Button" parent="Window/SaveContainer/Save1Cont"]
 custom_minimum_size = Vector2(150, 50)
@@ -754,7 +754,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 3"
+text = "Save 2"
 
 [node name="Clear 2" type="Button" parent="Window/SaveContainer/Save2Cont"]
 custom_minimum_size = Vector2(150, 50)
