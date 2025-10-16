@@ -7,6 +7,7 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 using Parsing;
+using System.Collections;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
@@ -117,12 +118,92 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 					return; // not a valid arg
 			}
 
+			//be able to refer to functions in LevelUi
+			var ui = manager.GetTree().CurrentScene as LevelUi;
+			
+			//tile dimension
+			int tileSize = 16;
+			
+			Vector2I targetGrid = this.GetPos() + MoveVector;
+			//area boundary of tileset
+			var level = BoilerTronicsGlobalManager.GlobalManager.currLevel as BoilerTronicsLevel;
+			int maxX = level.x;
+			int maxY = level.y;
+			
+			GD.Print(targetGrid.X);
+			GD.Print(targetGrid.Y);
+			
+			//check if coords are out of bounds
+			if (targetGrid.X < 0 || targetGrid.Y < 0 || targetGrid.X >= maxX || targetGrid.Y >= maxY) {
+				ui.setError(1, E.Name);
+				Vector2I gridPos = this.GetCurrPos();
+				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
+				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
+				ui.setErrorCoords(pixelPosWithOffset);
+				return;
+			}
+
 			// Check to make sure we are on a track and the track is the correct orientation
 			PlaceableObject currObj = manager.currLevel.rLayer.FindObject(this.GetPos());
-			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir) return; // Error: rail we are on is either none existant or the wrong direction
+			// Error: rail we are on is either none existant or the wrong direction
+			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir) {
+				ui.setError(0, E.Name);
+				Vector2I gridPos = this.GetCurrPos();
+				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
+				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
+				ui.setErrorCoords(pixelPosWithOffset);
+				return;
+			}
 			// Check to make sure we are going to a track and that track is the correct orientation
 			PlaceableObject targetObj = manager.currLevel.rLayer.FindObject(this.GetPos() + MoveVector);
-			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir) return; // Error: rail we are going to is either none existant or the wrong direction
+			// Error: rail we are going to is either none existant or the wrong direction
+			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir) {
+				ui.setError(0, E.Name);
+				Vector2I gridPos = this.GetCurrPos();
+				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
+				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
+				ui.setErrorCoords(pixelPosWithOffset);
+				return;
+			}
+			
+			Vector2I futureGridPosition = this.GetPos() + MoveVector;
+			PlaceableObject existingClaw = manager.layerClaw.FindObject(futureGridPosition);
+			if (existingClaw is ClawObject otherClaw && otherClaw != this)
+			{
+				ui.setError(2, E.Name);
+				
+				Vector2I pixelPosWithOffset = new Vector2I(
+					(int)((futureGridPosition.X + 2) * tileSize),
+					(int)((futureGridPosition.Y - 1) * tileSize));
+				ui.setErrorCoords(pixelPosWithOffset);
+				return;
+			}
+
+
+			/*ArrayList claws = manager.currLevel.cLayer.exportObjectList();
+			foreach (var obj in claws)
+			{
+				if (obj is ClawObject clawObj)
+				{
+					if (clawObj == this) continue;
+
+					Vector2 objPos = clawObj.GetCurrPos();
+					Vector2 intendedPos = this.GetCurrPos() + MoveVector;
+
+					GD.Print("comparing claws");
+					GD.Print(objPos);
+					GD.Print(intendedPos);
+
+					if (objPos == intendedPos)
+					{
+						ui.setError(2, E.Name);
+
+						Vector2I pixelPosWithOffset = new Vector2I((int)((intendedPos.X + 2) * tileSize),(int)((intendedPos.Y - 1) * tileSize));
+						ui.setErrorCoords(pixelPosWithOffset);
+						return;
+					}
+				}
+			}*/
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
