@@ -70,12 +70,16 @@ public partial class BoilerTronicsGlobalManager : Node
 	}
 
 	// This will allow for the step button to interact with the backend of the game
+	// LevelUI.cs
 	public void Step() {
+		terminalContainer.SetEditorsEditable(false);
 		return;
 	}
 
 	// This will tell the backend to reset
+	// LevelUI.cs
 	public void Reset() {
+		terminalContainer.SetEditorsEditable(true);
 		return;
 	}
 	

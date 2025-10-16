@@ -138,7 +138,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				ui.setError(1, E.Name);
 				Vector2I gridPos = this.GetCurrPos();
 				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
+				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
 				ui.setErrorCoords(pixelPosWithOffset);
 				return;
 			}

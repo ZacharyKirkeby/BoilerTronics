@@ -64,6 +64,8 @@ public partial class LevelUi : Node2D
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.P = parser;
+		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
+		button.GrabFocus();
 		
 		//run tests
 		var autoTest = new ErrorTest();
@@ -97,7 +99,7 @@ public partial class LevelUi : Node2D
 	}
 
 	// return to main menu button
-	private void _on_button_pressed()
+	private void _on_exit_button_pressed()
 	{
 
 		// Get manager
@@ -110,6 +112,20 @@ public partial class LevelUi : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
 	}
 
+	private void _on_settings_button_pressed() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = true;
+	}
+	private void _on_exit_menu_close_requested() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = false;
+	}
+	
+	private void _on_level_statistics_menu_close_requested() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = false;
+	}
+	
+	private void _on_level_statistics_pressed() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
+	}
 	private void _on_save_button_pressed() {
 		
 		// Don't allow saving while stepping!
@@ -308,7 +324,10 @@ public partial class LevelUi : Node2D
 		stepButton.Disabled = true;
 		if (!isError)
 		{
+			// Tell the global manager that we are stepping
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.Step();
+			
 			if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
 			
 			// on first step button press, trigger an autosave!
@@ -360,6 +379,7 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.Reset();
 		manager.currLevel.Reset();
 
 		//reset highlighting in terminals
@@ -428,12 +448,15 @@ public partial class LevelUi : Node2D
 				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
 
 				// Highlight error line
-				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f));
+				editor.HighlightLine(lineNumber - 1, new Color(1, 0, 0, 0.25f));
 
 				//TODO - delete
 				GD.Print($"[ParserError] {editorName}: Line {lineNumber} -> {message}");
 				break;
 			}
 		}
+	}
+	private void _on_open_button_pressed() {
+		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
 	}
 }

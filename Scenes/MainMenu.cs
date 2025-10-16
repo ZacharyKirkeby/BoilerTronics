@@ -8,14 +8,16 @@ public partial class MainMenu : Node2D
 	public override void _Ready()
 	{
 		// Set fullscreen toggle
-		var fullscreenButton = GetNode<Button>("SettingsMenu/VBoxContainer/VBoxContainer2/Fullscreen");
+		var fullscreenButton = GetNode<Button>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen");
 		fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
 			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
 
 		// Set volume slider
-		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/VBoxContainer2/MainVolSlider");
+		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		int masterBus = AudioServer.GetBusIndex("Master");
 		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
+		
+		
 		
 	}
 
@@ -41,10 +43,22 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("SettingsMenu").Visible = true;
 	}
-
+	
+	private void _on_profile_pressed() {
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("ProfileMenu").Visible = true;
+	}
+	
+	private void _on_leaderboard_pressed() {
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("Leaderboard").Visible = true;
+	}
+	
 	private void _on_back_pressed()
 	{
 		GetNode<Control>("SettingsMenu").Visible = false;
+		GetNode<Control>("ProfileMenu").Visible = false;
+		GetNode<Control>("Leaderboard").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
 	}
 

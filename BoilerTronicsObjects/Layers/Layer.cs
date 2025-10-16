@@ -72,6 +72,7 @@ namespace BoilerTronicsObjects.Layers
 		}
 		
 		// TODO: return this data safely rather than just returning the address
+		// TODO: refactor to properly follow C# syntax
 		public PlaceableObject[,] exportTiles() {
 			return tiles;
 		}
@@ -126,6 +127,10 @@ namespace BoilerTronicsObjects.Layers
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
 			// UpdateInternals();
 			GD.Print("Added object");
+			
+			// update placeable's parent layer info
+			newPlaceable.SetParentLayer(this);
+			
 			numItems++;
 		}
 

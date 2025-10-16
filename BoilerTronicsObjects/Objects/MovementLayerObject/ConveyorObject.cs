@@ -17,6 +17,15 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
+		
+		// For saving purposes, the "head" of a ConveyorGroup should also point to the ConveyorGroup's terminal
+		// Therefore, we must track it here!
+		// This should be handled on ConveyorGroup creation/merging/editing in MovementLayer.cs
+		// Otherwise, only saving functionality should interact with this system
+		private CodeEdit E;
+		
+		// For loading purposes, have a specific string that will override its parent's group contents
+		private string toLoadText;
 
 		private void UpdateSprite() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -70,6 +79,28 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
 			cObj.moving = true;
 		}
+		
+		// Methods to deal with terminals (inherit from the parent ConveyorGroup)
+		// This should mostly only be used by MovementLayer.cs
+		public void SetTerminal(CodeEdit input) {
+			E = input;
+		}	
+		public CodeEdit GetTerminal() {
+			return E;
+		}
+		public string GetScript() {
+			if (E == null) { return null; }
+			return E.Text;
+		}
+		
+		// For loading purposes
+		public void SetToLoadText(string input) {
+			toLoadText = input;
+		}
+		// For loading purposes
+		public string GetToLoadText() {
+			return toLoadText;
+		}
 
 		public ArrayList GetConnections() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -95,6 +126,19 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (obj2 != null && obj2 is ConveyorObject cObj2 && cObj2.GetDir() == this.GetDir()) retList.Add(obj2);
 
 			return retList;
+		}
+		
+		// Override 'save' function to also return a script's information
+		// CONDITIONAL: Only adds anything
+		public override Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
+			
+			if (E != null) {
+				res["conveyorCode"] = GetScript();
+			}
+			return res;
 		}
 	}
 }

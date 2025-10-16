@@ -9,8 +9,10 @@ base_font = ExtResource("1_kc1xk")
 
 [resource]
 Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
 Button/fonts/font = SubResource("FontVariation_28flt")
 Button/styles/focus = ExtResource("2_deck4")
 Button/styles/hover = ExtResource("3_03lbr")
 Button/styles/normal = ExtResource("2_deck4")
+Button/styles/pressed = ExtResource("2_deck4")
