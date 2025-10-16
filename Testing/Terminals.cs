@@ -125,7 +125,8 @@ public partial class Terminals : TabContainer
 		ClearHighlightedObjects();
 		
 		// call terminal's "just got selected" function
-		GetCurrentEditor().TerminalSelected();
+		// check: is the current editor queued for deletion? check to avoid debug errors
+		if (IsInstanceValid(GetCurrentEditor())) GetCurrentEditor().TerminalSelected();
 	}
 	
 	// tells all layers to stop highlighting objects
@@ -145,6 +146,10 @@ public partial class Terminals : TabContainer
 
 	public CodeEdit GetCurrentEditor()
 	{
+		// TODO: sometimes when deleting, or some other actions, 'CurrentTab' can go negative!
+		// "Index p_index = (...) is out of bounds ((int)data.children_cache.size() - data.internal_children_front_count_cahce - data.internal_children_back_count_cache = 0)
+		// int index = CurrentTab;
+		// if (index < 0) { index = 0; GD.Print("Terminal: CurrentTab has a negative value: ", index);}
 		return GetChild<CodeEdit>(CurrentTab) as CodeEdit;
 	}
 
