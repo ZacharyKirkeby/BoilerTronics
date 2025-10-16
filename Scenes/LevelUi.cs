@@ -32,6 +32,7 @@ public partial class LevelUi : Node2D
 	private Button clearTwo;
 	private Button stepButton;
 	private Node errorSceneInstance;
+	private bool stepDisabled = false;
 
 	public override void _Ready()
 	{
@@ -236,7 +237,8 @@ public partial class LevelUi : Node2D
 	{
 		isError = false;
 		errorID = -1;
-		stepButton.Disabled = false;
+		//stepButton.Disabled = false;
+		stepDisabled = false;
 	}
 	
 	//be able to call for error popup from this script
@@ -321,7 +323,10 @@ public partial class LevelUi : Node2D
 	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
 		//update stepCount regardless of error
-		stepButton.Disabled = true;
+		//if (stepButton.Disabled) return;
+		//if(stepDisabled) return;
+		stepDisabled = true;
+		//stepButton.Disabled = true;
 		if (!isError)
 		{
 			// Tell the global manager that we are stepping
@@ -364,7 +369,8 @@ public partial class LevelUi : Node2D
 		{
 			handleError(errorID, errorEditor);
 		}
-		stepButton.Disabled = false;
+		//stepButton.Disabled = false;
+		stepDisabled = false;
 	}
 
 	private void UpdateStepCount()
