@@ -267,12 +267,18 @@ public partial class LevelUi : Node2D
 		//update stepCount regardless of error
 		if (!isError)
 		{
+			// Tell the global manager that we are stepping
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.Step();
+			
 			if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
 			
 			// on first step button press, trigger an autosave!
 			if (stepCount == 0) {
 				manager.SaveAutosave();
+				
+				// also stop all highlighting
+				manager.terminalContainer.ClearHighlightedObjects();
 			}
 			
 			stepCount++;
@@ -315,6 +321,7 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.Reset();
 		manager.currLevel.Reset();
 
 		//reset highlighting in terminals
@@ -328,6 +335,9 @@ public partial class LevelUi : Node2D
 				existing.QueueFree();
 			}
 		}
+		
+		// reset terminal's highlighted objects
+		manager.terminalContainer.UpdateSelectedTerminal();
 
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));

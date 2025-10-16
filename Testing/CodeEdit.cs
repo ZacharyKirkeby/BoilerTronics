@@ -4,6 +4,7 @@ using System.Collections;				//	ArrayList
 using BoilerTronicsObjects.Placeable;	//	PlaceableObject
 using BoilerTronicsObjects.Layers;		//	all core layer functionality and etc
 using BoilerTronicsObjects.Interfaces;	//	Scriptable interface
+using BoilerTronicsObjects.Objects.MovementLayerObjects;	// ConveyorGroup (terminal highlighting, specific exception)
 
 // whole file is arguably a test file
 public partial class CodeEdit : Godot.CodeEdit
@@ -14,6 +15,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	
 	// important vars for highlighting objects!
 	private PlaceableObject correspondingObject;
+	private Layer highlightedLayer;
 	private bool highlightingObject = false;
 
 	public override void _Ready()
@@ -23,6 +25,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
 		currentLine = 0;
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// if new terminal is created, then the CurrentEditor() should be this terminal
+		// call and update terminal container accordingly
+		if (manager.terminalContainer.GetCurrentEditor() == this) {
+			manager.terminalContainer.UpdateSelectedTerminal();
+		}
 	}
 
 	// this is a debug function
@@ -38,33 +47,90 @@ public partial class CodeEdit : Godot.CodeEdit
 	public void TerminalSelected() {
 		GD.Print("terminal selected");
 		
-		if (correspondingObject != null && (correspondingObject is Scriptable)) {
-			// highlight corresponding object
+		TryHighlightingObject();
+	}
+	
+	public void TryHighlightingObject() {
+		GD.Print("CodeEdit: correspondingObject: ", correspondingObject);
+		if (correspondingObject != null) {
 			
-			// determine what layer this object is from
-			// TODO: we really should update the PlaceableObject objects to actually hold this data
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			
-			// try and find and highlight the specified object
-			bool res = HighlightObjectIfValid(correspondingObject, manager.layerClaw);
-			if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFactory); }
-			if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFloor); }
-			if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerMovement); }
-			if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerRail); }
-			
-		}
+			// Scriptable case
+			if (correspondingObject is Scriptable) {
+				// highlight corresponding object
+				/*
+				OLD INEFFICIENT CODE
+				only here as a backup/for reference
+				
+				// determine what layer this object is from
+				// TODO: we really should update the PlaceableObject objects to actually hold this data
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				
+				// try and find and highlight the specified object
+				bool res = HighlightObjectIfValid(correspondingObject, manager.layerClaw);
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFactory); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFloor); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerMovement); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerRail); }
+				
+				if (!res) {
+					GD.Print("CodeEdit: could not find object on layer to highlight");
+				}
+				*/
+				
+				// Extremely simplified method to highlight a tile
+				Layer layer = correspondingObject.GetParentLayer();
+				if (layer != null) {
+					layer.HighlightTile(true, correspondingObject.GetCurrPos());
+					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+				}
+				
+				if (correspondingObject is ConveyorGroup) {
+					// what if the object is a ConveyorGroup object?
+					// need to write exception given that the ConveyorGroup object is extremely distinct
+					// does not behave like normal PlaceableObject objects
+					GD.Print("CodeEdit: Detected ConveyorGroup!");
+					
+					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
+					// Get the first item from the ConveyorGroup's list
+					PlaceableObject obj = (PlaceableObject) ((ConveyorGroup) correspondingObject).convList[0];
+					
+					// if that doesn't work, just give up.
+					if (obj == null) {
+						GD.Print("CodeEdit: ConveyorGroup associated with terminal has no ConveyorObject objects!");
+						return;
+					}
+					
+					layer = obj.GetParentLayer();
+					if (layer != null) {
+						layer.HighlightTile(true, obj.GetCurrPos());
+						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+					}
+				}
+			}
+		} else {
+			GD.Print("CodeEdit: correspondingObject is null!");
+		}	
 	}
 	
 	// function to stop highlighting and etc
 	public void StopHighlighting() {
-		if (correspondingObject != null && highlightingObject) {
-			GD.Print("TODO: stop highlighting object");
-		}
+		// TODO: does not seem to work properly? The below values don't seem to be saved properly
+		// Behavior of when a CodeEdit terminal is de-selected is unknown...
+		
+		// GD.Print("CodeEdit: Trying to stop highlighting");
+		// only stop highlighting if needed!
+		// if (correspondingObject != null && highlightingObject) {
+			// if (highlightedLayer != null) {
+				// GD.Print("CodeEdit: Sent stop highlighting request to layer");
+				// highlightedLayer.HighlightTile(false, new Vector2I(0, 0));
+			// }
+		// }
 	}
 	
 	// terrible little helper function
 	// returns if the specified layer has the specified object
 	// refer to TerminalSelected; this should be deprecated ASAP when good datastructures are adopted and etc
+	/*DEPRECATED*/
 	private bool ObjectInLayer(PlaceableObject target, Layer layer) {
 		ArrayList work = layer.exportObjectList();
 		
@@ -80,15 +146,20 @@ public partial class CodeEdit : Godot.CodeEdit
 	
 	// yet another terrible little helper function
 	// if the object is in the specified layer, then highlight the specified object
+	/*DEPRECATED*/
 	private bool HighlightObjectIfValid(PlaceableObject target, Layer layer) {
 		// if object is not in layer, return
 		if (!ObjectInLayer(target, layer)) {return false;}
 		
 		// else: try and highlight the object!
 		// (TODO)
-		GD.Print("found target:", target);
+		// GD.Print("found target:", target);
+		highlightedLayer = layer;
+		layer.HighlightTile(true, target.GetCurrPos());
+		
 		return true;
 	}
+	
 	
 	// sets internal object to point to input
 	// mainly just used for the "highlight terminal's corresponding object" functionality
@@ -186,6 +257,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		}
 		lastHighlightedLine = -1;
 		HighlightCurrentLine = true;
+	}
+	
+	public override void _Input(InputEvent @event) {
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left) {
+			// TerminalSelected();
+		}
+		base._Input(@event);
 	}
 	
 }

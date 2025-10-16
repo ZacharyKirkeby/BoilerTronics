@@ -52,4 +52,3 @@ Registers:
 r0 - default store, math operations store the results to r0
 r1, r2: general purpose registers
 cmp - where compare flags are stored
-
