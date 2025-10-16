@@ -7,6 +7,9 @@ using Godot;
 using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Placeable;
 using System.Text.RegularExpressions;
+using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
 
 namespace Parsing;
 // issue is this being lowercase???
@@ -50,7 +53,14 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null) scriptObject.Move(values);
+			if ( scriptObject != null & !(scriptObject is ConveyorRotatorObject))
+			{
+				scriptObject.Move(values);
+			} else
+			{
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
+			}
+				
 		});
 
 		// invalid mov arg
@@ -82,7 +92,13 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null) scriptObject.Rotate(values);
+			if ( scriptObject != null & (scriptObject is ConveyorRotatorObject))
+			{
+				scriptObject.Rotate(values);
+			} else
+			{
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
+			}
 		});
 
 		// rot with the wrong args
@@ -114,7 +130,13 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null) scriptObject.Drop(values);
+			if ( scriptObject != null & (scriptObject is ClawObject))
+			{
+				scriptObject.Drop(values);
+			} else
+			{
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
+			}
 		});
 
 		// drop with args (bad)
@@ -138,7 +160,13 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null) scriptObject.Grab(values);
+			if ( scriptObject != null & (scriptObject is ClawObject))
+			{
+				scriptObject.Grab(values);
+			} else
+			{
+				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
+			}
 		});
 
 		// grab with args (bad)
