@@ -172,7 +172,9 @@ namespace BoilerTronicsObjects.Layers
 			if (highlight) {
 				highlightTarget = loc;
 			}
-			QueueRedraw();
+			
+			// check: is this instance queued for deletion -- needed to mitigate debug spam!
+			if (IsInstanceValid(this)) QueueRedraw();
 		}
 		
 		public override void _Draw() {
@@ -264,7 +266,8 @@ namespace BoilerTronicsObjects.Layers
 					
 					// queue redraw for highlighting after moving an object
 					// QueueRedraw();
-					manager.terminalContainer.UpdateSelectedTerminal();
+					// 'null' check to prevent errors
+					if (manager.terminalContainer != null) manager.terminalContainer.UpdateSelectedTerminal();
 				}
 			} else {
 				// Left mouse click on a spot where an object exitsts
