@@ -126,8 +126,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			
 			Vector2I targetGrid = this.GetPos() + MoveVector;
 			//area boundary of tileset
-			int maxX = 30;
-			int maxY = 30;
+			var level = BoilerTronicsGlobalManager.GlobalManager.currLevel as BoilerTronicsLevel;
+			int maxX = level.x;
+			int maxY = level.y;
 			
 			GD.Print(targetGrid.X);
 			GD.Print(targetGrid.Y);
@@ -164,8 +165,22 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				ui.setErrorCoords(pixelPosWithOffset);
 				return;
 			}
+			
+			Vector2I futureGridPosition = this.GetPos() + MoveVector;
+			PlaceableObject existingClaw = manager.layerClaw.FindObject(futureGridPosition);
+			if (existingClaw is ClawObject otherClaw && otherClaw != this)
+			{
+				ui.setError(2, E.Name);
+				
+				Vector2I pixelPosWithOffset = new Vector2I(
+					(int)((futureGridPosition.X + 2) * tileSize),
+					(int)((futureGridPosition.Y - 1) * tileSize));
+				ui.setErrorCoords(pixelPosWithOffset);
+				return;
+			}
 
-			ArrayList claws = manager.currLevel.cLayer.exportObjectList();
+
+			/*ArrayList claws = manager.currLevel.cLayer.exportObjectList();
 			foreach (var obj in claws)
 			{
 				if (obj is ClawObject clawObj)
@@ -188,7 +203,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 						return;
 					}
 				}
-			}
+			}*/
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);

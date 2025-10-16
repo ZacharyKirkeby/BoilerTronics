@@ -7,11 +7,12 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 using Parsing;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
-	int x;
-	int y;
+	public int x;
+	public int y;
 	public int StepCount;
 	double deltaTime = 100.0; // time we want it to take to move objects
 	TileSet tileset;
@@ -256,6 +257,19 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void MovingCollisionReport(MovingObject mObj) {
 		// This will cause an error
+		var ui = GetTree().CurrentScene as LevelUi;
+		int tileSize = 16;
+		var clawObj = mObj.obj as ClawObject;
+		String editorName = "not found";
+		 if (mObj.obj is Scriptable scriptableObj) {
+			editorName = scriptableObj.GetTerminal()?.Name ?? "Unknown";
+		}
+		ui.setError(2, editorName);
+		GD.Print("COLLISION");
+		Vector2I gridPos = mObj.obj.GetCurrPos();
+		Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
+		Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
+		ui.setErrorCoords(pixelPosWithOffset);
 
 		// Halt all other movement
 		foreach (MovingObject obj in movingList) {
