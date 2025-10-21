@@ -265,7 +265,6 @@ public partial class BoilerTronicsLevel : Node2D
 	public void MovingCollisionReport(MovingObject mObj) {
 		// This will cause an error
 		var ui = GetTree().CurrentScene as LevelUi;
-		int tileSize = 16;
 
 		// Halt all other movement
 		foreach (MovingObject obj in movingList) {
@@ -280,10 +279,15 @@ public partial class BoilerTronicsLevel : Node2D
 			editorName = scriptableObj.GetTerminal()?.Name ?? "Unknown";
 		}
 		ui.setError(2, editorName);
-		GD.Print("COLLISION");
+		GD.Print("COLLISION");	
+		Layer parentLayer = mObj.obj.GetParentLayer();
 		Vector2I gridPos = mObj.obj.GetCurrPos();
-		Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-		Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
-		ui.setErrorCoords(pixelPosWithOffset);
+
+		Vector2 localPos = parentLayer.MapToLocal(gridPos);
+		Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+		Vector2 offsetPos = globalPos + new Vector2(16, -16);
+		ui.setErrorCoords((Vector2I)offsetPos);
+		return;
 	}
 }

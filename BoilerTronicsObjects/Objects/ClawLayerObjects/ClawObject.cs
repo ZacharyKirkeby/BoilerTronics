@@ -121,9 +121,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			//be able to refer to functions in LevelUi
 			var ui = manager.GetTree().CurrentScene as LevelUi;
 			
-			//tile dimension
-			int tileSize = 16;
-			
 			Vector2I targetGrid = this.GetPos() + MoveVector;
 			//area boundary of tileset
 			var level = BoilerTronicsGlobalManager.GlobalManager.currLevel as BoilerTronicsLevel;
@@ -136,10 +133,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			//check if coords are out of bounds
 			if (targetGrid.X < 0 || targetGrid.Y < 0 || targetGrid.X >= maxX || targetGrid.Y >= maxY) {
 				ui.setError(1, E.Name);
+
+				Layer parentLayer = this.GetParentLayer();
 				Vector2I gridPos = this.GetCurrPos();
-				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-				ui.setErrorCoords(pixelPosWithOffset);
+
+				Vector2 localPos = parentLayer.MapToLocal(gridPos);
+				Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+				Vector2 offsetPos = globalPos + new Vector2(16, -16);
+				ui.setErrorCoords((Vector2I)offsetPos);
 				return;
 			}
 
@@ -148,10 +150,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// Error: rail we are on is either none existant or the wrong direction
 			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir) {
 				ui.setError(0, E.Name);
+
+				Layer parentLayer = this.GetParentLayer();
 				Vector2I gridPos = this.GetCurrPos();
-				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
-				ui.setErrorCoords(pixelPosWithOffset);
+
+				Vector2 localPos = parentLayer.MapToLocal(gridPos);
+				Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+				Vector2 offsetPos = globalPos + new Vector2(16, -16);
+				ui.setErrorCoords((Vector2I)offsetPos);
 				return;
 			}
 			// Check to make sure we are going to a track and that track is the correct orientation
@@ -159,25 +166,31 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// Error: rail we are going to is either none existant or the wrong direction
 			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir) {
 				ui.setError(0, E.Name);
+
+				Layer parentLayer = this.GetParentLayer();
 				Vector2I gridPos = this.GetCurrPos();
-				Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-				Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
-				ui.setErrorCoords(pixelPosWithOffset);
+
+				Vector2 localPos = parentLayer.MapToLocal(gridPos);
+				Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+				Vector2 offsetPos = globalPos + new Vector2(16, -16);
+				ui.setErrorCoords((Vector2I)offsetPos);
 				return;
 			}
 			
-			Vector2I futureGridPosition = this.GetPos() + MoveVector;
+			//TODO: Replace
+			/*Vector2I futureGridPosition = this.GetPos() + MoveVector;
 			PlaceableObject existingClaw = manager.layerClaw.FindObject(futureGridPosition);
 			if (existingClaw is ClawObject otherClaw && otherClaw != this)
 			{
 				ui.setError(2, E.Name);
 				
 				Vector2I pixelPosWithOffset = new Vector2I(
-					(int)((futureGridPosition.X + 2) * tileSize),
-					(int)((futureGridPosition.Y - 1) * tileSize));
+					(int)((futureGridPosition.X + 2) * 16),
+					(int)((futureGridPosition.Y - 1) * 16));
 				ui.setErrorCoords(pixelPosWithOffset);
 				return;
-			}
+			}*/
 
 
 			/*ArrayList claws = manager.currLevel.cLayer.exportObjectList();

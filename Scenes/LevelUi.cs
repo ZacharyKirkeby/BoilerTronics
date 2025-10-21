@@ -70,7 +70,7 @@ public partial class LevelUi : Node2D
 		
 		//run tests
 		var autoTest = new ErrorTest();
-		//AddChild(autoTest);;
+		//AddChild(autoTest);
 	}
 	
 	public void RemoveErrorScene() {
@@ -421,6 +421,7 @@ public partial class LevelUi : Node2D
 	{
 		// Prevent stepping while error exists
 		setError(4, editorName);
+		setErrorCoords(new Vector2I(0, 0));
 
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 		foreach (CodeEdit editor in codeEditors)
