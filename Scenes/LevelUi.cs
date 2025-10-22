@@ -280,7 +280,9 @@ public partial class LevelUi : Node2D
 				terminal = editor;
 			}
 		}
-		terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+		if(terminal != null) {
+			terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+		}
 
 		//dynamic error popups based on type of error
 		switch (errorID)
