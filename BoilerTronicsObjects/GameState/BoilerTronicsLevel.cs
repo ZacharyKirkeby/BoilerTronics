@@ -263,8 +263,8 @@ public partial class BoilerTronicsLevel : Node2D
 	}
 
 	public void MovingCollisionReport(MovingObject mObj) {
-		// This will cause an error
-		var ui = GetTree().CurrentScene as LevelUi;
+
+		var ui = GetTree().Root.GetNode<LevelUi>("/root/Node2D");
 
 		// Halt all other movement
 		foreach (MovingObject obj in movingList) {
