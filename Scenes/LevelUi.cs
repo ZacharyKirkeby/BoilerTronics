@@ -17,7 +17,7 @@ public partial class LevelUi : Node2D
 	private bool isError = false; //temp boolean to track if an error has occured
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = { "ClawRail", "ClawOutOfBounds", "ClawCollision", "ClawInventory" }; //keep track of current error type
-	private int errorID = -1; //current error type identifier (defined by errorTypes array)
+	public int errorID = -1; //current error type identifier (defined by errorTypes array)
 	private Vector2I errorCoords = new Vector2I(300,200);
 	private String errorEditor;
 	private StyleBoxFlat sbf = new StyleBoxFlat();
@@ -254,7 +254,7 @@ public partial class LevelUi : Node2D
 	}
 
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
-	private void handleError(int errorType, String badEditor)
+	public void handleError(int errorType, String badEditor)
 	{
 		//open error notice (exclamation mark) at coords of error
 		//TODO: add this to camera2D in actual level window
