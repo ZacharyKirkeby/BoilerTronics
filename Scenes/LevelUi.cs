@@ -256,6 +256,7 @@ public partial class LevelUi : Node2D
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
 	public void handleError(int errorType, String badEditor)
 	{
+		manager.currLevel.HaultObjects();
 		//open error notice (exclamation mark) at coords of error
 		//TODO: add this to camera2D in actual level window
 		/*if(errorNoticeIcon == null) {

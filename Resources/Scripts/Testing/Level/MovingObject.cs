@@ -63,6 +63,7 @@ public partial class MovingObject : Area2D {
 
 		// Create collision circle 2d
 		Shape.Shape = new CircleShape2D();
+		Shape.Position = this.Position;
 		CircleShape2D circle = Shape.Shape as CircleShape2D;
 		circle.Radius = 2; // 32 pixels (height of the objects)
 
@@ -73,6 +74,7 @@ public partial class MovingObject : Area2D {
 		Sprite = new Sprite2D();
 		Sprite.Texture = this.obj.GetTexture() as Texture2D;
 		Sprite.Offset = new Vector2(0, 24);
+		Sprite.Position = this.Position;
 		// Sprite.Scale = new Vector2(10, 10);
 
 		this.AddChild(Sprite);
