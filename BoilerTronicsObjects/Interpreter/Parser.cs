@@ -1,18 +1,13 @@
 using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using System.Threading;
 using Godot;
 using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Placeable;
 using System.Text.RegularExpressions;
-using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 
 namespace Parsing;
-// issue is this being lowercase???
 public partial class Parser : Node2D
 {
 	private int maxLineLength;
@@ -68,7 +63,6 @@ public partial class Parser : Node2D
 		{
 			GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Move Argument", editorName);
-			// func all
 		});
 
 		// empty mov
@@ -76,14 +70,13 @@ public partial class Parser : Node2D
 		{
 			GD.Print("Malformed Move command, missing argument");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Move Missing Argument", editorName);
-			// func call
 		});
 
 		// rot l | r
 		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
 		{
 			GD.Print($"Command: Rotate {m.Groups[1].Value}");
-			// func call
+			
 			//regex collection to string array
 			GroupCollection groups = m.Groups;
 			string[] values = new string[groups.Count];
@@ -106,7 +99,6 @@ public partial class Parser : Node2D
 		{
 			GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Rotate Argument", editorName);
-			// func call
 		});
 
 		// rot without args
@@ -120,7 +112,6 @@ public partial class Parser : Node2D
 		_commandParser.Register(@"^\s*drp\s*$", d =>
 		{
 			GD.Print("Command: Drop");
-			//func call
 
 			//regex collection to string array
 			GroupCollection groups = d.Groups;
@@ -144,14 +135,12 @@ public partial class Parser : Node2D
 		{
 			GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Drop Argument", editorName);
-			// func call
 		});
 
 
 		_commandParser.Register(@"^\s*grb\s*$", g =>
 		{
 			GD.Print("Command: Grab");
-			//func call
 			//regex collection to string array
 			GroupCollection groups = g.Groups;
 			string[] values = new string[groups.Count];
@@ -174,7 +163,6 @@ public partial class Parser : Node2D
 		{
 			GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Grab Argument", editorName);
-			// func call
 		});
 
 		_commandParser.Register(@"^\s*wrt\s+(\w+)\s+(-?\d+)\s*$", m =>
@@ -276,13 +264,11 @@ public partial class Parser : Node2D
 	// Takes in the current step, derives line number off that
 	public void ParseGetLine(PlaceableObject obj, CodeEdit codeEdit, string terminal, int step, string editor)
 	{
-		if ((obj is Scriptable))
+		if (obj is Scriptable)
 		{
 			scriptObject = (Scriptable)obj;
 			currEditor = codeEdit;
 		}
-		//GD.Print("Made it to Parser");
-		//CurrLine = line;
 		editorName = editor;
 		// error handling - i love c#
 		if (string.IsNullOrWhiteSpace(terminal))
@@ -316,20 +302,15 @@ public partial class Parser : Node2D
 		}
 		// error handling -> if theres nothing just stop
 		if (validLines.Count == 0) { return; }
-		CurrLine = step % validLines.Count;
+		CurrLine = step % validLines.Count; // this is an issue rn
 
 		// update UI about current line
 		// TODO - get this to actually work
 
-		if (CurrLine >= validLines.Count)
-		{
-			GD.Print("Split related issue");
-			return;
-		}
-
 		string lineToBeProcessed = validLines[CurrLine];
 		lineToBeProcessed = lineToBeProcessed.ToLower();
 
+		// since a jump isn't a step consuming task, we pre-handle it
 		if (HandleJump(lineToBeProcessed, out int newLine))
 		{
 			if (newLine >= 0 && newLine < validLines.Count)
@@ -344,6 +325,10 @@ public partial class Parser : Node2D
 			return;
 		}
 
+		// handle arithmetic here: since it shouldn't consume a step
+
+		// handle -> if end of lines shouldn't continue, unless controlled by JMP
+
 		if (!_commandParser.Process(lineToBeProcessed))
 		{
 			GD.Print($"Unknown or malformed command: {lineToBeProcessed}");
@@ -354,7 +339,7 @@ public partial class Parser : Node2D
 	{
 		newLine = -1;
 
-		var match = System.Text.RegularExpressions.Regex.Match(line, @"^\s*jmp\s+(\w+)\s*$");
+		var match = MyRegex().Match(line);
 		if (!match.Success)
 			return false;
 
@@ -370,6 +355,7 @@ public partial class Parser : Node2D
 		return false;
 	}
 
+	// NGL i think i can delete this i think i forgot to use it
 	public int GetFirstValidLineAfterLabel(string labelName, List<string> lines)
 	{
 		for (int i = 0; i < lines.Count; i++)
@@ -394,4 +380,8 @@ public partial class Parser : Node2D
 		//return -1 if not found
 		return -1;
 	}
+
+    [GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
+    private static partial Regex MyRegex();
+
 }
