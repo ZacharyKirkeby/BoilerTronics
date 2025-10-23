@@ -286,16 +286,16 @@ public partial class LevelUi : Node2D
 		switch (errorID)
 		{
 			case 0:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawRailError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawRailError.tscn");
 				break;
 			case 1:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawOutOfBoundsError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawOutOfBoundsError.tscn");
 				break;
 			case 2:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawCollisionError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawCollisionError.tscn");
 				break;
 			case 3:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawInventoryError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindow/ClawInventoryError.tscn");
 				break;
 			case 4:
 				// no popup
