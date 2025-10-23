@@ -110,7 +110,7 @@ public partial class LevelUi : Node2D
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
 
-		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
 	}
 
 	private void _on_settings_button_pressed() {
