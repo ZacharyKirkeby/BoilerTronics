@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class CanvasLayer : Godot.CanvasLayer
+public partial class ButtonTray : Godot.CanvasLayer
 {
 		public override void _Ready()
 	{
