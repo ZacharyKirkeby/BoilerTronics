@@ -263,7 +263,6 @@ public partial class BoilerTronicsLevel : Node2D
 	}
 
 	public void MovingCollisionReport(MovingObject mObj) {
-
 		var ui = GetTree().Root.GetNode<LevelUi>("/root/Node2D");
 
 		// Halt all other movement
@@ -288,6 +287,9 @@ public partial class BoilerTronicsLevel : Node2D
 
 		Vector2 offsetPos = globalPos + new Vector2(16, -16);
 		ui.setErrorCoords((Vector2I)offsetPos);
+
+
+		ui.handleError(ui.errorID, "claw collision");
 		return;
 	}
 }
