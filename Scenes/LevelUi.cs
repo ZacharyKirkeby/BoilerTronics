@@ -253,6 +253,16 @@ public partial class LevelUi : Node2D
 		camera.RemoveErrorSprite();
 	}
 
+	private void OnErrorDialogClosed() {
+		GD.Print("Error dialog closed — clearing reference");
+		if (errorSceneInstance != null)
+		{
+			errorSceneInstance.QueueFree();
+			errorSceneInstance = null;
+		}
+	}
+
+
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
 	public void handleError(int errorType, String badEditor)
 	{
@@ -266,6 +276,11 @@ public partial class LevelUi : Node2D
 		}
 		//TODO: replace example coords with actual (make dynamic)
 		errorNoticeIcon.Position = errorCoords;*/
+		if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
+			GD.Print("popup already open");
+			return;
+		}
+
 		ShowErrorNotice(errorCoords);
 
 		PackedScene packedErrorScene = null;
@@ -309,7 +324,18 @@ public partial class LevelUi : Node2D
 		
 		//actually display error notice
 		if(packedErrorScene != null) {
+			if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
+				return;
+			}
+
 			errorSceneInstance = packedErrorScene.Instantiate();
+
+			if (errorSceneInstance is AcceptDialog dialog) {
+				dialog.Connect("confirmed", new Callable(this, nameof(OnErrorDialogClosed)));
+				dialog.Connect("canceled", new Callable(this, nameof(OnErrorDialogClosed)));
+				dialog.Connect("close_requested", new Callable(this, nameof(OnErrorDialogClosed)));
+			}
+
 			GetTree().CurrentScene.AddChild(errorSceneInstance);
 		}
 	}
