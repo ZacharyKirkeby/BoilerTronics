@@ -107,17 +107,17 @@ theme_override_constants/separation = 30
 [node name="Save 0" type="Button" parent="Window/SaveContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Save 1"
+text = "Save 0"
 
 [node name="Save 1" type="Button" parent="Window/SaveContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Save 2"
+text = "Save 1"
 
 [node name="Save 2" type="Button" parent="Window/SaveContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Save 3"
+text = "Save 2"
 
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Back" to="." method="_on_back_pressed"]
