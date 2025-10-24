@@ -17,7 +17,7 @@ public partial class LevelUi : Node2D
 	private bool isError = false; //temp boolean to track if an error has occured
 	private Node2D errorNoticeIcon;
 	private String[] errorTypes = { "ClawRail", "ClawOutOfBounds", "ClawCollision", "ClawInventory" }; //keep track of current error type
-	private int errorID = -1; //current error type identifier (defined by errorTypes array)
+	public int errorID = -1; //current error type identifier (defined by errorTypes array)
 	private Vector2I errorCoords = new Vector2I(300,200);
 	private String errorEditor;
 	private StyleBoxFlat sbf = new StyleBoxFlat();
@@ -70,7 +70,7 @@ public partial class LevelUi : Node2D
 		
 		//run tests
 		var autoTest = new ErrorTest();
-		//AddChild(autoTest);;
+		//AddChild(autoTest);
 	}
 	
 	public void RemoveErrorScene() {
@@ -253,9 +253,20 @@ public partial class LevelUi : Node2D
 		camera.RemoveErrorSprite();
 	}
 
+	private void OnErrorDialogClosed() {
+		GD.Print("Error dialog closed — clearing reference");
+		if (errorSceneInstance != null)
+		{
+			errorSceneInstance.QueueFree();
+			errorSceneInstance = null;
+		}
+	}
+
+
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
-	private void handleError(int errorType, String badEditor)
+	public void handleError(int errorType, String badEditor)
 	{
+		manager.currLevel.HaultObjects();
 		//open error notice (exclamation mark) at coords of error
 		//TODO: add this to camera2D in actual level window
 		/*if(errorNoticeIcon == null) {
@@ -265,6 +276,11 @@ public partial class LevelUi : Node2D
 		}
 		//TODO: replace example coords with actual (make dynamic)
 		errorNoticeIcon.Position = errorCoords;*/
+		if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
+			GD.Print("popup already open");
+			return;
+		}
+
 		ShowErrorNotice(errorCoords);
 
 		PackedScene packedErrorScene = null;
@@ -280,7 +296,9 @@ public partial class LevelUi : Node2D
 				terminal = editor;
 			}
 		}
-		terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+		if(terminal != null) {
+			terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+		}
 
 		//dynamic error popups based on type of error
 		switch (errorID)
@@ -306,7 +324,18 @@ public partial class LevelUi : Node2D
 		
 		//actually display error notice
 		if(packedErrorScene != null) {
+			if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
+				return;
+			}
+
 			errorSceneInstance = packedErrorScene.Instantiate();
+
+			if (errorSceneInstance is AcceptDialog dialog) {
+				dialog.Connect("confirmed", new Callable(this, nameof(OnErrorDialogClosed)));
+				dialog.Connect("canceled", new Callable(this, nameof(OnErrorDialogClosed)));
+				dialog.Connect("close_requested", new Callable(this, nameof(OnErrorDialogClosed)));
+			}
+
 			GetTree().CurrentScene.AddChild(errorSceneInstance);
 		}
 	}
@@ -421,6 +450,7 @@ public partial class LevelUi : Node2D
 	{
 		// Prevent stepping while error exists
 		setError(4, editorName);
+		setErrorCoords(new Vector2I(0, 0));
 
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 		foreach (CodeEdit editor in codeEditors)

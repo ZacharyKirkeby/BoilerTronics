@@ -63,6 +63,7 @@ public partial class MovingObject : Area2D {
 
 		// Create collision circle 2d
 		Shape.Shape = new CircleShape2D();
+		Shape.Position = this.Position;
 		CircleShape2D circle = Shape.Shape as CircleShape2D;
 		circle.Radius = 2; // 32 pixels (height of the objects)
 
@@ -73,6 +74,7 @@ public partial class MovingObject : Area2D {
 		Sprite = new Sprite2D();
 		Sprite.Texture = this.obj.GetTexture() as Texture2D;
 		Sprite.Offset = new Vector2(0, 24);
+		Sprite.Position = this.Position;
 		// Sprite.Scale = new Vector2(10, 10);
 
 		this.AddChild(Sprite);
@@ -97,11 +99,23 @@ public partial class MovingObject : Area2D {
 		}
 
 		this.TotalDelta += delta;
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 		if (this.TotalDelta >= this.TargetDelta) {
 			// We done
 			// Move the object internally
 			obj.MoveCurrPos(TargetPos.X, TargetPos.Y);
+
+			//check for static collision
+			if (layer != null)
+			{
+				var existingObj = layer.FindObject(TargetPos);
+				if (existingObj != null && existingObj != obj)
+				{
+					manager.currLevel.MovingCollisionReport(this);
+					return;
+				}
+			}
 
 			if (obj is ClawObject cObj) {
 				cObj.moving = false;
@@ -110,7 +124,7 @@ public partial class MovingObject : Area2D {
 			// Place the object back on the layer
 			layer.AddObject(obj);
 			// De-register object from the game state
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.UnRegisterMoving(this);
 			// Destroy this object
 			this.QueueFree();
