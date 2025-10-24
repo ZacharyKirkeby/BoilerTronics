@@ -77,6 +77,11 @@ namespace BoilerTronicsObjects.GameCamera {
 			}
 			
 		public void SpawnErrorSprite(Vector2 errorPosition) {
+			//if coords are negative/invalid do not spawn
+			if(errorPosition.X < 0 || errorPosition.Y < 0) {
+				return;
+			}
+
 			//remove sprite if already there
 			if (errorSprite != null && IsInstanceValid(errorSprite)) {
 				errorSprite.QueueFree();
