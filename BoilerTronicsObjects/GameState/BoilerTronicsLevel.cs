@@ -236,6 +236,7 @@ public partial class BoilerTronicsLevel : Node2D
 	// Steps through all runnables
 	public void Step() {
 		if (E.HasError()) return; // Can't step if there is an error
+		if (movingList.Count != 0) return; // Can't step while stuff is moving
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
