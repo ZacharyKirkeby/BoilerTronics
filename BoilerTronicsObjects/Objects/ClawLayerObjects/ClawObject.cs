@@ -26,8 +26,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public void Step() {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 		}
 
 		public void RegisterSteppable() {
