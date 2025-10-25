@@ -30,12 +30,12 @@ public partial class MainMenu : Node2D
 		
 		// load autosave
 		// manager.SetTargetLevelSave(0, -2);
-		GetTree().ChangeSceneToFile("res://Scenes/level_ui.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
 	}
 
 	private void _on_level_select_pressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/level_select.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/level_select.tscn");
 	}
 
 	private void _on_settings_pressed()
