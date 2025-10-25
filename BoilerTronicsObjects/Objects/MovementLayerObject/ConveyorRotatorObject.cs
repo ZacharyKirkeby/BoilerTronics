@@ -102,6 +102,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 					tObj.ChangeDir(0);
 					break;
 			}
+			
+			manager.PlaySound("rotate");
 
 			GD.Print("newDir:", tObj.GetDir());
 		}

@@ -78,6 +78,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
 			cObj.moving = true;
+			manager.PlaySound("move");
 		}
 		
 		// Methods to deal with terminals (inherit from the parent ConveyorGroup)

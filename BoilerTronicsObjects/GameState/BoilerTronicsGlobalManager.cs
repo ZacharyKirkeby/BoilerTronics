@@ -79,6 +79,7 @@ public partial class BoilerTronicsGlobalManager : Node
 		sounds["move"] = GD.Load<AudioStream>("res://Resources/moving.wav");
 		sounds["grab"] = GD.Load<AudioStream>("res://Resources/grab.wav");
 		sounds["drop"] = GD.Load<AudioStream>("res://Resources/grab.wav");
+		sounds["rotate"] = GD.Load<AudioStream>("res://Resources/turning.wav");
 	}
 	
 	//play the sound called by name
