@@ -282,17 +282,19 @@ public partial class BoilerTronicsLevel : Node2D
 
 		HaultObjects(); // Stop all objects
 
+		Layer parentLayer = pObj.GetParentLayer();
+		Vector2I gridPos = pObj.GetCurrPos();
+
+		Vector2 localPos = parentLayer.MapToLocal(gridPos);
+		Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+		Vector2 offsetPos = globalPos + new Vector2(16, -16);
+
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
-			Layer parentLayer = pObj.GetParentLayer();
-			Vector2I gridPos = pObj.GetCurrPos();
-
-			Vector2 localPos = parentLayer.MapToLocal(gridPos);
-			Vector2 globalPos = parentLayer.ToGlobal(localPos);
-
-			Vector2 offsetPos = globalPos + new Vector2(16, -16);
-
-			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
+			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+		} else {
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
 		}
 	}
 }
