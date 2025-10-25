@@ -226,12 +226,16 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Empty moving list
 		this.movingList.Clear();
+
+		// Clear errors
+		E.ClearError();
 	}
 
 	/* Handle runnable objects */
 
 	// Steps through all runnables
 	public void Step() {
+		if (E.HasError()) return; // Can't step if there is an error
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;

@@ -14,7 +14,6 @@ public partial class LevelUi : Node2D
 	/* Steps */
 
 	private Label stepCountLabel;
-	private int stepCount = 0;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -32,8 +31,6 @@ public partial class LevelUi : Node2D
 	private Button clearOne;
 	private Button clearTwo;
 	private Button stepButton;
-
-	private bool stepDisabled = false;
 
 	public override void _Ready()
 	{
@@ -60,7 +57,7 @@ public partial class LevelUi : Node2D
 		sbeh.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		stepButton = GetNode<Button>("%Step Button");
-		UpdateStepCount();
+		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.E = new ErrorHandler();
@@ -87,16 +84,15 @@ public partial class LevelUi : Node2D
 
 	private void _on_reset_button_pressed()
 	{
-		//reset the step counter
-		stepCount = 0;
-
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
 		manager.Reset();
 		manager.currLevel.Reset();
 
 		//reset highlighting in terminals
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+
 		foreach (CodeEdit editor in codeEditors)
 		{
 			editor.ClearAllHighlights();
@@ -112,44 +108,30 @@ public partial class LevelUi : Node2D
 
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
-		UpdateStepCount();
 
-		//delete error notice (exclamation mark) if exists/open
-		/*if(errorNoticeIcon != null) {
-		  errorNoticeIcon.QueueFree();
-		  errorNoticeIcon = null;
-		  }*/
+		UpdateStepCount(manager.currLevel.StepCount);
+
 		manager.currLevel.E.ClearErrorNotice();
 	}
 
 	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
-		//update stepCount regardless of error
-		//if (stepButton.Disabled) return;
-		//if(stepDisabled) return;
-		stepDisabled = true;
-		//stepButton.Disabled = true;
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
-		// Tell the global manager that we are stepping
-		manager.Step();
-
-		if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
-
 		// on first step button press, trigger an autosave!
-		if (stepCount == 0) {
+		if (manager.currLevel.StepCount == 0) {
 			manager.SaveAutosave();
 
 			// also stop all highlighting
 			manager.terminalContainer.ClearHighlightedObjects();
 		}
 
-		stepCount++;
-		UpdateStepCount();
-		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
-
 		// Tell the global manager that we are stepping
-		manager.currLevel.Step();
+		manager.Step(); // This will also call step on the level
+
+		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
+
+		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
 		//update code terminal highlighting to next one regardless of error
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
@@ -163,9 +145,6 @@ public partial class LevelUi : Node2D
 		editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
 		*/
-
-		//stepButton.Disabled = false;
-		stepDisabled = false;
 	}
 
 	private void _on_run_button_pressed() {
@@ -320,7 +299,7 @@ public partial class LevelUi : Node2D
 
 	/* Helper Funcitons */
 
-	private void UpdateStepCount()
+	private void UpdateStepCount(int stepCount)
 	{
 		stepCountLabel.Text = "Step Count: " + stepCount;
 	}
