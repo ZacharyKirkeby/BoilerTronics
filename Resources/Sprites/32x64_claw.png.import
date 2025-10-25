@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ji1iygspvrgp"
-path="res://.godot/imported/32x32_movement.png-0d6649b84fdb61ab690a426215787c6c.ctex"
+uid="uid://homjd2pg6vet"
+path="res://.godot/imported/32x64_claw.png-3399db0f42613a9bd381f5637831cdf1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Resources/32x32_movement.png"
-dest_files=["res://.godot/imported/32x32_movement.png-0d6649b84fdb61ab690a426215787c6c.ctex"]
+source_file="res://Resources/Sprites/32x64_claw.png"
+dest_files=["res://.godot/imported/32x64_claw.png-3399db0f42613a9bd381f5637831cdf1.ctex"]
 
 [params]
 
