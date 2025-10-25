@@ -26,6 +26,7 @@ public partial class ErrorHandler : Node2D {
 	// Function to throw an error from the parser
 	public void OnParserErrorRaised(int lineNumber, string message, string editorName)
 	{
+		GD.Print("Test");
 		// TODO: Rework this to work with the new error handling system ? (see if this is doable)
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 
