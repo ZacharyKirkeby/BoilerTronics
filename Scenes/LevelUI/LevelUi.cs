@@ -169,13 +169,18 @@ public partial class LevelUi : Node2D
 	}
 
 	private void _on_run_button_pressed() {
-		// get the current run speed (not running, 1x, 2x, submit)
-		// increse t
-
+		// TODO: Implement
+		// On press we should look at our current run state
+		// If we have paused or are stepping, don't do anything
+		// If we are not running, go to 1x
+		// If we are at 1x, go to 2x
+		// If we are at 2x, go to submit speed
+		// If we are at submit speed, don't do anything
 	}
 
 	private void _on_pause_button_pressed() {
-
+		// If we are not running, don't do anything
+		// Otherwise, stop running
 	}
 
 	// return to main menu button
@@ -333,9 +338,6 @@ public partial class LevelUi : Node2D
 		button.AddThemeStyleboxOverride("hover", sbeh);
 		button.AddThemeStyleboxOverride("focus", sbe);
 	}
-
-	/* Error Functions */
-
 
 	/* Testing Functions */
 
