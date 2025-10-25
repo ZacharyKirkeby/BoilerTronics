@@ -35,15 +35,6 @@ public partial class LevelUi : Node2D
 
 	private bool stepDisabled = false;
 
-	// Error stuff
-	private bool isError = false; //temp boolean to track if an error has occured
-	public int errorID = -1; //current error type identifier (defined by errorTypes array)
-	private String[] errorTypes = { "ClawRail", "ClawOutOfBounds", "ClawCollision", "ClawInventory" }; //keep track of current error type
-	private Vector2I errorCoords = new Vector2I(300,200);
-	private String errorEditor;
-	private Node2D errorNoticeIcon;
-	private Node errorSceneInstance;
-
 	public override void _Ready()
 	{
 		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
@@ -72,9 +63,12 @@ public partial class LevelUi : Node2D
 		UpdateStepCount();
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.E = new ErrorHandler();
+		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
-		parser.Connect(Parser.SignalName.ErrorRaised, new Callable(this, nameof(OnParserErrorRaised)));
+		parser.Connect(Parser.SignalName.ErrorRaised, new Callable(this, nameof(manager.currLevel.E.OnParserErrorRaised)));
+
 		manager.currLevel.P = parser;
 
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
@@ -125,9 +119,7 @@ public partial class LevelUi : Node2D
 		  errorNoticeIcon.QueueFree();
 		  errorNoticeIcon = null;
 		  }*/
-		ClearErrorNotice();
-
-		removeError();
+		manager.currLevel.E.ClearErrorNotice();
 	}
 
 	//called in test script to have access to auto resetting
@@ -137,48 +129,41 @@ public partial class LevelUi : Node2D
 		//if(stepDisabled) return;
 		stepDisabled = true;
 		//stepButton.Disabled = true;
-		if (!isError)
-		{
-			// Tell the global manager that we are stepping
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.Step();
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
-			if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
+		// Tell the global manager that we are stepping
+		manager.Step();
 
-			// on first step button press, trigger an autosave!
-			if (stepCount == 0) {
-				manager.SaveAutosave();
+		if (manager.currLevel.movingList.Count != 0) return; // Can't step while stuff is still moving
 
-				// also stop all highlighting
-				manager.terminalContainer.ClearHighlightedObjects();
-			}
+		// on first step button press, trigger an autosave!
+		if (stepCount == 0) {
+			manager.SaveAutosave();
 
-			stepCount++;
-			UpdateStepCount();
-			stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-			// Tell the global manager that we are stepping
-			manager.currLevel.Step();
-
-			//update code terminal highlighting to next one regardless of error
-			var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-
-			/*
-			 * This will be moved into the step function of the scriptable objects
-			 foreach (CodeEdit editor in codeEditors)
-			 {
-			// NOTE - FUNNY STUFF
-			parser.ParseGetLine(null, null, editor.Text, stepCount, editor.Name);
-			editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-			}
-			*/
+			// also stop all highlighting
+			manager.terminalContainer.ClearHighlightedObjects();
 		}
 
-		//if error, handle accordingly with popups and code terminal highlighting
-		if (isError)
-		{
-			handleError(errorID, errorEditor);
+		stepCount++;
+		UpdateStepCount();
+		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+		// Tell the global manager that we are stepping
+		manager.currLevel.Step();
+
+		//update code terminal highlighting to next one regardless of error
+		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+
+		/*
+		 * This will be moved into the step function of the scriptable objects
+		 foreach (CodeEdit editor in codeEditors)
+		 {
+		// NOTE - FUNNY STUFF
+		parser.ParseGetLine(null, null, editor.Text, stepCount, editor.Name);
+		editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
+		*/
+
 		//stepButton.Disabled = false;
 		stepDisabled = false;
 	}
@@ -350,188 +335,6 @@ public partial class LevelUi : Node2D
 	}
 
 	/* Error Functions */
-
-	private void OnParserErrorRaised(int lineNumber, string message, string editorName)
-	{
-		// Prevent stepping while error exists
-		setError(4, editorName);
-		setErrorCoords(new Vector2I(0, 0));
-
-		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-		foreach (CodeEdit editor in codeEditors)
-		{
-			if (editor.Name == editorName)
-			{
-				var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
-				if (existing != null)
-				{
-					existing.QueueFree();
-				}
-
-				// Create error label
-				Label errorLabel = new Label
-				{
-					Name = "ErrorLabel",
-					Text = $"Line {lineNumber}: {message}",
-					HorizontalAlignment = HorizontalAlignment.Left,
-					Modulate = new Color(1, 0.3f, 0.3f),
-					AutowrapMode = TextServer.AutowrapMode.Word
-				};
-
-				// Add to bottom of CodeEdit
-				editor.AddChild(errorLabel);
-				errorLabel.AnchorLeft = 0;
-				errorLabel.AnchorRight = 1;
-				errorLabel.AnchorBottom = 1;
-				errorLabel.AnchorTop = 1;
-				errorLabel.OffsetBottom = -4;
-
-				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
-
-				// Highlight error line
-				editor.HighlightLine(lineNumber - 1, new Color(1, 0, 0, 0.25f));
-
-				//TODO - delete
-				GD.Print($"[ParserError] {editorName}: Line {lineNumber} -> {message}");
-				break;
-			}
-		}
-	}
-
-	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
-	public void handleError(int errorType, String badEditor)
-	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.HaultObjects();
-		//open error notice (exclamation mark) at coords of error
-		//TODO: add this to camera2D in actual level window
-		/*if(errorNoticeIcon == null) {
-		  var scene = (PackedScene)ResourceLoader.Load("res://Resources/ErrorNotice.tscn");
-		  errorNoticeIcon = scene.Instantiate<Node2D>();
-		  AddChild(errorNoticeIcon);
-		  }
-		//TODO: replace example coords with actual (make dynamic)
-		errorNoticeIcon.Position = errorCoords;*/
-		if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
-			GD.Print("popup already open");
-			return;
-		}
-
-		ShowErrorNotice(errorCoords);
-
-		PackedScene packedErrorScene = null;
-
-		//highlight current line of erroneous terminal red
-		//TODO: ensure name is what we end up differentiating by
-		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-		CodeEdit terminal = null;
-
-		foreach (CodeEdit editor in codeEditors)
-		{
-			if (editor.Name == badEditor)
-			{
-				terminal = editor;
-			}
-		}
-
-		if(terminal != null) {
-			terminal.HighlightLine(terminal.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
-		}
-
-		//dynamic error popups based on type of error
-		switch (errorID)
-		{
-			case 0:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawRailError.tscn");
-				break;
-			case 1:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawOutOfBoundsError.tscn");
-				break;
-			case 2:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawCollisionError.tscn");
-				break;
-			case 3:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindow/ClawInventoryError.tscn");
-				break;
-			case 4:
-				// no popup
-				break;
-			case -1:
-				break; //should not happen as error should be set to false
-		}
-
-		//actually display error notice
-		if(packedErrorScene != null) {
-			if (errorSceneInstance != null && IsInstanceValid(errorSceneInstance)) {
-				return;
-			}
-
-			errorSceneInstance = packedErrorScene.Instantiate();
-
-			if (errorSceneInstance is AcceptDialog dialog) {
-				dialog.Connect("confirmed", new Callable(this, nameof(OnErrorDialogClosed)));
-				dialog.Connect("canceled", new Callable(this, nameof(OnErrorDialogClosed)));
-				dialog.Connect("close_requested", new Callable(this, nameof(OnErrorDialogClosed)));
-			}
-
-			GetTree().CurrentScene.AddChild(errorSceneInstance);
-		}
-	}
-
-	public void RemoveErrorScene() {
-		if(IsInstanceValid(errorSceneInstance)) {
-			errorSceneInstance.QueueFree();
-			errorSceneInstance = null;
-			GD.Print("Error scene removed.");
-		}
-		else {
-			GD.Print("Error scene failed to removed.");
-		}
-	}
-
-	//set error status as true with errorID and name of terminal causing error
-	public void setError(int errID, String editor)
-	{
-		GD.Print("errid = " + errID);
-		if ((errID >= -1) && (errID < 4))
-			errorID = errID;
-		isError = true;
-		errorEditor = editor;
-	}
-
-	public void setErrorCoords(Vector2I coords)
-	{
-		errorCoords = coords;
-	}
-
-	private void removeError()
-	{
-		isError = false;
-		errorID = -1;
-		//stepButton.Disabled = false;
-		stepDisabled = false;
-	}
-
-	//be able to call for error popup from this script
-	private void ShowErrorNotice(Vector2 position) {
-		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
-		camera.SpawnErrorSprite(position);
-	}
-
-	//be able to call for error popup removal from this script
-	private void ClearErrorNotice() {
-		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
-		camera.RemoveErrorSprite();
-	}
-
-	private void OnErrorDialogClosed() {
-		GD.Print("Error dialog closed — clearing reference");
-		if (errorSceneInstance != null)
-		{
-			errorSceneInstance.QueueFree();
-			errorSceneInstance = null;
-		}
-	}
 
 
 	/* Testing Functions */
