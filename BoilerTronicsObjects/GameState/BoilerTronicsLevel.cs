@@ -25,6 +25,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
 	public Parser P;
+	public ErrorHandler E;
 	
 	// store all four corners of the placement grid
 	private Vector2 c1;
@@ -262,28 +263,31 @@ public partial class BoilerTronicsLevel : Node2D
 		movingList.Remove(mObj);
 	}
 
-	public void MovingCollisionReport(MovingObject mObj) {
-		// This will cause an error
-		var ui = GetTree().CurrentScene as LevelUi;
-		int tileSize = 16;
-
+	public void HaultObjects() {
 		// Halt all other movement
 		foreach (MovingObject obj in movingList) {
 			obj.Halt();
 		}
 
-		if (mObj == null) return;
+	}
 
-		// var clawObj = mObj.obj as ClawObject;
-		String editorName = "not found";
-		 if (mObj.obj is Scriptable scriptableObj) {
-			editorName = scriptableObj.GetTerminal()?.Name ?? "Unknown";
+	public void MovingCollisionReport(MovingObject mObj) {
+		if (mObj == null) return; // We can't report a moving object
+		if (!(mObj.obj is PlaceableObject pObj)) return; // We can't report a moving object
+
+		HaultObjects(); // Stop all objects
+
+		// Right now we only have collison for claws
+		if (pObj is Scriptable sObj) {
+			Layer parentLayer = pObj.GetParentLayer();
+			Vector2I gridPos = pObj.GetCurrPos();
+
+			Vector2 localPos = parentLayer.MapToLocal(gridPos);
+			Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+			Vector2 offsetPos = globalPos + new Vector2(16, -16);
+
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
 		}
-		ui.setError(2, editorName);
-		GD.Print("COLLISION");
-		Vector2I gridPos = mObj.obj.GetCurrPos();
-		Vector2I pixelPos = new Vector2I((gridPos.X) * tileSize, (gridPos.Y) * tileSize);
-		Vector2I pixelPosWithOffset = new Vector2I((gridPos.X + 2) * tileSize, (gridPos.Y - 1) * tileSize);
-		ui.setErrorCoords(pixelPosWithOffset);
 	}
 }
