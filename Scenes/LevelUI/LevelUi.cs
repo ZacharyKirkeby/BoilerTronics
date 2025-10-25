@@ -110,7 +110,7 @@ public partial class LevelUi : Node2D
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
 
-		GetTree().ChangeSceneToFile("res://Scenes/main_menu.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
 	}
 
 	private void _on_settings_button_pressed() {
@@ -304,16 +304,16 @@ public partial class LevelUi : Node2D
 		switch (errorID)
 		{
 			case 0:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawRailError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawRailError.tscn");
 				break;
 			case 1:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawOutOfBoundsError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawOutOfBoundsError.tscn");
 				break;
 			case 2:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawCollisionError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawCollisionError.tscn");
 				break;
 			case 3:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Resources/ClawInventoryError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindow/ClawInventoryError.tscn");
 				break;
 			case 4:
 				// no popup
