@@ -33,7 +33,6 @@ public partial class LevelUi : Node2D
 	private Button stepButton;
 	private Node errorSceneInstance;
 	private bool stepDisabled = false;
-	private AudioStreamPlayer errorSound;
 
 	public override void _Ready()
 	{
@@ -73,7 +72,6 @@ public partial class LevelUi : Node2D
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
 		
-		errorSound = GetNode<AudioStreamPlayer>("ErrorSound");
 	}
 	
 	public void RemoveErrorScene() {
@@ -268,10 +266,7 @@ public partial class LevelUi : Node2D
 		}
 		//TODO: replace example coords with actual (make dynamic)
 		errorNoticeIcon.Position = errorCoords;*/
-		
-		if (errorSound != null) {
-			errorSound.Play();
-		}
+		manager.PlaySound("error");
 		
 		ShowErrorNotice(errorCoords);
 

@@ -58,6 +58,9 @@ public partial class BoilerTronicsGlobalManager : Node
 
 	public static BoilerTronicsGlobalManager GlobalManager { get; private set; } // This will be the global singelton we interact with throught the program
 
+	private Dictionary<string, AudioStream> sounds = new(); // for string to relate to audio
+	private AudioStreamPlayer soundPlayer;
+
 	public override void _Ready()
 	{
 		// Make sure there only exists one manager
@@ -67,6 +70,29 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 
 		GlobalManager = this; // get this as the manager
+		
+		//set sounds
+		soundPlayer = new AudioStreamPlayer();
+		soundPlayer.Name = "SoundPlayer";
+		AddChild(soundPlayer);
+		sounds["error"] = GD.Load<AudioStream>("res://Resources/errorSound.wav");
+		sounds["move"] = GD.Load<AudioStream>("res://Resources/moving.wav");
+		sounds["grab"] = GD.Load<AudioStream>("res://Resources/grab.wav");
+		sounds["drop"] = GD.Load<AudioStream>("res://Resources/grab.wav");
+	}
+	
+	//play the sound called by name
+	public void PlaySound(string soundName) {
+		if (sounds.ContainsKey(soundName)) {
+			if(soundPlayer == null) {
+				GD.Print("soundplayer null");
+			}
+			soundPlayer.Stream = sounds[soundName];
+			soundPlayer.Play();
+		}
+		else {
+			GD.Print("sound not found");
+		}
 	}
 
 	// This will allow for the step button to interact with the backend of the game
