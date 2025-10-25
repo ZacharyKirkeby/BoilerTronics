@@ -385,6 +385,7 @@ public partial class LevelUi : Node2D
 	{
 		//reset the step counter
 		stepCount = 0;
+		setErrorCoords(new Vector2I(0,0));
 
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
