@@ -95,6 +95,12 @@ public partial class BoilerTronicsGlobalManager : Node
 			GD.Print("sound not found");
 		}
 	}
+	
+	public void StopSound() {
+		if((soundPlayer != null) && (soundPlayer.Playing)) {
+			soundPlayer.Stop();
+		}
+	}
 
 	// This will allow for the step button to interact with the backend of the game
 	// LevelUI.cs
