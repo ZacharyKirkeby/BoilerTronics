@@ -14,6 +14,7 @@ public partial class LevelUi : Node2D
 	/* Steps */
 
 	private Label stepCountLabel;
+	private Label costCountLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -34,6 +35,7 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
+		GD.Print(GetPath());
 		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
 
 
@@ -55,11 +57,13 @@ public partial class LevelUi : Node2D
 		sbe.SetCornerRadiusAll(20);
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
+		costCountLabel = GetNode<Label>("%Cost Count");
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		stepButton = GetNode<Button>("%Step Button");
 		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		UpdateCost(manager.currLevel.cost);
 		manager.currLevel.E = new ErrorHandler();
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
@@ -302,6 +306,14 @@ public partial class LevelUi : Node2D
 	private void UpdateStepCount(int stepCount)
 	{
 		stepCountLabel.Text = "Step Count: " + stepCount;
+	}
+	
+	public void UpdateCost(int cost) {
+		if (costCountLabel == null) {
+			return;
+		}
+		costCountLabel.Text = "Cost: " + cost;
+		GD.Print("cost updated" + cost);
 	}
 
 	private void full_theme(Button button)
