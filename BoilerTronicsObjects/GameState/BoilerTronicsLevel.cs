@@ -226,12 +226,17 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Empty moving list
 		this.movingList.Clear();
+
+		// Clear errors
+		E.ClearError();
 	}
 
 	/* Handle runnable objects */
 
 	// Steps through all runnables
 	public void Step() {
+		if (E.HasError()) return; // Can't step if there is an error
+		if (movingList.Count != 0) return; // Can't step while stuff is moving
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
@@ -277,17 +282,19 @@ public partial class BoilerTronicsLevel : Node2D
 
 		HaultObjects(); // Stop all objects
 
+		Layer parentLayer = pObj.GetParentLayer();
+		Vector2I gridPos = pObj.GetCurrPos();
+
+		Vector2 localPos = parentLayer.MapToLocal(gridPos);
+		Vector2 globalPos = parentLayer.ToGlobal(localPos);
+
+		Vector2 offsetPos = globalPos + new Vector2(16, -16);
+
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
-			Layer parentLayer = pObj.GetParentLayer();
-			Vector2I gridPos = pObj.GetCurrPos();
-
-			Vector2 localPos = parentLayer.MapToLocal(gridPos);
-			Vector2 globalPos = parentLayer.ToGlobal(localPos);
-
-			Vector2 offsetPos = globalPos + new Vector2(16, -16);
-
-			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
+			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+		} else {
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
 		}
 	}
 }
