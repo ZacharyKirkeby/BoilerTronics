@@ -5,6 +5,9 @@ using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -132,6 +135,38 @@ namespace BoilerTronicsObjects.Layers
 			newPlaceable.SetParentLayer(this);
 			
 			numItems++;
+
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = 0;
+			switch (newPlaceable)
+			{
+				case ClawObject:
+					costToAdd = 50;
+					GD.Print("claw cost updated" + costToAdd);
+					break;
+				case TrackObject:
+					costToAdd = 10;
+					break;
+				case ConveyorObject:
+					costToAdd = 20;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = 20;
+					break;
+				case FactoryInputObject:
+					costToAdd = 100;
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+
+			GD.Print(GetPath());
+			manager.currLevel.cost += costToAdd;
+			GD.Print($"UI found? {ui != null}, Current cost before add: {manager.currLevel.cost}, Adding: {costToAdd}");
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		public virtual void RemoveObject(PlaceableObject objectToRemove)

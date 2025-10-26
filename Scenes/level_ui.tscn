@@ -1,24 +1,24 @@
-[gd_scene load_steps=49 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=49 format=3 uid="uid://besvo8smcg6e"]
 
-[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
-[ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
-[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xc2rq"]
-[ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_c2lek"]
-[ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_nctgy"]
-[ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_uqjh5"]
-[ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_bsnj2"]
-[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_5rb4o"]
-[ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="9_qx84d"]
-[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="10_3k86a"]
-[ext_resource type="Script" uid="uid://bm2ejy2n4db66" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="11_wueca"]
-[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/LevelUI/PlaceButton1.cs" id="12_ykdp4"]
-[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/LevelUI/PlaceButton2.cs" id="13_82t02"]
-[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/LevelUI/PlaceButton3.cs" id="14_jvbj7"]
-[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/LevelUI/ObjectPicker.cs" id="15_hwj7e"]
-[ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="16_bvu8t"]
-[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="17_l4peq"]
-[ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="18_oen8g"]
-[ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="19_g4s26"]
+[ext_resource type="Script" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
+[ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
+[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="5_q1sto"]
+[ext_resource type="Script" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
+[ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
+[ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_34jgd"]
+[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="7_ai2e2"]
+[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="7_h5pod"]
+[ext_resource type="Script" uid="uid://bm2ejy2n4db66" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
+[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_4jcs4"]
+[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="8_iu26y"]
+[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="9_qd36q"]
+[ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="10_2j1wt"]
+[ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="10_iu26y"]
+[ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="11_iu26y"]
+[ext_resource type="Theme" uid="uid://2o6akadb80fc" path="res://Scenes/buttontheme.tres" id="12_qd36q"]
+[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="16_3ip32"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -277,7 +277,7 @@ Button/styles/normal = SubResource("StyleBoxFlat_4jcs4")
 Button/styles/pressed = SubResource("StyleBoxFlat_q1sto")
 
 [node name="Node2D" type="Node2D"]
-script = ExtResource("1_r8yfq")
+script = ExtResource("1_2qe5m")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
 offset_right = 1920.0
@@ -292,7 +292,7 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_horizontal = 3
 drag_to_rearrange_enabled = true
-script = ExtResource("2_5sd26")
+script = ExtResource("1_31yto")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
@@ -313,7 +313,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Level 1: The Beginning"
 horizontal_alignment = 2
 
@@ -325,7 +325,7 @@ theme_override_constants/separation = 0
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 theme_override_constants/icon_max_width = 20
-icon = ExtResource("4_c2lek")
+icon = ExtResource("5_q1sto")
 icon_alignment = 1
 
 [node name="Exit Menu" type="Window" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer"]
@@ -346,13 +346,13 @@ offset_right = 200.0
 offset_bottom = -6.1035156e-05
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("5_nctgy")
+theme = ExtResource("12_qd36q")
 theme_override_constants/separation = 20
 
 [node name="ExitMenuLabel" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 40
 text = "Exit Menu"
 horizontal_alignment = 1
@@ -397,7 +397,7 @@ offset_right = 200.0
 offset_bottom = -6.1035156e-05
 grow_horizontal = 2
 grow_vertical = 0
-theme = ExtResource("5_nctgy")
+theme = ExtResource("12_qd36q")
 theme_override_constants/separation = 50
 
 [node name="Level Statistics" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
@@ -408,7 +408,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 14
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 75
 text = "Level Statistics"
 horizontal_alignment = 1
@@ -420,36 +420,36 @@ layout_mode = 2
 
 [node name="Highest Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "Highest Score: 100"
 horizontal_alignment = 1
 
 [node name="Previous Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "Previous Score: 100"
 horizontal_alignment = 1
 
 [node name="Lines Ran" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "Lines Ran: 5"
 horizontal_alignment = 1
 
 [node name="Time Played" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "Time Played: 0 hrs"
 horizontal_alignment = 1
 
-[node name="ButtonTray" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
-script = ExtResource("6_uqjh5")
+[node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+script = ExtResource("6_2j1wt")
 
-[node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray"]
+[node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer"]
 layout_mode = 3
 anchors_preset = 11
 anchor_left = 1.0
@@ -461,7 +461,7 @@ offset_bottom = -525.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray"]
+[node name="Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -470,7 +470,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_3didx")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -485,41 +485,41 @@ theme = SubResource("Theme_r0au2")
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/icon_max_width = 25
-icon = ExtResource("7_bsnj2")
+icon = ExtResource("7_34jgd")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_font_sizes/font_size = 25
 text = "?"
 
-[node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/icon_max_width = 25
-icon = ExtResource("8_5rb4o")
+icon = ExtResource("8_4jcs4")
 icon_alignment = 1
 expand_icon = true
 
-[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="ToggleButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-icon = ExtResource("9_qx84d")
+icon = ExtResource("7_2j1wt")
 expand_icon = true
 
-[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel"]
+[node name="HSeparator" type="HSeparator" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -532,12 +532,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/separator = SubResource("StyleBoxLine_2j1wt")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray"]
 libraries = {
 &"": SubResource("AnimationLibrary_2j1wt")
 }
 
-[node name="OpenButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray"]
+[node name="OpenButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer"]
 visible = false
 anchors_preset = -1
 anchor_left = 1.0
@@ -559,10 +559,10 @@ size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
 render_target_update_mode = 4
 
-[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("10_3k86a")]
+[node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("4_2qe5m")]
 
 [node name="Parser" type="Node2D" parent="MainVBox/TerminalLevelSplit"]
-script = ExtResource("11_wueca")
+script = ExtResource("7_htk61")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox"]
 layout_mode = 2
@@ -582,28 +582,28 @@ theme_override_constants/separation = 0
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_iu26y")
 text = "Movement"
-script = ExtResource("12_ykdp4")
+script = ExtResource("7_h5pod")
 
 [node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_qd36q")
 text = "Factory"
-script = ExtResource("13_82t02")
+script = ExtResource("8_iu26y")
 
 [node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2j1wt")
 text = "Claw"
-script = ExtResource("14_jvbj7")
+script = ExtResource("9_qd36q")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -621,7 +621,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
-script = ExtResource("15_hwj7e")
+script = ExtResource("7_ai2e2")
 
 [node name="CounterTimeControlsContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -634,20 +634,13 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container"]
-layout_mode = 2
-
-[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container/VBoxContainer"]
+[node name="Step Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.67481464, 0.67481464, 0.6748146, 0.8627451)
-theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_fonts/font = ExtResource("3_xdjqv")
 text = "Step Counter: 0"
 horizontal_alignment = 1
-
-[node name="Cost Count" type="Label" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/Counter Container/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
 
 [node name="TimeControlsContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer"]
 custom_minimum_size = Vector2(175, 175)
@@ -670,7 +663,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
-icon = ExtResource("16_bvu8t")
+icon = ExtResource("10_2j1wt")
 icon_alignment = 1
 
 [node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
@@ -678,7 +671,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
-icon = ExtResource("17_l4peq")
+icon = ExtResource("16_3ip32")
 icon_alignment = 1
 
 [node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
@@ -686,7 +679,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
-icon = ExtResource("18_oen8g")
+icon = ExtResource("10_iu26y")
 icon_alignment = 1
 
 [node name="Reset Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
@@ -695,7 +688,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
 theme_override_constants/icon_max_width = 40
-icon = ExtResource("19_g4s26")
+icon = ExtResource("11_iu26y")
 icon_alignment = 1
 
 [node name="Window" type="Window" parent="."]
@@ -718,7 +711,7 @@ offset_right = 20.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("5_nctgy")
+theme = ExtResource("12_qd36q")
 theme_override_constants/separation = 30
 
 [node name="Save0Cont" type="VBoxContainer" parent="Window/SaveContainer"]
@@ -729,7 +722,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 1"
+text = "Save 0"
 
 [node name="Clear 0" type="Button" parent="Window/SaveContainer/Save0Cont"]
 custom_minimum_size = Vector2(150, 50)
@@ -745,7 +738,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 2"
+text = "Save 1"
 
 [node name="Clear 1" type="Button" parent="Window/SaveContainer/Save1Cont"]
 custom_minimum_size = Vector2(150, 50)
@@ -761,7 +754,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Save 3"
+text = "Save 2"
 
 [node name="Clear 2" type="Button" parent="Window/SaveContainer/Save2Cont"]
 custom_minimum_size = Vector2(150, 50)
@@ -775,8 +768,8 @@ text = "Clear"
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics" to="." method="_on_level_statistics_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu" to="." method="_on_level_statistics_menu_close_requested"]
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_toggle_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
 [connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
