@@ -15,6 +15,19 @@ public partial class LevelUi : Node2D
 
 	private Label stepCountLabel;
 	private Label costCountLabel;
+	
+	/* Statistics */
+	private Label ppsCutoffLabel;
+	private Label cpsCutoffLabel;
+	private Label rcCutoffLabel;
+	
+	private Label ppsSolutionLabel;
+	private Label cpsSolutionLabel;
+	private Label rcSolutionLabel;
+	
+	private Label ppsGradeLabel;
+	private Label cpsGradeLabel;
+	private Label rcGradeLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -57,9 +70,25 @@ public partial class LevelUi : Node2D
 		sbe.SetCornerRadiusAll(20);
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
+		
 		costCountLabel = GetNode<Label>("%Cost Count");
+		
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		stepButton = GetNode<Button>("%Step Button");
+		
+		/* Statistics Labels */
+		ppsCutoffLabel = GetNode<Label>("%PPS Cutoff");
+		ppsSolutionLabel = GetNode<Label>("%PPS Solution");
+		ppsGradeLabel = GetNode<Label>("%PPS Grade");
+		
+		cpsCutoffLabel = GetNode<Label>("%CPS Cutoff");
+		cpsSolutionLabel = GetNode<Label>("%CPS Solution");
+		cpsGradeLabel = GetNode<Label>("%CPS Grade");
+		
+		rcCutoffLabel = GetNode<Label>("%RC Cutoff");
+		rcSolutionLabel = GetNode<Label>("%RC Solution");
+		rcGradeLabel = GetNode<Label>("%RC Grade");
+		
 		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;

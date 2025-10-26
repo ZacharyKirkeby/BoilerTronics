@@ -144,7 +144,6 @@ namespace BoilerTronicsObjects.Layers
 			{
 				case ClawObject:
 					costToAdd = 50;
-					GD.Print("claw cost updated" + costToAdd);
 					break;
 				case TrackObject:
 					costToAdd = 10;
@@ -158,6 +157,9 @@ namespace BoilerTronicsObjects.Layers
 				case FactoryInputObject:
 					costToAdd = 100;
 					break;
+				case FactoryOutputObject:
+					costToAdd = 100;
+					break;
 				default:
 					costToAdd = 0;
 					break;
@@ -165,7 +167,6 @@ namespace BoilerTronicsObjects.Layers
 
 			GD.Print(GetPath());
 			manager.currLevel.cost += costToAdd;
-			GD.Print($"UI found? {ui != null}, Current cost before add: {manager.currLevel.cost}, Adding: {costToAdd}");
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
@@ -178,6 +179,39 @@ namespace BoilerTronicsObjects.Layers
 			if (!editableTiles[pos.X, pos.Y]) return;
 			tiles[pos.X, pos.Y] = null; // remove from the tiles
 			numItems--;
+			
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = 0;
+			switch (objectToRemove)
+			{
+				case ClawObject:
+					costToAdd = -50;
+					break;
+				case TrackObject:
+					costToAdd = -10;
+					break;
+				case ConveyorObject:
+					costToAdd = -20;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = -20;
+					break;
+				case FactoryInputObject:
+					costToAdd = -100;
+					break;
+				case FactoryOutputObject:
+					costToAdd = -100;
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+
+			GD.Print(GetPath());
+			manager.currLevel.cost += costToAdd;
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		public virtual PlaceableObject FindObject(Vector2I loc)
