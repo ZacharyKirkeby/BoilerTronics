@@ -1,22 +1,22 @@
 [gd_scene load_steps=23 format=3 uid="uid://oluvf880mleu"]
 
-[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_28flt"]
-[ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu.cs" id="1_yhxw7"]
-[ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_1ehe0"]
-[ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Scenes/menubuttonhover.tres" id="3_ce3w2"]
-[ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Scenes/buttontheme.tres" id="3_trj04"]
-[ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="5_yhxw7"]
-[ext_resource type="Texture2D" uid="uid://b65q7unusmxur" path="res://Resources/Icons/podium.png" id="6_trj04"]
-[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="7_16hvj"]
-[ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="8_vr1f0"]
-[ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/Username.cs" id="10_16hvj"]
-[ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/Leaderboard.cs" id="11_vr1f0"]
+[ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
+[ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Resources/ButtonThemes/buttontheme.tres" id="3_w5buf"]
+[ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="4_6c6cs"]
+[ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="5_fo6ee"]
+[ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="6_nqd6t"]
+[ext_resource type="Texture2D" uid="uid://b65q7unusmxur" path="res://Resources/Icons/podium.png" id="7_43m2q"]
+[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_xt57n"]
+[ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
+[ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
+[ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
-Button/styles/focus = ExtResource("2_1ehe0")
-Button/styles/hover = ExtResource("3_ce3w2")
-Button/styles/normal = ExtResource("2_1ehe0")
+Button/styles/focus = ExtResource("4_6c6cs")
+Button/styles/hover = ExtResource("5_fo6ee")
+Button/styles/normal = ExtResource("4_6c6cs")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t1dhk"]
 bg_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
@@ -44,36 +44,36 @@ corner_radius_bottom_left = 20
 
 [sub_resource type="Theme" id="Theme_cp0ys"]
 Button/colors/font_color = Color(0, 0, 0, 1)
-Button/styles/focus = ExtResource("2_1ehe0")
-Button/styles/hover = ExtResource("3_ce3w2")
-Button/styles/normal = ExtResource("2_1ehe0")
+Button/styles/focus = ExtResource("4_6c6cs")
+Button/styles/hover = ExtResource("5_fo6ee")
+Button/styles/normal = ExtResource("4_6c6cs")
 CheckBox/colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_focus_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_hover_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_hover_pressed_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_pressed_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
-CheckBox/fonts/font = ExtResource("1_28flt")
+CheckBox/fonts/font = ExtResource("2_rlg4b")
 CheckBox/styles/focus = SubResource("StyleBoxEmpty_trj04")
 CheckBox/styles/hover = SubResource("StyleBoxEmpty_vr1f0")
 CheckBox/styles/hover_pressed = SubResource("StyleBoxEmpty_t1dhk")
 CheckBox/styles/normal = SubResource("StyleBoxEmpty_yhxw7")
 CheckBox/styles/pressed = SubResource("StyleBoxEmpty_5egv6")
-Label/fonts/font = ExtResource("1_28flt")
+Label/fonts/font = ExtResource("2_rlg4b")
 Label/styles/focus = SubResource("StyleBoxEmpty_16hvj")
 
 [sub_resource type="FontVariation" id="FontVariation_28flt"]
-base_font = ExtResource("1_28flt")
+base_font = ExtResource("2_rlg4b")
 
 [sub_resource type="Theme" id="Theme_vr1f0"]
 Button/colors/font_color = Color(0, 0, 0, 1)
 Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
 Button/fonts/font = SubResource("FontVariation_28flt")
-Button/styles/focus = ExtResource("2_1ehe0")
-Button/styles/hover = ExtResource("3_ce3w2")
-Button/styles/normal = ExtResource("2_1ehe0")
+Button/styles/focus = ExtResource("4_6c6cs")
+Button/styles/hover = ExtResource("5_fo6ee")
+Button/styles/normal = ExtResource("4_6c6cs")
 
 [node name="MainMenu" type="Node2D"]
-script = ExtResource("1_yhxw7")
+script = ExtResource("1_mdp32")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1920.0
@@ -90,7 +90,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 14
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 175
 text = "Boilertronics"
 horizontal_alignment = 1
@@ -100,7 +100,7 @@ vertical_alignment = 1
 offset_top = 375.0
 offset_right = 1920.0
 offset_bottom = 955.0
-theme = ExtResource("3_trj04")
+theme = ExtResource("3_w5buf")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="MainMenu"]
 layout_mode = 2
@@ -114,7 +114,7 @@ theme_override_constants/separation = 30
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "New Game"
 
@@ -122,7 +122,7 @@ text = "New Game"
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Level Select"
 
@@ -130,7 +130,7 @@ text = "Level Select"
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Settings"
 
@@ -143,25 +143,25 @@ alignment = 1
 [node name="Profile" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-icon = ExtResource("5_yhxw7")
+icon = ExtResource("6_nqd6t")
 icon_alignment = 1
 
 [node name="Leaderboard" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-icon = ExtResource("6_trj04")
+icon = ExtResource("7_43m2q")
 icon_alignment = 1
 
 [node name="Documentation" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-icon = ExtResource("7_16hvj")
+icon = ExtResource("8_xt57n")
 icon_alignment = 1
 
 [node name="Quit" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-icon = ExtResource("8_vr1f0")
+icon = ExtResource("9_os7au")
 icon_alignment = 1
 
 [node name="SettingsMenu" type="CenterContainer" parent="."]
@@ -172,7 +172,7 @@ offset_bottom = 979.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsMenu"]
 layout_mode = 2
-theme = ExtResource("3_trj04")
+theme = ExtResource("3_w5buf")
 theme_override_constants/separation = 20
 
 [node name="Panel" type="Panel" parent="SettingsMenu/VBoxContainer"]
@@ -196,7 +196,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 14
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 100
 text = "Settings"
 horizontal_alignment = 1
@@ -246,7 +246,7 @@ custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
 
@@ -282,12 +282,12 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 14
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 100
 text = "Leaderboard"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("10_16hvj")
+script = ExtResource("10_n0kcp")
 
 [node name="GridContainer" type="GridContainer" parent="ProfileMenu/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -300,7 +300,7 @@ columns = 2
 [node name="Label" type="Label" parent="ProfileMenu/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Levels Completed: 0"
 horizontal_alignment = 1
@@ -308,7 +308,7 @@ horizontal_alignment = 1
 [node name="Label2" type="Label" parent="ProfileMenu/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Time Played: 0 hrs"
 horizontal_alignment = 1
@@ -316,7 +316,7 @@ horizontal_alignment = 1
 [node name="Label3" type="Label" parent="ProfileMenu/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Lines Ran: 0"
 horizontal_alignment = 1
@@ -324,7 +324,7 @@ horizontal_alignment = 1
 [node name="Label4" type="Label" parent="ProfileMenu/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Objects Placed: 0"
 horizontal_alignment = 1
@@ -334,7 +334,7 @@ custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
 
@@ -344,7 +344,7 @@ offset_left = -3.0
 offset_top = 305.0
 offset_right = 1917.0
 offset_bottom = 1073.0
-script = ExtResource("11_vr1f0")
+script = ExtResource("11_37xt4")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Leaderboard"]
 layout_mode = 2
@@ -371,7 +371,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 5
 theme_override_constants/shadow_offset_y = 14
 theme_override_constants/outline_size = 6
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 100
 text = "Leaderboard"
 horizontal_alignment = 1
@@ -386,7 +386,7 @@ theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 alignment = 1
 selected = 0
 item_count = 2
@@ -406,7 +406,7 @@ columns = 2
 [node name="Name" type="Label" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Name"
 horizontal_alignment = 1
@@ -414,7 +414,7 @@ horizontal_alignment = 1
 [node name="Score" type="Label" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/GridContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Score"
 horizontal_alignment = 1
@@ -423,7 +423,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -432,7 +432,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -441,7 +441,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -450,7 +450,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -459,7 +459,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -468,7 +468,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -477,7 +477,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -486,7 +486,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -495,7 +495,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -504,7 +504,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -513,7 +513,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "You"
 horizontal_alignment = 1
@@ -522,7 +522,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 16
 text = "100"
 horizontal_alignment = 1
@@ -532,7 +532,7 @@ custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 0
-theme_override_fonts/font = ExtResource("1_28flt")
+theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
 
