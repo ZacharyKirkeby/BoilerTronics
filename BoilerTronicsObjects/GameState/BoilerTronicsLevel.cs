@@ -25,6 +25,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
 	public Parser P;
+	public ErrorHandler E;
 	
 	// store all four corners of the placement grid
 	private Vector2 c1;
@@ -225,12 +226,17 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Empty moving list
 		this.movingList.Clear();
+
+		// Clear errors
+		E.ClearError();
 	}
 
 	/* Handle runnable objects */
 
 	// Steps through all runnables
 	public void Step() {
+		if (E.HasError()) return; // Can't step if there is an error
+		if (movingList.Count != 0) return; // Can't step while stuff is moving
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
 			Runnable rObj = (Runnable)obj;
@@ -271,29 +277,24 @@ public partial class BoilerTronicsLevel : Node2D
 	}
 
 	public void MovingCollisionReport(MovingObject mObj) {
-		var ui = GetTree().Root.GetNode<LevelUi>("/root/Node2D");
+		if (mObj == null) return; // We can't report a moving object
+		if (!(mObj.obj is PlaceableObject pObj)) return; // We can't report a moving object
 
-		HaultObjects();
+		HaultObjects(); // Stop all objects
 
-		if (mObj == null) return;
-
-		// var clawObj = mObj.obj as ClawObject;
-		String editorName = "not found";
-		 if (mObj.obj is Scriptable scriptableObj) {
-			editorName = scriptableObj.GetTerminal()?.Name ?? "Unknown";
-		}
-		ui.setError(2, editorName);
-		GD.Print("COLLISION");	
-		Layer parentLayer = mObj.obj.GetParentLayer();
-		Vector2I gridPos = mObj.obj.GetCurrPos();
+		Layer parentLayer = pObj.GetParentLayer();
+		Vector2I gridPos = pObj.GetCurrPos();
 
 		Vector2 localPos = parentLayer.MapToLocal(gridPos);
 		Vector2 globalPos = parentLayer.ToGlobal(localPos);
 
 		Vector2 offsetPos = globalPos + new Vector2(16, -16);
-		ui.setErrorCoords((Vector2I)offsetPos);
 
-		ui.handleError(ui.errorID, editorName);
-		return;
+		// Right now we only have collison for claws
+		if (pObj is Scriptable sObj) {
+			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+		} else {
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
+		}
 	}
 }

@@ -89,7 +89,7 @@ namespace BoilerTronicsObjects.GameCamera {
 			}
 
 			errorSprite = new Sprite2D();
-			errorSprite.Texture = GD.Load<Texture2D>("res://Resources/exclamation.png");
+			errorSprite.Texture = GD.Load<Texture2D>("res://Resources/Icons/exclamation.png");
 			errorSprite.Position = errorPosition;
 			
 			errorSprite.ZIndex = 1000;      
