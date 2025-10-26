@@ -11,14 +11,17 @@ public partial class CodeEdit : Godot.CodeEdit
 {
 	private int lastHighlightedLine = -1;
 	public int currentLine = 0;
-	
+	private int lastLine = 0;
+
+	// TODO - call proprocessor on line change - cursor or enter
+	// check text change too for safety
 	
 	// important vars for highlighting objects!
 	private PlaceableObject correspondingObject;
 	private Layer highlightedLayer;
 	private bool highlightingObject = false;
 
-	public override void _Ready()
+    public override void _Ready()
 	{
 		AddToGroup("CodeTerminals");
 		HighlightCurrentLine = true;
@@ -38,7 +41,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	private void OnTextChanged()
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
-	}
+	}	
 	
 	// custom function, called by Terminals.cs
 	// intention is to use this function to check if 'correspondingObject' exists
