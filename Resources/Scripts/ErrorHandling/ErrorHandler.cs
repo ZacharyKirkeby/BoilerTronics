@@ -9,26 +9,40 @@ public partial class ErrorHandler : Node2D {
 	// Digit in the 100s spot is the type of error
 	// Other digits are the sub-category of error
 	public enum ErrorType {
-		ClawRail = -100,
-		ClawOutOfBounds = -101,
-		ClawCollision = -102,
-		ClawInventory = -103,
+		ClawErrorGeneric = -100,
+		ClawRail = -101,
+		ClawOutOfBounds = -102,
+		ClawCollision = -103,
+		ClawInventory = -104,
+		TerminalErrorGneric = -200,
+		TerminalInvalidCommand = -201,
+		TerminalInvalidArg = -202,
+		TerminalInvalidCommandUse = -203,
 		// TODO: Make more error codes
 	}
 
 	// We need to track the scene so that we can remove it later
-	Node errorSceneInstance;
+	private Node errorSceneInstance;
+	private bool ErrorPresent;
 
 	public ErrorHandler() {
 
 	}
 
+	public bool HasError() {
+		return ErrorPresent;
+	}
+
+	public void ClearError() {
+		ErrorPresent = false;
+	}
+
 	// Function to throw an error from the parser
 	public void OnParserErrorRaised(int lineNumber, string message, string editorName)
 	{
-		GD.Print("Test");
 		// TODO: Rework this to work with the new error handling system ? (see if this is doable)
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
+		GD.Print(codeEditors);
 
 		foreach (CodeEdit editor in codeEditors)
 		{
@@ -61,13 +75,17 @@ public partial class ErrorHandler : Node2D {
 				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
 
 				// Highlight error line
-				editor.HighlightLine(lineNumber - 1, new Color(1, 0, 0, 0.25f));
+				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f));
 
 				//TODO - delete
 				GD.Print($"[ParserError] {editorName}: Line {lineNumber} -> {message}");
 				break;
 			}
 		}
+
+		ShowErrorNotice(new Vector2I(0,0)); // Add the '!' icon | TODO: throw a handle error based on the actual error
+
+		ErrorPresent = true;
 	}
 
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
@@ -125,6 +143,8 @@ public partial class ErrorHandler : Node2D {
 
 			GetTree().CurrentScene.AddChild(errorSceneInstance);
 		}
+
+		ErrorPresent = true;
 	}
 
 
