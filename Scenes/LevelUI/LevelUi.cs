@@ -30,7 +30,7 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
-	private Button stepButton;
+	private Button pauseButton;
 
 	public override void _Ready()
 	{
@@ -56,8 +56,8 @@ public partial class LevelUi : Node2D
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		stepButton = GetNode<Button>("%Step Button");
-		UpdateStepCount(0);
+		pauseButton = GetNode<Button>("%Pause Button");
+
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.E = new ErrorHandler();
@@ -74,6 +74,12 @@ public partial class LevelUi : Node2D
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
+	}
+
+	public override void _Process(double delta) {
+		// Always update step count (this is for running)
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		UpdateStepCount(manager.currLevel.StepCount);
 	}
 
 	/* Button Fuctions */
@@ -109,8 +115,6 @@ public partial class LevelUi : Node2D
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 
-		UpdateStepCount(manager.currLevel.StepCount);
-
 		manager.currLevel.E.ClearErrorNotice();
 	}
 
@@ -129,8 +133,6 @@ public partial class LevelUi : Node2D
 		// Tell the global manager that we are stepping
 		manager.Step(); // This will also call step on the level
 
-		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
-
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
 		//update code terminal highlighting to next one regardless of error
@@ -148,18 +150,13 @@ public partial class LevelUi : Node2D
 	}
 
 	private void _on_run_button_pressed() {
-		// TODO: Implement
-		// On press we should look at our current run state
-		// If we have paused or are stepping, don't do anything
-		// If we are not running, go to 1x
-		// If we are at 1x, go to 2x
-		// If we are at 2x, go to submit speed
-		// If we are at submit speed, don't do anything
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.IncRun(); // This will call run and increase the run speed
 	}
 
 	private void _on_pause_button_pressed() {
-		// If we are not running, don't do anything
-		// Otherwise, stop running
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.Pause(); // Pauses
 	}
 
 	// return to main menu button
