@@ -1,8 +1,8 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://2o6akadb80fc"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://d68aun80r0yt"]
 
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_kc1xk"]
 [ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_deck4"]
-[ext_resource type="StyleBox" path="res://Scenes/menubuttonhover.tres" id="3_03lbr"]
+[ext_resource type="StyleBox" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="3_03lbr"]
 
 [sub_resource type="FontVariation" id="FontVariation_28flt"]
 base_font = ExtResource("1_kc1xk")
