@@ -1,14 +1,14 @@
 [gd_scene load_steps=17 format=3 uid="uid://bexf663u4e728"]
 
-[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUi.cs" id="1_7w7ni"]
+[ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_7w7ni"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_btda1"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_s62vv"]
-[ext_resource type="Script" uid="uid://djik2ldqvibl0" path="res://Testing/CodeEdit.cs" id="3_rdo3t"]
+[ext_resource type="Script" uid="uid://byi81xnip1u26" path="res://Testing/CodeEdit.cs" id="3_rdo3t"]
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2yvf5"]
-[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="5_xpvbc"]
-[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="6_s62vv"]
-[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="7_rdo3t"]
-[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="8_s62vv"]
+[ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/LevelUI/PlaceButton1.cs" id="5_xpvbc"]
+[ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/LevelUI/PlaceButton2.cs" id="6_s62vv"]
+[ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/LevelUI/PlaceButton3.cs" id="7_rdo3t"]
+[ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/LevelUI/ObjectPicker.cs" id="8_s62vv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_52dyq"]
 border_width_left = 4

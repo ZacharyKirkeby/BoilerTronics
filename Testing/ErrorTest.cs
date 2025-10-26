@@ -70,7 +70,8 @@ public partial class ErrorTest : Node
 	}
 	
 	public void RemoveErrorScene() {
-		levelUi.RemoveErrorScene();
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.E.RemoveErrorScene();
 	}
 	
 	public void ResetScene() {

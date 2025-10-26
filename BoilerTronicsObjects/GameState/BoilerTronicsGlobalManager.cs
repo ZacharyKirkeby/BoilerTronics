@@ -73,6 +73,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	// LevelUI.cs
 	public void Step() {
 		terminalContainer.SetEditorsEditable(false);
+		currLevel.Step();
 		return;
 	}
 
@@ -80,6 +81,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	// LevelUI.cs
 	public void Reset() {
 		terminalContainer.SetEditorsEditable(true);
+		currLevel.Reset();
 		return;
 	}
 	
