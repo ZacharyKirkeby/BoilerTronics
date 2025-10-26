@@ -41,6 +41,10 @@ public partial class BoilerTronicsLevel : Node2D
 	private float SlowRunDeltaTime = 1.0f; // 1 Second
 	private float FastRunDeltaTime = 0.5f; // Half Second
 	private float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
+	private float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
+	private int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
+	private int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+
 
 	enum GameRunState {
 		Idle = 0,
@@ -268,11 +272,13 @@ public partial class BoilerTronicsLevel : Node2D
 	public void Pause() {
 		// This will set our state to pause
 		RunState = GameRunState.Paused; // Pause, this will stop running
+		DeltaTime = StepDeltaTime;
 	}
 
 	public void SetStep() {
 		// This will set our state to step, this will make sure we can't run after stepping
 		RunState = GameRunState.Stepping;
+		DeltaTime = StepDeltaTime;
 	}
 
 	public void IncRun() {
@@ -315,6 +321,14 @@ public partial class BoilerTronicsLevel : Node2D
 		      )
 		{
 			Step(); // Step while we are running
+
+			// if we are on submit speed
+			if (RunState == GameRunState.SubmitSpeed && (StepCount % SubmitSpeedCahngeStep == 0)) {
+				// interpulate between our start and end submit time
+				float interpalatePercent = ((float) StepCount/ (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps;
+				if (interpalatePercent > 1.0f) return; // don't continue if we are already at max
+				DeltaTime = (SubmitStartDeltaTime * (1 - interpalatePercent)) + (SubmitEndDeltaTime * interpalatePercent);
+			}
 		}
 	}
 
