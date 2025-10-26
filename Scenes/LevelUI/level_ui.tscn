@@ -418,33 +418,87 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 
-[node name="Highest Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+[node name="Lowest Cost" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_xc2rq")
 theme_override_font_sizes/font_size = 25
-text = "Highest Score: 100"
+text = "Lowest Solution Cost: 100"
 horizontal_alignment = 1
 
-[node name="Previous Score" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+[node name="Last Solution Cost" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_xc2rq")
 theme_override_font_sizes/font_size = 25
-text = "Previous Score: 100"
+text = "Last Solution Cost: 500"
 horizontal_alignment = 1
 
-[node name="Lines Ran" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+[node name="Solution Time" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_xc2rq")
 theme_override_font_sizes/font_size = 25
-text = "Lines Ran: 5"
+text = "Solution Time: ? seconds"
 horizontal_alignment = 1
 
-[node name="Time Played" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("3_xc2rq")
-theme_override_font_sizes/font_size = 25
-text = "Time Played: 0 hrs"
-horizontal_alignment = 1
+alignment = 1
+
+[node name="Production Per Step2" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Production Per Step" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
+layout_mode = 2
+text = "Production Per Step"
+
+[node name="PPS Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Cost Per Step" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Cost Per Step" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
+layout_mode = 2
+text = "Cost Per Step"
+
+[node name="CPS Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Resources Consumed" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Resources Consumed" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
+layout_mode = 2
+text = "Resources Consumed"
+
+[node name="RC Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RC Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RC Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="ButtonTray" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 script = ExtResource("6_uqjh5")
