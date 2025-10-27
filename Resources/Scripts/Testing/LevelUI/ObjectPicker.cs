@@ -69,10 +69,14 @@ public partial class ObjectPicker : HBoxContainer
 			var imageTexture = fullTexture.GetRegion(tile);
 			var texture = new ImageTexture();
 			texture.SetImage(imageTexture);
-
-			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
-
-			// GD.Print(GetChildren());
+			VBoxContainer vbox = new VBoxContainer();
+			vbox.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			vbox.SizeFlagsVertical   = Control.SizeFlags.ExpandFill;
+			AddChild(vbox);
+			Label lab = new Label();
+			lab.Text = "afsdlfaf";
+			vbox.AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
+			vbox.AddChild(lab);
 		}
 	}
 

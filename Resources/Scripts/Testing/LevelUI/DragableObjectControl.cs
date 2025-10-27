@@ -13,14 +13,16 @@ public partial class DragableObjectControl : Control {
 	static Vector2I visibleObjectScaling = new Vector2I(5, 5);
 
 	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
+
+		
 		sprite = new Sprite2D();
 		// get texture
 		sprite.Texture = texture;
 		sprite.Scale = visibleObjectScaling;
 		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
-		AddChild(sprite);
+		AddChild(sprite); 
 		this.atlasCords = atlasCords;
-		this.selection = selection;
+		this.selection = selection; 
 	}
 
 	public override void _Ready() {

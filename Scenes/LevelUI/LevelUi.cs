@@ -110,9 +110,14 @@ public partial class LevelUi : Node2D
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
 
+		CallDeferred(nameof(ChangeScene));
+	}
+	
+
+	private void ChangeScene()
+	{
 		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
 	}
-
 	private void _on_settings_button_pressed() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = true;
 	}
