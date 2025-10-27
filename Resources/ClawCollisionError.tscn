@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dtuu4mn34mbbl"]
+[gd_scene format=3 uid="uid://div3i6es4xlcm"]
 
 [node name="ClawCollisionError" type="AcceptDialog"]
 oversampling_override = 1.0
