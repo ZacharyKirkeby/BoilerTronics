@@ -60,6 +60,8 @@ public partial class BoilerTronicsGlobalManager : Node
 
 	private Dictionary<string, AudioStream> sounds = new(); // for string to relate to audio
 	private AudioStreamPlayer soundPlayer;
+	private string currentSound = "";
+	private int currentPriority = 0;
 
 	public override void _Ready()
 	{
@@ -83,16 +85,24 @@ public partial class BoilerTronicsGlobalManager : Node
 	}
 	
 	//play the sound called by name
-	public void PlaySound(string soundName) {
+	public void PlaySound(string soundName, int priority) {
 		if (sounds.ContainsKey(soundName)) {
 			if(soundPlayer == null) {
 				GD.Print("soundplayer null");
 			}
+			if (priority < currentPriority && soundPlayer.Playing) {
+				return;
+			}
+
+			if (soundPlayer.Playing) {
+				soundPlayer.Stop();
+			}
+
 			soundPlayer.Stream = sounds[soundName];
 			soundPlayer.Play();
-		}
-		else {
-			GD.Print("sound not found");
+
+			currentSound = soundName;
+			currentPriority = priority;
 		}
 	}
 	
@@ -100,12 +110,15 @@ public partial class BoilerTronicsGlobalManager : Node
 		if((soundPlayer != null) && (soundPlayer.Playing)) {
 			soundPlayer.Stop();
 		}
+		currentSound = "";
+		currentPriority = 0;
 	}
 
 	// This will allow for the step button to interact with the backend of the game
 	// LevelUI.cs
 	public void Step() {
 		terminalContainer.SetEditorsEditable(false);
+		currLevel.Step();
 		return;
 	}
 
@@ -113,6 +126,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	// LevelUI.cs
 	public void Reset() {
 		terminalContainer.SetEditorsEditable(true);
+		currLevel.Reset();
 		return;
 	}
 	
