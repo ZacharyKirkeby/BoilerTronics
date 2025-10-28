@@ -13,9 +13,9 @@ public partial class MainMenu : Node2D
 			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
 
 		// Set volume slider
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
-		int masterBus = AudioServer.GetBusIndex("Master");
-		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
+		volSlider.Value = manager.GetCurrentVolume();
 		
 		
 		
@@ -77,8 +77,8 @@ public partial class MainMenu : Node2D
 
 	private void _on_main_vol_slider_value_changed(float val)
 	{
-		int masterBus = AudioServer.GetBusIndex("Master");
-		AudioServer.SetBusVolumeDb(masterBus, Mathf.LinearToDb(val));
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.SetCurrentVolume(val);
 	}
 	
 	private void _on_mute_pressed()
