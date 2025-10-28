@@ -458,6 +458,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="PPS Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="PPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -477,6 +481,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="CPS Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="CPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -493,6 +501,10 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RC Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RC Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 unique_name_in_owner = true
 layout_mode = 2
 

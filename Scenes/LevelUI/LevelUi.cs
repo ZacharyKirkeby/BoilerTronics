@@ -28,6 +28,10 @@ public partial class LevelUi : Node2D
 	private Label ppsGradeLabel;
 	private Label cpsGradeLabel;
 	private Label rcGradeLabel;
+	
+	private Label ppsDifferenceLabel;
+	private Label cpsDifferenceLabel;
+	private Label rcDifferenceLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -80,14 +84,17 @@ public partial class LevelUi : Node2D
 		ppsCutoffLabel = GetNode<Label>("%PPS Cutoff");
 		ppsSolutionLabel = GetNode<Label>("%PPS Solution");
 		ppsGradeLabel = GetNode<Label>("%PPS Grade");
+		ppsDifferenceLabel = GetNode<Label>("%PPS Difference");
 		
 		cpsCutoffLabel = GetNode<Label>("%CPS Cutoff");
 		cpsSolutionLabel = GetNode<Label>("%CPS Solution");
 		cpsGradeLabel = GetNode<Label>("%CPS Grade");
+		cpsDifferenceLabel = GetNode<Label>("%CPS Difference");
 		
 		rcCutoffLabel = GetNode<Label>("%RC Cutoff");
 		rcSolutionLabel = GetNode<Label>("%RC Solution");
 		rcGradeLabel = GetNode<Label>("%RC Grade");
+		rcDifferenceLabel = GetNode<Label>("%RC Difference");
 		
 		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
