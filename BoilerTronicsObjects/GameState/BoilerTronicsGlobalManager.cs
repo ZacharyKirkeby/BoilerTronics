@@ -62,6 +62,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	private AudioStreamPlayer soundPlayer;
 	private string currentSound = "";
 	private int currentPriority = 0;
+	
 
 	public override void _Ready()
 	{
@@ -112,6 +113,18 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 		currentSound = "";
 		currentPriority = 0;
+	}
+	
+	public float GetCurrentVolume() {
+		int masterBus = AudioServer.GetBusIndex("Master");
+		float db = AudioServer.GetBusVolumeDb(masterBus);
+		return Mathf.DbToLinear(db);
+	}
+
+	public void SetCurrentVolume(float vol) {
+		int masterBus = AudioServer.GetBusIndex("Master");
+		float db = Mathf.LinearToDb(vol);
+		AudioServer.SetBusVolumeDb(masterBus, db);
 	}
 
 	// This will allow for the step button to interact with the backend of the game
