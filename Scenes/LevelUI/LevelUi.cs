@@ -81,8 +81,9 @@ public partial class LevelUi : Node2D
 			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
 
 		// Set volume slider
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		var volSlider = GetNode<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
-		volSlider.Value = manager.GetCurrentVolume();
+		volSlider.Value = soundManager.GetCurrentVolume();
 	}
 
 	/* Button Fuctions */
@@ -95,8 +96,9 @@ public partial class LevelUi : Node2D
 	{
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 
-		manager.StopSound();
+		soundManager.StopSound();
 		manager.Reset();
 		manager.currLevel.Reset();
 
@@ -219,8 +221,8 @@ public partial class LevelUi : Node2D
 
 	private void _on_main_vol_slider_value_changed(float val)
 	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetCurrentVolume(val);
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		soundManager.SetCurrentVolume(val);
 	}
 	
 	private void _on_mute_pressed()

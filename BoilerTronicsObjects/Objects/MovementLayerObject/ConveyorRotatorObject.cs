@@ -103,7 +103,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 					break;
 			}
 			
-			manager.PlaySound("rotate", 2);
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound("rotate", 2);
 
 			GD.Print("newDir:", tObj.GetDir());
 		}

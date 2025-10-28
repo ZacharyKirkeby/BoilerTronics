@@ -236,8 +236,8 @@ public partial class BoilerTronicsLevel : Node2D
 	// Steps through all runnables
 	public void Step() {
 		if (E.HasError()) {
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.PlaySound("error", 10);
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound("error", 10);
 			return; // Can't step if there is an error
 		}
 		if (movingList.Count != 0) return; // Can't step while stuff is moving

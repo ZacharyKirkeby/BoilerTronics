@@ -67,6 +67,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			// Move track
 			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound("move", 3);
 
 			// Move claw if there exists one
 			obj = manager.currLevel.cLayer.FindObject(this.GetCurrPos());
@@ -78,7 +80,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, 1);
 			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
 			cObj.moving = true;
-			manager.PlaySound("move", 3);
+			soundManager.PlaySound("move", 3);
 		}
 		
 		// Methods to deal with terminals (inherit from the parent ConveyorGroup)
