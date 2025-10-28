@@ -26,11 +26,11 @@ public partial class BoilerTronicsSoundManager : Node
 		AddChild(soundPlayer);
 
 		//set sounds
-		sounds["error"] = GD.Load<AudioStream>("res://Resources/errorSound.wav");
-		sounds["move"] = GD.Load<AudioStream>("res://Resources/moving.wav");
-		sounds["grab"] = GD.Load<AudioStream>("res://Resources/grab.wav");
-		sounds["drop"] = GD.Load<AudioStream>("res://Resources/grab.wav");
-		sounds["rotate"] = GD.Load<AudioStream>("res://Resources/turning.wav");
+		sounds["error"] = GD.Load<AudioStream>("res://Resources/Sounds/errorSound.wav");
+		sounds["move"] = GD.Load<AudioStream>("res://Resources/Sounds/moving.wav");
+		sounds["grab"] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
+		sounds["drop"] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
+		sounds["rotate"] = GD.Load<AudioStream>("res://Resources/Sounds/turning.wav");
 	}
 
 	//play the sound called by name
