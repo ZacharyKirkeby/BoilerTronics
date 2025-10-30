@@ -16,6 +16,7 @@ public partial class Parser : Node2D
 	private List<string> _validLines = new();
 	private int _programCounter = 0;
 	private bool _programHalted = false;
+	private bool _debug = false;
 	private string _currentProgram = "";
 
 	// Current execution context
@@ -63,6 +64,7 @@ public partial class Parser : Node2D
 	// Control commands
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
+
 
 
 	public override void _Ready()
@@ -281,7 +283,7 @@ public partial class Parser : Node2D
 	}
 
 	public int GetProgramCounter() => _programCounter;
-	
+
 	public bool IsProgramHalted() => _programHalted;
 	
 	public Dictionary<string, int> GetRegisters() => new Dictionary<string, int>(_registers);
@@ -373,56 +375,87 @@ public partial class Parser : Node2D
 		}
 	}
 
-	private bool HandleJump(string line, out int newLine)
+	// THE LATEST AND GREATEST: More jumping
+		private bool HandleJumps(string line, ref int pc)
 	{
-		newLine = -1;
-
-		var match = MyRegex().Match(line);
-		if (!match.Success)
-			return false;
-
-		string label = match.Groups[1].Value.ToLower();
-		if (_labelMap.TryGetValue(label, out int targetIndex))
+		// Unconditional jump
+		var jmpMatch = JmpRegex().Match(line);
+		if (jmpMatch.Success)
 		{
-			newLine = targetIndex;
-			GD.Print($"Jumping to label '{label}' at line {targetIndex}");
+			return PerformJump(jmpMatch.Groups[1].Value, ref pc);
+		}
+
+		// Conditional jumps based on cmp register
+		var jeqMatch = JeqRegex().Match(line);
+		if (jeqMatch.Success)
+		{
+			if (_registers["cmp"] == 0)
+				return PerformJump(jeqMatch.Groups[1].Value, ref pc);
+			return true; // Condition not met, but valid instruction
+		}
+
+		var jneMatch = JneRegex().Match(line);
+		if (jneMatch.Success)
+		{
+			if (_registers["cmp"] != 0)
+				return PerformJump(jneMatch.Groups[1].Value, ref pc);
 			return true;
 		}
 
-		GD.PrintErr($"Undefined label: {label}");
+		var jgtMatch = JgtRegex().Match(line);
+		if (jgtMatch.Success)
+		{
+			if (_registers["cmp"] > 0)
+				return PerformJump(jgtMatch.Groups[1].Value, ref pc);
+			return true;
+		}
+
+		var jltMatch = JltRegex().Match(line);
+		if (jltMatch.Success)
+		{
+			if (_registers["cmp"] < 0)
+				return PerformJump(jltMatch.Groups[1].Value, ref pc);
+			return true;
+		}
+
+		var jgeMatch = JgeRegex().Match(line);
+		if (jgeMatch.Success)
+		{
+			if (_registers["cmp"] >= 0)
+				return PerformJump(jgeMatch.Groups[1].Value, ref pc);
+			return true;
+		}
+
+		var jleMatch = JleRegex().Match(line);
+		if (jleMatch.Success)
+		{
+			if (_registers["cmp"] <= 0)
+				return PerformJump(jleMatch.Groups[1].Value, ref pc);
+			return true;
+		}
 		return false;
 	}
 
-	// NGL i think i can delete this i think i forgot to use it
-	public int GetFirstValidLineAfterLabel(string labelName, List<string> lines)
-	{
-		for (int i = 0; i < lines.Count; i++)
-		{
-			string line = lines[i]?.Trim();
 
-			//find label:
-			if (line != null && line.Equals(labelName + ":"))
-			{
-				//get next valid line
-				for (int j = i + 1; j < lines.Count; j++)
-				{
-					string nextLine = lines[j]?.Trim();
-					//don't highlight empty lines or label lines
-					if (!string.IsNullOrWhiteSpace(nextLine) && !nextLine.EndsWith(":"))
-					{
-						return j;
-					}
-				}
-			}
-		}
-		//return -1 if not found
-		return -1;
+	private bool PerformJump(string label, ref int pc)
+	{
+		if (_labelMap.TryGetValue(label, out int targetIndex))
+		{
+			pc = targetIndex;
+			if (_debug) GD.Print($"Jumping to '{label}' at line {targetIndex}");
+			return true;
+		} else
+        {
+            if (_debug) GD.PrintErr($"Undefined label: {label}");
+			EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
+			return false;
+        }
 	}
 
 	[GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
 	private static partial Regex MyRegex();
 
-// aldso instead of in ready
+// also instead of in ready
 private void RegisterCommands()
 	{
 		// Movement commands (step-consuming)
