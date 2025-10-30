@@ -31,6 +31,11 @@ public partial class LevelUi : Node2D
 	private Button clearOne;
 	private Button clearTwo;
 	private Button pauseButton;
+	private Button playButton;
+
+	/* Icons */
+	private Texture2D playIcon;
+	private Texture2D submitIcon;
 
 	public override void _Ready()
 	{
@@ -57,6 +62,7 @@ public partial class LevelUi : Node2D
 		sbeh.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		pauseButton = GetNode<Button>("%Pause Button");
+		playButton = GetNode<Button>("%Play Button");
 
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -71,6 +77,10 @@ public partial class LevelUi : Node2D
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
 
+		// Init icons for running and submittingnull
+		playIcon = GD.Load<Texture2D>("res://Resources/Icons/play.png");
+		submitIcon = GD.Load<Texture2D>("res://Resources/Icons/submission-speed.png");
+
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
@@ -80,6 +90,7 @@ public partial class LevelUi : Node2D
 		// Always update step count (this is for running)
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateStepCount(manager.currLevel.StepCount);
+
 	}
 
 	/* Button Fuctions */
@@ -116,6 +127,10 @@ public partial class LevelUi : Node2D
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 
 		manager.currLevel.E.ClearErrorNotice();
+
+		// TODO: reset the play button
+		playButton.Text = ""; // Remove text
+		playButton.Icon = playIcon;
 	}
 
 	//called in test script to have access to auto resetting
@@ -151,7 +166,26 @@ public partial class LevelUi : Node2D
 
 	private void _on_run_button_pressed() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
 		manager.currLevel.IncRun(); // This will call run and increase the run speed
+
+		switch (manager.currLevel.GetGameRunState()) {
+			case BoilerTronicsLevel.GameRunState.SlowRun:
+				// 1X
+				playButton.Text = "1X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.FastRun:
+				// 2X
+				playButton.Text = "2X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.SubmitSpeed:
+				// Submit speed
+				playButton.Text = "";
+				playButton.Icon = submitIcon; // This will be the submit speed
+				break;
+		}
 	}
 
 	private void _on_pause_button_pressed() {

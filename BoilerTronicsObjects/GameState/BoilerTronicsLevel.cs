@@ -44,9 +44,10 @@ public partial class BoilerTronicsLevel : Node2D
 	private float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
 	private int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
 	private int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	private int SubmitStartStep = -1; // This will be set when we enter the submit state, this is to allow for a smooth ramp up
 
 
-	enum GameRunState {
+	public enum GameRunState {
 		Idle = 0,
 		Stepping = 1,
 		Paused = 2,
@@ -236,6 +237,9 @@ public partial class BoilerTronicsLevel : Node2D
 	/* Reset Layer */
 
 	public void Reset() {
+		// Stops moving objects to prevent errors
+		HaultObjects();
+
 		// Reset all layers
 		mLayer.Reset();
 		rLayer.Reset();
@@ -265,6 +269,7 @@ public partial class BoilerTronicsLevel : Node2D
 		E.ClearError();
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
+		SubmitStartStep = -1;
 	}
 
 	/* RunState Management */
@@ -293,6 +298,7 @@ public partial class BoilerTronicsLevel : Node2D
 				break;
 			case GameRunState.FastRun:
 				RunState = GameRunState.SubmitSpeed;
+				SubmitStartStep = StepCount;
 				DeltaTime = SubmitStartDeltaTime;
 				break;
 		}
@@ -323,11 +329,15 @@ public partial class BoilerTronicsLevel : Node2D
 			Step(); // Step while we are running
 
 			// if we are on submit speed
-			if (RunState == GameRunState.SubmitSpeed && (StepCount % SubmitSpeedCahngeStep == 0)) {
+			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0)) {
 				// interpulate between our start and end submit time
-				float interpalatePercent = ((float) StepCount/ (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps;
-				if (interpalatePercent > 1.0f) return; // don't continue if we are already at max
-				DeltaTime = (SubmitStartDeltaTime * (1 - interpalatePercent)) + (SubmitEndDeltaTime * interpalatePercent);
+				
+				// get the percent that we want to interpolate (Current step / Total steps)
+				float interpalatePercent = (((float) (StepCount - SubmitStartStep) / (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps);
+				// don't continue if we are already at max
+				if (interpalatePercent > 1.0f) return;
+				// Interpolate between the max and min delta time
+				DeltaTime = (SubmitStartDeltaTime * (1.0f - interpalatePercent)) + (SubmitEndDeltaTime * interpalatePercent);
 			}
 		}
 	}
@@ -390,5 +400,9 @@ public partial class BoilerTronicsLevel : Node2D
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
 		}
+	}
+
+	public GameRunState GetGameRunState() {
+		return RunState;
 	}
 }
