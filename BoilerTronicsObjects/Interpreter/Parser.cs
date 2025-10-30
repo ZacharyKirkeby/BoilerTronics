@@ -16,13 +16,14 @@ public partial class Parser : Node2D
 	private List<string> _validLines = new();
 	private int _programCounter = 0;
 	private bool _programHalted = false;
-	private bool _debug = false;
 	private string _currentProgram = "";
 
 	// Current execution context
 	private Scriptable scriptObject;
 	private CodeEdit currEditor;
 	private string editorName;
+	private bool _debug = false;
+	private enum qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
@@ -466,9 +467,11 @@ private void RegisterCommands()
 				GroupCollection groups = m.Groups;
 				string[] values = new string[groups.Count];
 				for (int i = 0; i < groups.Count; i++)
+                {
 					values[i] = groups[i].Value;
+                }
 				scriptObject.Move(values);
-				GD.Print($"Move {m.Groups[1].Value}");
+				if (_debug)GD.Print($"Move {m.Groups[1].Value}");
 			}
 			else
 			{
@@ -484,9 +487,11 @@ private void RegisterCommands()
 				GroupCollection groups = m.Groups;
 				string[] values = new string[groups.Count];
 				for (int i = 0; i < groups.Count; i++)
+				{
 					values[i] = groups[i].Value;
+				}
 				scriptObject.Rotate(values);
-				GD.Print($"Rotate {m.Groups[1].Value}");
+				if (_debug) GD.Print($"Rotate {m.Groups[1].Value}");
 			}
 			else
 			{
@@ -501,9 +506,11 @@ private void RegisterCommands()
 				GroupCollection groups = m.Groups;
 				string[] values = new string[groups.Count];
 				for (int i = 0; i < groups.Count; i++)
+				{
 					values[i] = groups[i].Value;
+				}
 				scriptObject.Drop(values);
-				GD.Print("Drop");
+				if (_debug) GD.Print("Drop");
 			}
 			else
 			{
@@ -519,15 +526,19 @@ private void RegisterCommands()
 				GroupCollection groups = m.Groups;
 				string[] values = new string[groups.Count];
 				for (int i = 0; i < groups.Count; i++)
+				{
 					values[i] = groups[i].Value;
+				}
 				scriptObject.Grab(values);
-				GD.Print("Grab");
+				if (_debug) GD.Print("Grab");
 			}
 			else
 			{
 				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
 			}
 		});
+		
+		// Switch command - FTODO for someone else
 	}
 
 }

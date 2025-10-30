@@ -225,6 +225,8 @@ public static partial class ProgramValidator
     // Returns error message if invalid, null if valid
     private static string ValidateInstruction(string line)
     {
+        // BEHOLD MY EVIL FUNCTION FULL OF EVIL
+        
         // Movement commands
         if (MovValidRegex().IsMatch(line)) return null;
         if (MovEmptyRegex().IsMatch(line)) return "Move missing argument";
@@ -299,7 +301,7 @@ public static partial class ProgramValidator
 		var errors = ValidateProgram(terminal);
 		
 		if (errors.Count == 0)
-			return "✓ No errors found";
+			return "No errors found";
 		
 		var report = $"Found {errors.Count} error(s):\n";
 		foreach (var (lineNum, error) in errors)
