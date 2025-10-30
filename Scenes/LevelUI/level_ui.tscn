@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_c2lek"]
-[ext_resource type="Theme" uid="uid://cds64h45ujwjt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_nctgy"]
+[ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_nctgy"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_uqjh5"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_bsnj2"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_5rb4o"]
@@ -667,10 +667,14 @@ icon = ExtResource("16_bvu8t")
 icon_alignment = 1
 
 [node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
+theme_override_colors/font_color = Color(0.29803923, 0.6862745, 0.3137255, 1)
+theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_font_sizes/font_size = 42
 icon = ExtResource("17_l4peq")
 icon_alignment = 1
 
@@ -771,6 +775,8 @@ text = "Clear"
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Play Button" to="." method="_on_run_button_pressed"]
+[connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Pause Button" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Reset Button" to="." method="_on_reset_button_pressed"]
 [connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
 [connection signal="pressed" from="Window/SaveContainer/Save0Cont/Save 0" to="." method="_on_save_0_pressed"]
