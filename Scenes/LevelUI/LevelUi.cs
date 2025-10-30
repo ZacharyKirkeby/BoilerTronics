@@ -30,7 +30,12 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
-	private Button stepButton;
+	private Button pauseButton;
+	private Button playButton;
+
+	/* Icons */
+	private Texture2D playIcon;
+	private Texture2D submitIcon;
 
 	public override void _Ready()
 	{
@@ -56,8 +61,9 @@ public partial class LevelUi : Node2D
 		sbeh = sbe.Duplicate() as StyleBoxFlat;
 		sbeh.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		stepButton = GetNode<Button>("%Step Button");
-		UpdateStepCount(0);
+		pauseButton = GetNode<Button>("%Pause Button");
+		playButton = GetNode<Button>("%Play Button");
+
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.E = new ErrorHandler();
@@ -71,9 +77,20 @@ public partial class LevelUi : Node2D
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
 
+		// Init icons for running and submittingnull
+		playIcon = GD.Load<Texture2D>("res://Resources/Icons/play.png");
+		submitIcon = GD.Load<Texture2D>("res://Resources/Icons/submission-speed.png");
+
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
+	}
+
+	public override void _Process(double delta) {
+		// Always update step count (this is for running)
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		UpdateStepCount(manager.currLevel.StepCount);
+
 	}
 
 	/* Button Fuctions */
@@ -109,9 +126,11 @@ public partial class LevelUi : Node2D
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 
-		UpdateStepCount(manager.currLevel.StepCount);
-
 		manager.currLevel.E.ClearErrorNotice();
+
+		// TODO: reset the play button
+		playButton.Text = ""; // Remove text
+		playButton.Icon = playIcon;
 	}
 
 	//called in test script to have access to auto resetting
@@ -128,8 +147,6 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are stepping
 		manager.Step(); // This will also call step on the level
-
-		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
 
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -148,19 +165,32 @@ public partial class LevelUi : Node2D
 	}
 
 	private void _on_run_button_pressed() {
-		// TODO: Implement
-		// On press we should look at our current run state
-		// If we have paused or are stepping, don't do anything
-		// If we are not running, go to 1x
-		// If we are at 1x, go to 2x
-		// If we are at 2x, go to submit speed
-		// If we are at submit speed, don't do anything
-		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		manager.currLevel.IncRun(); // This will call run and increase the run speed
+
+		switch (manager.currLevel.GetGameRunState()) {
+			case BoilerTronicsLevel.GameRunState.SlowRun:
+				// 1X
+				playButton.Text = "1X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.FastRun:
+				// 2X
+				playButton.Text = "2X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.SubmitSpeed:
+				// Submit speed
+				playButton.Text = "";
+				playButton.Icon = submitIcon; // This will be the submit speed
+				break;
+		}
 	}
 
 	private void _on_pause_button_pressed() {
-		// If we are not running, don't do anything
-		// Otherwise, stop running
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.Pause(); // Pauses
 	}
 
 	// return to main menu button
