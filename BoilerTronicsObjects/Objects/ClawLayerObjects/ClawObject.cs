@@ -174,7 +174,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				return;
 			}
 
-			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
+			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 
 			return;

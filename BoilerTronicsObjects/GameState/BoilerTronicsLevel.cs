@@ -15,15 +15,18 @@ public partial class BoilerTronicsLevel : Node2D
 	public int x;
 	public int y;
 	public int StepCount;
-	double deltaTime = 100.0; // time we want it to take to move objects
-	TileSet tileset;
+	public float DeltaTime; // time we want it to take to move objects
+	public TileSet tileset;
+
 	public MovementLayer mLayer;
 	public RailLayer rLayer;
 	public ClawLayer cLayer;
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
+
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+
 	public Parser P;
 	public ErrorHandler E;
 	
@@ -32,7 +35,29 @@ public partial class BoilerTronicsLevel : Node2D
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
+	private BoilerTronicsLevel.GameRunState RunState;
+
+	private float StepDeltaTime = 1.0f; // 1 Second
+	private float SlowRunDeltaTime = 1.0f; // 1 Second
+	private float FastRunDeltaTime = 0.5f; // Half Second
+	private float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
+	private float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
+	private int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
+	private int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	private int SubmitStartStep = -1; // This will be set when we enter the submit state, this is to allow for a smooth ramp up
+
+
+	public enum GameRunState {
+		Idle = 0,
+		Stepping = 1,
+		Paused = 2,
+		SlowRun = 3,
+		FastRun = 4,
+		SubmitSpeed = 5,
+	}
 	
+	/* Create layers */
+
 	private Layer CreateMovementLayer() {
 		mLayer = new MovementLayer();
 		mLayer.RedefineLayer(x, y);
@@ -110,6 +135,8 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 	}
 
+	/* init values fpr layer */
+
 	public override void _Ready()
 	{
 		GD.Print("Generating Level...");
@@ -183,6 +210,10 @@ public partial class BoilerTronicsLevel : Node2D
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
 
+		// Set the run state to Idle
+		RunState = BoilerTronicsLevel.GameRunState.Idle;
+		DeltaTime = StepDeltaTime;
+		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
 		
@@ -237,6 +268,8 @@ public partial class BoilerTronicsLevel : Node2D
 		base._Ready();
 	}
 
+	/* Draw boarder for layer */
+	
 	public override void _Draw() {
 		
 		// Draws the border of the tile map
@@ -249,7 +282,12 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 	}
 
+	/* Reset Layer */
+
 	public void Reset() {
+		// Stops moving objects to prevent errors
+		HaultObjects();
+
 		// Reset all layers
 		mLayer.Reset();
 		rLayer.Reset();
@@ -283,11 +321,45 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Clear errors
 		E.ClearError();
+
+		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
+		SubmitStartStep = -1;
 	}
 
-	/* Handle runnable objects */
+	/* RunState Management */
 
-	// Steps through all runnables
+	public void Pause() {
+		// This will set our state to pause
+		RunState = GameRunState.Paused; // Pause, this will stop running
+		DeltaTime = StepDeltaTime;
+	}
+
+	public void SetStep() {
+		// This will set our state to step, this will make sure we can't run after stepping
+		RunState = GameRunState.Stepping;
+		DeltaTime = StepDeltaTime;
+	}
+
+	public void IncRun() {
+		switch (RunState) {
+			case GameRunState.Idle:
+				RunState = GameRunState.SlowRun;
+				DeltaTime = SlowRunDeltaTime;
+				break;
+			case GameRunState.SlowRun:
+				RunState = GameRunState.FastRun;
+				DeltaTime = FastRunDeltaTime;
+				break;
+			case GameRunState.FastRun:
+				RunState = GameRunState.SubmitSpeed;
+				SubmitStartStep = StepCount;
+				DeltaTime = SubmitStartDeltaTime;
+				break;
+		}
+	}
+
+	/* Stepping and Running */
+
 	public void Step() {
 		if (E.HasError()) return; // Can't step if there is an error
 		if (movingList.Count != 0) return; // Can't step while stuff is moving
@@ -298,6 +370,33 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		StepCount++;
 	}
+
+	public override void _Process(double delta) {
+		// This is where our run will exist to allow for async running
+		if (
+			(RunState == BoilerTronicsLevel.GameRunState.SlowRun ||
+			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
+			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
+			!E.HasError() // Stop running if there's an error
+		      )
+		{
+			Step(); // Step while we are running
+
+			// if we are on submit speed
+			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0)) {
+				// interpulate between our start and end submit time
+				
+				// get the percent that we want to interpolate (Current step / Total steps)
+				float interpalatePercent = (((float) (StepCount - SubmitStartStep) / (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps);
+				// don't continue if we are already at max
+				if (interpalatePercent > 1.0f) return;
+				// Interpolate between the max and min delta time
+				DeltaTime = (SubmitStartDeltaTime * (1.0f - interpalatePercent)) + (SubmitEndDeltaTime * interpalatePercent);
+			}
+		}
+	}
+
+	/* Handle runnable objects */
 
 	public void RegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
@@ -314,6 +413,7 @@ public partial class BoilerTronicsLevel : Node2D
 	}
 	
 	/* Handle Moving Objects */
+
 	public void RegisterMoving(MovingObject mObj) {
 		movingList.Add(mObj);
 	}
@@ -321,6 +421,10 @@ public partial class BoilerTronicsLevel : Node2D
 	public void UnRegisterMoving(MovingObject mObj) {
 		movingList.Remove(mObj);
 	}
+
+	/* Error Handling */
+
+	// Resume Objects ?? (This could be used in the middle of a step if we pause)
 
 	public void HaultObjects() {
 		// Halt all other movement
@@ -350,5 +454,9 @@ public partial class BoilerTronicsLevel : Node2D
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
 		}
+	}
+
+	public GameRunState GetGameRunState() {
+		return RunState;
 	}
 }
