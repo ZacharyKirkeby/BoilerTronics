@@ -280,6 +280,19 @@ public partial class Parser : Node2D
 		InitializeRegisters();
 	}
 
+	public int GetProgramCounter() => _programCounter;
+	
+	public bool IsProgramHalted() => _programHalted;
+	
+	public Dictionary<string, int> GetRegisters() => new Dictionary<string, int>(_registers);
+	
+	public int GetProgramLength() => _validLines.Count;
+	
+	public int GetRegister(string name)
+	{
+		return _registers.ContainsKey(name) ? _registers[name] : 0;
+	}
+
 
 
 
