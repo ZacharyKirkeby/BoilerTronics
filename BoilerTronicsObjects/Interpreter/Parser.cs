@@ -67,124 +67,10 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
 
-
-
 	public override void _Ready()
 	{
 		InitializeRegisters();
 		RegisterCommands();
-
-
-		// MATH OPS + compare
-		string[] arith = { "add", "sub", "mul", "div", "cmp" };
-		foreach (var cmd in arith)
-		{
-			// correct usage
-			_commandParser.Register($@"^\s*{cmd}\s+(r[0-2])\s+(r[0-2])\s*$", m =>
-			{
-				string reg1 = m.Groups[1].Value.ToLower();
-				string reg2 = m.Groups[2].Value.ToLower();
-
-				switch (cmd)
-				{
-					case "add": _registers["r0"] = _registers[reg1] + _registers[reg2]; break;
-					case "sub": _registers["r0"] = _registers[reg1] - _registers[reg2]; break;
-					case "mul": _registers["r0"] = _registers[reg1] * _registers[reg2]; break;
-					case "div":
-						if (_registers[reg2] == 0)
-						{
-							GD.Print("Divide by zero error");
-							EmitSignal(SignalName.ErrorRaised, CurrLine, "Divide By Zero Error", editorName);
-							return;
-						}
-						_registers["r0"] = _registers[reg1] / _registers[reg2];
-						break;
-					case "cmp":
-						int cmpResult = _registers[reg1] == _registers[reg2] ? 0 :
-										_registers[reg1] < _registers[reg2] ? -1 : 1;
-						_registers["cmp"] = cmpResult;
-						break;
-				}
-
-				GD.Print($"Command: {cmd} {reg1} {reg2} => R0={_registers["r0"]}, R1={_registers["r1"]}, R2={_registers["r2"]}, CMP={_registers["cmp"]}");
-			});
-
-			// missing second argument
-			_commandParser.Register($@"^\s*{cmd}\s+(r[0-2])\s*$", m =>
-			{
-				GD.Print($"Invalid {cmd} command, missing second argument");
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Second Argument", editorName);
-			});
-
-			// no arguments
-			_commandParser.Register($@"^\s*{cmd}\s*$", m =>
-			{
-				GD.Print($"Malformed {cmd} command, missing arguments");
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Arguments", editorName);
-			});
-		}
-
-		_commandParser.Register($@"^\s*wait\s*$", m =>
-		{
-			GD.Print("Command: Wait");
-		});
-
-		_commandParser.Register($@"^\s*wait\s+(\S+)\s*$", m =>
-		{
-			GD.Print("Malformed Wait Unknown Arg");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Wait", editorName);
-		});
-
-		_commandParser.Register($@"^\s*jmp\s+(\S+)\s*$", m =>
-		{
-			GD.Print("Command: Jump");
-		});
-
-		_commandParser.Register($@"^\s*jump\s*$", m =>
-		{
-			GD.Print("Malformed Jump: Missing Destination");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Jump: Missing Destination", editorName);
-		});
-
-		// placeholder for anything else
-		_commandParser.Register(@"^\s*\S+.*$", m =>
-		{
-			GD.Print($"Unknown command: {m.Value}");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Unknown Command", editorName);
-		});
-	}
-	
-	public void LoadProgram(string terminal)
-	{
-		_currentProgram = terminal;
-		_programCounter = 0;
-		_programHalted = false;
-		_validLines.Clear();
-		_labelMap.Clear();
-
-		if (string.IsNullOrWhiteSpace(terminal))
-			return;
-
-		// Use ProgramValidator to preprocess
-		var result = ProgramValidator.PreprocessProgram(terminal);
-
-		foreach (var kvp in result.labels)
-		{
-			_labelMap[kvp.Key] = kvp.Value;
-		}
-		_validLines.AddRange(result.validLines);
-		
-		// Handle validation errors
-		if (result.errors.Count > 0)
-		{
-			foreach (var (lineNum, error) in result.errors)
-			{
-				if (_debug) GD.PrintErr($"Validation error at line {lineNum}: {error}");
-				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
-			}
-		}
-		
-		if (_debug) GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
 	}
 
 	// instead of in ready, dedicated function
@@ -206,17 +92,47 @@ public partial class Parser : Node2D
 	public bool IsProgramHalted() => _programHalted;
 	
 	public Dictionary<string, int> GetRegisters() => new Dictionary<string, int>(_registers);
-	
+
 	public int GetProgramLength() => _validLines.Count;
 	
 	public int GetRegister(string name)
 	{
 		return _registers.ContainsKey(name) ? _registers[name] : 0;
 	}
+	
+	public void LoadProgram(string terminal, bool debug=false)
+	{
+		_currentProgram = terminal;
+		_programCounter = 0;
+		_programHalted = false;
+		_validLines.Clear();
+		_labelMap.Clear();
 
+		if (string.IsNullOrWhiteSpace(terminal))
+			return;
 
-
-
+		// Use ProgramValidator to preprocess
+		var result = ProgramValidator.PreprocessProgram(terminal);
+		
+		// Copy results into our readonly collections
+		foreach (var kvp in result.labels)
+		{
+			_labelMap[kvp.Key] = kvp.Value;
+		}
+		_validLines.AddRange(result.validLines);
+		
+		// Handle validation errors
+		if (result.errors.Count > 0)
+		{
+			foreach (var (lineNum, error) in result.errors)
+			{
+				GD.PrintErr($"Validation error at line {lineNum}: {error}");
+				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
+			}
+		}
+		
+		GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
+	}
 
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
@@ -229,69 +145,120 @@ public partial class Parser : Node2D
 			currEditor = codeEdit;
 		}
 		editorName = editor;
-		// error handling - i love c#
-		if (string.IsNullOrWhiteSpace(terminal))
+
+		// Reload program if it changed
+		if (terminal != _currentProgram)
+		{
+			LoadProgram(terminal);
+		}
+
+		// Check if program is halted or finished
+		if (_programHalted || _validLines.Count == 0)
 		{
 			return;
 		}
 
-		string[] rawLines = terminal.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-
-		List<string> validLines = new();
-		_labelMap.Clear();
-
-		// parses and builds label map - so i can process jumps
-		// smh i shouldnt have allowed jumps
-		for (int i = 0; i < rawLines.Length; i++)
+		// Check if we've reached the end
+		if (_programCounter >= _validLines.Count)
 		{
-			string trimmed = rawLines[i].Trim();
-			if (string.IsNullOrEmpty(trimmed))
-				continue;
-
-			// labels
-			if (trimmed.EndsWith(":"))
-			{
-				string label = trimmed.TrimEnd(':').Trim().ToLower();
-				if (!_labelMap.ContainsKey(label))
-					_labelMap[label] = validLines.Count;
-				continue;
-			}
-
-			validLines.Add(trimmed);
-		}
-		// error handling -> if theres nothing just stop
-		if (validLines.Count == 0) { return; }
-		CurrLine = step % validLines.Count; // this is an issue rn
-
-		// update UI about current line
-		// TODO - get this to actually work
-
-		string lineToBeProcessed = validLines[CurrLine];
-		lineToBeProcessed = lineToBeProcessed.ToLower();
-
-		// since a jump isn't a step consuming task, we pre-handle it
-		if (HandleJump(lineToBeProcessed, out int newLine))
-		{
-			if (newLine >= 0 && newLine < validLines.Count)
-			{
-				CurrLine = newLine;
-				// update UI for jump target
-			}
-			else
-			{
-				GD.Print($"Invalid jump target: {lineToBeProcessed}");
-			}
+			_programHalted = true;
+			if (_debug) GD.Print("Program reached end of execution");
 			return;
 		}
 
-		// handle arithmetic here: since it shouldn't consume a step
+		string lineToProcess = _validLines[_programCounter];
+		int currentPC = _programCounter;
 
-		// handle -> if end of lines shouldn't continue, unless controlled by JMP
+		if (_debug) GD.Print($"Executing line {_programCounter}: {lineToProcess}");
 
-		if (!_commandParser.Process(lineToBeProcessed))
+		// Execute instruction
+		if (!ExecuteInstruction(lineToProcess, ref _programCounter))
 		{
-			GD.Print($"Unknown or malformed command: {lineToBeProcessed}");
+			if (_debug)GD.PrintErr($"Failed to execute: {lineToProcess}");
+			EmitSignal(SignalName.ErrorRaised, currentPC, "Execution error", editorName);
 		}
+
+		// If PC wasn't changed by a jump, increment it
+		if (_programCounter == currentPC)
+		{
+			_programCounter++;
+		}
+
+		// Check if we've now reached the end
+		if (_programCounter >= _validLines.Count)
+		{
+			_programHalted = true;
+			if (_debug) GD.Print("Program completed execution");
+		}
+	}
+
+	private bool ExecuteInstruction(string line, ref int pc)
+	{
+		// Handle jumps (unconditional and conditional)
+		// Jumps don't consume a step, so they modify PC directly
+		if (HandleJumps(line, ref pc))
+			return true;
+
+		// Handle wait (no-op, consumes a step)
+		if (WaitRegex().IsMatch(line))
+		{
+			GD.Print("Command: Wait");
+			return true;
+		}
+
+		// Handle write (doesn't consume a step)
+		var wrtMatch = WrtRegex().Match(line);
+		if (wrtMatch.Success)
+		{
+			string reg = wrtMatch.Groups[1].Value;
+			int val = int.Parse(wrtMatch.Groups[2].Value);
+			_registers[reg] = val;
+			GD.Print($"Write: {reg} = {val}");
+			return true;
+		}
+
+		// Handle arithmetic (doesn't consume a step)
+		var arithMatch = ArithRegex().Match(line);
+		if (arithMatch.Success)
+		{
+			string cmd = arithMatch.Groups[1].Value;
+			string reg1 = arithMatch.Groups[2].Value;
+			string reg2 = arithMatch.Groups[3].Value;
+
+			switch (cmd)
+			{
+				case "add":
+					_registers["r0"] = _registers[reg1] + _registers[reg2];
+					break;
+				case "sub":
+					_registers["r0"] = _registers[reg1] - _registers[reg2];
+					break;
+				case "mul":
+					_registers["r0"] = _registers[reg1] * _registers[reg2];
+					break;
+				case "div":
+					if (_registers[reg2] == 0)
+					{
+						GD.PrintErr("Divide by zero error");
+						EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
+						return false;
+					}
+					_registers["r0"] = _registers[reg1] / _registers[reg2];
+					break;
+				case "cmp":
+					int cmpResult = _registers[reg1] == _registers[reg2] ? 0 :
+									_registers[reg1] < _registers[reg2] ? -1 : 1;
+					_registers["cmp"] = cmpResult;
+					break;
+			}
+
+			GD.Print($"{cmd}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
+			return true;
+		}
+
+		// Handle movement/rotation/claw commands via CommandParser
+		// These DO consume a step
+		return _commandParser.Process(line);
 	}
 
 	// THE LATEST AND GREATEST: More jumping
