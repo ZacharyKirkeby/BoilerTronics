@@ -6,6 +6,7 @@ using BoilerTronicsObjects.Placeable;
 using System.Text.RegularExpressions;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using System.Diagnostics;
 
 namespace Parsing;
 
@@ -73,122 +74,6 @@ public partial class Parser : Node2D
 		InitializeRegisters();
 		RegisterCommands();
 
-
-		// Below bout to be [Deprecated]
-		
-
-
-		// rot l | r
-		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
-		{
-			GD.Print($"Command: Rotate {m.Groups[1].Value}");
-
-			//regex collection to string array
-			GroupCollection groups = m.Groups;
-			string[] values = new string[groups.Count];
-			for (int i = 0; i < groups.Count; i++)
-			{
-				values[i] = groups[i].Value;
-			}
-			// function call
-			if (scriptObject != null & (scriptObject is ConveyorRotatorObject))
-			{
-				scriptObject.Rotate(values);
-			}
-			else
-			{
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
-			}
-		});
-
-		// rot with the wrong args
-		_commandParser.Register(@"^\s*rot\s+(\S+)\s*$", m =>
-		{
-			GD.Print($"Invalid Rotate argument: {m.Groups[1].Value}");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Rotate Argument", editorName);
-		});
-
-		// rot without args
-		_commandParser.Register(@"^\s*rot\s*$", m =>
-		{
-			GD.Print("Malformed Rotate command, missing argument");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Missing Rotate Argument", editorName);
-		});
-
-
-		_commandParser.Register(@"^\s*drp\s*$", d =>
-		{
-			GD.Print("Command: Drop");
-
-			//regex collection to string array
-			GroupCollection groups = d.Groups;
-			string[] values = new string[groups.Count];
-			for (int i = 0; i < groups.Count; i++)
-			{
-				values[i] = groups[i].Value;
-			}
-			// function call
-			if (scriptObject != null & (scriptObject is ClawObject))
-			{
-				scriptObject.Drop(values);
-			}
-			else
-			{
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
-			}
-		});
-
-		// drop with args (bad)
-		_commandParser.Register(@"^\s*drp\s+(\S+)\s*$", m =>
-		{
-			GD.Print($"Invalid Drop argument: {m.Groups[1].Value}");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Drop Argument", editorName);
-		});
-
-
-		_commandParser.Register(@"^\s*grb\s*$", g =>
-		{
-			GD.Print("Command: Grab");
-			//regex collection to string array
-			GroupCollection groups = g.Groups;
-			string[] values = new string[groups.Count];
-			for (int i = 0; i < groups.Count; i++)
-			{
-				values[i] = groups[i].Value;
-			}
-			// function call
-			if (scriptObject != null & (scriptObject is ClawObject))
-			{
-				scriptObject.Grab(values);
-			}
-			else
-			{
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
-			}
-		});
-
-		// grab with args (bad)
-		_commandParser.Register(@"^\s*grb\s+(\S+)\s*$", m =>
-		{
-			GD.Print($"Invalid Grab argument: {m.Groups[1].Value}");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Grab Argument", editorName);
-		});
-
-		_commandParser.Register(@"^\s*wrt\s+(\w+)\s+(-?\d+)\s*$", m =>
-		{
-			string reg = m.Groups[1].Value.ToLower();
-			int val = int.Parse(m.Groups[2].Value);
-			_registers[reg] = val;
-			GD.Print($"Write: {reg} = {val}");
-		});
-
-		_commandParser.Register(@"^\s*wrt\s+(\w+)\s*$", m =>
-			GD.Print($"Malformed Write: Missing value for register {m.Groups[1].Value}"));
-		EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing value", editorName);
-
-		_commandParser.Register(@"^\s*wrt\s*$", _ =>
-			GD.Print("Malformed Write: Missing register and value"));
-		EmitSignal(SignalName.ErrorRaised, CurrLine, "Malformed Write: Missing Register", editorName);
 
 		// MATH OPS + compare
 		string[] arith = { "add", "sub", "mul", "div", "cmp" };
@@ -267,6 +152,39 @@ public partial class Parser : Node2D
 			GD.Print($"Unknown command: {m.Value}");
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Unknown Command", editorName);
 		});
+	}
+	
+	public void LoadProgram(string terminal)
+	{
+		_currentProgram = terminal;
+		_programCounter = 0;
+		_programHalted = false;
+		_validLines.Clear();
+		_labelMap.Clear();
+
+		if (string.IsNullOrWhiteSpace(terminal))
+			return;
+
+		// Use ProgramValidator to preprocess
+		var result = ProgramValidator.PreprocessProgram(terminal);
+
+		foreach (var kvp in result.labels)
+		{
+			_labelMap[kvp.Key] = kvp.Value;
+		}
+		_validLines.AddRange(result.validLines);
+		
+		// Handle validation errors
+		if (result.errors.Count > 0)
+		{
+			foreach (var (lineNum, error) in result.errors)
+			{
+				if (_debug) GD.PrintErr($"Validation error at line {lineNum}: {error}");
+				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
+			}
+		}
+		
+		if (_debug) GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
 	}
 
 	// instead of in ready, dedicated function
