@@ -667,10 +667,14 @@ icon = ExtResource("16_bvu8t")
 icon_alignment = 1
 
 [node name="Play Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 focus_mode = 0
+theme_override_colors/font_color = Color(0.29803923, 0.6862745, 0.3137255, 1)
+theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_font_sizes/font_size = 42
 icon = ExtResource("17_l4peq")
 icon_alignment = 1
 
