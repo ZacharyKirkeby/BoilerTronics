@@ -4,7 +4,6 @@ using System.Text.RegularExpressions;
 using Godot;
 
 namespace Parsing;
-//inshallah my baby is reborn
 public static partial class ProgramValidator
 {
 	// Movement commands
@@ -226,7 +225,7 @@ public static partial class ProgramValidator
     private static string ValidateInstruction(string line)
     {
         // BEHOLD MY EVIL FUNCTION FULL OF EVIL
-        
+
         // Movement commands
         if (MovValidRegex().IsMatch(line)) return null;
         if (MovEmptyRegex().IsMatch(line)) return "Move missing argument";

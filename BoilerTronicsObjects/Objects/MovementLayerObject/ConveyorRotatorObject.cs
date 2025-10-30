@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Parsing;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
@@ -11,6 +12,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
+		private Parser _parser;
 		CodeEdit E;
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
@@ -43,9 +45,20 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			E.Text = script;
 		}
 
-		public string GetScript() {
+		public string GetScript()
+		{
 			return E.Text;
 		}
+		
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this._parser;
+        }
 
 		public void Step() {
 			// Make a call to the parser
