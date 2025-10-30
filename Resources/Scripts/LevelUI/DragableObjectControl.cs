@@ -6,11 +6,11 @@ public partial class DragableObjectControl : Control {
 	
 	// if false, then should block all drag attempts
 	public static bool allowDrag = true;
-	
+	public static Window objectControlWindow;
 	Sprite2D sprite;
 	Vector2I atlasCords;
 	int selection;
-	static Vector2I visibleObjectScaling = new Vector2I(5, 5);
+	static Vector2I visibleObjectScaling = new Vector2I(3, 3);
 
 	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
 
@@ -26,7 +26,7 @@ public partial class DragableObjectControl : Control {
 	}
 
 	public override void _Ready() {
-		CustomMinimumSize = new Vector2(256, 256);
+		CustomMinimumSize = new Vector2(171, 171); // 256,256
 	}
 
 	public override void _GuiInput(InputEvent @event)
@@ -42,12 +42,21 @@ public partial class DragableObjectControl : Control {
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
 			// spawn terminal perhap?
-			
+
 			GD.Print("Created new dragable:", draggable);
 			manager.objectToPlace = atlasCords;
 			manager.placingObject = 1;
 			manager.currSlection = selection;
 		}
+		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")
+		{
+			objectControlWindow = new Window();
+			objectControlWindow.Size = new Vector2I(200, 200);
+			Vector2 mousePos = buttonEvent2.GlobalPosition;
+			objectControlWindow.Position = new Vector2I((int)mousePos.X, (int)mousePos.Y);
+			AddChild(objectControlWindow);
+			
+        }
 		else
 		{
 			base._Input(@event); // pass downward
