@@ -8,75 +8,78 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 
 namespace Parsing;
+
 public partial class Parser : Node2D
 {
-	private int maxLineLength;
-	private int CurrLine;
-	private string editorName;
-	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
-	// for now this is how the labels and jumps will be handled
-	private readonly Dictionary<string, int> _labelMap = new();
-	// register mapping
 	private readonly Dictionary<string, int> _registers = new();
+	private readonly Dictionary<string, int> _labelMap = new();
+	private List<string> _validLines = new();
+	private int _programCounter = 0;
+	private bool _programHalted = false;
+	private string _currentProgram = "";
+
+	// Current execution context
 	private Scriptable scriptObject;
 	private CodeEdit currEditor;
+	private string editorName;
 
-	// for line adjustment for jumps
+	// Command parser for step-consuming instructions (mov, rot, grb, drp)
+	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
+
 	[Signal]
 	public delegate void ErrorRaisedEventHandler(int lineNumber, string message, string editorName);
 
+	// None of these consume time steps, hence registered here
+
+	// Jump commands
+	[GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
+	private static partial Regex JmpRegex();
+
+	[GeneratedRegex(@"^\s*jeq\s+(\w+)\s*$")]
+	private static partial Regex JeqRegex();
+
+	[GeneratedRegex(@"^\s*jne\s+(\w+)\s*$")]
+	private static partial Regex JneRegex();
+
+	[GeneratedRegex(@"^\s*jgt\s+(\w+)\s*$")]
+	private static partial Regex JgtRegex();
+
+	[GeneratedRegex(@"^\s*jlt\s+(\w+)\s*$")]
+	private static partial Regex JltRegex();
+
+	[GeneratedRegex(@"^\s*jge\s+(\w+)\s*$")]
+	private static partial Regex JgeRegex();
+
+	[GeneratedRegex(@"^\s*jle\s+(\w+)\s*$")]
+	private static partial Regex JleRegex();
+
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
+	private static partial Regex WrtRegex();
+
+	// Arithmetic commands
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2])\s+(r[0-2])\s*$")]
+	private static partial Regex ArithRegex();
+
+	// Control commands
+	[GeneratedRegex(@"^\s*wait\s*$")]
+	private static partial Regex WaitRegex();
+
+
 	public override void _Ready()
 	{
-		// el registers
-		_registers["r0"] = 0;
-		_registers["r1"] = 0;
-		_registers["r2"] = 0;
-		_registers["cmp"] = 0;
+		InitializeRegisters();
+		RegisterCommands();
 
-		// MOVABLES
 
-		// mov l | r | u | d
-		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
-		{
-			GD.Print($"Command: Move {m.Groups[1].Value}");
+		// Below bout to be [Deprecated]
+		
 
-			//regex collection to string array
-			GroupCollection groups = m.Groups;
-			string[] values = new string[groups.Count];
-			for (int i = 0; i < groups.Count; i++)
-			{
-				values[i] = groups[i].Value;
-			}
-			// function call
-			if ( scriptObject != null & !(scriptObject is ConveyorRotatorObject))
-			{
-				scriptObject.Move(values);
-			} else
-			{
-				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
-			}
-				
-		});
-
-		// invalid mov arg
-		_commandParser.Register(@"^\s*mov\s+(\S+)\s*$", m =>
-		{
-			GD.Print($"Invalid Move argument: {m.Groups[1].Value}");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Move Argument", editorName);
-		});
-
-		// empty mov
-		_commandParser.Register(@"^\s*mov\s*$", m =>
-		{
-			GD.Print("Malformed Move command, missing argument");
-			EmitSignal(SignalName.ErrorRaised, CurrLine, "Move Missing Argument", editorName);
-		});
 
 		// rot l | r
 		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
 		{
 			GD.Print($"Command: Rotate {m.Groups[1].Value}");
-			
+
 			//regex collection to string array
 			GroupCollection groups = m.Groups;
 			string[] values = new string[groups.Count];
@@ -85,10 +88,11 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null & (scriptObject is ConveyorRotatorObject))
+			if (scriptObject != null & (scriptObject is ConveyorRotatorObject))
 			{
 				scriptObject.Rotate(values);
-			} else
+			}
+			else
 			{
 				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
 			}
@@ -121,10 +125,11 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null & (scriptObject is ClawObject))
+			if (scriptObject != null & (scriptObject is ClawObject))
 			{
 				scriptObject.Drop(values);
-			} else
+			}
+			else
 			{
 				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
 			}
@@ -149,10 +154,11 @@ public partial class Parser : Node2D
 				values[i] = groups[i].Value;
 			}
 			// function call
-			if ( scriptObject != null & (scriptObject is ClawObject))
+			if (scriptObject != null & (scriptObject is ClawObject))
 			{
 				scriptObject.Grab(values);
-			} else
+			}
+			else
 			{
 				EmitSignal(SignalName.ErrorRaised, CurrLine, "Invalid Command for this Object", editorName);
 			}
@@ -259,6 +265,25 @@ public partial class Parser : Node2D
 			EmitSignal(SignalName.ErrorRaised, CurrLine, "Unknown Command", editorName);
 		});
 	}
+
+	// instead of in ready, dedicated function
+	private void InitializeRegisters()
+	{
+		_registers["r0"] = 0;
+		_registers["r1"] = 0;
+		_registers["r2"] = 0;
+		_registers["cmp"] = 0;
+	}
+
+	public void ResetRegisters()
+	{
+		InitializeRegisters();
+	}
+
+
+
+
+
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
 	// Takes in the current step, derives line number off that
@@ -381,7 +406,82 @@ public partial class Parser : Node2D
 		return -1;
 	}
 
-    [GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
-    private static partial Regex MyRegex();
+	[GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
+	private static partial Regex MyRegex();
+
+// aldso instead of in ready
+private void RegisterCommands()
+	{
+		// Movement commands (step-consuming)
+		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
+		{
+			if (scriptObject != null && !(scriptObject is ConveyorRotatorObject))
+			{
+				GroupCollection groups = m.Groups;
+				string[] values = new string[groups.Count];
+				for (int i = 0; i < groups.Count; i++)
+					values[i] = groups[i].Value;
+				scriptObject.Move(values);
+				GD.Print($"Move {m.Groups[1].Value}");
+			}
+			else
+			{
+				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+			}
+		});
+
+		// Rotation commands (step-consuming)
+		_commandParser.Register(@"^\s*rot\s+([lr])\s*$", m =>
+		{
+			if (scriptObject != null && scriptObject is ConveyorRotatorObject)
+			{
+				GroupCollection groups = m.Groups;
+				string[] values = new string[groups.Count];
+				for (int i = 0; i < groups.Count; i++)
+					values[i] = groups[i].Value;
+				scriptObject.Rotate(values);
+				GD.Print($"Rotate {m.Groups[1].Value}");
+			}
+			else
+			{
+				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+			}
+		});
+
+		_commandParser.Register(@"^\s*drp\s*$", m =>
+		{
+			if (scriptObject != null && scriptObject is ClawObject)
+			{
+				GroupCollection groups = m.Groups;
+				string[] values = new string[groups.Count];
+				for (int i = 0; i < groups.Count; i++)
+					values[i] = groups[i].Value;
+				scriptObject.Drop(values);
+				GD.Print("Drop");
+			}
+			else
+			{
+				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+			}
+		});
+
+		// Grab command
+		_commandParser.Register(@"^\s*grb\s*$", m =>
+		{
+			if (scriptObject != null && scriptObject is ClawObject)
+			{
+				GroupCollection groups = m.Groups;
+				string[] values = new string[groups.Count];
+				for (int i = 0; i < groups.Count; i++)
+					values[i] = groups[i].Value;
+				scriptObject.Grab(values);
+				GD.Print("Grab");
+			}
+			else
+			{
+				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+			}
+		});
+	}
 
 }
