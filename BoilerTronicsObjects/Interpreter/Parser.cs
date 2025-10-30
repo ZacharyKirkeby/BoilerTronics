@@ -23,7 +23,7 @@ public partial class Parser : Node2D
 	private Scriptable scriptObject;
 	private CodeEdit currEditor;
 	private string editorName;
-	private bool _debug = false;
+	private bool _debug = true;
 	private enum qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
