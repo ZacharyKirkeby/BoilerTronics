@@ -256,9 +256,10 @@ public partial class BoilerTronicsLevel : Node2D
 		cLayer.Reset();
 		fLayer.Reset();
 		flLayer.Reset();
-		
+
 		// Loop through moving objects
-		foreach (MovingObject mObj in movingList) {
+		foreach (MovingObject mObj in movingList)
+		{
 			// Get object and layer
 			PlaceableObject obj = mObj.obj;
 			Layer layer = mObj.layer;
@@ -269,6 +270,11 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
+		
+		foreach (Runnable rObj in runnableList)
+        {
+			rObj.Reset();
+        }
 		
 		StepCount = 0;
 
