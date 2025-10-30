@@ -16,6 +16,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
+		private Parser P;
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
@@ -50,9 +51,19 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 
 		// Methods to deal with terminals
-		public CodeEdit GetTerminal() {
+		public CodeEdit GetTerminal()
+		{
 			return E;
 		}
+		public void SetParser(Parser parser)
+		{
+			this.P = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this.P;
+        }
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -192,5 +203,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-	}
+    }
 }
