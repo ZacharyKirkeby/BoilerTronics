@@ -15,7 +15,7 @@ namespace CommandParser
 			_rules.Add((regex, handler));
 		}
 
-		public bool Process(string input, bool debug=false)
+		public bool Process(string input, bool debug=true)
 		{
 			foreach (var (pattern, handler) in _rules)
 			{
