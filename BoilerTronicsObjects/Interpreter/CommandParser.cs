@@ -15,7 +15,7 @@ namespace CommandParser
 			_rules.Add((regex, handler));
 		}
 
-		public bool Process(string input)
+		public bool Process(string input, bool debug=false)
 		{
 			foreach (var (pattern, handler) in _rules)
 			{
@@ -23,13 +23,13 @@ namespace CommandParser
 				if (match.Success)
 				{
 					handler(match);
-					//GD.Print($"[CommandParser] Matched pattern: {pattern}");
+					if (debug) GD.Print($"[CommandParser] Matched pattern: {pattern}");
 					return true; // Success
 				}
 			}
 
 			// No pattern matched
-			GD.Print($"[CommandParser] Unknown command: {input}");
+			if (debug) GD.Print($"[CommandParser] Unknown command: {input}");
 			return false; // Fail
 		}
 
