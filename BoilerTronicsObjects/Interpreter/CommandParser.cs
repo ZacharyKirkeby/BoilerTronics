@@ -4,15 +4,15 @@ using Godot;
 
 namespace CommandParser
 {
-	// Delegate is a silly c# thing that lets me treat stuff as objects
 	public delegate void CommandHandler(Match match);
 	public class CommandParser
 	{
 		private readonly List<(Regex Pattern, CommandHandler Handler)> _rules = new();
-		// register table - flag, genric 1, 2, 3, 
+
 		public void Register(string pattern, CommandHandler handler)
 		{
-			_rules.Add((new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled), handler));
+			var regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+			_rules.Add((regex, handler));
 		}
 
 		public bool Process(string input)
@@ -23,14 +23,23 @@ namespace CommandParser
 				if (match.Success)
 				{
 					handler(match);
-					GD.Print("Matched command");
-					return true; // success
+					//GD.Print($"[CommandParser] Matched pattern: {pattern}");
+					return true; // Success
 				}
 			}
 
-		// None matched
-		GD.Print($"Unknown command: {input}");
-		return false; // failure
+			// No pattern matched
+			GD.Print($"[CommandParser] Unknown command: {input}");
+			return false; // Fail
+		}
+
+		public void Clear()
+		{
+			_rules.Clear();
+		}
+		public int GetRuleCount()
+		{
+			return _rules.Count;
 		}
 	}
 }
