@@ -1,12 +1,14 @@
-[gd_scene load_steps=49 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=51 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_c2lek"]
 [ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_nctgy"]
+[ext_resource type="Theme" uid="uid://c1ews8yalr04b" path="res://Scenes/LevelUI/StatHeading.tres" id="6_5sd26"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_uqjh5"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_bsnj2"]
+[ext_resource type="Theme" uid="uid://yrlb1mo8agju" path="res://Scenes/LevelUI/StatValues.tres" id="7_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_5rb4o"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="9_qx84d"]
 [ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="10_3k86a"]
@@ -383,7 +385,6 @@ text = "Exit"
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(800, 800)
-visible = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu"]
 anchors_preset = -1
@@ -415,7 +416,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Control" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="Lowest Cost" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
@@ -445,72 +446,105 @@ alignment = 1
 
 [node name="Production Per Step2" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Production Per Step" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 layout_mode = 2
+theme = ExtResource("6_5sd26")
 text = "Production Per Step"
+horizontal_alignment = 1
 
 [node name="PPS Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="PPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="PPS Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="PPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="Cost Per Step" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Cost Per Step" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 layout_mode = 2
+theme = ExtResource("6_5sd26")
 text = "Cost Per Step"
+horizontal_alignment = 1
 
 [node name="CPS Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="CPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="CPS Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="CPS Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="Resources Consumed" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Resources Consumed" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 layout_mode = 2
+theme = ExtResource("6_5sd26")
 text = "Resources Consumed"
+horizontal_alignment = 1
 
 [node name="RC Cutoff" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="RC Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="RC Difference" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="RC Grade" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]
 unique_name_in_owner = true
 layout_mode = 2
+theme = ExtResource("7_xc2rq")
+horizontal_alignment = 1
 
 [node name="ButtonTray" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 script = ExtResource("6_uqjh5")

@@ -100,6 +100,7 @@ public partial class LevelUi : Node2D
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateCost(manager.currLevel.cost);
+		SetStatisticDefaults();
 		manager.currLevel.E = new ErrorHandler();
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
@@ -348,8 +349,65 @@ public partial class LevelUi : Node2D
 		if (costCountLabel == null) {
 			return;
 		}
-		costCountLabel.Text = "Cost: " + cost;
+		costCountLabel.Text = "Cost: $" + cost;
 		GD.Print("cost updated" + cost);
+	}
+	
+	public void SetStatisticDefaults() {
+		ppsCutoffLabel.Text = "Cutoff PPS: TBD";
+		cpsCutoffLabel.Text = "Cutoff CPS: TBD";
+		rcCutoffLabel.Text = "Cutoff RC: TBD";
+		
+		ppsSolutionLabel.Text = "PPS: N/A";
+		cpsSolutionLabel.Text = "CPS: N/A";
+		rcSolutionLabel.Text = "RC: N/A";
+		
+		ppsDifferenceLabel.Text = "Diff: N/A";
+		cpsDifferenceLabel.Text = "Diff: N/A";
+		rcDifferenceLabel.Text = "Diff: N/A";
+		
+		ppsGradeLabel.Text = "Grade: N/A";
+		cpsGradeLabel.Text = "Grade: N/A";
+		rcGradeLabel.Text = "Grade: N/A";
+	}
+	
+	public void UpdateSolutionStatistics(float pps, float cps, int rc) {
+		ppsSolutionLabel.Text = "PPS: " + pps;
+		cpsSolutionLabel.Text = "CPS: $" + cps;
+		rcSolutionLabel.Text = "RC: " + rc;
+	}
+	
+	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
+		ppsCutoffLabel.Text = "Cutoff PPS: " + pps;
+		cpsCutoffLabel.Text = "Cutoff CPS: $" + cps;
+		rcCutoffLabel.Text = "Cutoff RC: " + rc;
+	}
+
+	public void UpdateSolutionDifferences(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
+		if(ppsCutoff <= ppsSol) {
+			//good
+			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff);
+		}
+		else {
+			//bad
+			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol);
+		}
+		if(cpsCutoff >= cpsSol) {
+			//good
+			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol);
+		}
+		else {
+			//bad
+			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff);
+		}
+		if(rcCutoff >= rcSol) {
+			//good
+			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol);
+		}
+		else {
+			//bad
+			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff);
+		}
 	}
 
 	private void full_theme(Button button)
