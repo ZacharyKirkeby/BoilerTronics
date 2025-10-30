@@ -16,7 +16,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
-		private Parser P;
+		private Parser _parser;
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
@@ -28,7 +28,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (_parser == null)
+			{
+				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
+				return;
+			}
+			_parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 		}
 
 		public void RegisterSteppable() {
@@ -57,12 +62,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 		public void SetParser(Parser parser)
 		{
-			this.P = parser;
+			this._parser = parser;
 		}
 		
 		public Parser GetParser()
         {
-			return this.P;
+			return this._parser;
         }
 
 		public void CreateTerminal() {
