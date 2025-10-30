@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 using Parsing;
-public partial class LevelUi : Node2D
+public partial class LevelCreator : Node2D
 {
 	/* Editors */
 
@@ -331,8 +331,11 @@ public partial class LevelUi : Node2D
 		_on_step_button_pressed();
 	}
 
-	public void simulateReset() {
+	public void simulateReset()
+	{
 		_on_reset_button_pressed();
 	}
+	
+	/* Level Creator Functions */
 
 }
