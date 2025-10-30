@@ -383,31 +383,74 @@ public partial class LevelUi : Node2D
 		rcCutoffLabel.Text = "Cutoff RC: " + rc;
 	}
 
-	public void UpdateSolutionDifferences(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
+	public void UpdateSolutionGrading(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
+		//difference and grading labels
 		if(ppsCutoff <= ppsSol) {
 			//good
 			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff);
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true);
 		}
 		else {
 			//bad
 			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol);
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, false);
 		}
 		if(cpsCutoff >= cpsSol) {
 			//good
 			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol);
+			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, true);
 		}
 		else {
 			//bad
 			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff);
+			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, false);
 		}
 		if(rcCutoff >= rcSol) {
 			//good
 			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol);
+			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, true);
 		}
 		else {
 			//bad
 			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff);
+			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, false);
 		}
+	}
+
+	public float CalculateGrade(float cutoff, float solution, bool good) {
+		//check for dividing by 0
+		if (cutoff == 0) {
+			return 0;
+		}
+
+		float ratio = solution / cutoff;
+		float grade;
+
+		if (good) {
+			if (ratio < 1.0f) {
+				grade = 100f * ratio;
+			}
+			else {
+				grade = 100f + 20f * (float)Math.Log10(ratio);
+			}
+		}
+		else {
+			if (ratio > 1.0f) {
+				grade = 100f / ratio;
+			}
+			else {
+				grade = 100f + 20f * (float)Math.Log10(1f / ratio);
+			}
+		}
+
+		//ensure number is valid
+		if (grade < 0f) {
+			grade = 0f;
+		}
+		if (grade > 150f) {
+			grade = 150f;
+		}
+		return grade;
 	}
 
 	private void full_theme(Button button)
