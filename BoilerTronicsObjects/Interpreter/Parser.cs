@@ -341,8 +341,8 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
 	private static partial Regex MyRegex();
 
-// also instead of in ready
-private void RegisterCommands()
+	// also instead of in ready
+	private void RegisterCommands()
 	{
 		// Movement commands (step-consuming)
 		_commandParser.Register(@"^\s*mov\s+([lrud])\s*$", m =>
@@ -352,11 +352,11 @@ private void RegisterCommands()
 				GroupCollection groups = m.Groups;
 				string[] values = new string[groups.Count];
 				for (int i = 0; i < groups.Count; i++)
-                {
+				{
 					values[i] = groups[i].Value;
-                }
+				}
 				scriptObject.Move(values);
-				if (_debug)GD.Print($"Move {m.Groups[1].Value}");
+				if (_debug) GD.Print($"Move {m.Groups[1].Value}");
 			}
 			else
 			{
@@ -422,8 +422,14 @@ private void RegisterCommands()
 				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
 			}
 		});
-		
+
 		// Switch command - FTODO for someone else
+	}
+	
+	public void ResetProgramCounter()
+	{
+		_programCounter = 0;
+		_programHalted = false;
 	}
 
 }
