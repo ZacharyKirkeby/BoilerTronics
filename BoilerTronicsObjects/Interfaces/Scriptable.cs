@@ -16,6 +16,7 @@ namespace BoilerTronicsObjects.Interfaces {
 		void DestroyTerminal(); // Unregisters the runnable object with the global manager
 		void SetScript(string script); // sets the text of the code edit
 		string GetScript(); // sets the text of the code edit
-        void SetParser(Parser parser);
+		void SetParser(Parser parser);
+		Parser GetParser();
     }
 }

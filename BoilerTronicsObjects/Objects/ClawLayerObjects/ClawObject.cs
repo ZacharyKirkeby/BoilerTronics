@@ -48,6 +48,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Reset() {
 			base.ResetPos();
+			_parser.ResetProgramCounter();
+            _parser.ResetRegisters();
 			heldObject = null;
 			// Maybe need to make a call to our codeEdit/interrputer?
 		}

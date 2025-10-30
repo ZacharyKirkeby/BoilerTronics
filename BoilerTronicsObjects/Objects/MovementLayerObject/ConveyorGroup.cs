@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Parsing;
 using System.Collections;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -12,6 +13,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		private CodeEdit E;
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 		public int dir;
+		private Parser _parser;
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
@@ -28,11 +30,22 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		// Remove from conveyor group
-		public void RemoveConveyor(ConveyorObject conv) {
+		public void RemoveConveyor(ConveyorObject conv)
+		{
 			if (conv == null) return;
 			convList.Remove(conv);
 			VerifyGroup();
 		}
+		
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this._parser;
+        }
 
 		// Verify Group
 		public void VerifyGroup() {
