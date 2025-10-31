@@ -1,14 +1,19 @@
 using Godot;
 using System.Collections.Generic;
 
+public enum SoundType {
+	Error,
+	Move,
+	Grab,
+	Drop,
+	Rotate
+}
+
 public partial class BoilerTronicsSoundManager : Node
 {
 	public static BoilerTronicsSoundManager SoundManager { get; private set; }
 
-	private Dictionary<string, AudioStream> sounds = new();
-	private AudioStreamPlayer soundPlayer;
-	private string currentSound = "";
-	private int currentPriority = 0;
+	private Dictionary<SoundType, AudioStream> sounds = new();
 
 	public override void _Ready()
 	{
@@ -21,46 +26,39 @@ public partial class BoilerTronicsSoundManager : Node
 		SoundManager = this;
 		Name = "BoilerTronicsSoundManager";
 
-		soundPlayer = new AudioStreamPlayer();
-		soundPlayer.Name = "SoundPlayer";
-		AddChild(soundPlayer);
-
-		//set sounds
-		sounds["error"] = GD.Load<AudioStream>("res://Resources/Sounds/errorSound.wav");
-		sounds["move"] = GD.Load<AudioStream>("res://Resources/Sounds/moving.wav");
-		sounds["grab"] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
-		sounds["drop"] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
-		sounds["rotate"] = GD.Load<AudioStream>("res://Resources/Sounds/turning.wav");
+		//load sounds
+		sounds[SoundType.Error] = GD.Load<AudioStream>("res://Resources/Sounds/errorSound.wav");
+		sounds[SoundType.Move] = GD.Load<AudioStream>("res://Resources/Sounds/moving.wav");
+		sounds[SoundType.Grab] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
+		sounds[SoundType.Drop] = GD.Load<AudioStream>("res://Resources/Sounds/grab.wav");
+		sounds[SoundType.Rotate] = GD.Load<AudioStream>("res://Resources/Sounds/turning.wav");
 	}
 
 	//play the sound called by name
-	public void PlaySound(string soundName, int priority) {
-		if (sounds.ContainsKey(soundName)) {
-			if(soundPlayer == null) {
-				GD.Print("soundplayer null");
-			}
-			if (priority < currentPriority && soundPlayer.Playing) {
-				return;
-			}
-
-			if (soundPlayer.Playing) {
-				soundPlayer.Stop();
-			}
-
-			soundPlayer.Stream = sounds[soundName];
-			soundPlayer.Play();
-
-			currentSound = soundName;
-			currentPriority = priority;
+	public void PlaySound(SoundType type) {
+		if (!sounds.ContainsKey(type)) {
+			GD.Print("sound not found");
 		}
+		
+		//create soundplayer
+		var soundPlayer = new AudioStreamPlayer();
+		soundPlayer.Stream = sounds[type];
+		soundPlayer.Name = $"{type}_Player";
+		AddChild(soundPlayer);
+		
+		soundPlayer.Finished += () =>
+		{
+			soundPlayer.QueueFree();
+		};
+
+		soundPlayer.Play();
 	}
 	
-	public void StopSound() {
-		if((soundPlayer != null) && (soundPlayer.Playing)) {
-			soundPlayer.Stop();
+	public void StopAllSound() {
+		foreach (var child in GetChildren()) {
+			if (child is AudioStreamPlayer player)
+				player.Stop();
 		}
-		currentSound = "";
-		currentPriority = 0;
 	}
 	
 	public float GetCurrentVolume() {

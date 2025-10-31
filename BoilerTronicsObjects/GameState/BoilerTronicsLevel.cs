@@ -237,7 +237,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public void Step() {
 		if (E.HasError()) {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
-			soundManager.PlaySound("error", 10);
+			soundManager.PlaySound(SoundType.Error);
 			return; // Can't step if there is an error
 		}
 		if (movingList.Count != 0) return; // Can't step while stuff is moving

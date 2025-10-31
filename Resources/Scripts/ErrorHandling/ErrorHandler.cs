@@ -84,7 +84,7 @@ public partial class ErrorHandler : Node2D {
 		}
 
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
-		soundManager.PlaySound("error", 10);
+		soundManager.PlaySound(SoundType.Error);
 
 		ShowErrorNotice(new Vector2I(0,0)); // Add the '!' icon | TODO: throw a handle error based on the actual error
 
@@ -95,8 +95,8 @@ public partial class ErrorHandler : Node2D {
 	public void handleError(ErrorType type, CodeEdit E, Vector2 Pos) {
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		soundManager.StopSound();
-		soundManager.PlaySound("error", 10);
+		soundManager.StopAllSound();
+		soundManager.PlaySound(SoundType.Error);
 
 		if (errorSceneInstance != null) return; // Already displaying error
 		manager.currLevel.HaultObjects();
@@ -152,7 +152,7 @@ public partial class ErrorHandler : Node2D {
 		}
 
 		ErrorPresent = true;
-		soundManager.PlaySound("error", 10);
+		soundManager.PlaySound(SoundType.Error);
 	}
 
 
