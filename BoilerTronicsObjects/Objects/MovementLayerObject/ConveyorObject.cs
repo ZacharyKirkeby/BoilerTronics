@@ -8,12 +8,17 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorObject : MovementLayerObjects {
+	public class ConveyorObject : PlaceableObject {
 
 		int direction; // 0 = left; 1 = right;
 
 		public const int Left = 0;
 		public const int Right = 1;
+		
+		static int layerSourceId = 2;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
 
 		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
@@ -33,7 +38,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.mLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
 		}
 
-		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
+		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, layerSourceId, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
 			if (dir != ConveyorObject.Right && dir != ConveyorObject.Left) return; // Error
 
 			direction = dir;
