@@ -12,6 +12,7 @@ public enum SoundType {
 public partial class BoilerTronicsSoundManager : Node
 {
 	public static BoilerTronicsSoundManager SoundManager { get; private set; }
+	private Dictionary<SoundType, AudioStreamPlayer> activePlayers = new();
 
 	private Dictionary<SoundType, AudioStream> sounds = new();
 
@@ -40,25 +41,40 @@ public partial class BoilerTronicsSoundManager : Node
 			GD.Print("sound not found");
 		}
 		
-		//create soundplayer
-		var soundPlayer = new AudioStreamPlayer();
-		soundPlayer.Stream = sounds[type];
-		soundPlayer.Name = $"{type}_Player";
-		AddChild(soundPlayer);
+		//if already playing, start over
+		if (activePlayers.ContainsKey(type)) {
+			AudioStreamPlayer existingPlayer = activePlayers[type];
+			existingPlayer.Stop();
+			existingPlayer.QueueFree();
+			activePlayers.Remove(type);
+		}
 		
-		soundPlayer.Finished += () =>
-		{
-			soundPlayer.QueueFree();
-		};
+		//create soundplayer
+		var newPlayer = new AudioStreamPlayer();
+		newPlayer.Stream = sounds[type];
+		newPlayer.Name = $"{type}_Player";
+		AddChild(newPlayer);
+		activePlayers[type] = newPlayer;
 
-		soundPlayer.Play();
+		newPlayer.Play();
+		
+		newPlayer.Finished += () =>
+		{
+			if (IsInstanceValid(newPlayer)) {
+				newPlayer.QueueFree();
+			}
+			activePlayers.Remove(type);
+		};
 	}
 	
 	public void StopAllSound() {
 		foreach (var child in GetChildren()) {
-			if (child is AudioStreamPlayer player)
-				player.Stop();
+			if (child is AudioStreamPlayer soundPlayer) {
+				soundPlayer.Stop();
+				soundPlayer.QueueFree();
+			}
 		}
+		activePlayers.Clear();
 	}
 	
 	public float GetCurrentVolume() {
