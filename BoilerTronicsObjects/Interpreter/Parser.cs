@@ -90,17 +90,17 @@ public partial class Parser : Node2D
 	public int GetProgramCounter() => _programCounter;
 
 	public bool IsProgramHalted() => _programHalted;
-	
+
 	public Dictionary<string, int> GetRegisters() => new Dictionary<string, int>(_registers);
 
 	public int GetProgramLength() => _validLines.Count;
-	
+
 	public int GetRegister(string name)
 	{
 		return _registers.ContainsKey(name) ? _registers[name] : 0;
 	}
-	
-	public void LoadProgram(string terminal, bool debug=false)
+
+	public void LoadProgram(string terminal, bool debug = false)
 	{
 		_currentProgram = terminal;
 		_programCounter = 0;
@@ -113,14 +113,14 @@ public partial class Parser : Node2D
 
 		// Use ProgramValidator to preprocess
 		var result = ProgramValidator.PreprocessProgram(terminal);
-		
+
 		// Copy results into our readonly collections
 		foreach (var kvp in result.labels)
 		{
 			_labelMap[kvp.Key] = kvp.Value;
 		}
 		_validLines.AddRange(result.validLines);
-		
+
 		// Handle validation errors
 		if (result.errors.Count > 0)
 		{
@@ -130,7 +130,7 @@ public partial class Parser : Node2D
 				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
 			}
 		}
-		
+
 		GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
 	}
 
@@ -139,6 +139,7 @@ public partial class Parser : Node2D
 	// Takes in the current step, derives line number off that
 	public void ParseGetLine(PlaceableObject obj, CodeEdit codeEdit, string terminal, int step, string editor)
 	{
+		int lastConsumed = -1;
 		if (obj is Scriptable)
 		{
 			scriptObject = (Scriptable)obj;
@@ -158,55 +159,74 @@ public partial class Parser : Node2D
 			return;
 		}
 
-		// Check if we've reached the end
-		if (_programCounter >= _validLines.Count)
+		// Execute instructions until we hit a step-consuming instruction
+		int maxInstructionsPerStep = 1000;
+		int instructionsExecuted = 0;
+
+		while (!_programHalted && _programCounter < _validLines.Count && instructionsExecuted < maxInstructionsPerStep)
 		{
+			string lineToProcess = _validLines[_programCounter];
+			int currentPC = _programCounter;
+
+			if (_debug) GD.Print($"Executing line {_programCounter}: {lineToProcess}");
+
+			// Execute instruction and check if it consumes a step
+			bool consumesStep = false;
+			if (!ExecuteInstruction(lineToProcess, ref _programCounter, out consumesStep))
+			{
+				if (_debug) GD.PrintErr($"Failed to execute: {lineToProcess}");
+				EmitSignal(SignalName.ErrorRaised, currentPC, "Execution error", editorName);
+				break;
+			}
+
+			// If PC wasn't changed by a jump, increment it
+			if (_programCounter == currentPC)
+			{
+				_programCounter++;
+			}
+
+			instructionsExecuted++;
+
+			// If this instruction consumed a step, stop executing more instructions
+			if (consumesStep)
+			{
+				if (_debug) GD.Print($"Step-consuming instruction executed. Stopping for this step.");
+				break;
+			}
+
+			// Check if we've reached the end
+			if (_programCounter >= _validLines.Count)
+			{
+				_programHalted = true;
+				if (_debug) GD.Print("Program completed execution");
+				break;
+			}
+		}
+
+		if (instructionsExecuted >= maxInstructionsPerStep)
+		{
+			GD.PrintErr("Maximum instructions per step exceeded - possible infinite loop!");
 			_programHalted = true;
-			if (_debug) GD.Print("Program reached end of execution");
-			return;
-		}
-
-		string lineToProcess = _validLines[_programCounter];
-		int currentPC = _programCounter;
-
-		if (_debug) GD.Print($"Executing line {_programCounter}: {lineToProcess}");
-
-		// Execute instruction
-		if (!ExecuteInstruction(lineToProcess, ref _programCounter))
-		{
-			if (_debug)GD.PrintErr($"Failed to execute: {lineToProcess}");
-			EmitSignal(SignalName.ErrorRaised, currentPC, "Execution error", editorName);
-		}
-
-		// If PC wasn't changed by a jump, increment it
-		if (_programCounter == currentPC)
-		{
-			_programCounter++;
-		}
-
-		// Check if we've now reached the end
-		if (_programCounter >= _validLines.Count)
-		{
-			_programHalted = true;
-			if (_debug) GD.Print("Program completed execution");
 		}
 	}
 
-	private bool ExecuteInstruction(string line, ref int pc)
+	private bool ExecuteInstruction(string line, ref int pc, out bool consumesStep)
 	{
-		// Handle jumps (unconditional and conditional)
-		// Jumps don't consume a step, so they modify PC directly
+		consumesStep = false; // Default: instruction doesn't consume a step
+
+		// Handle jumps (unconditional and conditional) - FREE
 		if (HandleJumps(line, ref pc))
 			return true;
 
-		// Handle wait (no-op, consumes a step)
+		// Handle wait (no-op, CONSUMES a step)
 		if (WaitRegex().IsMatch(line))
 		{
 			GD.Print("Command: Wait");
+			consumesStep = true;
 			return true;
 		}
 
-		// Handle write (doesn't consume a step)
+		// Handle write (doesn't consume a step) - FREE
 		var wrtMatch = WrtRegex().Match(line);
 		if (wrtMatch.Success)
 		{
@@ -214,10 +234,10 @@ public partial class Parser : Node2D
 			int val = int.Parse(wrtMatch.Groups[2].Value);
 			_registers[reg] = val;
 			GD.Print($"Write: {reg} = {val}");
-			return true;
+			return true; // consumesStep = false
 		}
 
-		// Handle arithmetic (doesn't consume a step)
+		// Handle arithmetic (doesn't consume a step) - FREE
 		var arithMatch = ArithRegex().Match(line);
 		if (arithMatch.Success)
 		{
@@ -253,16 +273,20 @@ public partial class Parser : Node2D
 			}
 
 			GD.Print($"{cmd}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
-			return true;
+			return true; // consumesStep = false
 		}
 
-		// Handle movement/rotation/claw commands via CommandParser
 		// These DO consume a step
-		return _commandParser.Process(line);
+		bool result = _commandParser.Process(line);
+		if (result)
+		{
+			consumesStep = true; // mov, rot, grb, drp all consume steps
+		}
+		return result;
 	}
 
 	// THE LATEST AND GREATEST: More jumping
-		private bool HandleJumps(string line, ref int pc)
+	private bool HandleJumps(string line, ref int pc)
 	{
 		// Unconditional jump
 		var jmpMatch = JmpRegex().Match(line);
@@ -330,12 +354,13 @@ public partial class Parser : Node2D
 			pc = targetIndex;
 			if (_debug) GD.Print($"Jumping to '{label}' at line {targetIndex}");
 			return true;
-		} else
-        {
-            if (_debug) GD.PrintErr($"Undefined label: {label}");
+		}
+		else
+		{
+			if (_debug) GD.PrintErr($"Undefined label: {label}");
 			EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
 			return false;
-        }
+		}
 	}
 
 	[GeneratedRegex(@"^\s*jmp\s+(\w+)\s*$")]
@@ -432,16 +457,15 @@ public partial class Parser : Node2D
 		_programHalted = false;
 		_currentProgram = "";
 	}
-	
+
 	public void Reset()
 	{
-    	_programCounter = 0;
-    	_programHalted = false;
-    	_currentProgram = "";
-    	_validLines.Clear();
-    	_labelMap.Clear();
-    	ResetRegisters();
-    	if (_debug) GD.Print("Parser reset complete");
+		_programCounter = 0;
+		_programHalted = false;
+		_currentProgram = "";
+		_validLines.Clear();
+		_labelMap.Clear();
+		ResetRegisters();
+		if (_debug) GD.Print("Parser reset complete");
 	}
-
 }
