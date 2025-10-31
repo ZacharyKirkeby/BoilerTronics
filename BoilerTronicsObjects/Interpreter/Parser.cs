@@ -425,11 +425,23 @@ public partial class Parser : Node2D
 
 		// Switch command - FTODO for someone else
 	}
-	
+
 	public void ResetProgramCounter()
 	{
 		_programCounter = 0;
 		_programHalted = false;
+		_currentProgram = "";
+	}
+	
+	public void Reset()
+	{
+    	_programCounter = 0;
+    	_programHalted = false;
+    	_currentProgram = "";
+    	_validLines.Clear();
+    	_labelMap.Clear();
+    	ResetRegisters();
+    	if (_debug) GD.Print("Parser reset complete");
 	}
 
 }

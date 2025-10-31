@@ -74,6 +74,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void Reset() {
 			base.ResetPos();
+			_parser.Reset();
 		}
 
 		public void RegisterSteppable() {
