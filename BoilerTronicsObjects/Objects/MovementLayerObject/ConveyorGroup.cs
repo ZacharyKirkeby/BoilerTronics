@@ -187,8 +187,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
 				return;
 			}
-			_parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void RegisterSteppable() {
