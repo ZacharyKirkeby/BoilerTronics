@@ -27,13 +27,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public void Step() {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			//E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 			if (_parser == null)
 			{
 				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
 				return;
 			}
-			_parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void RegisterSteppable() {
@@ -48,8 +49,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Reset() {
 			base.ResetPos();
-			_parser.ResetProgramCounter();
-			_parser.ResetRegisters();
 			_parser.Reset();
 			heldObject = null;
 			// Maybe need to make a call to our codeEdit/interrputer?
