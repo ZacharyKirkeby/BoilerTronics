@@ -7,7 +7,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMaterial : FactoryLayerObjects, Runnable, Movable {
+	public class FactoryTestMaterial : FactoryLayerObjects, Movable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
 
@@ -16,29 +16,16 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		// Moveable, this will allow us to pickup and drop off items
 		public PlaceableObject PickUp() {
-			return null;
+			// Remove ourselves from the layer we exist in (factory layer)
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.fLayer.RemoveObject(this);
+			return this; // What ever is grabing this should manage this objct and place it again at some point
 		}
 		
-		public void Place() {
+		public void Place(PlaceableObject obj) {
+			return; // This is a material, you can't place anything in us
 		}
 
-		// Runnable, this will allow the factory to do work
-		public void Step() {
-
-		}
-
-		public void Reset() {
-
-		}
-
-		public void RegisterSteppable() {
-
-		}
-
-		public void UnRegisterSteppable() {
-
-		}
-		
 		public FactoryTestMaterial(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, objectAtlasPos, altTitle) {}
 	}

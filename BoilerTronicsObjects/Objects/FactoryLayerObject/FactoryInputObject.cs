@@ -18,7 +18,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return null;
 		}
 		
-		public void Place() {
+		public void Place(PlaceableObject obj) {
 		}
 		
 		public FactoryInputObject(int OGX, int OGY, int altTitle = 0) 
