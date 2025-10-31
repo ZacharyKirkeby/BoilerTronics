@@ -98,7 +98,7 @@ public partial class LevelUi : Node2D
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 
-		soundManager.StopSound();
+		soundManager.StopAllSound();
 		manager.Reset();
 		manager.currLevel.Reset();
 
