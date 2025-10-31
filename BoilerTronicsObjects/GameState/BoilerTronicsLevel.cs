@@ -323,6 +323,7 @@ public partial class BoilerTronicsLevel : Node2D
 		E.ClearError();
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
+		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
 		SubmitStartStep = -1;
 	}
 
@@ -380,6 +381,7 @@ public partial class BoilerTronicsLevel : Node2D
 			!E.HasError() // Stop running if there's an error
 		      )
 		{
+			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running
 
 			// if we are on submit speed
