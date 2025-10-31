@@ -60,8 +60,11 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
 	private static partial Regex WrtRegex();
 
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]  // ← NEW LINE
+	private static partial Regex WrtRegisterRegex();
+
 	// Arithmetic commands
-	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2])\s+(r[0-2])\s*$")]
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
 	private static partial Regex ArithRegex();
 
 	// Control commands
@@ -221,6 +224,25 @@ public partial class Parser : Node2D
 		return -1;
 	}
 
+	private int GetOperandValue(string operand)
+	{
+		// Check if it's a register
+		if (_registers.ContainsKey(operand))
+		{
+			return _registers[operand];
+		}
+
+		// Otherwise parse as literal
+		if (int.TryParse(operand, out int literal))
+		{
+			return literal;
+		}
+
+		// shouldn't reach here if regex is correct but idk 
+		GD.PrintErr($"Invalid operand: {operand}");
+		return 0;
+	}
+
 	private bool ExecuteInstruction(string line, ref int pc, out bool consumesStep)
 	{
 		consumesStep = false; // Default: instruction doesn't consume a step
@@ -245,46 +267,56 @@ public partial class Parser : Node2D
 			int val = int.Parse(wrtMatch.Groups[2].Value);
 			_registers[reg] = val;
 			GD.Print($"Write: {reg} = {val}");
-			return true; // consumesStep = false
+			return true;
 		}
 
-		// Handle arithmetic (doesn't consume a step) - FREE
+		var wrtRegMatch = WrtRegisterRegex().Match(line);
+		if (wrtRegMatch.Success)
+		{
+			string destReg = wrtRegMatch.Groups[1].Value;
+			string srcReg = wrtRegMatch.Groups[2].Value;
+			_registers[destReg] = _registers[srcReg];
+			GD.Print($"Write: {destReg} = {srcReg} ({_registers[destReg]})");
+			return true;
+		}
+
 		var arithMatch = ArithRegex().Match(line);
 		if (arithMatch.Success)
 		{
 			string cmd = arithMatch.Groups[1].Value;
-			string reg1 = arithMatch.Groups[2].Value;
-			string reg2 = arithMatch.Groups[3].Value;
+			string operand1 = arithMatch.Groups[2].Value;
+			string operand2 = arithMatch.Groups[3].Value;
+
+			int val1 = GetOperandValue(operand1);
+			int val2 = GetOperandValue(operand2);
 
 			switch (cmd)
 			{
 				case "add":
-					_registers["r0"] = _registers[reg1] + _registers[reg2];
+					_registers["r0"] = val1 + val2;
 					break;
 				case "sub":
-					_registers["r0"] = _registers[reg1] - _registers[reg2];
+					_registers["r0"] = val1 - val2;
 					break;
 				case "mul":
-					_registers["r0"] = _registers[reg1] * _registers[reg2];
+					_registers["r0"] = val1 * val2;
 					break;
 				case "div":
-					if (_registers[reg2] == 0)
+					if (val2 == 0)
 					{
 						GD.PrintErr("Divide by zero error");
 						EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
 						return false;
 					}
-					_registers["r0"] = _registers[reg1] / _registers[reg2];
+					_registers["r0"] = val1 / val2;
 					break;
 				case "cmp":
-					int cmpResult = _registers[reg1] == _registers[reg2] ? 0 :
-									_registers[reg1] < _registers[reg2] ? -1 : 1;
+					int cmpResult = val1 == val2 ? 0 : val1 < val2 ? -1 : 1;
 					_registers["cmp"] = cmpResult;
 					break;
 			}
-
-			GD.Print($"{cmd}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
-			return true; // consumesStep = false
+			if (_debug) GD.Print($"{cmd} {operand1} {operand2}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
+			return true;
 		}
 
 		// These DO consume a step
