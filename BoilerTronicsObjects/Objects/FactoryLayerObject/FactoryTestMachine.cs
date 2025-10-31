@@ -7,9 +7,10 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMachine : FactoryLayerObjects, Runnable, Movable {
+	public class FactoryTestMachine : PlaceableObject, Runnable, Movable {
 		
-		static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static int layerSourceId = 0;
 	
 		private PlaceableObject _Inv;
 		private bool _Working;
@@ -27,10 +28,12 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return _Inv;
 		}
 		
-		public void Place(PlaceableObject obj) {
+		public bool Place(PlaceableObject obj) {
+			// TODO: Add checks to make sure we can take the object and the object is the correct type
 			_Inv = obj;
 			_Working = true;
 			_StepsTillCompletion = 2; // Wait 2 steps till we complete
+			return true; // We took the object
 		}
 
 		// Runnable, this will allow the factory to do work
@@ -59,6 +62,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 		
 		public FactoryTestMachine(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
 	}
 }

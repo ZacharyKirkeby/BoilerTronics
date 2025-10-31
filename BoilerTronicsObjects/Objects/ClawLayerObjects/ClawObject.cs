@@ -168,11 +168,39 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Grab(string[] args) {
-			return; // TODO: implement fully
+			if (heldObject != null) return; // TODO: make this an error
+	
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			
+			// Get the factory object below the claw
+			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+
+			// If there is no factory objecy, return
+			if (factoryObj == null) return;
+			// If there is we want to check if it's moveable, if not return
+			if (!(factoryObj is Movable mObj)) return;
+
+			// If it is, then we want to try to pick it up (or it's contents)
+			heldObject = mObj.PickUp();
+			GD.Print("Pickedup: ", heldObject);
 		}
 
 		public void Drop(string[] args) {
-			return; // TODO: implement fully
+			if (heldObject == null) return; // Not an error ?
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			
+			// Get the factory object below the claw
+			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+
+			Vector2I pos = GetCurrPos();
+			heldObject.MoveCurrPos(pos.X, pos.Y);
+
+			if (factoryObj == null) {
+				manager.currLevel.fLayer.AddObject(heldObject);
+				heldObject = null;
+			} else if (factoryObj is Movable mObj) {
+				if (mObj.Place(heldObject)) heldObject = null;
+			}
 		}
 
 		public void Rotate(string[] args) {

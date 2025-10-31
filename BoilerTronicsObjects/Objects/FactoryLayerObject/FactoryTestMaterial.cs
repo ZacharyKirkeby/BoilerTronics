@@ -7,9 +7,10 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMaterial : FactoryLayerObjects, Movable {
+	public class FactoryTestMaterial : PlaceableObject, Movable {
 		
-		static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static int layerSourceId = 0;
 
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
@@ -22,11 +23,18 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return this; // What ever is grabing this should manage this objct and place it again at some point
 		}
 		
-		public void Place(PlaceableObject obj) {
-			return; // This is a material, you can't place anything in us
+		public bool Place(PlaceableObject obj) {
+			return false; // This is a material, you can't place anything in us
+		}
+
+		public override void ResetPos()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.fLayer.RemoveObject(this);
+		    	base.ResetPos();
 		}
 
 		public FactoryTestMaterial(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
 	}
 }

@@ -4,10 +4,11 @@ using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryOutputObject : PlaceableObject {
+	public class FactoryOutputObject : PlaceableObject, Movable {
 
 		static int layerSourceId = 0;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
@@ -17,6 +18,14 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
+		public PlaceableObject PickUp() {
+			return null; // We can't pick something up from the out put
+		}
+		
+		public bool Place(PlaceableObject obj) {
+			return true;
+		}
+
 		public FactoryOutputObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
 	}

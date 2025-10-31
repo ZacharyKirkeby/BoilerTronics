@@ -679,6 +679,7 @@ icon = ExtResource("17_l4peq")
 icon_alignment = 1
 
 [node name="Pause Button" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
