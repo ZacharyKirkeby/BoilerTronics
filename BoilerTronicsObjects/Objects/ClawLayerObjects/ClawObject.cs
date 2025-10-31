@@ -46,9 +46,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Reset() {
+			GD.Print("Claw reset");
+			this.heldObject = null;
 			base.ResetPos();
-			heldObject = null;
-			// Maybe need to make a call to our codeEdit/interrputer?
 		}
 
 		// Scriptable interface
@@ -169,11 +169,13 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Grab(string[] args) {
 			if (heldObject != null) return; // TODO: make this an error
+			GD.Print("Grabbing object");
 	
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			
 			// Get the factory object below the claw
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+			GD.Print("Factory obj: ", factoryObj);
 
 			// If there is no factory objecy, return
 			if (factoryObj == null) return;
@@ -187,18 +189,22 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Drop(string[] args) {
 			if (heldObject == null) return; // Not an error ?
+			GD.Print("Dropping obj");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			
 			// Get the factory object below the claw
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+			GD.Print("Factory obj: ", factoryObj);
 
 			Vector2I pos = GetCurrPos();
 			heldObject.MoveCurrPos(pos.X, pos.Y);
 
 			if (factoryObj == null) {
+				GD.Print("Placing object on ground");
 				manager.currLevel.fLayer.AddObject(heldObject);
 				heldObject = null;
 			} else if (factoryObj is Movable mObj) {
+				GD.Print("Placing object in factory object");
 				if (mObj.Place(heldObject)) heldObject = null;
 			}
 		}
