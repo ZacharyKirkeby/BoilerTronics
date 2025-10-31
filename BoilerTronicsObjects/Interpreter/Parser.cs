@@ -14,6 +14,7 @@ public partial class Parser : Node2D
 {
 	private readonly Dictionary<string, int> _registers = new();
 	private readonly Dictionary<string, int> _labelMap = new();
+	private List<int> _sourceLineNumbers = new();
 	private List<string> _validLines = new();
 	private int _programCounter = 0;
 	private bool _programHalted = false;
@@ -107,12 +108,14 @@ public partial class Parser : Node2D
 		_programHalted = false;
 		_validLines.Clear();
 		_labelMap.Clear();
+		_sourceLineNumbers.Clear();
 
 		if (string.IsNullOrWhiteSpace(terminal))
 			return;
 
 		// Use ProgramValidator to preprocess
 		var result = ProgramValidator.PreprocessProgram(terminal);
+		_sourceLineNumbers.AddRange(result.sourceLineNumbers);
 
 		// Copy results into our readonly collections
 		foreach (var kvp in result.labels)
@@ -137,9 +140,9 @@ public partial class Parser : Node2D
 
 	// Takes in the terminal text (full text, FTODO can i get just a line?)
 	// Takes in the current step, derives line number off that
-	public void ParseGetLine(PlaceableObject obj, CodeEdit codeEdit, string terminal, int step, string editor)
+	public int ParseGetLine(PlaceableObject obj, CodeEdit codeEdit, string terminal, int step, string editor)
 	{
-		int lastConsumed = -1;
+		int lastStepConsumingLineNumber = -1;
 		if (obj is Scriptable)
 		{
 			scriptObject = (Scriptable)obj;
@@ -156,7 +159,7 @@ public partial class Parser : Node2D
 		// Check if program is halted or finished
 		if (_programHalted || _validLines.Count == 0)
 		{
-			return;
+			return -1;
 		}
 
 		// Execute instructions until we hit a step-consuming instruction
@@ -187,11 +190,17 @@ public partial class Parser : Node2D
 
 			instructionsExecuted++;
 
-			// If this instruction consumed a step, stop executing more instructions
+			// If this instruction consumed a step, record its source line and stop
 			if (consumesStep)
 			{
-				if (_debug) GD.Print($"Step-consuming instruction executed. Stopping for this step.");
-				break;
+				// Get the source line number for the instruction that just executed
+				if (currentPC >= 0 && currentPC < _sourceLineNumbers.Count)
+				{
+					lastStepConsumingLineNumber = _sourceLineNumbers[currentPC];
+				}
+
+				if (_debug) GD.Print($"Step-consuming instruction at editor line {lastStepConsumingLineNumber}. Stopping.");
+				return lastStepConsumingLineNumber;
 			}
 
 			// Check if we've reached the end
@@ -208,6 +217,8 @@ public partial class Parser : Node2D
 			GD.PrintErr("Maximum instructions per step exceeded - possible infinite loop!");
 			_programHalted = true;
 		}
+
+		return -1;
 	}
 
 	private bool ExecuteInstruction(string line, ref int pc, out bool consumesStep)
@@ -218,7 +229,7 @@ public partial class Parser : Node2D
 		if (HandleJumps(line, ref pc))
 			return true;
 
-		// Handle wait (no-op, CONSUMES a step)
+		// Handle wait - NOT FREE
 		if (WaitRegex().IsMatch(line))
 		{
 			GD.Print("Command: Wait");
