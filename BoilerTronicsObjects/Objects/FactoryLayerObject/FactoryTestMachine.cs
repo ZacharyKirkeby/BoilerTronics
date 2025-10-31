@@ -25,11 +25,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			PlaceableObject tmp = _Inv;
 			_Inv = null;
-			return _Inv;
+			return tmp;
 		}
 		
 		public bool Place(PlaceableObject obj) {
-			// TODO: Add checks to make sure we can take the object and the object is the correct type
+			GD.Print("Pickedup: ", obj);
 			_Inv = obj;
 			_Working = true;
 			_StepsTillCompletion = 2; // Wait 2 steps till we complete
@@ -39,6 +39,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Runnable, this will allow the factory to do work
 		public void Step() {
 			if (!_Working) return;
+			GD.Print("Processing material | Steps left: ", _StepsTillCompletion);
 
 			if (--_StepsTillCompletion == 0) _Working = false;
 		}
@@ -51,17 +52,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void RegisterSteppable() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
 			manager.currLevel.RegisterRunnable(this);
 		}
 
 		public void UnRegisterSteppable() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
 			manager.currLevel.UnRegisterRunnable(this);
 		}
 		
 		public FactoryTestMachine(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+			RegisterSteppable();
+		}
 	}
 }
