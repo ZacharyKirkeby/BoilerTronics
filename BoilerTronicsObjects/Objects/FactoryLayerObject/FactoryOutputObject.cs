@@ -7,13 +7,17 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryOutputObject : FactoryLayerObjects {
-		
+	public class FactoryOutputObject : PlaceableObject {
+
+		static int layerSourceId = 0;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
 		static Vector2I objectAtlasPos = new Vector2I(0, 1);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		public FactoryOutputObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
 	}
 }
