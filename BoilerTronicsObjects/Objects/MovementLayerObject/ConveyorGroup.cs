@@ -205,7 +205,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			// Loop through elements in group and reset (shouldn't do anything)
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			_parser.ResetProgramCounter();
-            _parser.ResetRegisters();
+			_parser.ResetRegisters();
+			_parser.Reset();
 			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
 		}
 
