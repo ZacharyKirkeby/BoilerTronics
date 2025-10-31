@@ -19,6 +19,8 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
 			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
 			objectMap.Add(hashCoords(0, new Vector2I(0, 2)), 2);	//floordefault
+			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
+			objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 4);	//factorymaterial
 			
 			// Claw/rail layer
 			objectMap.Add(hashCoords(1, new Vector2I(0, 0)), 50);	//clawdefault
