@@ -158,7 +158,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Move);
 
-			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, 1);
+			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 
 			return;
