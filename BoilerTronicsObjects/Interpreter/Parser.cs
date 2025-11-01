@@ -30,9 +30,6 @@ public partial class Parser : Node2D
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
 
-	[Signal]
-	public delegate void ErrorRaisedEventHandler(int lineNumber, string message, string editorName);
-
 	// None of these consume time steps, hence registered here
 
 	// Jump commands
@@ -133,7 +130,8 @@ public partial class Parser : Node2D
 			foreach (var (lineNum, error) in result.errors)
 			{
 				GD.PrintErr($"Validation error at line {lineNum}: {error}");
-				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(lineNum, error, editorName);
 			}
 		}
 
@@ -181,7 +179,8 @@ public partial class Parser : Node2D
 			if (!ExecuteInstruction(lineToProcess, ref _programCounter, out consumesStep))
 			{
 				if (_debug) GD.PrintErr($"Failed to execute: {lineToProcess}");
-				EmitSignal(SignalName.ErrorRaised, currentPC, "Execution error", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
 				break;
 			}
 
@@ -305,7 +304,9 @@ public partial class Parser : Node2D
 					if (val2 == 0)
 					{
 						GD.PrintErr("Divide by zero error");
-						EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
+						//EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
+						BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+						manager.currLevel.E.OnParserErrorRaised(pc, "Divide by zero", editorName);
 						return false;
 					}
 					_registers["r0"] = val1 / val2;
@@ -401,7 +402,9 @@ public partial class Parser : Node2D
 		else
 		{
 			if (_debug) GD.PrintErr($"Undefined label: {label}");
-			EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
+			//EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.E.OnParserErrorRaised(pc, $"Undefined label: {label}", editorName);
 			return false;
 		}
 	}
@@ -428,7 +431,10 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
+				
 			}
 		});
 
@@ -448,7 +454,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 
@@ -467,7 +475,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 
@@ -487,7 +497,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 

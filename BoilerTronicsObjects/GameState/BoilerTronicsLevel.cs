@@ -227,10 +227,6 @@ public partial class BoilerTronicsLevel : Node2D
 				Parser parser = new Parser();
 				parser._Ready();
 				scriptableObj.SetParser(parser);
-				var errorHandler = new ErrorHandler();
-				AddChild(errorHandler);
-				parser.Connect(Parser.SignalName.ErrorRaised,
-                new Callable(errorHandler, nameof(ErrorHandler.OnParserErrorRaised)));
 				CodeEdit terminal = scriptableObj.GetTerminal();
 				if (terminal != null)
 				{	
@@ -260,15 +256,7 @@ public partial class BoilerTronicsLevel : Node2D
 					GD.PrintErr($"  {obj.GetType().Name} is Scriptable but has no terminal!");
 				}
 			}
-		}
-		if (P != null && E != null)
-		{
-			if (!P.IsConnected(Parser.SignalName.ErrorRaised, new Callable(E, "OnParserErrorRaised")))
-			{
-				P.Connect(Parser.SignalName.ErrorRaised, new Callable(E, "OnParserErrorRaised"));
-			}
-			GD.Print("Global parser error handler connected");
-		}		
+		}	
 		base._Ready();
 	}
 
