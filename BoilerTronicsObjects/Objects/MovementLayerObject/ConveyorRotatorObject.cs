@@ -75,6 +75,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void Reset() {
 			base.ResetPos();
 			_parser.Reset();
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
 		}
 
 		public void RegisterSteppable() {

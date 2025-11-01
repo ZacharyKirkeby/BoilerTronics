@@ -208,6 +208,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			_parser.ResetRegisters();
 			_parser.Reset();
 			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
 		}
 
 		// Scriptable interface

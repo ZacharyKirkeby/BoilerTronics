@@ -51,6 +51,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			base.ResetPos();
 			_parser.Reset();
 			heldObject = null;
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
 			// Maybe need to make a call to our codeEdit/interrputer?
 		}
 
