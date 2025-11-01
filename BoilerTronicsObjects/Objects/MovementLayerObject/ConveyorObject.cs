@@ -70,7 +70,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (!(obj is TrackObject tObj)) return;
 
 			// Move track
-			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, 1);
+			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
 
 			// Move claw if there exists one
@@ -80,7 +80,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (cObj.moving) manager.currLevel.MovingCollisionReport(null);
 
 			// Move track
-			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, 1);
+			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
 			cObj.moving = true;
 		}

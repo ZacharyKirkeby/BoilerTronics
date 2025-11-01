@@ -73,7 +73,8 @@ public partial class BoilerTronicsGlobalManager : Node
 	// LevelUI.cs
 	public void Step() {
 		terminalContainer.SetEditorsEditable(false);
-		currLevel.Step();
+		currLevel.SetStep(); // Set out state to stepping
+		currLevel.Step(); // Step
 		return;
 	}
 
