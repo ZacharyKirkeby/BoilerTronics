@@ -73,12 +73,12 @@ namespace BoilerTronicsObjects.Placeable
 			return new Vector2I(CurrX, CurrY);
 		}
 
-		public int GetSourceID()
+		public virtual int GetSourceID()
 		{
 			return sourceId;
 		}
 
-		public Vector2I GetAtlasPos()
+		public virtual Vector2I GetAtlasPos()
 		{
 			return atlasPos;
 		}
