@@ -227,6 +227,10 @@ public partial class BoilerTronicsLevel : Node2D
 				Parser parser = new Parser();
 				parser._Ready();
 				scriptableObj.SetParser(parser);
+				var errorHandler = new ErrorHandler();
+				AddChild(errorHandler);
+				parser.Connect(Parser.SignalName.ErrorRaised,
+                new Callable(errorHandler, nameof(ErrorHandler.OnParserErrorRaised)));
 				CodeEdit terminal = scriptableObj.GetTerminal();
 				if (terminal != null)
 				{	
