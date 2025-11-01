@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
-	public class ClawObject : PlaceableObject, Scriptable, Runnable {
+	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
@@ -49,6 +49,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			GD.Print("Claw reset");
 			this.heldObject = null;
 			base.ResetPos();
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
 		}
 
 		// Scriptable interface
@@ -177,7 +181,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
 			GD.Print("Factory obj: ", factoryObj);
 
-			// If there is no factory objecy, return
+			// If there is no factory object, return
 			if (factoryObj == null) return;
 			// If there is we want to check if it's moveable, if not return
 			if (!(factoryObj is Movable mObj)) return;
@@ -185,6 +189,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// If it is, then we want to try to pick it up (or it's contents)
 			heldObject = mObj.PickUp();
 			GD.Print("Pickedup: ", heldObject);
+			
+			// FRAME SYSTEM
+			// update current frame to "display" a successful grab
+			SetFrameIndex(2);
 		}
 
 		public void Drop(string[] args) {
@@ -207,6 +215,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				GD.Print("Placing object in factory object");
 				if (mObj.Place(heldObject)) heldObject = null;
 			}
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
 		}
 
 		public void Rotate(string[] args) {
@@ -217,6 +229,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public ClawObject(int OGX, int OGY, int altTitle) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
+			
+			// adds two new frames to be used by the Frame system
+			// (0) is default visuals
+			// (1) is "grab empty"
+			AddFrame(new TileTex(new Vector2I(0, 0), 3));
+			
+			// (2) is "grabbed stone (or some other grey nondescript object"
+			AddFrame(new TileTex(new Vector2I(0, 1), 3));
 		} // create object
 
 		~ClawObject() {

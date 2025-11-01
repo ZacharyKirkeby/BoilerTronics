@@ -334,7 +334,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			  )
 		{
 			Step(); // Step while we are running
 
