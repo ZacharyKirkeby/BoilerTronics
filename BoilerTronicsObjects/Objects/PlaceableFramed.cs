@@ -43,7 +43,7 @@ namespace BoilerTronicsObjects.Placeable
 			);
 			
 			// child objects must use 'AddFrame' instead
-			// ex: AddFrame(new TileTex(atlasPos, sourceId));
+			// ex: AddFrame(new TileTex(new Vector2I(0, 0), sourceId));
 		}
 		
 		// THE CRUX OF THIS SYSTEM
@@ -59,7 +59,8 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		
 		// adds a frame to the internal list of frames
-		private void AddFrame(TileTex input) {
+		// should only ever be called by child objects
+		protected void AddFrame(TileTex input) {
 			if (input == null) { return; }
 			frames.Add(input);
 		}
