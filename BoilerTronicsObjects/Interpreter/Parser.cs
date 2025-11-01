@@ -101,7 +101,7 @@ public partial class Parser : Node2D
 		return _registers.ContainsKey(name) ? _registers[name] : 0;
 	}
 
-	public void LoadProgram(string terminal, bool debug = false)
+	public bool LoadProgram(string terminal, bool debug = false)
 	{
 		_currentProgram = terminal;
 		_programCounter = 0;
@@ -111,7 +111,7 @@ public partial class Parser : Node2D
 		_sourceLineNumbers.Clear();
 
 		if (string.IsNullOrWhiteSpace(terminal))
-			return;
+			return false;
 
 		// Use ProgramValidator to preprocess
 		var result = ProgramValidator.PreprocessProgram(terminal);
@@ -125,17 +125,19 @@ public partial class Parser : Node2D
 		_validLines.AddRange(result.validLines);
 
 		// Handle validation errors
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		if (result.errors.Count > 0)
 		{
 			foreach (var (lineNum, error) in result.errors)
 			{
 				GD.PrintErr($"Validation error at line {lineNum}: {error}");
-				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 				manager.currLevel.E.OnParserErrorRaised(lineNum, error, editorName);
 			}
+			return false;
 		}
 
 		GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
+		return true;
 	}
 
 
@@ -150,15 +152,16 @@ public partial class Parser : Node2D
 			currEditor = codeEdit;
 		}
 		editorName = editor;
+		bool error = false;
 
 		// Reload program if it changed
 		if (terminal != _currentProgram)
 		{
-			LoadProgram(terminal);
+			error = LoadProgram(terminal);
 		}
 
 		// Check if program is halted or finished
-		if (_programHalted || _validLines.Count == 0)
+		if (_programHalted || _validLines.Count == 0 || error)
 		{
 			return -1;
 		}
