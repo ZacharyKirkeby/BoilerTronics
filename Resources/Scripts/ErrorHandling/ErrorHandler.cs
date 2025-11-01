@@ -52,7 +52,7 @@ public partial class ErrorHandler : Node2D {
 				var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
 				if (existing != null)
 				{
-					existing.QueueFree();
+					existing.Free();
 				}
 
 				// Create error label

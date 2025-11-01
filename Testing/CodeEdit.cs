@@ -190,6 +190,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		if (error == true)
 		{
 			SetLineBackgroundColor(lineNumber, color);
+			QueueRedraw();
 			return;
         }
 
