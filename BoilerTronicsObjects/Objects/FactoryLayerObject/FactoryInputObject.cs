@@ -15,18 +15,25 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		static int layerSourceId = 0;
+		private int _objectID;
+
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 		
 		public PlaceableObject PickUp() {
-			return null;
+			PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
+			GD.Print("Generating obj: ", obj);
+			return obj;
 		}
 		
-		public void Place() {
+		public bool Place(PlaceableObject obj) {
+			return false;
 		}
 		
-		public FactoryInputObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
+		public FactoryInputObject(int OGX, int OGY, int altTitle = 0, int objectID = 4)
+		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+			_objectID = objectID;
+		}
 	}
 }
