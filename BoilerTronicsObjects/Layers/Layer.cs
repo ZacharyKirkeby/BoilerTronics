@@ -180,7 +180,7 @@ namespace BoilerTronicsObjects.Layers
 			// update tiles, cells to fill accordingly to the PlaceableBig data
 			if (isPlaceableBig) {
 				PlaceableBig obj = (PlaceableBig) newPlaceable;
-				// iterate through expected tiles and fill accordingly
+				// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
 				// the "origin" object will already be placed by the code above!
 				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 					// check each individual data point

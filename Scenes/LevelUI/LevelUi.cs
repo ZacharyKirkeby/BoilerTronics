@@ -169,6 +169,14 @@ public partial class LevelUi : Node2D
 
 		manager.currLevel.IncRun(); // This will call run and increase the run speed
 
+		// on first step button press, trigger an autosave!
+		if (manager.currLevel.StepCount == 0) {
+			manager.SaveAutosave();
+
+			// also stop all highlighting
+			manager.terminalContainer.ClearHighlightedObjects();
+		}
+
 		switch (manager.currLevel.GetGameRunState()) {
 			case BoilerTronicsLevel.GameRunState.SlowRun:
 				// 1X

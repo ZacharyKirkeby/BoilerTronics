@@ -4,9 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 
+/*
+	How this object should be handled:
+	
+Any PlaceableObject that wants to have a variable dimension (i.e. larger than just a 1x1 tile)
+must extend this class. Extend the constructor however you'd like (should only require X, Y, "altTitle"
+params) and etc.
+
+In a child's constructor, they should call "SetTextureGrid()" and set up their "texture grids" accordingly.
+Reminder that 0-3 represent the three directions (i.e. array of 3 Lists), and that all must be initialized
+(to some extent) to function properly.
+
+TODO: make an actual child object to test
+*/
+
 namespace BoilerTronicsObjects.Placeable
 {
-	// child objects of PlaceableBIg should generate this statically (?)
+	// child objects of PlaceableBig should generate this statically (?)
 	public class PlaceableBigData {
 		private Vector2I offset = new Vector2I(0, 0);
 		private TileTex texture;
@@ -59,13 +73,25 @@ namespace BoilerTronicsObjects.Placeable
 		// an array of size 4, each element of which will be a list of the object's textures corresponding to 'dir'
 		private List<PlaceableBigData>[] textureGrid = new List<PlaceableBigData>[4];
 		
-		// TODO: a PlaceableBig should be given the correct information regarding the offets + textures
-		// TODO: a child of a PlaceableBIg should accordingly set up its 'textureGrid' in this constructor
+		// TODO: a child of a PlaceableBig should accordingly set up its 'textureGrid' in this constructor
+		// i.e. call 
 		public PlaceableBig(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0) 
 		: base(OGX, OGY, sourceId, atlasPos, altTitle)
 		{
 			// this.origin.X = OGX;
 			// this.origin.Y = OGY;
+			
+			// NOTE: THIS IS JUST A DEMO FOR WHAT CHILD OBJECTS SHOULD DO
+			
+			List<PlaceableBigData> dir0 = new List<PlaceableBigData>();
+			// update the list
+			dir0.Add(new PlaceableBigData(
+				new Vector2I(0, 1),		// offset from object's origin
+				new TileTex(0, 0, 1)	// atlasX, atlasY, sourceId
+			));
+			
+			// update the texture grid (commented out because only child objects should do this)
+			// SetTextureGrid(dir0, 0);
 		}
 		
 		// get this PlaceableBig's direction (0-3)
@@ -102,9 +128,12 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		
 		// TODO: Keenan work this out!
+		// i.e. return a "texture" (or something) that displays all the textures of this object
+		// arrayed in a manner that looks nice. will have to programatically generate (ideally) to
+		// handle all four directions properly.
 		public override Texture GetTexture()
 		{
-			return null;
+			return base.GetTexture();//null;
 		}
 		
 	}
