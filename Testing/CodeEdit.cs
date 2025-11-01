@@ -180,11 +180,18 @@ public partial class CodeEdit : Godot.CodeEdit
 	}
 	
 	//stepping shows current line of execution by highlighting the line in the terminal
-	public void HighlightLine(int lineNumber, Color color) {
+	public void HighlightLine(int lineNumber, Color color, bool error=false) {
 		HighlightCurrentLine = false;
-		if (lastHighlightedLine >= 0 && lastHighlightedLine < GetLineCount()) {
+		if (lastHighlightedLine >= 0 && lastHighlightedLine < GetLineCount())
+		{
 			SetLineBackgroundColor(lastHighlightedLine, new Color(0, 0, 0, 0f));
 		}
+		
+		if (error == true)
+		{
+			SetLineBackgroundColor(lineNumber, color);
+			return;
+        }
 
 		int totalLines = GetLineCount();
 		if (totalLines == 0) {
@@ -224,7 +231,6 @@ public partial class CodeEdit : Godot.CodeEdit
 		if (lineToHighlight >= totalLines) {
 			return;
 		}
-
 		SetLineBackgroundColor(lineToHighlight, color);
 		lastHighlightedLine = lineToHighlight;
 		QueueRedraw();
