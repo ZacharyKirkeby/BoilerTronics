@@ -9,7 +9,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FactoryTestMaterial : PlaceableObject, Movable {
 		
-		private static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static Vector2I objectAtlasPos = new Vector2I(0, 4); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
 		private static int layerSourceId = 0;
 
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object

@@ -26,8 +26,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		private int _TargetObjectID;
 		private int _TargetNum;
-
-		private int _CurrNum;
 		
 		public PlaceableObject PickUp() {
 			return null; // We can't pick something up from the out put
@@ -36,18 +34,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public bool Place(PlaceableObject obj) {
 			int objSourceID = obj.GetSourceID();
 			Vector2I objAtlasPos = obj.GetAtlasPos();
-			int objID = BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(objSourceID, objAtlasPos)];
-			GD.Print("Recived: ", objID);
-			if (objID == _TargetObjectID) _CurrNum--;
-			GD.Print("Objects Left: ", _CurrNum);
-			if (_CurrNum == 0) GD.Print("You Won!"); // this will be a function call to the level later
+			int objID = BoilerTronicsData.hashCoords(objSourceID, objAtlasPos);
+			if (objID == _TargetObjectID) _TargetNum--;
+			if (_TargetNum == 0) GD.Print("You Won!"); // this will be a function call to the level later
 			return true;
-		}
-
-		public override void ResetPos()
-		{
-			_CurrNum = _TargetNum;
-			base.ResetPos();
 		}
 
 		public void setTargetNum(int newNum) {
@@ -70,7 +60,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_TargetObjectID = targetID;
 			_TargetNum = targetNum;
-			_CurrNum = _TargetNum;
 		}
 	}
 }
