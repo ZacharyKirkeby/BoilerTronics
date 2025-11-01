@@ -43,6 +43,7 @@ public partial class ErrorHandler : Node2D {
 		// TODO: Rework this to work with the new error handling system ? (see if this is doable)
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 		GD.Print(codeEditors);
+		GD.Print(editorName);
 
 		foreach (CodeEdit editor in codeEditors)
 		{
