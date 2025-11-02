@@ -135,7 +135,7 @@ namespace BoilerTronicsObjects.Placeable
 				{ "sourceId", sourceId },
 				{ "atlasPosX", atlasPos.X },
 				{ "atlasPosY", atlasPos.Y },
-				{ "altTitle", "null" },
+				{ "altTitle", 0 },
 			};
 		}
 	}

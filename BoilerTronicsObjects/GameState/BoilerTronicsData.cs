@@ -18,9 +18,14 @@ namespace BoilerTronicsObjects.Data {
 			// Floor layer
 			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
 			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
-			objectMap.Add(hashCoords(0, new Vector2I(0, 2)), 2);	//floordefault
 			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
-			objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 4);	//factorymaterial
+			objectMap.Add(hashCoords(3, new Vector2I(2, 0)), 4);	//factoryfurnace
+			
+			// Actual Floors
+			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
+			
+			// Materials
+			objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 200);	//factorymaterial
 			
 			// Claw/rail layer
 			objectMap.Add(hashCoords(1, new Vector2I(0, 0)), 50);	//clawdefault
@@ -40,6 +45,7 @@ namespace BoilerTronicsObjects.Data {
 		// 50-99: 	claw layer
 		// 100-149:	rail layer
 		// 150-199:	movement layer
+		// 200-249: items
 		
 		// not exactly a perfect system, but so long as no single value exceeds ~1000,
 		// this will return a unique value very time.

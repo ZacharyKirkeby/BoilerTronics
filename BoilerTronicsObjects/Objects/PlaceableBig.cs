@@ -56,6 +56,11 @@ namespace BoilerTronicsObjects.Placeable
 			);
 		}
 		
+		// constructor that automatically inserts an internal PlaceableObject
+		public PlaceableBigData(Vector2I offset, TileTex texture, PlaceableObject obj) : this(offset, texture) {
+			SetInternalObj(obj);
+		}
+		
 		// getters/setters
 		public TileTex GetTileTex() {
 			return this.texture;
@@ -151,6 +156,18 @@ namespace BoilerTronicsObjects.Placeable
 			
 			// update the texture grid (commented out because only child objects should do this)
 			// SetTextureGrid(dir0, 0);
+			
+			
+			/*
+			// Demo of creating specific slots to have specific behaviors
+			PlaceableObject insertionPoint = ObjectFactory.GenerateObject(int objectId, 0, 0);
+			
+			dir0.Add(new PlaceableBigData(
+				new Vector2I(0, 0),		// offset from object's origin
+				new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
+				insertionPoint
+			));
+			*/
 		}
 		
 		// get this PlaceableBig's direction (0-3)
@@ -168,7 +185,7 @@ namespace BoilerTronicsObjects.Placeable
 		// TODO: should be called by child objects to establish a PlaceableBig's textureGrid.
 		// given the inputDir and the input list to be replaced, update accordingly
 		// should only be "private" as only children objects should ever use this functionalityt!
-		private void SetTextureGrid(List<PlaceableBigData> input, int inputDir) {
+		protected void SetTextureGrid(List<PlaceableBigData> input, int inputDir) {
 			this.textureGrid[inputDir] = input;
 		}
 		

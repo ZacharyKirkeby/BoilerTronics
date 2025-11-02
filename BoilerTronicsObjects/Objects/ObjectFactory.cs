@@ -66,8 +66,8 @@ namespace BoilerTronicsObjects.Objects
 					//factory machine
 					return new FactoryTestMachine(x, y, 0);
 				case 4:
-					//floordefault
-					return new FactoryTestMaterial(x, y, 0);
+					//factory furnace
+					return new FactoryFurnace(x, y, 0);
 				case 50:
 					//clawdefault
 					return new ClawObject(x, y, 0);
@@ -86,6 +86,9 @@ namespace BoilerTronicsObjects.Objects
 				case 152:
 					//rotatordefault
 					return new ConveyorRotatorObject(x, y, 0);
+				case 200:
+					//factorytestmaterial
+					return new FactoryTestMaterial(x, y, 0);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;
