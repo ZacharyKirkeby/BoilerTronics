@@ -31,7 +31,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return false;
 		}
 		
-		public FactoryInputObject(int OGX, int OGY, int altTitle = 0, int objectID = 4)
+		public FactoryInputObject(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
 		}

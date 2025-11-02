@@ -66,7 +66,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return _TargetObjectID;
 		}
 
-		public FactoryOutputObject(int OGX, int OGY, int altTitle = 0, int targetID = 4, int targetNum = 1) 
+		public FactoryOutputObject(int OGX, int OGY, int altTitle = 0, int targetID = 200, int targetNum = 1) 
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_TargetObjectID = targetID;
 			_TargetNum = targetNum;
