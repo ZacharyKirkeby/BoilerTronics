@@ -44,6 +44,9 @@ public static partial class ProgramValidator
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
 	private static partial Regex WrtValidRegex();
 
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]
+	private static partial Regex WrtRegisterValidRegex();
+
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s*$")]
 	private static partial Regex WrtMissingValueRegex();
 
@@ -54,7 +57,7 @@ public static partial class ProgramValidator
 	private static partial Regex WrtInvalidRegex();
 
 	// Arithmetic commands
-	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+r[0-2]\s+r[0-2]\s*$")]
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
 	private static partial Regex ArithValidRegex();
 
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+r[0-2]\s*$")]
@@ -248,14 +251,15 @@ public static partial class ProgramValidator
 
 		// Write command
 		if (WrtValidRegex().IsMatch(line)) return null;
+		if (WrtRegisterValidRegex().IsMatch(line)) return null;
 		if (WrtMissingValueRegex().IsMatch(line)) return "Write missing value";
 		if (WrtEmptyRegex().IsMatch(line)) return "Write missing register and value";
-		if (WrtInvalidRegex().IsMatch(line)) return "Invalid register (use r0/r1/r2/cmp)";
+		if (WrtInvalidRegex().IsMatch(line)) return "Invalid register or value (use r0/r1/r2/cmp)";
 
 		// Arithmetic commands
 		if (ArithValidRegex().IsMatch(line)) return null;
-		if (ArithMissingSecondRegex().IsMatch(line)) return "Missing second register";
-		if (ArithEmptyRegex().IsMatch(line)) return "Missing register arguments";
+		if (ArithMissingSecondRegex().IsMatch(line)) return "Missing second operand";
+		if (ArithEmptyRegex().IsMatch(line)) return "Missing operands";
 
 		// Jump commands
 		if (JmpValidRegex().IsMatch(line)) return null;

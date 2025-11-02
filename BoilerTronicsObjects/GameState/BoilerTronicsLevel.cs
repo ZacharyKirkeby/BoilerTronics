@@ -236,7 +236,7 @@ public partial class BoilerTronicsLevel : Node2D
 					// Load and validate the program
 					if (!string.IsNullOrWhiteSpace(terminal.Text))
 					{
-						parser.LoadProgram(terminal.Text);
+						bool error = parser.LoadProgram(terminal.Text);
 						// TODO - dynamic error checking terminal.ValidateCode();
 						//var errors = terminal.GetValidationErrors();
 						/*
@@ -256,15 +256,7 @@ public partial class BoilerTronicsLevel : Node2D
 					GD.PrintErr($"  {obj.GetType().Name} is Scriptable but has no terminal!");
 				}
 			}
-		}
-		if (P != null && E != null)
-		{
-			if (!P.IsConnected(Parser.SignalName.ErrorRaised, new Callable(E, "OnParserErrorRaised")))
-			{
-				P.Connect(Parser.SignalName.ErrorRaised, new Callable(E, "OnParserErrorRaised"));
-			}
-			GD.Print("Global parser error handler connected");
-		}		
+		}	
 		base._Ready();
 	}
 
@@ -321,6 +313,17 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Clear errors
 		E.ClearError();
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		foreach (CodeEdit editor in manager.terminalContainer.GetAllEditors())
+		{
+
+			var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.Free();
+			}
+		}
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
 		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
