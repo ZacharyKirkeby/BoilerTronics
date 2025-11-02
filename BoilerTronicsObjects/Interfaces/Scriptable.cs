@@ -18,5 +18,6 @@ namespace BoilerTronicsObjects.Interfaces {
 		string GetScript(); // sets the text of the code edit
 		void SetParser(Parser parser);
 		Parser GetParser();
+		RegisterLabel GetRegisterDisplay();
     }
 }
