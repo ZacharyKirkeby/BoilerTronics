@@ -230,8 +230,6 @@ public partial class LevelUi : Node2D
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
 	}
 
-<<<<<<< Updated upstream
-=======
 	private void _on_movement_visibility_toggled(bool toggled_on)
 	{
 		GD.Print(toggled_on);
@@ -275,7 +273,6 @@ public partial class LevelUi : Node2D
 		}
 	}
 
->>>>>>> Stashed changes
 	private void _on_save_button_pressed() {
 
 		// Don't allow saving while stepping!
