@@ -274,15 +274,23 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		public void Reset() {
+			ArrayList objsToRemove = new ArrayList();
 			foreach (PlaceableObject obj in objectList) {
 				Vector2I CurrPos =  obj.GetCurrPos();
 				Vector2I OGPos =  obj.GetOGPos();
 				tiles[CurrPos.X, CurrPos.Y] = null;
 				EraseCell(CurrPos); // erase object from the map
-				if (obj.GetGarbage() == true) continue; // Don't continue if this needs to be thrown away
+				if (obj.GetGarbage() == true) {
+					objsToRemove.Add(obj);
+					continue;
+				}
 				obj.ResetPos();
 				tiles[OGPos.X, OGPos.Y] = obj;
 				SetCell(OGPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+			}
+
+			foreach (PlaceableObject obj in objsToRemove) {
+				objectList.Remove(obj);
 			}
 		}
 		
