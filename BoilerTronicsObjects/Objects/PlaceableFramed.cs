@@ -86,7 +86,23 @@ namespace BoilerTronicsObjects.Placeable
 			TileTex T = frames[frameIndex];
 			if (T == null) return base.GetTexture(); // null
 
-			return null; // Replace this with the constructed texture
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+
+			int ID = T.GetSourceId();
+			Vector2I AtPos = T.GetAtlasPos();
+
+			int sourceid = tileSet.GetSourceId(ID);
+
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(AtPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
 		}
 		
 	}
