@@ -274,12 +274,13 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		public void Reset() {
+			ArrayList objsToRemove = new ArrayList();
 			foreach (PlaceableObject obj in objectList) {
 				Vector2I CurrPos =  obj.GetCurrPos();
 				Vector2I OGPos =  obj.GetOGPos();
 				tiles[CurrPos.X, CurrPos.Y] = null;
 				EraseCell(CurrPos); // erase object from the map
-				
+
 				// PlaceableBig case, erase from map accordingly
 				if (obj is PlaceableBig) {
 					PlaceableBig objB = (PlaceableBig) obj;
@@ -297,7 +298,10 @@ namespace BoilerTronicsObjects.Layers
 					}
 				}
 				
-				if (obj.GetGarbage() == true) continue; // Don't continue if this needs to be thrown away
+				if (obj.GetGarbage() == true) {
+					objsToRemove.Add(obj);
+					continue;
+				}
 				obj.ResetPos();
 				
 				tiles[OGPos.X, OGPos.Y] = obj;
@@ -322,6 +326,10 @@ namespace BoilerTronicsObjects.Layers
 					}
 				}
 				
+			}
+
+			foreach (PlaceableObject obj in objsToRemove) {
+				objectList.Remove(obj);
 			}
 		}
 		
