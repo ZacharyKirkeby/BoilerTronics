@@ -68,26 +68,6 @@ public partial class ObjectPicker : HBoxContainer
 		}
 		AddChild(new Control()); // Creates left padding so its not smushed against container
 		for (int i = 0; i < tileSetSource.GetTilesCount(); i++) {
-			if (selection == 1)
-            {
-				if (MovementItemPrices[i] == -1)
-				{
-					continue;
-				} 
-            } else if (selection == 2)
-			{
-				if (FactoryItemPrices[i] == -1)
-				{
-					continue;
-				}
-			}
-			else if (selection == 3)
-			{
-				if (ClawItemPrices[i] == -1)
-				{
-					continue;
-				}
-			}
 			var atlasCords = tileSetSource.GetTileId(i);
 			if (atlasCords == null) continue; // make sure that the cords exist
 

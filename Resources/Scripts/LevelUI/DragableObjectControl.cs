@@ -73,7 +73,7 @@ public partial class DragableObjectControl : Control {
 		PopupMenu popup = new PopupMenu();
 		AddChild(popup);
 		popup.AddItem("Change Price");
-		popup.AddItem("Remove Item");
+		
 		Vector2 mousePos = buttonEvent2.GlobalPosition;
 		popup.Position = new Vector2I((int)mousePos.X, (int)mousePos.Y);
 		popup.IdPressed += (id) =>
@@ -94,28 +94,6 @@ public partial class DragableObjectControl : Control {
 					priceBox.GrabFocus();
 
 					submitButton.Pressed += () => OnSubmitPrice();
-					break;
-
-				case "Remove Item":
-					GD.Print("Remove option selected");
-					var picker = GetTree().Root.GetNode<ObjectPicker>("/root/Node2D/MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ObjectPicker");
-					picker.RemoveChild(vboxPanel);
-					if (selection == 1)
-					{
-						ObjectPicker.MovementItemPrices[itemNumber] = -1;
-					}
-					else if (selection == 2)
-					{
-						ObjectPicker.FactoryItemPrices[itemNumber] = -1;
-					}
-					else if (selection == 3)
-					{
-						ObjectPicker.ClawItemPrices[itemNumber] = -1;
-					}
-					break;
-				case "Delete":
-					GD.Print("Delete option selected");
-					// Delete logic here
 					break;
 			}
 		};
