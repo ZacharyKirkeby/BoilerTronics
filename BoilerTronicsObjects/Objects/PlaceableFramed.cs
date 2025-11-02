@@ -7,7 +7,7 @@ using BoilerTronicsObjects.Layers;
 /*
 	How this object should be handled:
 	
-Objects that change while a solution is in action must extend this class.
+Objects that change visuals while a solution is in action must extend this class.
 The main function of this object is to hold a list of possible "frames" that an
 object could show, i.e. a "frame" is an object's sprite (atlasPos + sourceId).
 

@@ -20,14 +20,27 @@ TODO: make an actual child object to test
 
 namespace BoilerTronicsObjects.Placeable
 {
-	// child objects of PlaceableBig should generate this statically (?)
+	// child objects of PlaceableBig should generate these in the constructor
+	// and said children should update their 'textureGrid' accordingly there
 	public class PlaceableBigData {
 		private Vector2I offset = new Vector2I(0, 0);
 		private TileTex texture;
 		
+		// Optional stuff, mainly helpful for factories and etc
+		// with independent input/output on a per-tile basis
+		private int frameIndex = 0;
+		private List<TileTex> frames = new List<TileTex>();
+		private PlaceableObject internalObject;
+		// the "internalObject" should basically be a semi-dummy object that exists
+		// only to handle locational input/output functionality
+		
 		// generic constructor
 		public PlaceableBigData() {
 			this.texture = new TileTex();
+			
+			frames.Add(
+				new TileTex(texture.GetAtlasPos(), texture.GetSourceId())
+			);
 		}
 		
 		// constructor that *should* be used
@@ -36,6 +49,11 @@ namespace BoilerTronicsObjects.Placeable
 			this.offset.Y = offset.Y;
 			
 			this.texture = TileTex.Copy(texture);
+			
+			// by default, always add the default visuals into frame slot 0
+			frames.Add(
+				new TileTex(texture.GetAtlasPos(), texture.GetSourceId())
+			);
 		}
 		
 		// getters/setters
@@ -44,6 +62,10 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		public void SetTileTex(TileTex input) {
 			this.texture = TileTex.Copy(input);
+			
+			// update frame 0
+			frames[0].SetSourceId(texture.GetSourceId());
+			frames[0].SetAtlasPos(texture.GetAtlasPos());
 		}
 		
 		public Vector2I GetOffset() {
@@ -57,6 +79,43 @@ namespace BoilerTronicsObjects.Placeable
 		// given the object's origin, returns this data's position as origin + this.offset
 		public Vector2I GetPosition(Vector2I origin) {
 			return new Vector2I(origin.X + offset.X, origin.Y + offset.Y);
+		}
+		
+		// --- OPTIONAL: Internal Object Functionality ---
+		// should only be used by objects that require locational functions
+		// i.e. locational input/output stuff
+		public PlaceableObject GetInternalObj() {
+			return internalObject;
+		}
+		public void SetInternalObj(PlaceableObject obj) {
+			if (obj == null) { return; }
+			internalObject = obj;
+		}
+		
+		// --- OPTIONAL: Frame Functionality ---
+		// (functionally identical to PlaceableFramed.cs)
+		public TileTex GetFrame() {
+			return frames[frameIndex];
+		}
+		
+		// adds a frame to the internal list of frames
+		// should only ever be called by child objects
+		protected void AddFrame(TileTex input) {
+			if (input == null) { return; }
+			frames.Add(input);
+		}
+		
+		// updates the internal frame index to the input
+		// does nothing if input is OOB
+		public void SetFrameIndex(int index) {
+			if (index < 0) { return; }
+			if (index >= frames.Count) { return; }
+			frameIndex = index;
+		}
+		
+		// resets the frame back to this object's original visuals
+		public void ResetFrame() {
+			frameIndex = 0;
 		}
 	}
 	
@@ -113,13 +172,11 @@ namespace BoilerTronicsObjects.Placeable
 			this.textureGrid[inputDir] = input;
 		}
 		
-		// TODO: return a deep copy instead of just the reference of this object's textureGrid
 		// Returns the textureGrid according to this object's position
 		public List<PlaceableBigData> GetTextureGrid() {
 			return textureGrid[dir];
 		}
 		
-		// TODO: return a deep copy instead of just the reference of this object's textureGrid
 		// Returns the textureGrid according to the position specified by 'inputDir'
 		// Returns 'null' if 'inputDir' is OOB.
 		public List<PlaceableBigData> GetTextureGrid(int inputDir) {
