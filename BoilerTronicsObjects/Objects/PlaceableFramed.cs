@@ -82,7 +82,11 @@ namespace BoilerTronicsObjects.Placeable
 		// TODO: Keenan work this out!
 		public override Texture GetTexture()
 		{
-			return base.GetTexture();
+			// This will get the texture of the current frame
+			TileTex T = frames[frameIndex];
+			if (T == null) return base.GetTexture(); // null
+
+			return null; // Replace this with the constructed texture
 		}
 		
 	}

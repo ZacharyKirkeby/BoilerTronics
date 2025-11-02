@@ -127,14 +127,100 @@ namespace BoilerTronicsObjects.Placeable
 			return textureGrid[inputDir];
 		}
 		
+		private Vector2I GetMaxOffsets() {
+			Vector2I V = new Vector2I(0,0);
+
+			foreach (PlaceableBigData PBD in GetData()) { // Loop through all textures in the realivent direction
+				Vector2I off = PBD.GetOffset();	
+				if (off.X > V.X) V.X = off.X;
+				if (off.Y > V.Y) V.Y = off.Y;
+			}
+				
+			return V;
+		}
+
+		private List<PlaceableBigData> GetData() {
+			return textureGrid[dir];
+		}
+
+		private List<(Image, PlaceableBigData)> GetSortedImgs() {
+			List<(Image, PlaceableBigData)> imgs = new List<(Image, PlaceableBigData)>();
+
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+
+			foreach (PlaceableBigData PBD in GetData()) {
+				// Get the texture for each PBD
+
+				TileTex TT = PBD.GetTileTex();
+
+				int ID = TT.GetSourceId();
+				Vector2I AtPos = TT.GetAtlasPos();
+
+				int sourceid = tileSet.GetSourceId(ID);
+
+				TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+				// get the tile
+				var tile = tileSetSource.GetTileTextureRegion(AtPos);
+				var fullTexture = tileSetSource.Texture.GetImage();
+				var imageTexture = fullTexture.GetRegion(tile);
+
+				// Insert in list such that it is in the correct order to draw
+				// (Figure this out later)
+
+				imgs.Add((imageTexture, PBD));
+			}
+
+			return imgs;
+		}
+
+		private Image StitchImages(Image baseImg, Image addition, Vector2I offset) {
+
+			// Define the source rectangle from the overlay image
+			Rect2I addRect = new Rect2I(Vector2I.Zero, addition.GetSize());
+
+			// Draw the addition on the new image with some offset
+			baseImg.BlitRect(baseImg, addRect, offset);
+
+			return baseImg;
+		}
+
 		// TODO: Keenan work this out!
 		// i.e. return a "texture" (or something) that displays all the textures of this object
 		// arrayed in a manner that looks nice. will have to programatically generate (ideally) to
 		// handle all four directions properly.
 		public override Texture GetTexture()
 		{
-			return base.GetTexture();//null;
+			// Get the height and width of the big placable
+			// Create a large texture based on this height and width
+			// Get list of the textures of the cells
+			// Place the textures on the large texture in the correct spot
+			// 	This should be done is a specific order to ensure correct rendering
+
+			// This will be used to construct the large stitched texture
+			Vector2I Size = GetMaxOffsets();
+
+			// This wil lbe used to get the data for the texture
+			List<PlaceableBigData> Data = GetData();
+
+			// We need to sort the textures to add them in the correct order
+			Image StitchedImage = Image.Create(Size.X * 64, Size.Y * 32, false, Image.Format.Rgb8);
+
+			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(); // We need tile tex to keep track of offset
+			
+			foreach (var D in imgs) {
+				Image I = D.I;
+				PlaceableBigData PBD = D.PBD;
+
+				Vector2I off = PBD.GetOffset();
+
+				off *= new Vector2I(64, 32); // multiply to get pixel offset
+
+				StitchedImage = StitchImages(StitchedImage, I, off); // Stitch Images together
+			}
+
+
+			return ImageTexture.CreateFromImage(StitchedImage); // return the stitched image as a texture
 		}
-		
 	}
 }
