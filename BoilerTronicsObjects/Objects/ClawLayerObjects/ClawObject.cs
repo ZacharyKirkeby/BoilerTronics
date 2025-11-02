@@ -46,7 +46,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Reset() {
-			GD.Print("Claw reset");
+			if (this.heldObject != null) {
+				this.heldObject.ResetPos();
+			}
 			this.heldObject = null;
 			base.ResetPos();
 			

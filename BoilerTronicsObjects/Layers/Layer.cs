@@ -275,13 +275,14 @@ namespace BoilerTronicsObjects.Layers
 
 		public void Reset() {
 			foreach (PlaceableObject obj in objectList) {
-				Vector2I OldPos =  obj.GetPos();
-				tiles[OldPos.X, OldPos.Y] = null;
-				EraseCell(OldPos); // erase object from the map
+				Vector2I CurrPos =  obj.GetCurrPos();
+				Vector2I OGPos =  obj.GetOGPos();
+				tiles[CurrPos.X, CurrPos.Y] = null;
+				EraseCell(CurrPos); // erase object from the map
+				if (obj.GetGarbage() == true) continue; // Don't continue if this needs to be thrown away
 				obj.ResetPos();
-				Vector2I NewPos = obj.GetPos();
-				tiles[NewPos.X, NewPos.Y] = obj;
-				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				tiles[OGPos.X, OGPos.Y] = obj;
+				SetCell(OGPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
 			}
 		}
 		
