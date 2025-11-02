@@ -171,6 +171,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			return;
 		}
 
+		// TODO: Create some helper function so that we can update our current from based on our held object
+
 		public void Grab(string[] args) {
 			if (heldObject != null) return; // TODO: make this an error
 			GD.Print("Grabbing object");
@@ -193,6 +195,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// FRAME SYSTEM
 			// update current frame to "display" a successful grab
 			SetFrameIndex(2);
+			manager.currLevel.cLayer.UpdateObject(this);
 		}
 
 		public void Drop(string[] args) {
@@ -218,7 +221,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
-			ResetFrame();
+			if (heldObject == null) {
+				ResetFrame();
+				manager.currLevel.cLayer.UpdateObject(this);
+			}
 		}
 
 		public void Rotate(string[] args) {

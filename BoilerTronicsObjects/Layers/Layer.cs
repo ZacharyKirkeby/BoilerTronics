@@ -266,6 +266,13 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		public virtual void UpdateObject(PlaceableObject obj) {
+			if (!objectList.Contains(obj)) return; // We don't care about this objcet if
+			if (FindObject(obj.GetCurrPos()) != obj) return; // Verify that the object is in the position we think it is in
+
+			SetCell(obj.GetCurrPos(), obj.GetSourceID(), obj.GetAtlasPos()); // Update cell for that object
+		}
+
 		public void Reset() {
 			foreach (PlaceableObject obj in objectList) {
 				Vector2I OldPos =  obj.GetPos();
@@ -399,17 +406,8 @@ namespace BoilerTronicsObjects.Layers
 
 					RemoveObject(objAtPos);
 
-					var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
-					int sourceid = tileSet.GetSourceId(objAtPos.GetSourceID());
-
-					TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
-
-					// get the tile
-					var tile = tileSetSource.GetTileTextureRegion(objAtPos.GetAtlasPos());
-					var fullTexture = tileSetSource.Texture.GetImage();
-					var imageTexture = fullTexture.GetRegion(tile);
-					var texture = new ImageTexture();
-					texture.SetImage(imageTexture);
+					// get the tile texture
+					Texture2D texture = objAtPos.GetTexture() as Texture2D;
 
 					Sprite2D sprite = new Sprite2D();
 					// get texture
