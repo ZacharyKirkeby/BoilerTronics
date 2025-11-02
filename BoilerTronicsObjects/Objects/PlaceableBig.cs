@@ -202,7 +202,8 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// Given the (absolute) inputs X, Y (assumed to be on the same layer as this object),
 		// return the corresponding PlaceableBigData at that position, if it exists.
-		// If not, returns 'null'
+		// If not, returns 'null'.
+		// Also has overloaded methods that optionally allow for the object's direction to be specified
 		public PlaceableBigData GetDataAtPos(int x, int y) {
 			return GetDataAtPos(x, y, dir);
 		}

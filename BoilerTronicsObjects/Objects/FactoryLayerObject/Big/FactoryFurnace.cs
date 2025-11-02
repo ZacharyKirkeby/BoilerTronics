@@ -25,17 +25,29 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 		
+		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
+		// i.e. this object must somehow get the reference of the claw that is interacting
+		// with this object, then return "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
 		public PlaceableObject PickUp() {
 			
-			PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
-			GD.Print("Generating obj: ", obj);
-			return obj;
+			// PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
+			// GD.Print("Generating obj: ", obj);
+			// return obj;
+			
+			return null;
 		}
 		
+		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
+		// i.e. this object must somehow get the reference of the claw that is interacting
+		// with this object, then get "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
+		// as a PlaceableObject (i.e. 'dataObj')
+		// then return the output of "dataObj.Place(obj)"
 		public bool Place(PlaceableObject obj) {
 			return false;
 		}
 		
+		// REMINDER:
+		// the entirety of the object's visuals/internal objects are generated here!
 		public FactoryFurnace(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
