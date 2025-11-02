@@ -152,13 +152,19 @@ public partial class Parser : Node2D
 			currEditor = codeEdit;
 		}
 		editorName = editor;
-		bool successfulLoad = true;
 
 		// Reload program if it changed
 		if (terminal != _currentProgram)
 		{
-			successfulLoad = LoadProgram(terminal);
+			LoadProgram(terminal);
+
 		}
+		var result = ProgramValidator.PreprocessProgram(terminal);
+		if (result.errors.Count > 0)
+		{
+			GD.PrintErr("Error Found");
+			return -1;
+        }
 
 		// Check if program is halted or finished
 		if (_programHalted || _validLines.Count == 0)
