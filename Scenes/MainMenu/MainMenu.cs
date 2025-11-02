@@ -4,7 +4,7 @@ using System;
 public partial class MainMenu : Node2D
 {
 	private int level = 1;
-
+	
 	public override void _Ready()
 	{
 		// Set fullscreen toggle
@@ -16,8 +16,6 @@ public partial class MainMenu : Node2D
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		int masterBus = AudioServer.GetBusIndex("Master");
 		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
-		
-		
 		
 	}
 
