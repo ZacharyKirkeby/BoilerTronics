@@ -38,9 +38,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public float cpsSolution;
 	public int rcSolution;
 	
-	public float minPPS = Single.MaxValue;
-	public float minCPS = Single.MaxValue;
-	public int minRC = Int32.MaxValue;
+	public float bestScore = 0;
 	
 	//levelui reference
 	private LevelUi levelUi;
@@ -64,14 +62,10 @@ public partial class BoilerTronicsLevel : Node2D
 		if(levelUi != null) {
 			levelUi.UpdateSolutionStatistics(ppsSolution, cpsSolution, rcSolution);
 			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, cpsCutoff, cpsSolution, rcCutoff, rcSolution);
-			if(grades[0] < minPPS) {
-				minPPS = grades[0];
-			}
-			if(grades[1] < minCPS) {
-				minCPS = grades[1];
-			}
-			if(grades[2] < minRC) {
-				minRC = (int)grades[2];
+			float solutionScore = grades[0] + grades[1] + grades[2];
+			solutionScore /= 3;
+			if(solutionScore > bestScore) {
+				bestScore = solutionScore;
 			}
 		}
 	}

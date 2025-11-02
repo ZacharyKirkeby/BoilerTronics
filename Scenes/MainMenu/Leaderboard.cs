@@ -87,11 +87,7 @@ public partial class Leaderboard : CenterContainer
 		if(manager == null || manager.currLevel == null) {
 			return;
 		}
-		int rc = manager.currLevel.minRC;
-		float pps = manager.currLevel.minPPS;
-		float cps = manager.currLevel.minCPS;
-		float averageScore = pps + cps + (float)rc;
-		averageScore /= 3.0f;
-		firstScore.Text = averageScore.ToString("F2");
+		float score = manager.currLevel.bestScore;
+		firstScore.Text = score.ToString("F2");
 	}
 }
