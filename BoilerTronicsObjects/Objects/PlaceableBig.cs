@@ -138,7 +138,6 @@ namespace BoilerTronicsObjects.Placeable
 		private List<PlaceableBigData>[] textureGrid = new List<PlaceableBigData>[4];
 		
 		// TODO: a child of a PlaceableBig should accordingly set up its 'textureGrid' in this constructor
-		// i.e. call 
 		public PlaceableBig(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0) 
 		: base(OGX, OGY, sourceId, atlasPos, altTitle)
 		{
@@ -200,6 +199,38 @@ namespace BoilerTronicsObjects.Placeable
 			if (inputDir < 0 || inputDir > 3) { return null; }
 			return textureGrid[inputDir];
 		}
+		
+		// Given the (absolute) inputs X, Y (assumed to be on the same layer as this object),
+		// return the corresponding PlaceableBigData at that position, if it exists.
+		// If not, returns 'null'
+		public PlaceableBigData GetDataAtPos(int x, int y) {
+			return GetDataAtPos(x, y, dir);
+		}
+		public PlaceableBigData GetDataAtPos(int x, int y, int inDir = -1) {
+			if (inDir == -1) {
+				inDir = dir;
+			}
+			Vector2I currPos = GetCurrPos();
+			
+			List<PlaceableBigData> currData = textureGrid[inDir];
+			
+			foreach (PlaceableBigData dat in currData) {
+				Vector2I datPos = dat.GetPosition(currPos);
+				
+				if (currPos == datPos) {
+					return dat;
+				}
+			}
+			
+			return null;
+		}
+		public PlaceableBigData GetDataAtPos(Vector2I input) {
+			return GetDataAtPos(input.X, input.Y);
+		}
+		public PlaceableBigData GetDataAtPos(Vector2I input, int inDir = -1) {
+			return GetDataAtPos(input.X, input.Y, inDir);
+		}
+		
 		
 		private Vector2I GetMaxOffsets() {
 			Vector2I V = new Vector2I(0,0);
