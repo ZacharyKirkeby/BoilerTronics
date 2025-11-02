@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class Leaderboard : CenterContainer
 {
@@ -15,7 +16,12 @@ public partial class Leaderboard : CenterContainer
 	static private Label fifthScore;
 	static private Label sixthName;
 	static private Label sixthScore;
+
+	private List<(string Name, float Score)> leaderboard = new();
+
+
 	public override void _Ready() {
+		//get labels
 		firstName = GetNode<Label>("%firstName");
 		firstScore = GetNode<Label>("%firstScore");
 		secondName = GetNode<Label>("%secondName");
@@ -40,6 +46,8 @@ public partial class Leaderboard : CenterContainer
 		fifthScore.Text = ("60");
 		sixthName.Text = ("Ethen");
 		sixthScore.Text = ("50");
+		
+		UpdateLeaderboard();
 	}
 	private void _on_option_button_item_selected(int index) {
 		switch (index) {
@@ -72,5 +80,18 @@ public partial class Leaderboard : CenterContainer
 				sixthScore.Text = ("82");
 				break;
 		}
+	}
+	
+	public void UpdateLeaderboard() {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		if(manager == null || manager.currLevel == null) {
+			return;
+		}
+		int rc = manager.currLevel.minRC;
+		float pps = manager.currLevel.minPPS;
+		float cps = manager.currLevel.minCPS;
+		float averageScore = pps + cps + (float)rc;
+		averageScore /= 3.0f;
+		firstScore.Text = averageScore.ToString("F2");
 	}
 }

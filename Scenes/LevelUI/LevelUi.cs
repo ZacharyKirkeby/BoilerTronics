@@ -369,6 +369,13 @@ public partial class LevelUi : Node2D
 		ppsGradeLabel.Text = "Grade: N/A";
 		cpsGradeLabel.Text = "Grade: N/A";
 		rcGradeLabel.Text = "Grade: N/A";
+		
+		ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		cpsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		rcGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
 	}
 	
 	public void UpdateSolutionStatistics(float pps, float cps, int rc) {
@@ -383,12 +390,14 @@ public partial class LevelUi : Node2D
 		rcCutoffLabel.Text = "Cutoff RC: " + rc.ToString("F2");
 	}
 
-	public void UpdateSolutionGrading(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
+	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
 		//difference and grading labels
+		float[] grades = new float[3];
 		if(ppsCutoff <= ppsSol) {
 			//good
 			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff).ToString("F2");
 			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true).ToString("F2");
+			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, true);
 			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
@@ -396,6 +405,7 @@ public partial class LevelUi : Node2D
 			//bad
 			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol).ToString("F2");
 			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, false).ToString("F2");
+			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, false);
 			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
@@ -403,6 +413,7 @@ public partial class LevelUi : Node2D
 			//good
 			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol).ToString("F2");
 			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, true).ToString("F2");
+			grades[1] =  CalculateGrade(cpsCutoff, cpsSol, true);
 			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
@@ -410,6 +421,7 @@ public partial class LevelUi : Node2D
 			//bad
 			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff).ToString("F2");
 			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, false).ToString("F2");
+			grades[1] =  CalculateGrade(cpsCutoff, cpsSol, false);
 			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
@@ -417,6 +429,7 @@ public partial class LevelUi : Node2D
 			//good
 			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol).ToString("F2");
 			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, true).ToString("F2");
+			grades[2] =  CalculateGrade(rcCutoff, rcSol, true);
 			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			rcGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
@@ -424,9 +437,11 @@ public partial class LevelUi : Node2D
 			//bad
 			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff).ToString("F2");
 			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, false).ToString("F2");
+			grades[2] =  CalculateGrade(rcCutoff, rcSol, false);
 			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			rcGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
+		return grades;
 	}
 
 	public float CalculateGrade(float cutoff, float solution, bool good) {
