@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://dbyevtgjtslm8"]
+[gd_scene load_steps=52 format=3 uid="uid://dbyevtgjtslm8"]
 
 [ext_resource type="Script" uid="uid://dmk70fc4hqsoi" path="res://Scenes/LevelCreator/LevelCreator.cs" id="1_hjyc6"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_wuwu2"]
@@ -268,6 +268,22 @@ Button/styles/focus = SubResource("StyleBoxFlat_4jcs4")
 Button/styles/hover = SubResource("StyleBoxFlat_r0au2")
 Button/styles/normal = SubResource("StyleBoxFlat_4jcs4")
 Button/styles/pressed = SubResource("StyleBoxFlat_q1sto")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h0dp1"]
+bg_color = Color(0.9166399, 0.91663986, 0.9166398, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hjyc6"]
+bg_color = Color(0.8431842, 0.8431838, 0.84318364, 1)
+
+[sub_resource type="Theme" id="Theme_h0dp1"]
+LineEdit/colors/caret_color = Color(0, 0, 0, 1)
+LineEdit/colors/font_color = Color(0, 0, 0, 1)
+LineEdit/fonts/font = ExtResource("3_js8ol")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_h0dp1")
+TextEdit/colors/caret_color = Color(0, 0, 0, 1)
+TextEdit/colors/font_color = Color(0, 0, 0, 1)
+TextEdit/fonts/font = ExtResource("3_js8ol")
+TextEdit/styles/normal = SubResource("StyleBoxFlat_hjyc6")
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_hjyc6")
@@ -545,6 +561,7 @@ grow_vertical = 2
 
 [node name="LevelContainer" type="SubViewportContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="SubViewport" type="SubViewport" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer"]
 handle_input_locally = false
@@ -756,6 +773,41 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Clear"
 
+[node name="PriceChangeWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Price Change"
+initial_position = 1
+size = Vector2i(400, 200)
+visible = false
+
+[node name="PriceChangeVbox" type="VBoxContainer" parent="PriceChangeWindow"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -43.5
+offset_right = 100.0
+offset_bottom = 43.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="PriceChangeLabel" type="Label" parent="PriceChangeWindow/PriceChangeVbox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_js8ol")
+text = "Enter the New Price:"
+horizontal_alignment = 1
+
+[node name="PriceBox" type="LineEdit" parent="PriceChangeWindow/PriceChangeVbox"]
+custom_minimum_size = Vector2(200, 25)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_h0dp1")
+alignment = 1
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
@@ -773,3 +825,4 @@ text = "Clear"
 [connection signal="pressed" from="Window/SaveContainer/Save1Cont/Clear 1" to="." method="_on_clear_1_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save2Cont/Save 2" to="." method="_on_save_2_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save2Cont/Clear 2" to="." method="_on_clear_2_pressed"]
+[connection signal="close_requested" from="PriceChangeWindow" to="." method="_on_price_change_window_close_requested"]

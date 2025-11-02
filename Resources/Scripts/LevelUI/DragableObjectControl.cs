@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 // this script will be 
 public partial class DragableObjectControl : Control {
@@ -13,7 +14,11 @@ public partial class DragableObjectControl : Control {
 	static Vector2I visibleObjectScaling = new Vector2I(3, 3);
 	Label priceLabel;
 	PanelContainer vboxPanel;
-	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel)
+	Button submitButton;
+	Window priceChangeWindow;
+	LineEdit priceBox;
+	int itemNumber;
+	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel, int itemNumber)
 	{
 
 
@@ -27,6 +32,7 @@ public partial class DragableObjectControl : Control {
 		this.selection = selection;
 		this.vboxPanel = vboxPanel;
 		this.priceLabel = priceLabel;
+		this.itemNumber = itemNumber;
 	}
 
 	public override void _Ready() {
@@ -64,55 +70,49 @@ public partial class DragableObjectControl : Control {
 	}
 	public void DragableObjectMenu(InputEventMouseButton buttonEvent2)
 	{
-        PopupMenu popup = new PopupMenu();
+		PopupMenu popup = new PopupMenu();
 		AddChild(popup);
 		popup.AddItem("Change Price");
 		popup.AddItem("Remove Item");
 		Vector2 mousePos = buttonEvent2.GlobalPosition;
 		popup.Position = new Vector2I((int)mousePos.X, (int)mousePos.Y);
-		popup.IdPressed += (id) => {
-			string itemText = popup.GetItemText((int) id);
+		popup.IdPressed += (id) =>
+		{
+			string itemText = popup.GetItemText((int)id);
 			switch (itemText)
 			{
 				case "Change Price":
 					GD.Print("Change Price Selected");
-					Window priceChangeWindow = new Window();
-					priceChangeWindow.Size = new Vector2I(400, 300);
-				
-
-					// Get the viewport size (the visible game window)
-					Vector2 viewportSize = GetViewport().GetVisibleRect().Size;
-
-					// Center = viewport midpoint minus half of the window size
-					priceChangeWindow.Position = new Vector2I(
-						(int)((viewportSize.X - priceChangeWindow.Size.X) / 2),
-						(int)((viewportSize.Y - priceChangeWindow.Size.Y) / 2)
-					);
-					VBoxContainer vbox = new VBoxContainer();
-					vbox.CustomMinimumSize = new Vector2I(300, 200);
-					vbox.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-					vbox.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-					TextEdit priceBox = new TextEdit();
-					priceBox.CustomMinimumSize = new Vector2I(200, 200);
-					AddChild(priceChangeWindow);
-					priceChangeWindow.AddChild(vbox);
-					vbox.AddChild(priceBox);
-					Button changeButton = new Button();
-					changeButton.Pressed += () =>
-					{
-						priceLabel.Text = priceBox.Text;
-					};
-					vbox.AddChild(changeButton);
+					priceChangeWindow = GetTree().Root.GetNode<Window>("/root/Node2D/PriceChangeWindow");
 					priceChangeWindow.Visible = true;
-					
+					submitButton = new Button();
+					submitButton.Text = "Submit";
+					submitButton.SizeFlagsHorizontal = SizeFlags.ShrinkCenter;
+					submitButton.SizeFlagsVertical = SizeFlags.ShrinkCenter;
+					priceChangeWindow.GetNode<VBoxContainer>("PriceChangeVbox").AddChild(submitButton);
+					priceBox = priceChangeWindow.GetNode<LineEdit>("PriceChangeVbox/PriceBox");
+					priceBox.GrabFocus();
+
+					submitButton.Pressed += () => OnSubmitPrice();
 					break;
 
 				case "Remove Item":
 					GD.Print("Remove option selected");
 					var picker = GetTree().Root.GetNode<ObjectPicker>("/root/Node2D/MainVBox/PanelContainer/HBoxContainer/PanelContainer/ScrollContainer/ObjectPicker");
 					picker.RemoveChild(vboxPanel);
+					if (selection == 1)
+					{
+						ObjectPicker.MovementItemPrices[itemNumber] = -1;
+					}
+					else if (selection == 2)
+					{
+						ObjectPicker.FactoryItemPrices[itemNumber] = -1;
+					}
+					else if (selection == 3)
+					{
+						ObjectPicker.ClawItemPrices[itemNumber] = -1;
+					}
 					break;
-
 				case "Delete":
 					GD.Print("Delete option selected");
 					// Delete logic here
@@ -120,5 +120,29 @@ public partial class DragableObjectControl : Control {
 			}
 		};
 		popup.Popup();
-    }
+	}
+	private void OnSubmitPrice() 
+	{
+		vboxPanel.GetChild<VBoxContainer>(0).GetChild<Label>(2).Text = "Price: $" + priceBox.Text;
+		GD.Print(selection);
+		if (selection == 1)
+		{
+			ObjectPicker.MovementItemPrices[itemNumber] = Int32.Parse(priceBox.Text);
+			GD.Print(ObjectPicker.MovementItemPrices[itemNumber]);
+		}
+		else if (selection == 2)
+		{
+			ObjectPicker.FactoryItemPrices[itemNumber] = Int32.Parse(priceBox.Text);
+			GD.Print(ObjectPicker.FactoryItemPrices[itemNumber]);
+		}
+		else if (selection == 3)
+		{
+			ObjectPicker.ClawItemPrices[itemNumber] = Int32.Parse(priceBox.Text);
+			GD.Print(ObjectPicker.ClawItemPrices[itemNumber]);
+		}
+		priceBox.Text = "";
+		priceChangeWindow.Visible = false;
+		
+		submitButton.QueueFree();
+	}
 }

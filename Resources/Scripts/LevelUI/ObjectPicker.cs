@@ -10,7 +10,10 @@ public partial class ObjectPicker : HBoxContainer
 	static int MovementSpriteTable = 2;
 	static String[] MovementSpriteNames = { "Vertical Conveyor", "Horizontal Conveyor", "Rotator", "Placeholder", "Placeholder", "Placeholder" };
 	static String[] FactorySpriteNames = {"Input", "Output", "Floor", "Placeholder", "Placeholder", "Placeholder" };
-	static String[] ClawSpriteNames = {"Claw", "Vertical Rail", "Horizontal Rail"};
+	static String[] ClawSpriteNames = { "Claw", "Vertical Rail", "Horizontal Rail" };
+	public static int[] MovementItemPrices = { 0, 0, 0, 0, 0, 0};
+	public static int[] FactoryItemPrices = { 0, 0, 0, 0, 0, 0 };
+	public static int[] ClawItemPrices = { 0, 0, 0 };
 	public void Update(int selection) 
 	{
 		// This should be called when we change the type of object that we are wanting to select
@@ -46,8 +49,8 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel);
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel, int itemNumber) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel, itemNumber);
 		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
@@ -65,6 +68,26 @@ public partial class ObjectPicker : HBoxContainer
 		}
 		AddChild(new Control()); // Creates left padding so its not smushed against container
 		for (int i = 0; i < tileSetSource.GetTilesCount(); i++) {
+			if (selection == 1)
+            {
+				if (MovementItemPrices[i] == -1)
+				{
+					continue;
+				} 
+            } else if (selection == 2)
+			{
+				if (FactoryItemPrices[i] == -1)
+				{
+					continue;
+				}
+			}
+			else if (selection == 3)
+			{
+				if (ClawItemPrices[i] == -1)
+				{
+					continue;
+				}
+			}
 			var atlasCords = tileSetSource.GetTileId(i);
 			if (atlasCords == null) continue; // make sure that the cords exist
 
@@ -95,26 +118,31 @@ public partial class ObjectPicker : HBoxContainer
 			backgroundStyle.SetBorderWidthAll(2);
 			backgroundStyle.SetCornerRadiusAll(10);
 			background.AddThemeStyleboxOverride("panel", backgroundStyle);
-			
+
 			// Set name label to the name of the object.
 			Label nameLabel = new Label();
+			Label priceLabel = new Label();
 			if (source_idx == MovementSpriteTable)
 			{
 				nameLabel.Text = MovementSpriteNames[i];
+				priceLabel.Text = "Price: $" + MovementItemPrices[i];
 			}
 			else if (source_idx == ClawSpriteTable)
 			{
 				nameLabel.Text = ClawSpriteNames[i];
+				priceLabel.Text = "Price: $" + ClawItemPrices[i];
 			}
 			else if (source_idx == FactorySpriteTable)
 			{
 				nameLabel.Text = FactorySpriteNames[i];
+				priceLabel.Text = "Price: $" + FactoryItemPrices[i];
 			}
 			else
 			{
 				nameLabel.Text = "Error";
+				priceLabel.Text = "Error";
 			}
-			Label priceLabel = new Label();
+			
 			FontFile pixelFont = ResourceLoader.Load<FontFile>("Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 			priceLabel.AddThemeFontOverride("font", pixelFont);
 			priceLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
@@ -123,8 +151,8 @@ public partial class ObjectPicker : HBoxContainer
 			nameLabel.AddThemeFontOverride("font", pixelFont);
 			nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 			nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
-			
-			background.AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel));
+
+			background.AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel, i));
 			vbox.AddChild(background);
 			vbox.AddChild(nameLabel);
 			vbox.AddChild(priceLabel);
