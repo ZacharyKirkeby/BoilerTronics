@@ -279,10 +279,49 @@ namespace BoilerTronicsObjects.Layers
 				Vector2I OGPos =  obj.GetOGPos();
 				tiles[CurrPos.X, CurrPos.Y] = null;
 				EraseCell(CurrPos); // erase object from the map
+				
+				// PlaceableBig case, erase from map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					
+					// iterate through appropriate tiles and delete accordingly
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						
+						// update tile grid
+						EraseCell(dataCoords);
+						
+						// update tile references
+						tiles[dataCoords.X, dataCoords.Y] = null;
+					}
+				}
+				
 				if (obj.GetGarbage() == true) continue; // Don't continue if this needs to be thrown away
 				obj.ResetPos();
+				
 				tiles[OGPos.X, OGPos.Y] = obj;
 				SetCell(OGPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				
+				
+				// PlaceableBig case, update map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+					// the "origin" object will already be placed by the code above!
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						TileTex tex = data.GetTileTex();
+						
+						// update tiles to point to the origin (reference)
+						tiles[dataCoords.X, dataCoords.Y] = obj;
+						
+						// update tile grid 
+						SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+					}
+				}
+				
 			}
 		}
 		
