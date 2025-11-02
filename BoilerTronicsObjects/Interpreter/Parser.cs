@@ -28,6 +28,7 @@ public partial class Parser : Node2D
 	private CodeEdit currEditor;
 	private string editorName;
 	private bool _debug = true;
+	private bool _decayFlag = true;
 	private enum qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
@@ -569,6 +570,10 @@ public partial class Parser : Node2D
 	private void ProcessRegisterDecay()
 	{
 		_stepConsumingInstructionCount++;
+		if (!this._decayFlag)
+        {
+			return;
+        }
 
 		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
 		{
@@ -588,6 +593,11 @@ public partial class Parser : Node2D
 			}
 		}
 	}
+
+	public void setDecayFlag(bool input)
+    {
+		this._decayFlag = input;
+    }
 
 
 
