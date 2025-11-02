@@ -302,7 +302,11 @@ public partial class LevelCreator : Node2D
 	{
 		GetNode<Window>("Window").Visible = false;
 	}
-
+	
+	private void _on_price_change_window_close_requested() {
+		GetNode<Window>("PriceChangeWindow").Visible = false;
+	}
+	
 	/* Helper Funcitons */
 
 	private void UpdateStepCount(int stepCount)
