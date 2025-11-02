@@ -46,8 +46,8 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection);
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel);
 		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
@@ -82,6 +82,7 @@ public partial class ObjectPicker : HBoxContainer
 			vboxPanel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
 			VBoxContainer vbox = new VBoxContainer();
 			vbox.AddThemeConstantOverride("separation", 20);
+
 			AddChild(vboxPanel);
 			vboxPanel.AddChild(vbox);
 			PanelContainer background = new PanelContainer();
@@ -94,7 +95,7 @@ public partial class ObjectPicker : HBoxContainer
 			backgroundStyle.SetBorderWidthAll(2);
 			backgroundStyle.SetCornerRadiusAll(10);
 			background.AddThemeStyleboxOverride("panel", backgroundStyle);
-
+			
 			// Set name label to the name of the object.
 			Label nameLabel = new Label();
 			if (source_idx == MovementSpriteTable)
@@ -110,17 +111,23 @@ public partial class ObjectPicker : HBoxContainer
 				nameLabel.Text = FactorySpriteNames[i];
 			}
 			else
-            {
+			{
 				nameLabel.Text = "Error";
-            }
+			}
+			Label priceLabel = new Label();
 			FontFile pixelFont = ResourceLoader.Load<FontFile>("Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+			priceLabel.AddThemeFontOverride("font", pixelFont);
+			priceLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+			priceLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
 			nameLabel.AddThemeFontOverride("font", pixelFont);
 			nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 			nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
 			
-			background.AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
+			background.AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection, priceLabel, vboxPanel));
 			vbox.AddChild(background);
 			vbox.AddChild(nameLabel);
+			vbox.AddChild(priceLabel);
 		}
 	}
 
