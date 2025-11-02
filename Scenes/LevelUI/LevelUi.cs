@@ -39,7 +39,7 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
-		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
+		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
 
 
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
