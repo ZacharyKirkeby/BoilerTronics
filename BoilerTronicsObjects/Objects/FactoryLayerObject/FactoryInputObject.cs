@@ -24,6 +24,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public PlaceableObject PickUp() {
 			PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
 			GD.Print("Generating obj: ", obj);
+			obj.SetGarbage(true); // Tell the layer to throw it away on reset
 			return obj;
 		}
 		

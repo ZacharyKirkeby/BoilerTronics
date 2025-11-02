@@ -12,6 +12,7 @@ namespace BoilerTronicsObjects.Placeable
 		int OGY { get; set; }
 		private int CurrX;
 		private int CurrY;
+		private bool Garbage;
 		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
 		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
@@ -33,6 +34,15 @@ namespace BoilerTronicsObjects.Placeable
 
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
+			this.Garbage = false;
+		}
+
+		public void SetGarbage(bool isGarabage) {
+			this.Garbage = isGarabage;
+		}
+
+		public bool GetGarbage() {
+			return this.Garbage;
 		}
 		
 		// set parent layer info; mainly useful for the terminal highlighting mechanism
