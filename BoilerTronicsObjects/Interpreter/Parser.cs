@@ -33,9 +33,6 @@ public partial class Parser : Node2D
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
 
-	[Signal]
-	public delegate void ErrorRaisedEventHandler(int lineNumber, string message, string editorName);
-
 	// None of these consume time steps, hence registered here
 
 	// Jump commands
@@ -63,8 +60,11 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
 	private static partial Regex WrtRegex();
 
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]  // ← NEW LINE
+	private static partial Regex WrtRegisterRegex();
+
 	// Arithmetic commands
-	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2])\s+(r[0-2])\s*$")]
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
 	private static partial Regex ArithRegex();
 
 	// Control commands
@@ -111,7 +111,7 @@ public partial class Parser : Node2D
 		return _registers.ContainsKey(name) ? _registers[name] : 0;
 	}
 
-	public void LoadProgram(string terminal, bool debug = false)
+	public bool LoadProgram(string terminal, bool debug = false)
 	{
 		_currentProgram = terminal;
 		_programCounter = 0;
@@ -121,7 +121,7 @@ public partial class Parser : Node2D
 		_sourceLineNumbers.Clear();
 
 		if (string.IsNullOrWhiteSpace(terminal))
-			return;
+			return false;
 
 		// Use ProgramValidator to preprocess
 		var result = ProgramValidator.PreprocessProgram(terminal);
@@ -135,16 +135,19 @@ public partial class Parser : Node2D
 		_validLines.AddRange(result.validLines);
 
 		// Handle validation errors
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		if (result.errors.Count > 0)
 		{
 			foreach (var (lineNum, error) in result.errors)
 			{
 				GD.PrintErr($"Validation error at line {lineNum}: {error}");
-				EmitSignal(SignalName.ErrorRaised, lineNum, error, editorName);
+				manager.currLevel.E.OnParserErrorRaised(lineNum, error, editorName);
 			}
+			return false;
 		}
 
 		GD.Print($"Program loaded: {_validLines.Count} instructions, {_labelMap.Count} labels");
+		return true;
 	}
 
 
@@ -164,7 +167,14 @@ public partial class Parser : Node2D
 		if (terminal != _currentProgram)
 		{
 			LoadProgram(terminal);
+
 		}
+		var result = ProgramValidator.PreprocessProgram(terminal);
+		if (result.errors.Count > 0)
+		{
+			GD.PrintErr("Error Found");
+			return -1;
+        }
 
 		// Check if program is halted or finished
 		if (_programHalted || _validLines.Count == 0)
@@ -188,7 +198,8 @@ public partial class Parser : Node2D
 			if (!ExecuteInstruction(lineToProcess, ref _programCounter, out consumesStep))
 			{
 				if (_debug) GD.PrintErr($"Failed to execute: {lineToProcess}");
-				EmitSignal(SignalName.ErrorRaised, currentPC, "Execution error", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
 				break;
 			}
 
@@ -231,6 +242,25 @@ public partial class Parser : Node2D
 		return -1;
 	}
 
+	private int GetOperandValue(string operand)
+	{
+		// Check if it's a register
+		if (_registers.ContainsKey(operand))
+		{
+			return _registers[operand];
+		}
+
+		// Otherwise parse as literal
+		if (int.TryParse(operand, out int literal))
+		{
+			return literal;
+		}
+
+		// shouldn't reach here if regex is correct but idk 
+		GD.PrintErr($"Invalid operand: {operand}");
+		return 0;
+	}
+
 	private bool ExecuteInstruction(string line, ref int pc, out bool consumesStep)
 	{
 		consumesStep = false; // Default: instruction doesn't consume a step
@@ -256,46 +286,58 @@ public partial class Parser : Node2D
 			int val = int.Parse(wrtMatch.Groups[2].Value);
 			SetRegister(reg, val);
 			GD.Print($"Write: {reg} = {val}");
-			return true; // consumesStep = false
+			return true;
 		}
 
-		// Handle arithmetic (doesn't consume a step) - FREE
+		var wrtRegMatch = WrtRegisterRegex().Match(line);
+		if (wrtRegMatch.Success)
+		{
+			string destReg = wrtRegMatch.Groups[1].Value;
+			string srcReg = wrtRegMatch.Groups[2].Value;
+			_registers[destReg] = _registers[srcReg];
+			GD.Print($"Write: {destReg} = {srcReg} ({_registers[destReg]})");
+			return true;
+		}
+
 		var arithMatch = ArithRegex().Match(line);
 		if (arithMatch.Success)
 		{
 			string cmd = arithMatch.Groups[1].Value;
-			string reg1 = arithMatch.Groups[2].Value;
-			string reg2 = arithMatch.Groups[3].Value;
+			string operand1 = arithMatch.Groups[2].Value;
+			string operand2 = arithMatch.Groups[3].Value;
+
+			int val1 = GetOperandValue(operand1);
+			int val2 = GetOperandValue(operand2);
 
 			switch (cmd)
 			{
 				case "add":
-					_registers["r0"] = _registers[reg1] + _registers[reg2];
+					_registers["r0"] = val1 + val2;
 					break;
 				case "sub":
-					_registers["r0"] = _registers[reg1] - _registers[reg2];
+					_registers["r0"] = val1 - val2;
 					break;
 				case "mul":
-					_registers["r0"] = _registers[reg1] * _registers[reg2];
+					_registers["r0"] = val1 * val2;
 					break;
 				case "div":
-					if (_registers[reg2] == 0)
+					if (val2 == 0)
 					{
 						GD.PrintErr("Divide by zero error");
-						EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
+						//EmitSignal(SignalName.ErrorRaised, pc, "Divide by zero", editorName);
+						BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+						manager.currLevel.E.OnParserErrorRaised(pc, "Divide by zero", editorName);
 						return false;
 					}
-					_registers["r0"] = _registers[reg1] / _registers[reg2];
+					_registers["r0"] = val1 / val2;
 					break;
 				case "cmp":
-					int cmpResult = _registers[reg1] == _registers[reg2] ? 0 :
-									_registers[reg1] < _registers[reg2] ? -1 : 1;
+					int cmpResult = val1 == val2 ? 0 : val1 < val2 ? -1 : 1;
 					_registers["cmp"] = cmpResult;
 					break;
 			}
-
-			GD.Print($"{cmd}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
-			return true; // consumesStep = false
+			if (_debug) GD.Print($"{cmd} {operand1} {operand2}: r0={_registers["r0"]}, r1={_registers["r1"]}, r2={_registers["r2"]}, cmp={_registers["cmp"]}");
+			return true;
 		}
 
 		// These DO consume a step
@@ -381,7 +423,9 @@ public partial class Parser : Node2D
 		else
 		{
 			if (_debug) GD.PrintErr($"Undefined label: {label}");
-			EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
+			//EmitSignal(SignalName.ErrorRaised, pc, $"Undefined label: {label}", editorName);
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.E.OnParserErrorRaised(pc, $"Undefined label: {label}", editorName);
 			return false;
 		}
 	}
@@ -408,7 +452,10 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
+				
 			}
 		});
 
@@ -428,7 +475,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 
@@ -447,7 +496,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 
@@ -467,7 +518,9 @@ public partial class Parser : Node2D
 			}
 			else
 			{
-				EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
 			}
 		});
 

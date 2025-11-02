@@ -83,11 +83,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	{
 		terminalContainer.SetEditorsEditable(false);
 	}
-	
+
 	public void unlockTerminals()
-    {
-        terminalContainer.SetEditorsEditable(true);
-    }
+	{
+		terminalContainer.SetEditorsEditable(true);
+	}
 
 	// This will tell the backend to reset
 	// LevelUI.cs
