@@ -28,11 +28,53 @@ public partial class BoilerTronicsLevel : Node2D
 	public Parser P;
 	public ErrorHandler E;
 	
+	//statistics variables for cutoffs values
+	public float ppsCutoff;
+	public float cpsCutoff;
+	public int rcCutoff;
+	
+	//statistics variables for solution values
+	public float ppsSolution;
+	public float cpsSolution;
+	public int rcSolution;
+	
+	//levelui reference
+	private LevelUi levelUi;
+	
 	// store all four corners of the placement grid
 	private Vector2 c1;
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
+	
+	//when solution reached, update solution statistics
+	public void UpdateSolutionStats() {
+		//TODO: pps based on production/step
+		ppsSolution = 0;
+		cpsSolution = cost / StepCount;
+		//TODO: rc is resources consumed
+		rcSolution = 0;
+		
+		//update levelui stats labels
+		if(levelUi != null) {
+			levelUi.UpdateSolutionStatistics(ppsSolution, cpsSolution, rcSolution);
+			levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, cpsCutoff, cpsSolution, rcCutoff, rcSolution);
+		}
+	}
+	
+	public void ResetSolutionStats() {
+		ppsSolution = 0;
+		cpsSolution = 0;
+		rcSolution = 0;
+		levelUi.SetStatisticDefaults();
+	}
+	
+	public void UpdateCutoffs(float pps, float cps, int rc) {
+		ppsCutoff = pps;
+		cpsCutoff = cps;
+		rcCutoff = rc;
+		levelUi.UpdateSolutionCutoffs(pps, cps, rc);
+	}
 	
 	private Layer CreateMovementLayer() {
 		mLayer = new MovementLayer();
@@ -186,6 +228,12 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
+		
+		//get levelui reference to be able to update labels
+		levelUi = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+		if (levelUi == null) {
+			GD.PrintErr("LevelUi not found! Statistics won't update.");
+		}
 
 		base._Ready();
 	}
@@ -244,6 +292,13 @@ public partial class BoilerTronicsLevel : Node2D
 			rObj.Step();
 		}
 		StepCount++;
+		//test for stats
+		if(StepCount == 1) {
+			UpdateCutoffs(5,6,7);
+		}
+		else if(StepCount == 5) {
+			UpdateSolutionStats();
+		}
 	}
 
 	public void RegisterRunnable(PlaceableObject obj) {

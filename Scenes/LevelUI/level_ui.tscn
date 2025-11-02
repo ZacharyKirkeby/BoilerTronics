@@ -458,6 +458,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_xc2rq")
+text = "Cutoff PPS: TBD"
 horizontal_alignment = 1
 
 [node name="PPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Production Per Step2"]
@@ -492,6 +493,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_xc2rq")
+text = "Cutoff CPS: TBD"
 horizontal_alignment = 1
 
 [node name="CPS Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Cost Per Step"]
@@ -526,6 +528,7 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_xc2rq")
+text = "Cutoff RC: TBD"
 horizontal_alignment = 1
 
 [node name="RC Solution" type="Label" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/HBoxContainer/Resources Consumed"]

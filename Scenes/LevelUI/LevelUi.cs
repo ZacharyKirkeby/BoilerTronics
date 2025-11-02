@@ -131,6 +131,10 @@ public partial class LevelUi : Node2D
 		manager.Reset();
 		manager.currLevel.Reset();
 
+		//reset statistics as solution is wiped
+		SetStatisticDefaults();
+		manager.currLevel.ResetSolutionStats();
+
 		//reset highlighting in terminals
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 
@@ -354,10 +358,6 @@ public partial class LevelUi : Node2D
 	}
 	
 	public void SetStatisticDefaults() {
-		ppsCutoffLabel.Text = "Cutoff PPS: TBD";
-		cpsCutoffLabel.Text = "Cutoff CPS: TBD";
-		rcCutoffLabel.Text = "Cutoff RC: TBD";
-		
 		ppsSolutionLabel.Text = "PPS: N/A";
 		cpsSolutionLabel.Text = "CPS: N/A";
 		rcSolutionLabel.Text = "RC: N/A";
@@ -372,48 +372,60 @@ public partial class LevelUi : Node2D
 	}
 	
 	public void UpdateSolutionStatistics(float pps, float cps, int rc) {
-		ppsSolutionLabel.Text = "PPS: " + pps;
-		cpsSolutionLabel.Text = "CPS: $" + cps;
-		rcSolutionLabel.Text = "RC: " + rc;
+		ppsSolutionLabel.Text = "PPS: " + pps.ToString("F2");
+		cpsSolutionLabel.Text = "CPS: $" + cps.ToString("F2");
+		rcSolutionLabel.Text = "RC: " + rc.ToString("F2");
 	}
 	
 	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
-		ppsCutoffLabel.Text = "Cutoff PPS: " + pps;
-		cpsCutoffLabel.Text = "Cutoff CPS: $" + cps;
-		rcCutoffLabel.Text = "Cutoff RC: " + rc;
+		ppsCutoffLabel.Text = "Cutoff PPS: " + pps.ToString("F2");
+		cpsCutoffLabel.Text = "Cutoff CPS: $" + cps.ToString("F2");
+		rcCutoffLabel.Text = "Cutoff RC: " + rc.ToString("F2");
 	}
 
 	public void UpdateSolutionGrading(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
 		//difference and grading labels
 		if(ppsCutoff <= ppsSol) {
 			//good
-			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff);
-			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true);
+			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff).ToString("F2");
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true).ToString("F2");
+			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
 		else {
 			//bad
-			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol);
-			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, false);
+			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol).ToString("F2");
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, false).ToString("F2");
+			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
 		if(cpsCutoff >= cpsSol) {
 			//good
-			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol);
-			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, true);
+			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol).ToString("F2");
+			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, true).ToString("F2");
+			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
 		else {
 			//bad
-			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff);
-			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, false);
+			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff).ToString("F2");
+			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, false).ToString("F2");
+			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
 		if(rcCutoff >= rcSol) {
 			//good
-			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol);
-			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, true);
+			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol).ToString("F2");
+			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, true).ToString("F2");
+			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			rcGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
 		else {
 			//bad
-			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff);
-			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, false);
+			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff).ToString("F2");
+			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, false).ToString("F2");
+			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			rcGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
 	}
 
