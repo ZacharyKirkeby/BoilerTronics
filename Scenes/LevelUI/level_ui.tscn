@@ -1,7 +1,8 @@
-[gd_scene load_steps=49 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=50 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
+[ext_resource type="Script" uid="uid://dncowxuyc231n" path="res://BoilerTronicsObjects/Interpreter/RegisterLabel.cs" id="2_xc2rq"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_c2lek"]
 [ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_nctgy"]
@@ -291,23 +292,24 @@ theme_override_constants/separation = 0
 [node name="TerminalVBox" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3 
+size_flags_vertical = 3
 
 [node name="RegisterPanel" type="PanelContainer" parent="MainVBox/TerminalLevelSplit/TerminalVBox"]
-layout_mode = 2
 custom_minimum_size = Vector2(0, 28)
-size_flags_vertical = 0  
+layout_mode = 2
+size_flags_vertical = 0
 
 [node name="RegisterLabel" type="Label" parent="MainVBox/TerminalLevelSplit/TerminalVBox/RegisterPanel"]
 layout_mode = 2
 text = "R0: 0 | R1: 0 | R2: 0 | CMP: 0"
 horizontal_alignment = 1
 vertical_alignment = 1
+script = ExtResource("2_xc2rq")
 
 [node name="TerminalContainer" type="TabContainer" parent="MainVBox/TerminalLevelSplit/TerminalVBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3  
+size_flags_vertical = 3
 drag_to_rearrange_enabled = true
 script = ExtResource("2_5sd26")
 
