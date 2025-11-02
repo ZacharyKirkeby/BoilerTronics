@@ -233,10 +233,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// adds two new frames to be used by the Frame system
 			// (0) is default visuals
 			// (1) is "grab empty"
-			AddFrame(new TileTex(new Vector2I(0, 0), 3));
+			AddFrame(new TileTex(new Vector2I(0, 0), 10));
 			
 			// (2) is "grabbed stone (or some other grey nondescript object"
-			AddFrame(new TileTex(new Vector2I(0, 1), 3));
+			AddFrame(new TileTex(new Vector2I(0, 1), 10));
 		} // create object
 
 		~ClawObject() {

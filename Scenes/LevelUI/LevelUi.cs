@@ -283,7 +283,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 0);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 0);
 		manager.SaveLevel();
 		full_theme(saveZero);
 		clearZero.Visible = true;
@@ -292,7 +292,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_1_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 1);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 1);
 		manager.SaveLevel();
 		full_theme(saveOne);
 		clearOne.Visible = true;
@@ -301,12 +301,13 @@ public partial class LevelUi : Node2D
 	private void _on_save_2_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 2);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 2);
 		manager.SaveLevel();
 		full_theme(saveTwo);
 		clearTwo.Visible = true;
 	}
 
+	// TODO: Ethen should update these to use 'SaveManager' specific functions for consistency and etc
 	private void _on_clear_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;

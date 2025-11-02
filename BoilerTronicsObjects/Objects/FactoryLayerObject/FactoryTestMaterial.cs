@@ -32,7 +32,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.fLayer.RemoveObject(this);
 			this.MoveObject(-1, -1); // Move to an invalid position
-		    	base.ResetPos();
+				base.ResetPos();
 		}
 
 		public FactoryTestMaterial(int OGX, int OGY, int altTitle = 0) 
