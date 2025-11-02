@@ -6,19 +6,11 @@ using Parsing;
 public partial class RegisterLabel : Label
 {
 	private Parser _parser;
-	private Color _normalColor = new Color(0.8f, 0.8f, 0.8f); // Light gray
-	private Color _recentColor = new Color(0.3f, 1.0f, 0.3f);  // Bright green for recently changed
-	private Color _expiredColor = new Color(1.0f, 0.3f, 0.3f); // Red for about to expire
-	
 	private Dictionary<string, int> _lastValues = new();
 	private Dictionary<string, int> _framesSinceChange = new();
 
 	public override void _Ready()
-	{
-		// Style the label
-		AddThemeColorOverride("font_color", _normalColor);
-		AddThemeFontSizeOverride("font_size", 14);
-		
+	{	
 		// Initialize tracking
 		_lastValues["r0"] = 0;
 		_lastValues["r1"] = 0;
@@ -38,6 +30,7 @@ public partial class RegisterLabel : Label
 	}
 	public void UpdateDisplay()
 	{
+		GD.Print("updating registers");
 		if (_parser == null)
 		{
 			Text = "No Parser";
@@ -56,8 +49,9 @@ public partial class RegisterLabel : Label
 		displayText += FormatRegister("R2", registers["r2"]);
 		displayText += " | ";
 		displayText += FormatRegister("CMP", registers["cmp"]);
-		
+
 		Text = displayText;
+		GD.Print(Text);
 	}
 
 	private string FormatRegister(string name, int value)
@@ -85,16 +79,5 @@ public partial class RegisterLabel : Label
 		}
 		
 		return formatted;
-	}
-
-	public void HighlightRegister(string registerName, float duration = 0.5f)
-	{
-		// TODO: Implement per-register highlighting with RichTextLabel
-		// For now, just flash the whole label
-		Modulate = _recentColor;
-		
-		// Create timer to fade back
-		var timer = GetTree().CreateTimer(duration);
-		timer.Timeout += () => Modulate = _normalColor;
 	}
 }
