@@ -78,6 +78,15 @@ namespace BoilerTronicsObjects.Placeable
 			frameIndex = 0;
 		}
 		
+		public override int GetSourceID() {
+			TileTex T = frames[frameIndex];
+			return T.GetSourceID();
+		}
+		
+		public override Vector2I GetAtlasPos() {
+			TileTex T = frames[frameIndex];
+			return T.GetAtlasPos();
+		}
 		
 		// TODO: Keenan work this out!
 		public override Texture GetTexture()
@@ -91,9 +100,7 @@ namespace BoilerTronicsObjects.Placeable
 			int ID = T.GetSourceId();
 			Vector2I AtPos = T.GetAtlasPos();
 
-			int sourceid = tileSet.GetSourceId(ID);
-
-			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(ID) as TileSetAtlasSource;
 
 			// get the tile
 			var tile = tileSetSource.GetTileTextureRegion(AtPos);
