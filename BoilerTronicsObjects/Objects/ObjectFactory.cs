@@ -68,6 +68,15 @@ namespace BoilerTronicsObjects.Objects
 				case 4:
 					//factory furnace
 					return new FactoryFurnace(x, y, 0);
+				case 30:
+					//FloorCrackedTileObject
+					return new FloorCrackedTileObject(x, y, 0);
+				case 31:
+					//PipeBrokenFloorObject - Left
+					return new PipeBrokenFloorObject(x, y, 0, 0);
+				case 32:
+					//PipeBrokenFloorObject - Right
+					return new PipeBrokenFloorObject(x, y, 1, 0);
 				case 50:
 					//clawdefault
 					return new ClawObject(x, y, 0);
@@ -77,6 +86,18 @@ namespace BoilerTronicsObjects.Objects
 				case 101:
 					//railrightdefault
 					return new TrackObject(x, y, 1, 0);
+				case 130:
+					//StalagmiteObject
+					return new StalagmiteObject(x, y, 0);
+				case 131:
+					//StalagmitesObject
+					return new StalagmitesObject(x, y, 0);
+				case 132:
+					//PipeBrokenCeilingObject - Left
+					return new PipeBrokenCeilingObject(x, y, 0, 0);
+				case 133:
+					//PipeBrokenCeilingObject - Right
+					return new PipeBrokenCeilingObject(x, y, 1, 0);
 				case 150:
 					//conveyorleftdefault
 					return new ConveyorObject(x, y, 0, 0);
