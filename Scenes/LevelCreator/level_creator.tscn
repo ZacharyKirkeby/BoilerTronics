@@ -323,7 +323,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_fonts/font = ExtResource("3_js8ol")
-text = "Level 1: The Beginning"
+text = "Level Creator: TODO"
 horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
