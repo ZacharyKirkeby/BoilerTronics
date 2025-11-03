@@ -215,6 +215,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			{
 				existing.QueueFree();
 			}
+			UpdateRegisterDisplay();
 		}
 
 		// Scriptable interface

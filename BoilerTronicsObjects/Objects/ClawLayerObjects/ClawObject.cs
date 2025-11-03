@@ -66,6 +66,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				existing.QueueFree();
 			}
 			// Maybe need to make a call to our codeEdit/interrputer?
+			UpdateRegisterDisplay();
 		}
 
 		// Scriptable interface
