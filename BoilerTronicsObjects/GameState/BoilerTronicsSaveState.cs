@@ -244,7 +244,7 @@ public class BoilerTronicsSaveState
 					
 					this.levelDimensions = new Vector2I((int) mapSize[0], (int) mapSize[1]);
 					
-					GD.Print("metadata: " + level_id + ", " + save_slot + ", " + levelDimensions);
+					GD.Print("metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
 					continue;
 				}
 				
