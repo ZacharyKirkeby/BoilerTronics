@@ -20,6 +20,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		private PlaceableObject insertObj;
 		private PlaceableObject outputObj;
+		private List<PlaceableBigData>[] objectData;
+
+		/*
+		 * This is a static data structure that stores just the structure and texture data of the big object
+		 * This will be deep copied on instantiating an object
+		 * Other wise this will be used to stically create textures without instanciating an object
+		 */
 		private static List<PlaceableBigData>[] textureGrid = new List<PlaceableBigData>[] {
 			// Up direction
 			new List<PlaceableBigData> {
@@ -209,7 +216,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 
 		public override Texture GetTexture() {
-			return null;
+			return GetBigTexture(GetTextureGrid());
 		}
 		
 		public override List<PlaceableBigData> GetTextureGrid() {
