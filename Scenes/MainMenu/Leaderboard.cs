@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class Leaderboard : CenterContainer
 {
@@ -19,7 +20,6 @@ public partial class Leaderboard : CenterContainer
 
 	private List<(string Name, float Score)> leaderboard = new();
 
-
 	public override void _Ready() {
 		//get labels
 		firstName = GetNode<Label>("%firstName");
@@ -34,52 +34,48 @@ public partial class Leaderboard : CenterContainer
 		fifthScore = GetNode<Label>("%fifthScore");
 		sixthName = GetNode<Label>("%sixthName");
 		sixthScore = GetNode<Label>("%sixthScore");
-		firstName.Text = ("You");
-		firstScore.Text = ("100");
-		secondName.Text = ("Ethan");
-		secondScore.Text = ("99");
-		thirdName.Text = ("Abhi");
-		thirdScore.Text = ("80");
-		fourthName.Text = ("Keenan");
-		fourthScore.Text = ("70");
-		fifthName.Text = ("Zach");
-		fifthScore.Text = ("60");
-		sixthName.Text = ("Ethen");
-		sixthScore.Text = ("50");
+		
+		//leaderboard default values
+		leaderboard = new List<(string, float)>
+		{
+			("You", 100),
+			("Ethan", 99),
+			("Abhi", 80),
+			("Keenan", 70),
+			("Zach", 60),
+			("Ethen", 50)
+		};
 		
 		UpdateLeaderboard();
+		UpdateDisplay();
 	}
 	private void _on_option_button_item_selected(int index) {
 		switch (index) {
 			case 0:
-				firstName.Text = ("You");
-				firstScore.Text = ("100");
-				secondName.Text = ("Ethan");
-				secondScore.Text = ("99");
-				thirdName.Text = ("Abhi");
-				thirdScore.Text = ("80");
-				fourthName.Text = ("Keenan");
-				fourthScore.Text = ("70");
-				fifthName.Text = ("Zach");
-				fifthScore.Text = ("60");
-				sixthName.Text = ("Ethen");
-				sixthScore.Text = ("50");
+				leaderboard = new List<(string, float)>
+				{
+					("You", 100),
+					("Ethan", 99),
+					("Abhi", 80),
+					("Keenan", 70),
+					("Zach", 60),
+					("Ethen", 50)
+				};
 				break;
 			case 1:
-				firstName.Text = ("Keenan");
-				firstScore.Text = ("100");
-				secondName.Text = ("Ethen");
-				secondScore.Text = ("99");
-				thirdName.Text = ("Zach");
-				thirdScore.Text = ("90");
-				fourthName.Text = ("You");
-				fourthScore.Text = ("87");
-				fifthName.Text = ("Abhi");
-				fifthScore.Text = ("85");
-				sixthName.Text = ("Ethan");
-				sixthScore.Text = ("82");
+				leaderboard = new List<(string, float)>
+				{
+					("Keenan", 100),
+					("Ethen", 99),
+					("Zach", 90),
+					("You", 87),
+					("Abhi", 85),
+					("Ethan", 82)
+				};
 				break;
 		}
+		UpdateLeaderboard();
+		UpdateDisplay();
 	}
 	
 	public void UpdateLeaderboard() {
@@ -88,6 +84,36 @@ public partial class Leaderboard : CenterContainer
 			return;
 		}
 		float score = manager.currLevel.bestScore;
-		firstScore.Text = score.ToString("F2");
+		for (int i = 0; i < leaderboard.Count; i++) {
+			if (leaderboard[i].Name == "You") {
+				leaderboard[i] = ("You", score);
+				break;
+			}
+		}
+		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
+		UpdateDisplay();
+	}
+	
+	private void UpdateDisplay() {
+		var labels = new (Label name, Label score)[]
+		{
+			(firstName, firstScore),
+			(secondName, secondScore),
+			(thirdName, thirdScore),
+			(fourthName, fourthScore),
+			(fifthName, fifthScore),
+			(sixthName, sixthScore)
+		};
+
+		for (int i = 0; i < labels.Length; i++) {
+			if (i < leaderboard.Count) {
+				labels[i].name.Text = leaderboard[i].Name;
+				labels[i].score.Text = leaderboard[i].Score.ToString("F2");
+			}
+			else {
+				labels[i].name.Text = "-";
+				labels[i].score.Text = "-";
+			}
+		}
 	}
 }
