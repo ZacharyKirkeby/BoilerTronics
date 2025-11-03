@@ -216,7 +216,47 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
+		
+		// Prepare parsers for each scriptable element
+		foreach (PlaceableObject obj in runnableList) {
+			if (!(obj is Runnable)) continue; // error here?
+			Runnable rObj = (Runnable)obj;
 
+			if (rObj is Scriptable scriptableObj)
+			{
+				Parser parser = new Parser();
+				parser._Ready();
+				scriptableObj.SetParser(parser);
+				CodeEdit terminal = scriptableObj.GetTerminal();
+				if (terminal != null)
+				{	
+					// scaffoldiong for dynamic errors
+					//parser.Connect(Parser.SignalName.ErrorRaised, new Callable(terminal, nameof(terminal.OnParserErrorRaised)));
+				
+					// Load and validate the program
+					if (!string.IsNullOrWhiteSpace(terminal.Text))
+					{
+						bool error = parser.LoadProgram(terminal.Text);
+						// TODO - dynamic error checking terminal.ValidateCode();
+						//var errors = terminal.GetValidationErrors();
+						/*
+						if (errors.Count > 0)
+						{
+							GD.Print($"  {obj.GetType().Name} terminal has {errors.Count} validation error(s)");
+						}
+						else
+						{
+							GD.Print($"  {obj.GetType().Name} parser initialized successfully with {parser.GetProgramLength()} instructions");
+						}
+						*/
+					}
+				}
+				else
+				{
+					GD.PrintErr($"  {obj.GetType().Name} is Scriptable but has no terminal!");
+				}
+			}
+		}	
 		base._Ready();
 	}
 
@@ -246,9 +286,10 @@ public partial class BoilerTronicsLevel : Node2D
 		cLayer.Reset();
 		fLayer.Reset();
 		flLayer.Reset();
-		
+
 		// Loop through moving objects
-		foreach (MovingObject mObj in movingList) {
+		foreach (MovingObject mObj in movingList)
+		{
 			// Get object and layer
 			PlaceableObject obj = mObj.obj;
 			Layer layer = mObj.layer;
@@ -260,6 +301,11 @@ public partial class BoilerTronicsLevel : Node2D
 			mObj.QueueFree();
 		}
 		
+		foreach (Runnable rObj in runnableList)
+        {
+			rObj.Reset();
+        }
+		
 		StepCount = 0;
 
 		// Empty moving list
@@ -267,8 +313,20 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Clear errors
 		E.ClearError();
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		foreach (CodeEdit editor in manager.terminalContainer.GetAllEditors())
+		{
+
+			var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.Free();
+			}
+		}
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
+		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
 		SubmitStartStep = -1;
 	}
 
@@ -326,6 +384,7 @@ public partial class BoilerTronicsLevel : Node2D
 			!E.HasError() // Stop running if there's an error
 		      )
 		{
+			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running
 
 			// if we are on submit speed

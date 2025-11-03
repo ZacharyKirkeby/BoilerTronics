@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Parsing;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
@@ -11,6 +12,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
+		private Parser _parser;
 		CodeEdit E;
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
@@ -43,19 +45,42 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			E.Text = script;
 		}
 
-		public string GetScript() {
+		public string GetScript()
+		{
 			return E.Text;
 		}
+		
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this._parser;
+        }
 
 		public void Step() {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			if (_parser == null)
+			{
+				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
+				return;
+			}
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void Reset() {
 			base.ResetPos();
+			_parser.Reset();
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
 		}
 
 		public void RegisterSteppable() {
