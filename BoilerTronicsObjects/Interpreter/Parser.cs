@@ -199,8 +199,8 @@ public partial class Parser : Node2D
 			if (!ExecuteInstruction(lineToProcess, ref _programCounter, out consumesStep))
 			{
 				if (_debug) GD.PrintErr($"Failed to execute: {lineToProcess}");
-				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-				manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
+				//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				//manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
 				break;
 			}
 
@@ -309,6 +309,14 @@ public partial class Parser : Node2D
 
 			int val1 = GetOperandValue(operand1);
 			int val2 = GetOperandValue(operand2);
+
+			if (val1 == -9999999 || val2 == -9999999)
+			{
+				GD.PrintErr("Error: operand is NULL due to decay");
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(pc, "Error: operand is NULL due to decay", editorName);
+				return false;
+			}
 
 			switch (cmd)
 			{
@@ -585,7 +593,7 @@ public partial class Parser : Node2D
 
 				if (_registerTTL[reg] == 0)
 				{
-					_registers[reg] = 0;
+					_registers[reg] = -9999999;
 					_registerTTL[reg] = -9999999;
 
 					if (_debug) GD.Print($"Register {reg} decayed to 0");

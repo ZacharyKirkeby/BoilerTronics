@@ -65,7 +65,7 @@ public partial class RegisterLabel : Label
 			int ttl = _parser.GetRegisterTTL(regKey);
 
 			// If register had decay and TTL expired, show NULL
-			if (ttl == -9999999 && value == 0)
+			if (ttl == -9999999 && value == -9999999)
 			{
 				displayValue = "NULL";
 			}
