@@ -57,19 +57,27 @@ public partial class RegisterLabel : Label
 		}
 		_lastValues[regKey] = value;
 
-		// Format with value and optional TTL indicator
-		string formatted = $"{name}: {value}";
+		// Determine display value
+		string displayValue = value.ToString();
 
-		// If register has decay info, show TTL
 		if (_parser != null)
 		{
 			int ttl = _parser.GetRegisterTTL(regKey);
-			if (ttl >= 0)
+
+			// If register had decay and TTL expired, show NULL
+			if (ttl == -9999999 && value == 0)
 			{
-				formatted += $" ({ttl})";
+				displayValue = "NULL";
+			}
+
+			// Show TTL if still decaying
+			if (ttl > 0)
+			{
+				displayValue += $" ({ttl})";
 			}
 		}
 
-		return formatted;
+		return $"{name}: {displayValue}";
 	}
+
 }
