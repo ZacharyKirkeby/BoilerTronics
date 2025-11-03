@@ -182,6 +182,12 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerRail.ZIndex = 3;
 		manager.layerMovement.ZIndex = 4;
 
+		manager.layerFloor.YSortEnabled = true;
+		manager.layerFactory.YSortEnabled = true;
+		manager.layerClaw.YSortEnabled = true;
+		manager.layerRail.YSortEnabled = true;
+		manager.layerMovement.YSortEnabled = true;
+
 		// Shift layers
 		manager.layerClaw.Position = new Vector2(0, -32);
 		manager.layerRail.Position = new Vector2(0, -32);
@@ -300,6 +306,10 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
+
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
 		
 		foreach (Runnable rObj in runnableList)
         {
@@ -382,7 +392,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			  )
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running
