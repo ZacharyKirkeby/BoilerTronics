@@ -62,6 +62,11 @@ public partial class ObjectPicker : HBoxContainer
 		for (int i = 0; i < tileSetSource.GetTilesCount(); i++) {
 			var atlasCords = tileSetSource.GetTileId(i);
 			if (atlasCords == null) continue; // make sure that the cords exist
+			
+			// check if the tile has a default probability
+			// in the tilemap, set tiles to have a probability < 1.0 to not have them be displayed here
+			TileData tileDat = tileSetSource.GetTileData(atlasCords, 0);
+			if (tileDat.GetProbability() < 1.0) { continue; }
 
 			// get the tile
 			var tile = tileSetSource.GetTileTextureRegion(atlasCords);
