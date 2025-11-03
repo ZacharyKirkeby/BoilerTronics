@@ -1,14 +1,15 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
-using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
-namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
+// NOTE: Largely copied from TrackObject.cs
+namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class TrackObject : PlaceableObject {
+	public class PipeBrokenFloorObject : PlaceableObject {
 		
-		static int layerSourceId = 1;
+		static int layerSourceId = 5;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
@@ -21,12 +22,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public const int Left = 0;
 		public const int Right = 1;
 
-		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 1);
-		static Vector2I RightObjectAtlasPos = new Vector2I(0, 2);
+		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 3);
+		static Vector2I RightObjectAtlasPos = new Vector2I(1, 3);
 
-		public TrackObject(int OGX, int OGY, int dir, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, dir == TrackObject.Right ? TrackObject.RightObjectAtlasPos : TrackObject.LeftObjectAtlasPos, altTitle) {
-			if (dir != TrackObject.Right && dir != TrackObject.Left) return; // Error
+		public PipeBrokenFloorObject(int OGX, int OGY, int dir, int altTitle = 0) 
+		: base(OGX, OGY, layerSourceId, dir == PipeBrokenFloorObject.Right ? PipeBrokenFloorObject.RightObjectAtlasPos : PipeBrokenFloorObject.LeftObjectAtlasPos, altTitle) {
+			if (dir != PipeBrokenFloorObject.Right && dir != PipeBrokenFloorObject.Left) return; // Error
 
 			direction = dir;
 			OGdir = dir;
@@ -39,17 +40,17 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		private void updateAtlas() {
-			if (direction == TrackObject.Right) {
-				this.SetAtlasPos(TrackObject.RightObjectAtlasPos);
+			if (direction == PipeBrokenFloorObject.Right) {
+				this.SetAtlasPos(PipeBrokenFloorObject.RightObjectAtlasPos);
 			} else {
-				this.SetAtlasPos(TrackObject.LeftObjectAtlasPos);
+				this.SetAtlasPos(PipeBrokenFloorObject.LeftObjectAtlasPos);
 			}
 
 			UpdateSprite();
 		}
 
 		public void ChangeDir(int newDir) {
-			if (newDir != TrackObject.Right && newDir != TrackObject.Left) return;
+			if (newDir != PipeBrokenFloorObject.Right && newDir != PipeBrokenFloorObject.Left) return;
 			this.direction = newDir;
 			updateAtlas();
 		}

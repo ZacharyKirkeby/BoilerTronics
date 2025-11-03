@@ -4,7 +4,12 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Interfaces {
 	interface Movable {
-		PlaceableObject PickUp(); // Allows for an object to pick up this object
-		void Place(); // Places the object back on the right layer
+		// Allows for an object to pick up this object
+		// Also should be used by machines/factories to "give" objects to a claw
+		PlaceableObject PickUp();
+		
+		// Places the given object on the corresponding layer
+		// Also should be used by machines to "receive" dropped objects from claws
+		bool Place(PlaceableObject obj);
 	}
 }

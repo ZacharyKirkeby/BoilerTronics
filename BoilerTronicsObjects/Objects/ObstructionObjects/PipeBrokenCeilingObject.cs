@@ -4,11 +4,12 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
+// NOTE: Largely copied from TrackObject.cs
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
-	public class TrackObject : PlaceableObject {
+	public class PipeBrokenCeilingObject : PlaceableObject {
 		
-		static int layerSourceId = 1;
+		static int layerSourceId = 5;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
@@ -21,12 +22,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public const int Left = 0;
 		public const int Right = 1;
 
-		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 1);
-		static Vector2I RightObjectAtlasPos = new Vector2I(0, 2);
+		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 2);
+		static Vector2I RightObjectAtlasPos = new Vector2I(1, 2);
 
-		public TrackObject(int OGX, int OGY, int dir, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, dir == TrackObject.Right ? TrackObject.RightObjectAtlasPos : TrackObject.LeftObjectAtlasPos, altTitle) {
-			if (dir != TrackObject.Right && dir != TrackObject.Left) return; // Error
+		public PipeBrokenCeilingObject(int OGX, int OGY, int dir, int altTitle = 0) 
+		: base(OGX, OGY, layerSourceId, dir == PipeBrokenCeilingObject.Right ? PipeBrokenCeilingObject.RightObjectAtlasPos : PipeBrokenCeilingObject.LeftObjectAtlasPos, altTitle) {
+			if (dir != PipeBrokenCeilingObject.Right && dir != PipeBrokenCeilingObject.Left) return; // Error
 
 			direction = dir;
 			OGdir = dir;
@@ -39,17 +40,17 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		private void updateAtlas() {
-			if (direction == TrackObject.Right) {
-				this.SetAtlasPos(TrackObject.RightObjectAtlasPos);
+			if (direction == PipeBrokenCeilingObject.Right) {
+				this.SetAtlasPos(PipeBrokenCeilingObject.RightObjectAtlasPos);
 			} else {
-				this.SetAtlasPos(TrackObject.LeftObjectAtlasPos);
+				this.SetAtlasPos(PipeBrokenCeilingObject.LeftObjectAtlasPos);
 			}
 
 			UpdateSprite();
 		}
 
 		public void ChangeDir(int newDir) {
-			if (newDir != TrackObject.Right && newDir != TrackObject.Left) return;
+			if (newDir != PipeBrokenCeilingObject.Right && newDir != PipeBrokenCeilingObject.Left) return;
 			this.direction = newDir;
 			updateAtlas();
 		}
