@@ -586,7 +586,7 @@ public partial class Parser : Node2D
 				if (_registerTTL[reg] == 0)
 				{
 					_registers[reg] = 0;
-					_registerTTL[reg] = -1;
+					_registerTTL[reg] = -9999999;
 
 					if (_debug) GD.Print($"Register {reg} decayed to 0");
 				}
