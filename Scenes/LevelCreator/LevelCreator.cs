@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 using Parsing;
-public partial class LevelUi : Node2D
+public partial class LevelCreator : Node2D
 {
 	/* Editors */
 
@@ -30,12 +30,7 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
-	private Button pauseButton;
-	private Button playButton;
-
-	/* Icons */
-	private Texture2D playIcon;
-	private Texture2D submitIcon;
+	private Button stepButton;
 
 	public override void _Ready()
 	{
@@ -61,9 +56,8 @@ public partial class LevelUi : Node2D
 		EmptySaveButtonHoverTheme = EmptySaveButtonTheme.Duplicate() as StyleBoxFlat;
 		EmptySaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		pauseButton = GetNode<Button>("%Pause Button");
-		playButton = GetNode<Button>("%Play Button");
-
+		stepButton = GetNode<Button>("%Step Button");
+		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.E = new ErrorHandler();
@@ -77,20 +71,9 @@ public partial class LevelUi : Node2D
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
 
-		// Init icons for running and submittingnull
-		playIcon = GD.Load<Texture2D>("res://Resources/Icons/play.png");
-		submitIcon = GD.Load<Texture2D>("res://Resources/Icons/submission-speed.png");
-
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
-	}
-
-	public override void _Process(double delta) {
-		// Always update step count (this is for running)
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		UpdateStepCount(manager.currLevel.StepCount);
-
 	}
 
 	/* Button Fuctions */
@@ -126,11 +109,9 @@ public partial class LevelUi : Node2D
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 
-		manager.currLevel.E.ClearErrorNotice();
+		UpdateStepCount(manager.currLevel.StepCount);
 
-		// TODO: reset the play button
-		playButton.Text = ""; // Remove text
-		playButton.Icon = playIcon;
+		manager.currLevel.E.ClearErrorNotice();
 	}
 
 	//called in test script to have access to auto resetting
@@ -147,6 +128,8 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are stepping
 		manager.Step(); // This will also call step on the level
+
+		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
 
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -165,40 +148,18 @@ public partial class LevelUi : Node2D
 	}
 
 	private void _on_run_button_pressed() {
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-		manager.currLevel.IncRun(); // This will call run and increase the run speed
-
-		// on first step button press, trigger an autosave!
-		if (manager.currLevel.StepCount == 0) {
-			manager.SaveAutosave();
-
-			// also stop all highlighting
-			manager.terminalContainer.ClearHighlightedObjects();
-		}
-
-		switch (manager.currLevel.GetGameRunState()) {
-			case BoilerTronicsLevel.GameRunState.SlowRun:
-				// 1X
-				playButton.Text = "1X";
-				playButton.Icon = null;
-				break;
-			case BoilerTronicsLevel.GameRunState.FastRun:
-				// 2X
-				playButton.Text = "2X";
-				playButton.Icon = null;
-				break;
-			case BoilerTronicsLevel.GameRunState.SubmitSpeed:
-				// Submit speed
-				playButton.Text = "";
-				playButton.Icon = submitIcon; // This will be the submit speed
-				break;
-		}
+		// TODO: Implement
+		// On press we should look at our current run state
+		// If we have paused or are stepping, don't do anything
+		// If we are not running, go to 1x
+		// If we are at 1x, go to 2x
+		// If we are at 2x, go to submit speed
+		// If we are at submit speed, don't do anything
 	}
 
 	private void _on_pause_button_pressed() {
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.Pause(); // Pauses
+		// If we are not running, don't do anything
+		// Otherwise, stop running
 	}
 
 	// return to main menu button
@@ -289,7 +250,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(manager.GetLevelID(), 0);
+		manager.SetTargetLevelSave(0, 0);
 		manager.SaveLevel();
 		full_theme(saveZero);
 		clearZero.Visible = true;
@@ -298,7 +259,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_1_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(manager.GetLevelID(), 1);
+		manager.SetTargetLevelSave(0, 1);
 		manager.SaveLevel();
 		full_theme(saveOne);
 		clearOne.Visible = true;
@@ -307,13 +268,12 @@ public partial class LevelUi : Node2D
 	private void _on_save_2_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(manager.GetLevelID(), 2);
+		manager.SetTargetLevelSave(0, 2);
 		manager.SaveLevel();
 		full_theme(saveTwo);
 		clearTwo.Visible = true;
 	}
 
-	// TODO: Ethen should update these to use 'SaveManager' specific functions for consistency and etc
 	private void _on_clear_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -342,7 +302,11 @@ public partial class LevelUi : Node2D
 	{
 		GetNode<Window>("Window").Visible = false;
 	}
-
+	
+	private void _on_price_change_window_close_requested() {
+		GetNode<Window>("PriceChangeWindow").Visible = false;
+	}
+	
 	/* Helper Funcitons */
 
 	private void UpdateStepCount(int stepCount)
@@ -371,8 +335,11 @@ public partial class LevelUi : Node2D
 		_on_step_button_pressed();
 	}
 
-	public void simulateReset() {
+	public void simulateReset()
+	{
 		_on_reset_button_pressed();
 	}
+	
+	/* Level Creator Functions */
 
 }
