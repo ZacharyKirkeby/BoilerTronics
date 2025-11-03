@@ -20,6 +20,24 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		private PlaceableObject insertObj;
 		private PlaceableObject outputObj;
+		private static List<PlaceableBigData>[] textureGrid = new List<PlaceableBigData>[] {
+			// Up direction
+			new List<PlaceableBigData> {
+
+			},
+			// Down direction
+			new List<PlaceableBigData> {
+
+			},
+			// Left direction
+			new List<PlaceableBigData> {
+
+			},
+			// Right direction
+			new List<PlaceableBigData> {
+
+			},
+		};
 
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
@@ -67,7 +85,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// internal insert, output objects
 			insertObj = new FactoryFurnaceInput(0, 0, 0);
 			outputObj = new FactoryFurnaceOutput(0, 0, 0);
-			
+
 			/*
 			||[]			 
 			[]{}
@@ -96,7 +114,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			));
 			
 			// update the texture grid
-			SetTextureGrid(dir0, 0);
+			// SetTextureGrid(dir0, 0);
 			
 			/*
 			[]{}
@@ -125,7 +143,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				outputObj
 			));
 			// update the texture grid
-			SetTextureGrid(dir1, 1);
+			// SetTextureGrid(dir1, 1);
 			
 			/*
 			{}[]
@@ -154,7 +172,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				outputObj
 			));
 			// update the texture grid
-			SetTextureGrid(dir2, 2);
+			// SetTextureGrid(dir2, 2);
 			
 			/*
 			[]||
@@ -183,10 +201,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				outputObj
 			));
 			// update the texture grid
-			SetTextureGrid(dir3, 3);
+			// SetTextureGrid(dir3, 3);
 			
-			
-			SetDir(0);
+			SetDir(Direction.UP);
 		}
 	}
 }
