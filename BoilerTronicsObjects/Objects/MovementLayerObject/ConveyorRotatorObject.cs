@@ -56,9 +56,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		public void Step() {
 			// Make a call to the parser
