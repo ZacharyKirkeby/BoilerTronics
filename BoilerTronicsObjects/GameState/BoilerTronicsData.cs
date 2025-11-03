@@ -24,13 +24,26 @@ namespace BoilerTronicsObjects.Data {
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
 			
+			// Floor Obstructions
+			objectMap.Add(hashCoords(5, new Vector2I(0, 0)), 30);	//FloorCrackedTileObject
+			objectMap.Add(hashCoords(5, new Vector2I(0, 3)), 31);	//PipeBrokenFloorObject - Left
+			objectMap.Add(hashCoords(5, new Vector2I(1, 3)), 32);	//PipeBrokenFloorObject - Right
+			
 			// Materials
 			objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 200);	//factorymaterial
+			
 			
 			// Claw/rail layer
 			objectMap.Add(hashCoords(1, new Vector2I(0, 0)), 50);	//clawdefault
 			objectMap.Add(hashCoords(1, new Vector2I(0, 1)), 100);	//railleftdefault
 			objectMap.Add(hashCoords(1, new Vector2I(0, 2)), 101);	//railrightdefault
+			
+			// Ceiling (Rail Layer) Obstructions
+			objectMap.Add(hashCoords(5, new Vector2I(0, 1)), 130);	//StalagmiteObject
+			objectMap.Add(hashCoords(5, new Vector2I(1, 1)), 131);	//StalagmiteObjects
+			objectMap.Add(hashCoords(5, new Vector2I(0, 2)), 132);	//PipeBrokenCeilingObject - Left
+			objectMap.Add(hashCoords(5, new Vector2I(1, 2)), 133);	//PipeBrokenCeilingObject - Right
+			
 			
 			// Movement layer
 			objectMap.Add(hashCoords(2, new Vector2I(0, 0)), 150); //conveyorleftdefault
