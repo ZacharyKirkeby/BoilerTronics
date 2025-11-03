@@ -52,3 +52,27 @@ Registers:
 r0 - default store, math operations store the results to r0
 r1, r2: general purpose registers
 cmp - where compare flags are stored
+
+
+## More register Stuff Examples + Explanations
+
+wrt r0 10    # Write literal value
+wrt r0 r1    # Copy value from r1 to r0
+wrt r1 r2    # Copy value from r2 to r1
+wrt r0 cmp   # Copy cmp value to r0
+wrt cmp r0   # Copy r0 value to cmp
+
+
+# Register + Register
+add r0 r1    # r0 = r0 + r1
+
+# Register + Literal
+add r0 5     # r0 = r0 + 5
+sub r1 10    # r0 = r1 - 10
+
+# Literal + Register
+mul 3 r2     # r0 = 3 * r2
+
+# Literal + Literal
+div 100 4    # r0 = 100 / 4
+cmp 5 10     # cmp = (5 < 10) ? -1 : 0
