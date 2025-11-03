@@ -118,6 +118,35 @@ public partial class BoilerTronicsLevel : Node2D
 		return flLayer;
 	}
 	
+	// should just automatically fill the "outside" of the layer with some uninteractable floor tiles
+	private void CreateFloorFillLayer() {
+		FloorFillLayer fillLayer = new FloorFillLayer();
+		fillLayer.TileSet = tileset;
+		
+		// 5 tiles surrounding playable area
+		int fillSurround = 5;
+		
+		// TODO: load floor texture from level metadata
+		TileTex floorTex = new TileTex(new Vector2I(0, 0), 6);
+		fillLayer.GenerateLayer(x, y, fillSurround, floorTex);
+		
+		// spawn in the tile map
+		AddChild(fillLayer);
+		
+		// translate the top-left edge of this TileMap to the top-left edge of the floor layer
+		// (SANITY CHECK)
+		Vector2 fill00 = fillLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 floor00 = flLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 moveDif = floor00 - fill00;
+		fillLayer.Position -= moveDif;
+		GD.Print("move dif: ", moveDif);
+		
+		// offset this layer such that this layer properly surrounds the play area
+		moveDif = fill00 - flLayer.MapToLocal(new Vector2I(fillSurround, fillSurround));
+		fillLayer.Position += moveDif;
+		GD.Print("move dif 2: ", moveDif);
+	}
+	
 	// Given a target layer, a list of Placeables, and a Vector2I array of protected tiles, update the layer!
 	// Should only be used when loading info
 	private void UpdateLayer(Layer input, ArrayList objects, Vector2I[] protectedTiles) {
@@ -174,6 +203,9 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw = CreateClawLayer();
 		manager.layerRail = CreateRailLayer();
 		manager.layerMovement = CreateMovementLayer();
+		
+		// fills the "outside" of the area with some basic, uninteractable floor tiles
+		CreateFloorFillLayer();
 
 		// Set Z-index
 		manager.layerFloor.ZIndex = 0;
@@ -272,12 +304,18 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// Draws the border of the tile map
 		// only draw if corners have been determined
+		/*
+		
+		// DISABLED:
+		// Surrounding-floor-fill functionality already implemented
+		
 		if (c1 != null) {
 			DrawLine(c1, c2, Colors.Green, 3.0f);
 			DrawLine(c2, c3, Colors.Green, 3.0f);
 			DrawLine(c3, c4, Colors.Green, 3.0f);
 			DrawLine(c4, c1, Colors.Green, 3.0f);
 		}
+		*/
 	}
 
 	/* Reset Layer */
@@ -312,9 +350,9 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 

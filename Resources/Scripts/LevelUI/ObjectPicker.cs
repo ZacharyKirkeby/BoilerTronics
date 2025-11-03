@@ -8,7 +8,7 @@ public partial class ObjectPicker : HBoxContainer
 	static int FactorySpriteTable = 0;
 	static int ClawSpriteTable = 1;
 	static int MovementSpriteTable = 2;
-	static String[] MovementSpriteNames = { "Vertical Conveyor", "Horizontal Conveyor", "Rotator", "Placeholder", "Placeholder", "Placeholder" };
+	static String[] MovementSpriteNames = { "Vertical Conveyor", "Horizontal Conveyor", "Rotator" };
 	static String[] FactorySpriteNames = {"Input", "Output", "Floor", "Placeholder", "Placeholder", "Placeholder" };
 	static String[] ClawSpriteNames = { "Claw", "Vertical Rail", "Horizontal Rail" };
 	public static int[] MovementItemPrices = { 0, 0, 0, 0, 0, 0};
@@ -70,12 +70,6 @@ public partial class ObjectPicker : HBoxContainer
 		for (int i = 0; i < tileSetSource.GetTilesCount(); i++) {
 			var atlasCords = tileSetSource.GetTileId(i);
 			if (atlasCords == null) continue; // make sure that the cords exist
-			
-			// TODO: useless given the contents of the BigItemPicker branch
-			// check if the tile has a default probability
-			// in the tilemap, set tiles to have a probability < 1.0 to not have them be displayed here
-			// TileData tileDat = tileSetSource.GetTileData(atlasCords, 0);
-			// if (tileDat.GetProbability() < 1.0) { continue; }
 
 			// get the tile
 			var tile = tileSetSource.GetTileTextureRegion(atlasCords);
