@@ -188,11 +188,11 @@ namespace BoilerTronicsObjects.Placeable
 			return null;
 		}
 		
-		public List<PlaceableBigData> GetTextureGrid() {
+		public virtual List<PlaceableBigData> GetTextureGrid() {
 			return null;
 		}
 
-		public List<PlaceableBigData> GetTextureGrid(Direction inDir) {
+		public virtual List<PlaceableBigData> GetTextureGrid(Direction inDir) {
 			return null;
 		}
 
