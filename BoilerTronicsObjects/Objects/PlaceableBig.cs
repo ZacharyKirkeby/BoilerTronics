@@ -197,18 +197,6 @@ namespace BoilerTronicsObjects.Placeable
 		}
 
 		/** Static methods to stitch together images **/
-		
-		private static Vector2I GetMaxOffsets(List<PlaceableBigData> data) {
-			Vector2I V = new Vector2I(0,0);
-
-			foreach (PlaceableBigData PBD in data) {
-				Vector2I off = PBD.GetOffset();	
-				if (off.X > V.X) V.X = off.X;
-				if (off.Y > V.Y) V.Y = off.Y;
-			}
-				
-			return V;
-		}
 
 		private static List<(Image, PlaceableBigData)> GetSortedImgs(List<PlaceableBigData> data) {
 			List<(Image, PlaceableBigData)> imgs = new List<(Image, PlaceableBigData)>();
@@ -217,15 +205,13 @@ namespace BoilerTronicsObjects.Placeable
 
 			foreach (PlaceableBigData PBD in data) {
 				// Get the texture for each PBD
-
 				TileTex TT = PBD.GetTileTex();
 
 				int ID = TT.GetSourceId();
 				Vector2I AtPos = TT.GetAtlasPos();
 
-				int sourceid = tileSet.GetSourceId(ID);
-
-				TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+				// int sourceid = tileSet.GetSourceId(ID);
+				TileSetAtlasSource tileSetSource = tileSet.GetSource(ID) as TileSetAtlasSource;
 
 				// get the tile
 				var tile = tileSetSource.GetTileTextureRegion(AtPos);
@@ -244,10 +230,10 @@ namespace BoilerTronicsObjects.Placeable
 		private static Image StitchImages(Image baseImg, Image addition, Vector2I offset) {
 
 			// Define the source rectangle from the overlay image
-			Rect2I addRect = new Rect2I(Vector2I.Zero, addition.GetSize());
+			Rect2I addRect = new Rect2I(0, 0, addition.GetWidth(), addition.GetHeight());
 
 			// Draw the addition on the new image with some offset
-			baseImg.BlitRect(baseImg, addRect, offset);
+			baseImg.BlendRect(addition, addRect, offset);
 
 			return baseImg;
 		}
@@ -257,33 +243,84 @@ namespace BoilerTronicsObjects.Placeable
 		// handle all four directions properly.
 		public static Texture GetBigTexture(List<PlaceableBigData> data)
 		{
-			// Get the height and width of the big placable
-			// Create a large texture based on this height and width
-			// Get list of the textures of the cells
-			// Place the textures on the large texture in the correct spot
-			// 	This should be done is a specific order to ensure correct rendering
+			const int tileWidth = 32;
+			const int tileHeight = 16; 
+			const int halfTileWidth = 16; 
+			const int halfTileHeight = 8; 
 
-			// This will be used to construct the large stitched texture
-			Vector2I Size = GetMaxOffsets(data);
-
-			// We need to sort the textures to add them in the correct order
-			Image StitchedImage = Image.Create(Size.X * 64, Size.Y * 32, false, Image.Format.Rgb8);
-
-			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(data); // We need tile tex to keep track of offset
-			
-			foreach (var D in imgs) {
-				Image I = D.I;
-				PlaceableBigData PBD = D.PBD;
-
-				Vector2I off = PBD.GetOffset();
-
-				off *= new Vector2I(64, 32); // multiply to get pixel offset
-
-				StitchedImage = StitchImages(StitchedImage, I, off); // Stitch Images together
+			// 1. Find the min/max tile coordinates to determine the overall grid extents
+			int minX = 0, minY = 0, maxX = 0, maxY = 0;
+			foreach (var pbd in data)
+			{
+				Vector2I off = pbd.GetOffset();
+				if (off.X < minX) minX = off.X;
+				if (off.Y < minY) minY = off.Y;
+				if (off.X > maxX) maxX = off.X;
+				if (off.Y > maxY) maxY = off.Y;
 			}
 
+			// 2. Calculate actual pixel size with extra padding to prevent cropping
+			int padding = tileWidth * 2; // Increased padding for safety
+			int gridWidth = maxX - minX + 1;
+			int gridHeight = maxY - minY + 1;
 
-			return ImageTexture.CreateFromImage(StitchedImage); // return the stitched image as a texture
+			// Estimate a safe maximum canvas size based on the range of tiles
+			int imageWidth = (gridWidth * tileWidth) + halfTileWidth + padding * 2;
+			int imageHeight = (gridHeight * halfTileHeight) + tileHeight + padding * 2;
+
+			Image stitchedImage = Image.Create(imageWidth, imageHeight, false, Image.Format.Rgba8);
+			stitchedImage.Fill(new Color(0, 0, 0, 0)); 
+
+			// Calculate the start position for drawing.
+			// This shifts the entire composite image so that the top-most tile is at a padded position.
+			Vector2I startPosition = new Vector2I(padding, padding + (gridHeight * halfTileHeight));
+
+			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(data);
+
+			imgs.Reverse();
+
+			foreach (var D in imgs) 
+			{
+				Image currentImage = D.I;
+				PlaceableBigData pbd = D.PBD;
+				Vector2I tileOff = pbd.GetOffset(); 
+
+				// Apply a canvas-relative offset to account for negative grid coords
+				Vector2I relativeOff = tileOff - new Vector2I(minX, minY);
+
+				// Horizontal position is based on tile's X coordinate
+				int pixelX = startPosition.X + (relativeOff.X * tileWidth);
+
+				// Vertical position is based on tile's Y coordinate, inverting the stack logic
+				int pixelY = startPosition.Y + (relativeOff.Y * halfTileHeight); 
+
+				// Horizontal stagger on odd rows
+				if (relativeOff.Y % 2 != 0) {
+					pixelX += halfTileWidth;
+				}
+
+				// Fix for tiles being weirldy offset
+				if (((tileOff.X + tileOff.Y) % 2) != 0) {
+					pixelY -= halfTileHeight;
+					pixelX += halfTileWidth;
+				}
+
+
+				// Construct Position of tile
+				Vector2I finalPixelPosition = new Vector2I(pixelX, pixelY);
+
+				// Subtract the tileHeight to align the top of the sprite with its pixelY
+				finalPixelPosition.Y -= tileHeight; 
+				finalPixelPosition.X -= halfTileWidth; 
+
+				// Use BlendRect for alpha blending
+				StitchImages(stitchedImage, currentImage, finalPixelPosition); 
+			}
+
+			var texture = new ImageTexture();
+			texture.SetImage(stitchedImage); 
+
+			return texture;
 		}
 	}
 }
