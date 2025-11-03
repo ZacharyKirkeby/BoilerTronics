@@ -69,7 +69,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			outputObj = new FactoryFurnaceOutput(0, 0, 0);
 			
 			/*
-			  []			 
+			||[]			 
 			[]{}
 			*/
 			List<PlaceableBigData> dir0 = new List<PlaceableBigData>();
@@ -89,13 +89,18 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 				outputObj
 			));
+			dir0.Add(new PlaceableBigData(
+				new Vector2I(0, -1),		// offset from object's origin
+				new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+				outputObj
+			));
 			
 			// update the texture grid
 			SetTextureGrid(dir0, 0);
 			
 			/*
 			[]{}
-			  []
+			||[]
 			*/
 			List<PlaceableBigData> dir1 = new List<PlaceableBigData>();
 			// update the list
@@ -114,12 +119,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 				outputObj
 			));
+			dir1.Add(new PlaceableBigData(
+				new Vector2I(0, 1),		// offset from object's origin
+				new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+				outputObj
+			));
 			// update the texture grid
 			SetTextureGrid(dir1, 1);
 			
 			/*
 			{}[]
-			[]
+			[]||
 			*/
 			List<PlaceableBigData> dir2 = new List<PlaceableBigData>();
 			// update the list
@@ -138,11 +148,16 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 				outputObj
 			));
+			dir2.Add(new PlaceableBigData(
+				new Vector2I(0, 1),		// offset from object's origin
+				new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+				outputObj
+			));
 			// update the texture grid
 			SetTextureGrid(dir2, 2);
 			
 			/*
-			[]
+			[]||
 			{}[]
 			*/
 			List<PlaceableBigData> dir3 = new List<PlaceableBigData>();
@@ -160,6 +175,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			dir3.Add(new PlaceableBigData(
 				new Vector2I(1, 0),		// offset from object's origin
 				new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+				outputObj
+			));
+			dir3.Add(new PlaceableBigData(
+				new Vector2I(0, -1),		// offset from object's origin
+				new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
 				outputObj
 			));
 			// update the texture grid
