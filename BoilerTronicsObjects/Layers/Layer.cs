@@ -377,7 +377,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
-		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
+		public void MouseInput(InputEvent @event, int targetSel)
 		{
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
@@ -404,7 +404,6 @@ namespace BoilerTronicsObjects.Layers
 					if (objAtPos != null || !CheckValidPos(tileCoords.X, tileCoords.Y)) {
 						// reset so we don't place accidently
 						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-						manager.objectToPlace = new Vector2I(-1, -1);
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
@@ -419,19 +418,12 @@ namespace BoilerTronicsObjects.Layers
 					// This will happen if we are mopving an object
 					PlaceableObject obj = manager.objectToMove;
 
-					if (obj == null) {
-						// Not moving, placing a new object
-						Vector2I atlasCords = manager.objectToPlace;
-						AddObject(ObjectFactory.CreateObject(tileCoords, atlasID, atlasCords));
-					} else {
-						obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
-						Vector2I newPos = obj.GetPos();
-						AddObject(obj); // place object
-					}
+					obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
+					Vector2I newPos = obj.GetPos();
+					AddObject(obj); // place object
 
 					// reset to prevent multiple placements
 					manager.objectToMove = null;
-					manager.objectToPlace = new Vector2I(-1, -1);
 					manager.placingObject = 0;
 					
 					// queue redraw for highlighting after moving an object
@@ -463,11 +455,10 @@ namespace BoilerTronicsObjects.Layers
 					sprite.Scale = grabbedObjectScaling;
 					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
 
-					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos.GetAtlasPos());
+					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos);
 
 					SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 					subView.AddChild(draggable);
-					manager.objectToPlace = objAtPos.GetAtlasPos();
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;

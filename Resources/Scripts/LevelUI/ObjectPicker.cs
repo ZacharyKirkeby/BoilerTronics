@@ -31,7 +31,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Vertical Conveyor", 100, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Horizontal Conveyor", 100, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Rotator", 100, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
-		new ItemInfo("Switch", 100, 2, new Vector2I(0,3), new Vector2I(85, 85), true), // Placeholder sprite ATM
+		new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
 	};
 
 	static ItemInfo[] ClawSection = {
@@ -84,8 +84,8 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, priceLabel, vboxPanel);
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, sourceID, posX, posY, priceLabel, vboxPanel);
 		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
@@ -147,7 +147,7 @@ public partial class ObjectPicker : HBoxContainer
 		nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 		nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
-		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
+		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
 
 		vbox.AddChild(background);
 		vbox.AddChild(nameLabel);
