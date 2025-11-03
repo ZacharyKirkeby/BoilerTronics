@@ -19,7 +19,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
 		private Parser _parser;
-		private RegisterLabel _registerDisplay;
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
@@ -39,7 +38,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
-			if (_registerDisplay != null) _registerDisplay.UpdateDisplay();
+			UpdateRegisterDisplay();
 	
 		}
 
@@ -80,17 +79,34 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public void SetParser(Parser parser)
 		{
 			this._parser = parser;
-			if (_registerDisplay == null)
-			{
-				_registerDisplay = new RegisterLabel();
-				_registerDisplay.SetParser(_parser);
-
-			}
 		}
 
 		public Parser GetParser()
 		{
 			return this._parser;
+		}
+
+		private void UpdateRegisterDisplay()
+		{
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
+			}
 		}
 
 		public void CreateTerminal()
@@ -246,11 +262,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
 			res["terminalCode"] = GetScript();
 			return res;
-		}
-
-		public RegisterLabel GetRegisterDisplay()
-		{
-			return _registerDisplay;
 		}
 
 	}
