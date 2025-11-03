@@ -83,6 +83,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			{
 				existing.QueueFree();
 			}
+			UpdateRegisterDisplay();
 		}
 		
 		private void UpdateRegisterDisplay()
