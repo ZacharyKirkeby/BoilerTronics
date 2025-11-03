@@ -14,8 +14,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 		public int dir;
 		private Parser _parser;
-		private RegisterLabel _registerDisplay;
-
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
@@ -42,12 +40,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void SetParser(Parser parser)
 		{
 			this._parser = parser;
-			if (_registerDisplay == null)
-			{
-				_registerDisplay = new RegisterLabel();
-				_registerDisplay.SetParser(_parser);
-
-			}
 		}
 		
 		public Parser GetParser()
@@ -197,7 +189,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
-			if (_registerDisplay != null) _registerDisplay.UpdateDisplay();
+			UpdateRegisterDisplay();
 		}
 
 		public void RegisterSteppable() {
@@ -234,9 +226,27 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			return E;
 		}
 		
-		public RegisterLabel GetRegisterDisplay()
+		private void UpdateRegisterDisplay()
 		{
-			return _registerDisplay;
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
+			}
 		}
 
 		public void CreateTerminal() {
