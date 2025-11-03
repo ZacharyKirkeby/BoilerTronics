@@ -194,6 +194,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		
 		if (error == true)
 		{
+			GD.PrintErr(lineNumber);
 			SetLineBackgroundColor(lineNumber, color);
 			QueueRedraw();
 			return;
