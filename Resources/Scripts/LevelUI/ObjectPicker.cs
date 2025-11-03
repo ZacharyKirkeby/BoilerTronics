@@ -101,6 +101,7 @@ public partial class ObjectPicker : HBoxContainer
 			GD.Print(item.table, " is not a valid id for the sprite tabel");
 			return; // make sure it exists
 		}
+
 		AddChild(new Control()); // Creates left padding so its not smushed against container
 
 		// get the tile
