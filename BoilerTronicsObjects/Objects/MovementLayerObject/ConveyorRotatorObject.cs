@@ -13,7 +13,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
 		private Parser _parser;
-		private RegisterLabel _registerDisplay;
 		CodeEdit E;
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
@@ -54,12 +53,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void SetParser(Parser parser)
 		{
 			this._parser = parser;
-			if (_registerDisplay == null)
-			{
-				_registerDisplay = new RegisterLabel();
-				_registerDisplay.SetParser(_parser);
-
-			}
 		}
 		
 		public Parser GetParser()
@@ -77,10 +70,11 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
-			if (_registerDisplay != null) _registerDisplay.UpdateDisplay();
+			UpdateRegisterDisplay();
 		}
 
-		public void Reset() {
+		public void Reset()
+		{
 			base.ResetPos();
 			_parser.Reset();
 			E.ClearAllHighlights();
@@ -88,6 +82,29 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			if (existing != null)
 			{
 				existing.QueueFree();
+			}
+		}
+		
+		private void UpdateRegisterDisplay()
+		{
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
 			}
 		}
 
@@ -100,11 +117,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.UnRegisterRunnable(this);
-		}
-		
-		public RegisterLabel GetRegisterDisplay()
-		{
-			return _registerDisplay;
 		}
 
 		// Methods that we can use via commands
