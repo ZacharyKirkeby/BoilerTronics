@@ -1,4 +1,3 @@
-// TODO: implement in more detail
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryFurnace : PlaceableBig, Movable {
+	public class FactoryPress : PlaceableBig, Movable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(2, 0);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -32,94 +31,35 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				// update the list
 				new PlaceableBigData(
+						new Vector2I(-1, 1),	// offset from object's origin
+						new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Down direction
 			new List<PlaceableBigData> {
-				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(1, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 1),	// offset from object's origin
-						new TileTex(1, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
+				// update the list
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, 1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
 						null
-						)
+						),
 			},
 			// Left direction
 			new List<PlaceableBigData> {
-				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, 1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
 			},
 			// Right direction
 			new List<PlaceableBigData> {
-				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
 			},
 		};
 
@@ -150,7 +90,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		// REMINDER:
 		// the entirety of the object's visuals/internal objects are generated here!
-		public FactoryFurnace(int OGX, int OGY, int altTitle = 0, int objectID = 200)
+		public FactoryPress(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
 			
