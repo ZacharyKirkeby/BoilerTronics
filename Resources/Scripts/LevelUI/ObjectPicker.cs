@@ -48,7 +48,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Input", 100, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Output", 100, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Furnace", 100, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
-		// new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
+		new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
 		new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
 	};
 

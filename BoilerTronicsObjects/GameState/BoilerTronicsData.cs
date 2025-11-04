@@ -21,6 +21,7 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
 			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
 			objectMap.Add(hashCoords(3, new Vector2I(0, 3)), 5);	//factorypress
+			objectMap.Add(hashCoords(3, new Vector2I(0, 2)), 6);	//factoryroller
 			
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
