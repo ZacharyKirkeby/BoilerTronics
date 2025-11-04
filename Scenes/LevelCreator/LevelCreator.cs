@@ -1,12 +1,60 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Parsing;
 public partial class LevelCreator : LevelUi
 {
-	// TODO: inherit most functionality from LevelUi.cs
-	// reminder: use the 'protected' or 'override' keywords to handle it here
-	
-	
+
+
+	private void _on_creatorsave_button_pressed()
+	{
+		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
+		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		foreach (string saveFile in saveFiles)
+		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		var saveName = GetNode<Label>("%SaveName");
+		saveName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
+
+	}
+
+	private void _on_creator_save_window_close_requested()
+	{
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		var saveName = GetNode<LineEdit>("%NewSaveName");
+		saveName.Text = "";
+		saveWindow.Visible = false;
+	}
+
+	private void _on_new_save_button_pressed()
+	{
+		var saveName = GetNode<LineEdit>("%NewSaveName");
+		var saveButton = GetNode<Button>("%NewSaveButton");
+		/* TODO: Ethen implement save logic using name from lineedit */
+
+	}
+	private void _on_existing_level_selector_item_selected(int index)
+	{
+		var saveName = GetNode<Label>("%SaveName");
+	 	OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		saveName.Text = dropdown.GetItemText(index);
+	}
+
+	private void _on_overwrite_save_button_pressed()
+	{
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		/* TODO: Ethen implement save logic 
+			you can find the file name selected with 
+			dropdown.GetItemText(dropdown.Selected);
+			if you need full path youll probably have to store it in a variable 
+			somewhere using logic later
+		*/
+	}
+
 }
