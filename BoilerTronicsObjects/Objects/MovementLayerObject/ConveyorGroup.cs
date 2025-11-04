@@ -17,6 +17,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
+			_parser = new Parser();
+			_parser._Ready();
 			CreateTerminal();
 			RegisterSteppable();
 		}
