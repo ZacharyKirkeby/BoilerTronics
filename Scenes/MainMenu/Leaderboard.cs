@@ -72,12 +72,13 @@ public partial class Leaderboard : CenterContainer
 			case 0:
 				leaderboard = new List<(string, float)>
 				{
-					("You", 100),
+					("You", 5),
 					("Ethan", 99),
 					("Abhi", 80),
-					("Keenan", 70),
+					("Keenan", 85),
 					("Zach", 60),
-					("Ethen", 50)
+					("Ethen", 50),
+					("Bob", 200)
 				};
 				break;
 			case 1:
@@ -93,12 +94,13 @@ public partial class Leaderboard : CenterContainer
 				break;
 		}
 		UpdateLeaderboard();
-		UpdateDisplay();
 	}
 	
 	public void UpdateLeaderboard() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		if(manager == null || manager.currLevel == null) {
+			leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
+			UpdateDisplay();
 			return;
 		}
 		float score = manager.currLevel.bestScore;
@@ -113,6 +115,7 @@ public partial class Leaderboard : CenterContainer
 	}
 	
 	private void UpdateDisplay() {
+		GD.Print("updating leadboard display");
 		var labels = new (Label name, Label score)[]
 		{
 			(firstName, firstScore),
@@ -138,8 +141,8 @@ public partial class Leaderboard : CenterContainer
 		var playerEntry = leaderboard.FirstOrDefault(entry => entry.Name == "You");
 		bool playerInTop = topEntries.Any(entry => entry.Name == "You");
 		
-		Label extraNameLabel = GetNodeOrNull<Label>("%playerName");
-		Label extraScoreLabel = GetNodeOrNull<Label>("%playerScore");
+		Label extraNameLabel = GetNodeOrNull<Label>("%extraName");
+		Label extraScoreLabel = GetNodeOrNull<Label>("%extraScore");
 
 		if (extraNameLabel != null && extraScoreLabel != null) {
 			if (!playerInTop && playerEntry.Name != null) {
@@ -149,8 +152,8 @@ public partial class Leaderboard : CenterContainer
 				extraNameLabel.Visible = true;
 				extraScoreLabel.Visible = true;
 
-				extraNameLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.8f, 1.0f));
-				extraScoreLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.8f, 1.0f));
+				extraNameLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
+				extraScoreLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
 			}
 			else {
 				extraNameLabel.Visible = false;
