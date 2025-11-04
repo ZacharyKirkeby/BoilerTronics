@@ -76,6 +76,7 @@ namespace BoilerTronicsObjects.Placeable
 		public Vector2I GetOffset() {
 			return new Vector2I(offset.X, offset.Y);
 		}
+
 		public void SetOffset(Vector2I input) {
 			this.offset.X = input.X;
 			this.offset.Y = input.Y;
@@ -126,94 +127,45 @@ namespace BoilerTronicsObjects.Placeable
 	
 	public abstract class PlaceableBig : PlaceableObject
 	{
+		public enum Direction {
+			UP = 0,
+			DOWN = 1,
+			LEFT = 2,
+			RIGHT = 3
+		}
+
 		// keep track of the object's actual-actual origin
 		// note: why does this exist? disabled until an actual reason exists.
 		// can assume "origin" to be OGX/OGY
 		// private Vector2I origin = new Vector2I(0, 0);
-		private int dir; // 0-3, representing the four directions
-		
-		// "textureGrid" will be a list of (texture, offsetFromPlaceableBig) data
-		// this is how we will construct the "big placeable" object
-		// an array of size 4, each element of which will be a list of the object's textures corresponding to 'dir'
-		private List<PlaceableBigData>[] textureGrid = new List<PlaceableBigData>[4];
+
+		private Direction dir; // This will be the direction the that object is facing
 		
 		// TODO: a child of a PlaceableBig should accordingly set up its 'textureGrid' in this constructor
 		public PlaceableBig(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0) 
 		: base(OGX, OGY, sourceId, atlasPos, altTitle)
 		{
-			// this.origin.X = OGX;
-			// this.origin.Y = OGY;
-			
-			// NOTE: THIS IS JUST A DEMO FOR WHAT CHILD OBJECTS SHOULD DO
-			
-			List<PlaceableBigData> dir0 = new List<PlaceableBigData>();
-			// update the list
-			dir0.Add(new PlaceableBigData(
-				new Vector2I(0, 1),		// offset from object's origin
-				new TileTex(0, 0, 1)	// atlasX, atlasY, sourceId
-			));
-			
-			// update the texture grid (commented out because only child objects should do this)
-			// SetTextureGrid(dir0, 0);
-			
-			
-			/*
-			// Demo of creating specific slots to have specific behaviors
-			PlaceableObject insertionPoint = ObjectFactory.GenerateObject(int objectId, 0, 0);
-			
-			dir0.Add(new PlaceableBigData(
-				new Vector2I(0, 0),		// offset from object's origin
-				new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-				insertionPoint
-			));
-			*/
+			// Empty, everything should be taken care of by the parent class
 		}
 		
 		// get this PlaceableBig's direction (0-3)
-		public int GetDir() {
+		public Direction GetDir() {
 			return dir;
 		}
 		
 		// set this PlaceableBig's direction (0-3)
 		// if input is OOB, returns and does not affect 'dir'.
-		public void SetDir(int inputDir) {
-			if (inputDir < 0 || inputDir > 3) { return; }
+		public void SetDir(Direction inputDir) {
+			if (inputDir < Direction.UP || inputDir > Direction.RIGHT) { return; }
 			this.dir = inputDir;
 		}
-		
-		// TODO: should be called by child objects to establish a PlaceableBig's textureGrid.
-		// given the inputDir and the input list to be replaced, update accordingly
-		// should only be "private" as only children objects should ever use this functionalityt!
-		protected void SetTextureGrid(List<PlaceableBigData> input, int inputDir) {
-			this.textureGrid[inputDir] = input;
-		}
-		
-		// Returns the textureGrid according to this object's position
-		public List<PlaceableBigData> GetTextureGrid() {
-			return textureGrid[dir];
-		}
-		
-		// Returns the textureGrid according to the position specified by 'inputDir'
-		// Returns 'null' if 'inputDir' is OOB.
-		public List<PlaceableBigData> GetTextureGrid(int inputDir) {
-			if (inputDir < 0 || inputDir > 3) { return null; }
-			return textureGrid[inputDir];
-		}
-		
-		// Given the (absolute) inputs X, Y (assumed to be on the same layer as this object),
-		// return the corresponding PlaceableBigData at that position, if it exists.
-		// If not, returns 'null'.
-		// Also has overloaded methods that optionally allow for the object's direction to be specified
+
 		public PlaceableBigData GetDataAtPos(int x, int y) {
-			return GetDataAtPos(x, y, dir);
-		}
-		public PlaceableBigData GetDataAtPos(int x, int y, int inDir = -1) {
-			if (inDir == -1) {
-				inDir = dir;
-			}
-			Vector2I currPos = GetCurrPos();
+			Vector2I currPos = new Vector2I(x, y);
 			
-			List<PlaceableBigData> currData = textureGrid[inDir];
+			List<PlaceableBigData> currData = GetTextureGrid(this.dir);
+
+			if (currData == null) return null;
 			
 			foreach (PlaceableBigData dat in currData) {
 				Vector2I datPos = dat.GetPosition(currPos);
@@ -225,46 +177,41 @@ namespace BoilerTronicsObjects.Placeable
 			
 			return null;
 		}
+
 		public PlaceableBigData GetDataAtPos(Vector2I input) {
 			return GetDataAtPos(input.X, input.Y);
 		}
-		public PlaceableBigData GetDataAtPos(Vector2I input, int inDir = -1) {
-			return GetDataAtPos(input.X, input.Y, inDir);
+
+		/** These should be set in the child, this will be used in the stic methods to construct the stitched texture **/
+
+		public override Texture GetTexture() {
+			return null;
 		}
 		
-		
-		private Vector2I GetMaxOffsets() {
-			Vector2I V = new Vector2I(0,0);
-
-			foreach (PlaceableBigData PBD in GetData()) { // Loop through all textures in the realivent direction
-				Vector2I off = PBD.GetOffset();	
-				if (off.X > V.X) V.X = off.X;
-				if (off.Y > V.Y) V.Y = off.Y;
-			}
-				
-			return V;
+		public virtual List<PlaceableBigData> GetTextureGrid() {
+			return null;
 		}
 
-		private List<PlaceableBigData> GetData() {
-			return textureGrid[dir];
+		public virtual List<PlaceableBigData> GetTextureGrid(Direction inDir) {
+			return null;
 		}
 
-		private List<(Image, PlaceableBigData)> GetSortedImgs() {
+		/** Static methods to stitch together images **/
+
+		private static List<(Image, PlaceableBigData)> GetSortedImgs(List<PlaceableBigData> data) {
 			List<(Image, PlaceableBigData)> imgs = new List<(Image, PlaceableBigData)>();
 
 			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
 
-			foreach (PlaceableBigData PBD in GetData()) {
+			foreach (PlaceableBigData PBD in data) {
 				// Get the texture for each PBD
-
 				TileTex TT = PBD.GetTileTex();
 
 				int ID = TT.GetSourceId();
 				Vector2I AtPos = TT.GetAtlasPos();
 
-				int sourceid = tileSet.GetSourceId(ID);
-
-				TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+				// int sourceid = tileSet.GetSourceId(ID);
+				TileSetAtlasSource tileSetSource = tileSet.GetSource(ID) as TileSetAtlasSource;
 
 				// get the tile
 				var tile = tileSetSource.GetTileTextureRegion(AtPos);
@@ -280,53 +227,100 @@ namespace BoilerTronicsObjects.Placeable
 			return imgs;
 		}
 
-		private Image StitchImages(Image baseImg, Image addition, Vector2I offset) {
+		private static Image StitchImages(Image baseImg, Image addition, Vector2I offset) {
 
 			// Define the source rectangle from the overlay image
-			Rect2I addRect = new Rect2I(Vector2I.Zero, addition.GetSize());
+			Rect2I addRect = new Rect2I(0, 0, addition.GetWidth(), addition.GetHeight());
 
 			// Draw the addition on the new image with some offset
-			baseImg.BlitRect(baseImg, addRect, offset);
+			baseImg.BlendRect(addition, addRect, offset);
 
 			return baseImg;
 		}
 
-		// TODO: Keenan work this out!
 		// i.e. return a "texture" (or something) that displays all the textures of this object
 		// arrayed in a manner that looks nice. will have to programatically generate (ideally) to
 		// handle all four directions properly.
-		public override Texture GetTexture()
+		public static Texture GetBigTexture(List<PlaceableBigData> data)
 		{
-			// Get the height and width of the big placable
-			// Create a large texture based on this height and width
-			// Get list of the textures of the cells
-			// Place the textures on the large texture in the correct spot
-			// 	This should be done is a specific order to ensure correct rendering
+			const int tileWidth = 32;
+			const int tileHeight = 16; 
+			const int halfTileWidth = 16; 
+			const int halfTileHeight = 8; 
 
-			// This will be used to construct the large stitched texture
-			Vector2I Size = GetMaxOffsets();
-
-			// This wil lbe used to get the data for the texture
-			List<PlaceableBigData> Data = GetData();
-
-			// We need to sort the textures to add them in the correct order
-			Image StitchedImage = Image.Create(Size.X * 64, Size.Y * 32, false, Image.Format.Rgb8);
-
-			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(); // We need tile tex to keep track of offset
-			
-			foreach (var D in imgs) {
-				Image I = D.I;
-				PlaceableBigData PBD = D.PBD;
-
-				Vector2I off = PBD.GetOffset();
-
-				off *= new Vector2I(64, 32); // multiply to get pixel offset
-
-				StitchedImage = StitchImages(StitchedImage, I, off); // Stitch Images together
+			// 1. Find the min/max tile coordinates to determine the overall grid extents
+			int minX = 0, minY = 0, maxX = 0, maxY = 0;
+			foreach (var pbd in data)
+			{
+				Vector2I off = pbd.GetOffset();
+				if (off.X < minX) minX = off.X;
+				if (off.Y < minY) minY = off.Y;
+				if (off.X > maxX) maxX = off.X;
+				if (off.Y > maxY) maxY = off.Y;
 			}
 
+			// 2. Calculate actual pixel size with extra padding to prevent cropping
+			int padding = tileWidth * 2; // Increased padding for safety
+			int gridWidth = maxX - minX + 1;
+			int gridHeight = maxY - minY + 1;
 
-			return ImageTexture.CreateFromImage(StitchedImage); // return the stitched image as a texture
+			// Estimate a safe maximum canvas size based on the range of tiles
+			int imageWidth = (gridWidth * tileWidth) + halfTileWidth + padding * 2;
+			int imageHeight = (gridHeight * halfTileHeight) + tileHeight + padding * 2;
+
+			Image stitchedImage = Image.Create(imageWidth, imageHeight, false, Image.Format.Rgba8);
+			stitchedImage.Fill(new Color(0, 0, 0, 0)); 
+
+			// Calculate the start position for drawing.
+			// This shifts the entire composite image so that the top-most tile is at a padded position.
+			Vector2I startPosition = new Vector2I(padding, padding + (gridHeight * halfTileHeight));
+
+			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(data);
+
+			imgs.Reverse();
+
+			foreach (var D in imgs) 
+			{
+				Image currentImage = D.I;
+				PlaceableBigData pbd = D.PBD;
+				Vector2I tileOff = pbd.GetOffset(); 
+
+				// Apply a canvas-relative offset to account for negative grid coords
+				Vector2I relativeOff = tileOff - new Vector2I(minX, minY);
+
+				// Horizontal position is based on tile's X coordinate
+				int pixelX = startPosition.X + (relativeOff.X * tileWidth);
+
+				// Vertical position is based on tile's Y coordinate, inverting the stack logic
+				int pixelY = startPosition.Y + (relativeOff.Y * halfTileHeight); 
+
+				// Horizontal stagger on odd rows
+				if (relativeOff.Y % 2 != 0) {
+					pixelX += halfTileWidth;
+				}
+
+				// Fix for tiles being weirldy offset
+				if (((tileOff.X + tileOff.Y) % 2) != 0) {
+					pixelY -= halfTileHeight;
+					pixelX += halfTileWidth;
+				}
+
+
+				// Construct Position of tile
+				Vector2I finalPixelPosition = new Vector2I(pixelX, pixelY);
+
+				// Subtract the tileHeight to align the top of the sprite with its pixelY
+				finalPixelPosition.Y -= tileHeight; 
+				finalPixelPosition.X -= halfTileWidth; 
+
+				// Use BlendRect for alpha blending
+				StitchImages(stitchedImage, currentImage, finalPixelPosition); 
+			}
+
+			var texture = new ImageTexture();
+			texture.SetImage(stitchedImage); 
+
+			return texture;
 		}
 	}
 }

@@ -35,7 +35,6 @@ public partial class BoilerTronicsGlobalManager : Node
 	public int currSlection;
 	public int placingObject;
 	public ObjectPicker picker;
-	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
 	public Terminals terminalContainer;

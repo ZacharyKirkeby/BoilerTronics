@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using System.Linq;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
 
 // this script will be 
 public partial class DragableObjectControl : Control {
@@ -10,18 +12,17 @@ public partial class DragableObjectControl : Control {
 	public static Window objectControlWindow;
 	Sprite2D sprite;
 	Vector2I atlasCords;
-	int selection;
+	int sourceID;
 	static Vector2I visibleObjectScaling = new Vector2I(3, 3);
 	Label priceLabel;
 	PanelContainer vboxPanel;
 	Button submitButton;
 	Window priceChangeWindow;
 	LineEdit priceBox;
-	int itemNumber;
-	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection, Label priceLabel, PanelContainer vboxPanel, int itemNumber)
+	// int itemNumber;
+
+	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel)
 	{
-
-
 		sprite = new Sprite2D();
 		// get texture
 		sprite.Texture = texture;
@@ -29,10 +30,10 @@ public partial class DragableObjectControl : Control {
 		sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(posX, posY));
 		AddChild(sprite);
 		this.atlasCords = atlasCords;
-		this.selection = selection;
 		this.vboxPanel = vboxPanel;
 		this.priceLabel = priceLabel;
-		this.itemNumber = itemNumber;
+		this.sourceID = sourceID;
+		// this.itemNumber = itemNumber;
 	}
 
 	public override void _Ready() {
@@ -46,28 +47,35 @@ public partial class DragableObjectControl : Control {
 			&& allowDrag)
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
 			if (manager.currLevel.StepCount != 0) return; // Don't allow placement while we are stepping
 
+			manager.placingObject = 1;
+
+			// We now need to make the object so that we place it :D
+			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords);
+
 			// We want to spawn a new draggable object and pass in all the correct values
-			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, atlasCords);
+			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, obj);
+
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
 			// spawn terminal perhap?
 
 			GD.Print("Created new dragable:", draggable);
-			manager.objectToPlace = atlasCords;
-			manager.placingObject = 1;
-			manager.currSlection = selection;
 		}
-		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")
+		// else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")
+		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right) // Right click will rotate if the object we are displaying is big
 		{
-			DragableObjectMenu(buttonEvent2);
+			// DragableObjectMenu(buttonEvent2);
+			// Do something here to rotate lol (unsure what that looks like tbh)
 		}
 		else
 		{
 			base._Input(@event); // pass downward
 		}
 	}
+
 	public void DragableObjectMenu(InputEventMouseButton buttonEvent2)
 	{
 		PopupMenu popup = new PopupMenu();
@@ -99,8 +107,11 @@ public partial class DragableObjectControl : Control {
 		};
 		popup.Popup();
 	}
+
 	private void OnSubmitPrice() 
 	{
+		/*
+		 * Not sure if we need this, prices should be staic and defined in code
 		vboxPanel.GetChild<VBoxContainer>(0).GetChild<Label>(2).Text = "Price: $" + priceBox.Text;
 		GD.Print(selection);
 		if (selection == 1)
@@ -120,6 +131,7 @@ public partial class DragableObjectControl : Control {
 		}
 		priceBox.Text = "";
 		priceChangeWindow.Visible = false;
+		*/
 		
 		submitButton.QueueFree();
 	}
