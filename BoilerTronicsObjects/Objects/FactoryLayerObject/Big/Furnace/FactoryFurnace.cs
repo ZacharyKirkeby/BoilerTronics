@@ -60,18 +60,18 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						null
 						),
 				new PlaceableBigData(
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
 						new Vector2I(1, -1),	// offset from object's origin
 						new TileTex(1, 0, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
 						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 						null
 						)
 			},
@@ -79,22 +79,22 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
+						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
 						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
 						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
@@ -102,22 +102,22 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
 						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
+						new Vector2I(1, -1),	// offset from object's origin
 						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(3, 0, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(3, 0, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
