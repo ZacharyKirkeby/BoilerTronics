@@ -31,6 +31,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	public int GetLevelID() { return levelID; }
 	public int GetLevelLoadSlot() { return levelLoadSlot; }
 	
+	// NOTE: why is this "testing"? this is fully functional atm
 	/***** Testing vars *****/
 	public int currSlection;
 	public int placingObject;

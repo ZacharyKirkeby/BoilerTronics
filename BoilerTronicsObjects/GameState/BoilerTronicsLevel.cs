@@ -37,6 +37,11 @@ public partial class BoilerTronicsLevel : Node2D
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
+	
+	// store min, max of X, Y coordinates, based off the dimensions of the level
+	public Vector2 minCoords;
+	public Vector2 maxCoords;
+	
 	private BoilerTronicsLevel.GameRunState RunState;
 
 	private float StepDeltaTime = 1.0f; // 1 Second
@@ -247,6 +252,10 @@ public partial class BoilerTronicsLevel : Node2D
 		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		
+		// update the min, max coordinates
+		minCoords = c1;
+		maxCoords = c3;
 
 		// Set the run state to Idle
 		RunState = BoilerTronicsLevel.GameRunState.Idle;

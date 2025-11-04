@@ -9,8 +9,21 @@ namespace BoilerTronicsObjects.GameCamera {
 		// tracks right mouse button held
 		private bool rmbHeld = false;
 		
+		// camera offset to reach the center of the screen
+		// viewport size is (1408, 750)
+		private const float cameraOffsetY = -525;
+		private static Vector2 cameraOffset = new Vector2(-200, cameraOffsetY);
+		
+		// how much beyond the min/max of a level the camera can move
+		private const float cameraBoundaryBufferAmount = 10;
+		private static Vector2 cameraBoundaryBuffer = new Vector2(cameraBoundaryBufferAmount, cameraBoundaryBufferAmount);
+		
+		// general multiplier for the boundary of the camera
+		private const float cameraBoundaryMult = 0.8f;
+		
+		// zoom factor
 		private const float zoomFactor = 0.1f;
-		 
+		
 		// additive zoom
 		private Vector2 zoomFloat = new Vector2(zoomFactor,  zoomFactor);
 		
@@ -34,6 +47,51 @@ namespace BoilerTronicsObjects.GameCamera {
 			Vector2 diff = p1 - p0;
 			// GD.Print("diff: ",  diff);
 			this.Position -= diff;
+		}
+		
+		
+		// makes sure that the screen is within "bounds"
+		public void validateScreenPos() {
+			// try and get the global manager
+			// if it still doesn't exist, crash.
+			if (manager == null) {
+				manager = BoilerTronicsGlobalManager.GlobalManager;
+				
+				if (manager == null) { return; }
+			}
+		
+			// cameraOffset = GetViewport().GetVisibleRect().Size;
+			// GD.Print("camera size: ", GetViewport().GetVisibleRect().Size);
+			// GD.Print("camera size2: ", GetParent().GetViewport().GetVisibleRect().Size);
+			
+			// get min, max coordinates
+			// these are the local positions of the floor tilemap's edges
+			Vector2 minCoords = manager.currLevel.minCoords;
+			Vector2 maxCoords = manager.currLevel.maxCoords;
+			
+			// apply camera offset, camera boundary buffer to calculate the min/max valid coordinates that
+			// the camera can exist in
+			Vector2 minValidCoords = ((minCoords - cameraBoundaryBuffer) * this.GetZoom().X * cameraBoundaryMult + cameraOffset);
+			Vector2 maxValidCoords = ((maxCoords + cameraBoundaryBuffer) * this.GetZoom().X * cameraBoundaryMult + cameraOffset);
+			
+			// GD.Print("\ncurr camera coords: ", this.Position);
+			GD.Print("min camera coords: ", minValidCoords);
+			GD.Print("max camera coords: ", maxValidCoords);
+			
+			// restrict camera panning
+			if (this.Position.X < minValidCoords.X) { 
+				this.SetPosition(new Vector2(minValidCoords.X, this.Position.Y));
+			}
+			if (this.Position.Y < minValidCoords.Y) { 
+				this.SetPosition(new Vector2(this.Position.X, minValidCoords.Y));
+			}
+			if (this.Position.X > maxValidCoords.X) { 
+				this.SetPosition(new Vector2(maxValidCoords.X, this.Position.Y));
+			}
+			if (this.Position.Y > maxValidCoords.Y) { 
+				this.SetPosition(new Vector2(this.Position.X, maxValidCoords.Y));
+			}
+			// GD.Print("updated camera coords: ", this.Position, "\n");
 		}
 		
 		// handle mouse inputs (RMB, scroll wheel)
@@ -71,6 +129,8 @@ namespace BoilerTronicsObjects.GameCamera {
 							zoomToTarget(zoomOut);
 						}
 					}
+					
+					validateScreenPos();
 				}
 				// end
 			}
@@ -79,6 +139,8 @@ namespace BoilerTronicsObjects.GameCamera {
 			if (@event is InputEventMouseMotion eventMouseMotion && rmbHeld) {
 				// need to account for zoom level!
 				this.Position += eventMouseMotion.GetScreenRelative() * -1 / this.GetZoom().X;//new Vector2(5, 5);
+			
+				validateScreenPos();
 			}
 		}
 			

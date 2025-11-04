@@ -87,9 +87,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -285,5 +285,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-    }
+	}
 }
