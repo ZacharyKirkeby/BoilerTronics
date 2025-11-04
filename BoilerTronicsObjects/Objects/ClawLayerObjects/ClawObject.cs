@@ -55,7 +55,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Reset() {
 			base.ResetPos();
-			_parser.Reset();
+			_parser.Reset(); //disposed object error?
 			heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
