@@ -400,8 +400,12 @@ namespace BoilerTronicsObjects.Layers
 			if (manager.placingObject == 1) {
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
+					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
+					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
+						 CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
+					}
 					// make sure nothing is there already
-					if (objAtPos != null || !CheckValidPos(tileCoords.X, tileCoords.Y)) {
+					if (objAtPos != null || !validPos) {
 						// reset so we don't place accidently
 						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 						manager.placingObject = 0;
