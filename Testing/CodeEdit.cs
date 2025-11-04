@@ -21,7 +21,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	private Layer highlightedLayer;
 	private bool highlightingObject = false;
 
-    public override void _Ready()
+	public override void _Ready()
 	{
 		AddToGroup("CodeTerminals");
 		HighlightCurrentLine = true;
@@ -49,16 +49,20 @@ public partial class CodeEdit : Godot.CodeEdit
 	// TODO: current Terminals.cs implementation doesn't call this properly on initial level creation
 	public void TerminalSelected() {
 		GD.Print("terminal selected");
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
-		TryHighlightingObject();
+		if (manager.currLevel.StepCount == 0) {
+			TryHighlightingObject();
+		}
 	}
 	
 	public void TryHighlightingObject() {
 		GD.Print("CodeEdit: correspondingObject: ", correspondingObject);
 		if (correspondingObject != null) {
-			
+			GD.Print("CodeEdit: checking if object is scriptable");
 			// Scriptable case
 			if (correspondingObject is Scriptable) {
+				GD.Print("CodeEdit: object is scriptable");
 				// highlight corresponding object
 				/*
 				OLD INEFFICIENT CODE
@@ -79,13 +83,7 @@ public partial class CodeEdit : Godot.CodeEdit
 					GD.Print("CodeEdit: could not find object on layer to highlight");
 				}
 				*/
-				
-				// Extremely simplified method to highlight a tile
 				Layer layer = correspondingObject.GetParentLayer();
-				if (layer != null) {
-					layer.HighlightTile(true, correspondingObject.GetCurrPos());
-					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
-				}
 				
 				if (correspondingObject is ConveyorGroup) {
 					// what if the object is a ConveyorGroup object?
@@ -95,7 +93,12 @@ public partial class CodeEdit : Godot.CodeEdit
 					
 					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
 					// Get the first item from the ConveyorGroup's list
-					PlaceableObject obj = (PlaceableObject) ((ConveyorGroup) correspondingObject).convList[0];
+					ConveyorGroup conv = (ConveyorGroup) correspondingObject;
+					if (conv.convList.Count == 0) {
+						GD.Print("CodeEdit: ConveyorGroup associated with terminal is empty.");
+						return;
+					}
+					PlaceableObject obj = (PlaceableObject) conv.convList[0];
 					
 					// if that doesn't work, just give up.
 					if (obj == null) {
@@ -107,8 +110,17 @@ public partial class CodeEdit : Godot.CodeEdit
 					if (layer != null) {
 						layer.HighlightTile(true, obj.GetCurrPos());
 						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+						return;
 					}
 				}
+				
+				// Extremely simplified method to highlight a tile
+				if (layer != null) {
+					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+					layer.HighlightTile(true, correspondingObject.GetCurrPos());
+					return;
+				}
+				GD.Print("CodeEdit: failed to highlight correspondingObject.");
 			}
 		} else {
 			GD.Print("CodeEdit: correspondingObject is null!");
@@ -192,7 +204,7 @@ public partial class CodeEdit : Godot.CodeEdit
 			SetLineBackgroundColor(lineNumber, color);
 			QueueRedraw();
 			return;
-        }
+		}
 
 		int totalLines = GetLineCount();
 		if (totalLines == 0) {
