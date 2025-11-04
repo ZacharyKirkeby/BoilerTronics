@@ -31,13 +31,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				// update the list
 				new PlaceableBigData(
-						new Vector2I(-1, 1),	// offset from object's origin
+						new Vector2I(0, 0),	// offset from object's origin
 						new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
@@ -45,21 +45,43 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				// update the list
 				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
+						new Vector2I(-1, 0),	// offset from object's origin
 						new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Left direction
 			new List<PlaceableBigData> {
+				// update the list
+				new PlaceableBigData(
+						new Vector2I(-1, 1),	// offset from object's origin
+						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(3, 3, 3),	// atlasX, atlasY, sourceId
+						null
+						),
 			},
 			// Right direction
 			new List<PlaceableBigData> {
+				// update the list
+				new PlaceableBigData(
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(1, 3, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						null
+						),
 			},
 		};
 
