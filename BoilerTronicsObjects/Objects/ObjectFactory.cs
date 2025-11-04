@@ -54,6 +54,9 @@ namespace BoilerTronicsObjects.Objects
 				case 4:
 					//factory furnace
 					return FactoryFurnace.StaticGetTextureGrid(dir);
+				case 5:
+					//factory press
+					return FactoryPress.StaticGetTextureGrid(dir);
 			}
 
 			return null;
@@ -78,6 +81,9 @@ namespace BoilerTronicsObjects.Objects
 				case 4:
 					//factory furnace
 					return new FactoryFurnace(x, y, 0);
+				case 5:
+					//factory furnace
+					return new FactoryPress(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
