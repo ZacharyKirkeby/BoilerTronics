@@ -19,7 +19,7 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
 			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
 			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
-			objectMap.Add(hashCoords(3, new Vector2I(2, 0)), 4);	//factoryfurnace
+			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
 			
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
