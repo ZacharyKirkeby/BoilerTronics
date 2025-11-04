@@ -64,9 +64,9 @@ public partial class LevelCreator : Node2D
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
-		parser.Connect(Parser.SignalName.ErrorRaised, new Callable(manager.currLevel.E, nameof(manager.currLevel.E.OnParserErrorRaised)));
+		// parser.Connect(Parser.SignalName.ErrorRaised, new Callable(manager.currLevel.E, nameof(manager.currLevel.E.OnParserErrorRaised)));
 
-		manager.currLevel.P = parser;
+		// manager.currLevel.P = parser;
 
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
