@@ -54,6 +54,7 @@ public partial class DragableObjectControl : Control {
 
 			// We now need to make the object so that we place it :D
 			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords);
+			GD.Print(obj);
 
 			// We want to spawn a new draggable object and pass in all the correct values
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, obj);
