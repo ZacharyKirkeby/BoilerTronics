@@ -18,6 +18,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
+			_parser = new Parser();
+			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 		} // create object
