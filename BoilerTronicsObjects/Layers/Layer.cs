@@ -121,12 +121,15 @@ namespace BoilerTronicsObjects.Layers
 			// check base origin point
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
 			
+			Vector2I objOrigin = new Vector2I(X, Y);
+			
 			// iterate through 'obj' texture grid
 			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 				// check each individual data point
-				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				Vector2I dataCoords = data.GetPosition(objOrigin); // data.GetPosition(obj.GetPos());
 				X = dataCoords.X;
 				Y = dataCoords.Y;
+				// GD.Print("CheckValidPos: PlaceableBig case: ", dataCoords);
 				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
 			}
 			
@@ -402,7 +405,8 @@ namespace BoilerTronicsObjects.Layers
 				{
 					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
 					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
-						 CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
+						GD.Print("Placement: Checking PlaceableBig object");
+						validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
 					}
 					// make sure nothing is there already
 					if (objAtPos != null || !validPos) {
