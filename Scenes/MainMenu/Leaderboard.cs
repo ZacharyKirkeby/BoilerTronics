@@ -17,6 +17,8 @@ public partial class Leaderboard : CenterContainer
 	static private Label fifthScore;
 	static private Label sixthName;
 	static private Label sixthScore;
+	static private Label extraName;
+	static private Label extraScore;
 
 	private List<(string Name, float Score)> leaderboard = new();
 
@@ -115,5 +117,29 @@ public partial class Leaderboard : CenterContainer
 				labels[i].score.Text = "-";
 			}
 		}
+		
+		var topEntries = leaderboard.Take(6).ToList();
+		var playerEntry = leaderboard.FirstOrDefault(entry => entry.Name == "You");
+		bool playerInTop = topEntries.Any(entry => entry.Name == "You");
+		
+		Label extraNameLabel = GetNodeOrNull<Label>("%playerName");
+		Label extraScoreLabel = GetNodeOrNull<Label>("%playerScore");
+
+		if (extraNameLabel != null && extraScoreLabel != null) {
+			if (!playerInTop && playerEntry.Name != null) {
+				extraNameLabel.Text = playerEntry.Name;
+				extraScoreLabel.Text = playerEntry.Score.ToString("F2");
+
+				extraNameLabel.Visible = true;
+				extraScoreLabel.Visible = true;
+
+				extraNameLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.8f, 1.0f));
+				extraScoreLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.8f, 1.0f));
+			}
+			else {
+				extraNameLabel.Visible = false;
+				extraScoreLabel.Visible = false;
+			}
+	}
 	}
 }
