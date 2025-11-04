@@ -67,17 +67,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// Left direction
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
+						new Vector2I(0, 0),	// offset from object's origin
 						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
+						new Vector2I(2, -1),	// offset from object's origin
 						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
+						new Vector2I(1, -1),	// offset from object's origin
 						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
