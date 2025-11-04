@@ -12,6 +12,8 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
+	public static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	
 	public int x;
 	public int y;
 	public int StepCount;
@@ -123,11 +125,9 @@ public partial class BoilerTronicsLevel : Node2D
 		FloorFillLayer fillLayer = new FloorFillLayer();
 		fillLayer.TileSet = tileset;
 		
-		// 5 tiles surrounding playable area
-		int fillSurround = 5;
-		
-		// TODO: load floor texture from level metadata
-		TileTex floorTex = new TileTex(new Vector2I(0, 0), 6);
+		// Load boundary data from BoilerTronicsSaveState
+		int fillSurround = manager.saveState.boundarySize;
+		TileTex floorTex = manager.saveState.boundaryTex;
 		fillLayer.GenerateLayer(x, y, fillSurround, floorTex);
 		
 		// spawn in the tile map
