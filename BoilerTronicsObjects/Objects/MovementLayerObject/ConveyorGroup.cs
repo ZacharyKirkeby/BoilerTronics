@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using Parsing;
 using System.Collections;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -12,9 +13,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		private CodeEdit E;
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 		public int dir;
+		private Parser _parser;
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
+			_parser = new Parser();
+			_parser._Ready();
 			CreateTerminal();
 			RegisterSteppable();
 		}
@@ -28,11 +32,22 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		// Remove from conveyor group
-		public void RemoveConveyor(ConveyorObject conv) {
+		public void RemoveConveyor(ConveyorObject conv)
+		{
 			if (conv == null) return;
 			convList.Remove(conv);
 			VerifyGroup();
 		}
+		
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this._parser;
+        }
 
 		// Verify Group
 		public void VerifyGroup() {
@@ -169,8 +184,13 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			// Make a call to the parser
 			GD.Print("Conveyor");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			if (_parser == null)
+			{
+				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
+				return;
+			}
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void RegisterSteppable() {
@@ -186,8 +206,16 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void Reset() {
 			// Loop through elements in group and reset (shouldn't do anything)
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
+			_parser.ResetProgramCounter();
+			_parser.ResetRegisters();
+			_parser.Reset();
 			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
 		}
 
 		// Scriptable interface
