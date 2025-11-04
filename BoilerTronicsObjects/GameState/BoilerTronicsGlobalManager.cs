@@ -47,7 +47,9 @@ public partial class BoilerTronicsGlobalManager : Node
 	public CodeEdit lastSelectedTerminal;
 
 	/* Save Data Vars: */
-	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
+	// TODO: saveState updated to be a publicly available variable!
+	// Update systems accordingly (TODO)
+	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
 	/* Hold addresses to the layer objects; required for the save function! */
 	public Layer 	layerClaw;
