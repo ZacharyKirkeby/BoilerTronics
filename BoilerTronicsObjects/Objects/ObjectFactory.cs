@@ -49,6 +49,16 @@ namespace BoilerTronicsObjects.Objects
 			return GenerateObject(objectId, x, y);
 		}
 
+		public static List<PlaceableBigData> GetBigObjectTileMap(int objectID, PlaceableBig.Direction dir) {
+			switch (objectID) {
+				case 4:
+					//factory furnace
+					return FactoryFurnace.StaticGetTextureGrid(dir);
+			}
+
+			return null;
+		}
+
 		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
 			switch (objectID) {
 				case -1:

@@ -243,6 +243,8 @@ namespace BoilerTronicsObjects.Placeable
 		// handle all four directions properly.
 		public static Texture GetBigTexture(List<PlaceableBigData> data)
 		{
+			if (data == null) return null;
+
 			const int tileWidth = 32;
 			const int tileHeight = 16; 
 			const int halfTileWidth = 16; 

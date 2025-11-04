@@ -1,6 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
 using System.Reflection.Metadata;
+using BoilerTronicsObjects.Data;
 
 public partial class ObjectPicker : HBoxContainer
 {
@@ -31,7 +35,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Vertical Conveyor", 100, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Horizontal Conveyor", 100, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Rotator", 100, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
-		new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
+		// new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
 	};
 
 	static ItemInfo[] ClawSection = {
@@ -44,8 +48,8 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Input", 100, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Output", 100, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Furnace", 100, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
-		new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
-		new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
+		// new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
+		// new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
 	};
 
 	public void Update(int selection) 
@@ -103,13 +107,22 @@ public partial class ObjectPicker : HBoxContainer
 		}
 
 		AddChild(new Control()); // Creates left padding so its not smushed against container
+		ImageTexture texture = new ImageTexture();
 
-		// get the tile
-		var tile = tileSetSource.GetTileTextureRegion(item.atPos);
-		var fullTexture = tileSetSource.Texture.GetImage();
-		var imageTexture = fullTexture.GetRegion(tile);
-		var texture = new ImageTexture();
-		texture.SetImage(imageTexture);
+		if (item.big) {
+			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(item.table, item.atPos)], PlaceableBig.Direction.UP);
+			GD.Print(data);
+			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
+			double hScale = 32 / texture.GetHeight();
+			double wScale = 32 / texture.GetWidth();
+		} else {
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(item.atPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			texture.SetImage(imageTexture);
+		}
 
 		// Initialize vbox with styling for Name Label and Sprite
 		PanelContainer vboxPanel = new PanelContainer();

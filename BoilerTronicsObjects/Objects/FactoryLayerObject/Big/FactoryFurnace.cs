@@ -236,5 +236,19 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			}
 			return null;
 		}
+
+		public static List<PlaceableBigData> StaticGetTextureGrid(Direction dir) {
+			switch (dir) {
+				case Direction.UP:
+					return textureGrid[0];
+				case Direction.DOWN:
+					return textureGrid[1];
+				case Direction.LEFT:
+					return textureGrid[2];
+				case Direction.RIGHT:
+					return textureGrid[3];
+			}
+			return null;
+		}
 	}
 }
