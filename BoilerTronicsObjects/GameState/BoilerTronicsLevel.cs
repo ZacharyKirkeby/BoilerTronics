@@ -264,6 +264,7 @@ public partial class BoilerTronicsLevel : Node2D
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		QueueRedraw();
 		
+		/*
 		// Prepare parsers for each scriptable element
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
@@ -271,8 +272,6 @@ public partial class BoilerTronicsLevel : Node2D
 
 			if (rObj is Scriptable scriptableObj)
 			{
-				Parser parser = new Parser();
-				parser._Ready();
 				scriptableObj.SetParser(parser);
 				CodeEdit terminal = scriptableObj.GetTerminal();
 				if (terminal != null)
@@ -286,16 +285,6 @@ public partial class BoilerTronicsLevel : Node2D
 						bool error = parser.LoadProgram(terminal.Text);
 						// TODO - dynamic error checking terminal.ValidateCode();
 						//var errors = terminal.GetValidationErrors();
-						/*
-						if (errors.Count > 0)
-						{
-							GD.Print($"  {obj.GetType().Name} terminal has {errors.Count} validation error(s)");
-						}
-						else
-						{
-							GD.Print($"  {obj.GetType().Name} parser initialized successfully with {parser.GetProgramLength()} instructions");
-						}
-						*/
 					}
 				}
 				else
@@ -305,6 +294,7 @@ public partial class BoilerTronicsLevel : Node2D
 			}
 		}	
 		base._Ready();
+		*/
 	}
 
 	/* Draw boarder for layer */
