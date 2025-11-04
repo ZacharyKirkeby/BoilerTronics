@@ -292,9 +292,9 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 
@@ -372,7 +372,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			  )
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running

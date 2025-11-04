@@ -131,6 +131,14 @@ namespace BoilerTronicsObjects.Layers
 			// update placeable's parent layer info
 			newPlaceable.SetParentLayer(this);
 			
+			// update highlighting as object is placed
+			if (newPlaceable is Scriptable) {
+				GD.Print("Layer.cs: calling to terminal to highlight");
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				Terminals currTerminal = manager.terminalContainer;
+				currTerminal.GetCurrentEditor().TerminalSelected();
+			}
+			
 			numItems++;
 		}
 
@@ -238,7 +246,7 @@ namespace BoilerTronicsObjects.Layers
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
-							AddObject(manager.objectToMove); // move the object back to it's original position
+							AddObject(manager.objectToMove); // move the object back to its original position
 							manager.objectToMove = null;
 						}
 

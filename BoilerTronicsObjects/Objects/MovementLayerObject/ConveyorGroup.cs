@@ -7,7 +7,7 @@ using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
-	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable{
+	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable {
 		
 		public ArrayList convList = new ArrayList(); // List of conveyor objects
 		private CodeEdit E;
@@ -45,9 +45,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		// Verify Group
 		public void VerifyGroup() {
@@ -228,10 +228,15 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			E = manager.terminalContainer.AddEditor();
+			Terminals currTerminal = manager.terminalContainer;
+			E = currTerminal.AddEditor();
 			E.Name = "Conveyor";
-			
 			E.SetCorrespondingObject(this);
+			
+			// set as active tab
+			currTerminal.SetCurrentTab(currTerminal.GetTabCount() - 1);
+			// update terminal highlighting
+			currTerminal.GetCurrentEditor().TerminalSelected();
 		}
 
 		public void DestroyTerminal() {
