@@ -48,10 +48,26 @@ public partial class Leaderboard : CenterContainer
 			("Ethen", 50)
 		};
 		
+		// TODO: instead, load leaderboard data from a local save!
+		// i.e. construct the leaderboard (only top 6 scores?) after loading a local save
+		/*
+			First: if no local leaderboard save exists, "request from server"
+			- for now, load from game files
+
+			If the user ("You") has a locally saved statistic, load and attempt to "insert" into the list, and update the leaderboard accordingly
+			
+			TODO: what about if the user is way below the leaderboard?
+			- discussed with Abhi, will be implemented soon
+		
+		*/
+		
 		UpdateLeaderboard();
 		UpdateDisplay();
 	}
 	private void _on_option_button_item_selected(int index) {
+		
+		// TODO: implement loading system for these cases, i.e. these are the actually relevant cases that spawn/register
+		// on level leaderboard select
 		switch (index) {
 			case 0:
 				leaderboard = new List<(string, float)>
