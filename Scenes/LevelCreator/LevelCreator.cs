@@ -7,7 +7,21 @@ using Parsing;
 public partial class LevelCreator : LevelUi
 {
 
-
+	public override void _Ready()
+	{
+		base._Ready();
+		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
+		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		foreach (string saveFile in saveFiles)
+		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
+		var saveName = GetNode<Label>("%SaveName");
+		saveName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
+	}
 	private void _on_creatorsave_button_pressed()
 	{
 		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
@@ -39,11 +53,26 @@ public partial class LevelCreator : LevelUi
 		/* TODO: Ethen implement save logic using name from lineedit */
 
 	}
+	private void _on_new_level_button_pressed()
+	{
+		var levelName = GetNode<LineEdit>("%NewLevelName");
+		var newLevelButton = GetNode<Button>("%NewLevelButton");
+		/* TODO: Ethen implement new level logic using name from lineedit */
+		GetNode<Window>("%CreatorLoadWindow").Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+	}
 	private void _on_existing_level_selector_item_selected(int index)
 	{
 		var saveName = GetNode<Label>("%SaveName");
-	 	OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
 		saveName.Text = dropdown.GetItemText(index);
+	}
+	private void _on_existing_load_level_selector_item_selected(int index)
+	{
+		var loadName = GetNode<Label>("%LoadName");
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		loadName.Text = dropdown.GetItemText(index);
 	}
 
 	private void _on_overwrite_save_button_pressed()
@@ -55,6 +84,19 @@ public partial class LevelCreator : LevelUi
 			if you need full path youll probably have to store it in a variable 
 			somewhere using logic later
 		*/
+	}
+	private void _on_load_level_button_pressed()
+	{
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		/* TODO: Ethen implement load logic 
+			you can find the file name selected with 
+			dropdown.GetItemText(dropdown.Selected);
+			if you need full path youll probably have to store it in a variable 
+			somewhere using logic later
+		*/
+		GetNode<Window>("%CreatorLoadWindow").Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
 	}
 
 	private void _on_protected_tiles_pressed()
