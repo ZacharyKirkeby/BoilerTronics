@@ -60,6 +60,13 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(9, new Vector2I(3, 0)), 203); //ironplate
 			objectMap.Add(hashCoords(9, new Vector2I(0, 1)), 204); //ironrod
 			
+			// Input Objects
+			objectMap.Add(hashCoords(0, new Vector2I(1, 0)), 250); 	//factoryin - coal
+			objectMap.Add(hashCoords(0, new Vector2I(2, 0)), 251); 	//factoryin - iron ore
+			objectMap.Add(hashCoords(0, new Vector2I(3, 0)), 252); 	//factoryin - iron bar
+			objectMap.Add(hashCoords(0, new Vector2I(0, 2)), 253); 	//factoryin - iron plate
+			objectMap.Add(hashCoords(0, new Vector2I(1, 2)), 254); 	//factoryin - iron rod
+			
 			hasInitializedObjectMap = true;
 		}
 		
@@ -69,6 +76,7 @@ namespace BoilerTronicsObjects.Data {
 		// 100-149:	rail layer
 		// 150-199:	movement layer
 		// 200-249: items
+		// 250-299: input items (ignoring basic input obj)
 		
 		// not exactly a perfect system, but so long as no single value exceeds ~1000,
 		// this will return a unique value very time.
