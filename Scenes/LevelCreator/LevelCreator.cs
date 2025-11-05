@@ -84,7 +84,14 @@ public partial class LevelCreator : LevelUi
 			if you need full path youll probably have to store it in a variable 
 			somewhere using logic later
 		*/
+		
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		
+		string levelname = dropdown.GetItemText(dropdown.Selected);
+		GD.Print("LevelCreator: overwriting level: ", levelname);
+		man.saveState.SaveDataTo(man, "LevelCreator", "/" + levelname);
 	}
+	
 	private void _on_load_level_button_pressed()
 	{
 		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
@@ -108,8 +115,11 @@ public partial class LevelCreator : LevelUi
 		// updates manager field such that the level knows to load from a specific given level
 		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
 		man.loadLevelName = dropdown.GetItemText(dropdown.Selected);
+		
 		GD.Print("LevelCreator: loading level: ", man.loadLevelName);
 		GetTree().ReloadCurrentScene();
+		
+		// TODO: fix "_push_unhandled_input_internal: Condition "is_inside_tree()" is true" errors
 	}
 
 	private void _on_protected_tiles_pressed()
