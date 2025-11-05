@@ -42,6 +42,7 @@ namespace BoilerTronicsObjects.Objects
 			
 			if (!gotID) {
 				GD.Print("ERROR: catastrophic failure from ObjectFactory, could not find target object");
+				GD.Print("Failed to find: " + atlasPos + ", sourceID: ", sourceId);
 				return null;
 			}
 			
@@ -150,6 +151,21 @@ namespace BoilerTronicsObjects.Objects
 				case 204:
 					//IronRod
 					return new IronRodObject(x, y, 0);
+				case 250:
+					//factoryin - coal
+					return new FactoryInputObject(x, y, 0, 200);
+				case 251:
+					//factoryin - iron ore
+					return new FactoryInputObject(x, y, 0, 201);
+				case 252:
+					//factoryin - iron bar
+					return new FactoryInputObject(x, y, 0, 202);
+				case 253:
+					//factoryin - iron plate
+					return new FactoryInputObject(x, y, 0, 203);
+				case 254:
+					//factoryin - iron rod
+					return new FactoryInputObject(x, y, 0, 204);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;

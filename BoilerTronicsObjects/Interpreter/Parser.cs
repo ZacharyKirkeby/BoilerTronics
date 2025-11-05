@@ -14,6 +14,9 @@ public partial class Parser : Node2D
 {
 	private readonly Dictionary<string, int> _registers = new();
 	private readonly Dictionary<string, int> _labelMap = new();
+	private readonly Dictionary<string, int> _registerTTL = new();
+	private const int REGISTER_DECAY_STEPS = 5;
+	private int _stepConsumingInstructionCount = 0;
 	private List<int> _sourceLineNumbers = new();
 	private List<string> _validLines = new();
 	private int _programCounter = 0;
@@ -25,6 +28,7 @@ public partial class Parser : Node2D
 	private CodeEdit currEditor;
 	private string editorName;
 	private bool _debug = true;
+	private bool _decayFlag = true;
 	private enum qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
@@ -81,11 +85,18 @@ public partial class Parser : Node2D
 		_registers["r1"] = 0;
 		_registers["r2"] = 0;
 		_registers["cmp"] = 0;
+
+		// Da Kill Set
+		_registerTTL["r0"] = -1; // TTL-time to live
+		_registerTTL["r1"] = -1;
+		_registerTTL["r2"] = -1;
+		_registerTTL["cmp"] = -1;
 	}
 
 	public void ResetRegisters()
 	{
 		InitializeRegisters();
+		_stepConsumingInstructionCount = 0;
 	}
 
 	public int GetProgramCounter() => _programCounter;
@@ -188,8 +199,8 @@ public partial class Parser : Node2D
 			if (!ExecuteInstruction(lineToProcess, ref _programCounter, out consumesStep))
 			{
 				if (_debug) GD.PrintErr($"Failed to execute: {lineToProcess}");
-				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-				manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
+				//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				//manager.currLevel.E.OnParserErrorRaised(currentPC, "Execution error", editorName);
 				break;
 			}
 
@@ -262,7 +273,8 @@ public partial class Parser : Node2D
 		// Handle wait - NOT FREE
 		if (WaitRegex().IsMatch(line))
 		{
-			GD.Print("Command: Wait");
+			if (_debug) GD.Print("Command: Wait");
+			ProcessRegisterDecay();
 			consumesStep = true;
 			return true;
 		}
@@ -273,7 +285,7 @@ public partial class Parser : Node2D
 		{
 			string reg = wrtMatch.Groups[1].Value;
 			int val = int.Parse(wrtMatch.Groups[2].Value);
-			_registers[reg] = val;
+			SetRegister(reg, val);
 			GD.Print($"Write: {reg} = {val}");
 			return true;
 		}
@@ -297,6 +309,14 @@ public partial class Parser : Node2D
 
 			int val1 = GetOperandValue(operand1);
 			int val2 = GetOperandValue(operand2);
+
+			if (val1 == -9999999 || val2 == -9999999)
+			{
+				GD.PrintErr("Error: operand is NULL due to decay");
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(pc, "Error: operand is NULL due to decay", editorName);
+				return false;
+			}
 
 			switch (cmd)
 			{
@@ -333,7 +353,8 @@ public partial class Parser : Node2D
 		bool result = _commandParser.Process(line);
 		if (result)
 		{
-			consumesStep = true; // mov, rot, grb, drp, swt all consume steps
+			consumesStep = true; // mov, rot, grb, drp all consume steps
+			ProcessRegisterDecay();
 		}
 		return result;
 	}
@@ -550,6 +571,63 @@ public partial class Parser : Node2D
 		_validLines.Clear();
 		_labelMap.Clear();
 		ResetRegisters();
+		_registerTTL["r0"] = -1;
+		_registerTTL["r1"] = -1;
+		_registerTTL["r2"] = -1;
+		_registerTTL["cmp"] = -1;
+	
 		if (_debug) GD.Print("Parser reset complete");
 	}
+	public int GetRegisterTTL(string registerName)
+	{
+		if (_registerTTL.ContainsKey(registerName))
+		{
+			return _registerTTL[registerName];
+		}
+		return -1;
+	}
+
+	private void SetRegister(string reg, int value)
+	{
+		_registers[reg] = value;
+		_registerTTL[reg] = REGISTER_DECAY_STEPS;
+
+		if (_debug) GD.Print($"Set {reg} = {value}, TTL = {REGISTER_DECAY_STEPS}");
+	}
+
+	private void ProcessRegisterDecay()
+	{
+		_stepConsumingInstructionCount++;
+		if (!this._decayFlag)
+        {
+			return;
+        }
+
+		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
+		{
+			if (_registerTTL[reg] > 0)
+			{
+				_registerTTL[reg]--;
+
+				if (_debug) GD.Print($"Decay: {reg} TTL = {_registerTTL[reg]}");
+
+				if (_registerTTL[reg] == 0)
+				{
+					_registers[reg] = -9999999;
+					_registerTTL[reg] = -9999999;
+
+					if (_debug) GD.Print($"Register {reg} decayed to 0");
+				}
+			}
+		}
+	}
+
+	public void setDecayFlag(bool input)
+    {
+		this._decayFlag = input;
+    }
+
+
+
+
 }

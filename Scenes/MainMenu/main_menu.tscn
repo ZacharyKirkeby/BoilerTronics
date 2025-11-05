@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
-[ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="3_w5buf"]
+[ext_resource type="Theme" uid="uid://doo374ukjh36b" path="res://Resources/ButtonThemes/buttontheme.tres" id="3_w5buf"]
 [ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="4_6c6cs"]
 [ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="5_fo6ee"]
 [ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="6_nqd6t"]
@@ -30,17 +30,17 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trj04"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mdp32"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vr1f0"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rlg4b"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t1dhk"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w5buf"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yhxw7"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6c6cs"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5egv6"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fo6ee"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_16hvj"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nqd6t"]
 
 [sub_resource type="Theme" id="Theme_cp0ys"]
 Button/colors/font_color = Color(0, 0, 0, 1)
@@ -53,13 +53,13 @@ CheckBox/colors/font_hover_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_hover_pressed_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/colors/font_pressed_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 CheckBox/fonts/font = ExtResource("2_rlg4b")
-CheckBox/styles/focus = SubResource("StyleBoxEmpty_trj04")
-CheckBox/styles/hover = SubResource("StyleBoxEmpty_vr1f0")
-CheckBox/styles/hover_pressed = SubResource("StyleBoxEmpty_t1dhk")
-CheckBox/styles/normal = SubResource("StyleBoxEmpty_yhxw7")
-CheckBox/styles/pressed = SubResource("StyleBoxEmpty_5egv6")
+CheckBox/styles/focus = SubResource("StyleBoxEmpty_mdp32")
+CheckBox/styles/hover = SubResource("StyleBoxEmpty_rlg4b")
+CheckBox/styles/hover_pressed = SubResource("StyleBoxEmpty_w5buf")
+CheckBox/styles/normal = SubResource("StyleBoxEmpty_6c6cs")
+CheckBox/styles/pressed = SubResource("StyleBoxEmpty_fo6ee")
 Label/fonts/font = ExtResource("2_rlg4b")
-Label/styles/focus = SubResource("StyleBoxEmpty_16hvj")
+Label/styles/focus = SubResource("StyleBoxEmpty_nqd6t")
 
 [sub_resource type="FontVariation" id="FontVariation_28flt"]
 base_font = ExtResource("2_rlg4b")
@@ -223,6 +223,12 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 40
 text = "Main Volume"
 horizontal_alignment = 1
+
+[node name="Mute" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Mute"
 
 [node name="Fullscreen" type="CheckBox" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
 custom_minimum_size = Vector2(500, 0)
@@ -544,6 +550,7 @@ text = "Back"
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]

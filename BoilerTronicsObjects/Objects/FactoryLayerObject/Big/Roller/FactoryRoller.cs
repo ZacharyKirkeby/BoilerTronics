@@ -10,7 +10,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FactoryRoller : PlaceableBig, BigMovable {
 		
-		static Vector2I objectAtlasPos = new Vector2I(2, 0);
+		static Vector2I objectAtlasPos = new Vector2I(0, 2);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
