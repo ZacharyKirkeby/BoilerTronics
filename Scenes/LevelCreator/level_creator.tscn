@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3 uid="uid://dbyevtgjtslm8"]
+[gd_scene load_steps=56 format=3 uid="uid://dbyevtgjtslm8"]
 
 [ext_resource type="Script" uid="uid://dmk70fc4hqsoi" path="res://Scenes/LevelCreator/LevelCreator.cs" id="1_hjyc6"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_wuwu2"]
@@ -7,6 +7,7 @@
 [ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_wmnsp"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_fsp7g"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_4npyk"]
+[ext_resource type="Texture2D" uid="uid://dlpjkwqv3ugl1" path="res://Resources/Icons/shield.png" id="8_h0dp1"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_wirw1"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="9_2coc3"]
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="10_ebwh2"]
@@ -512,13 +513,16 @@ icon = ExtResource("7_4npyk")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Hints" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="ProtectedTiles" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_constants/icon_max_width = 25
 theme_override_fonts/font = ExtResource("3_js8ol")
 theme_override_font_sizes/font_size = 25
-text = "?"
+icon = ExtResource("8_h0dp1")
+icon_alignment = 1
 
 [node name="Documentation" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
@@ -907,12 +911,38 @@ size_flags_vertical = 4
 theme = SubResource("Theme_h0dp1")
 alignment = 1
 
+[node name="ProtectedTilesWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Protected Tiles"
+initial_position = 1
+size = Vector2i(300, 200)
+
+[node name="CenterContainer" type="CenterContainer" parent="ProtectedTilesWindow"]
+custom_minimum_size = Vector2(300, 200)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="OptionButton" type="OptionButton" parent="ProtectedTilesWindow/CenterContainer"]
+layout_mode = 2
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_creatorsave_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics" to="." method="_on_level_statistics_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu" to="." method="_on_level_statistics_menu_close_requested"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ProtectedTiles" to="." method="_on_protected_tiles_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
