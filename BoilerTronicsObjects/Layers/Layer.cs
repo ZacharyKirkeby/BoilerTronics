@@ -116,6 +116,13 @@ namespace BoilerTronicsObjects.Layers
 
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
+			// reset layer transparency
+			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
+			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
+			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
+			manager.layerRail.Modulate = new Color(1, 1, 1, 1);
+			manager.layerMovement.Modulate = new Color(1, 1, 1, 1);
+			
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			Vector2I pos = newPlaceable.GetPos();
 			if (FindObject(pos) != null) return;

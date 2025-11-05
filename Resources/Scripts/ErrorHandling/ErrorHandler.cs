@@ -43,6 +43,7 @@ public partial class ErrorHandler : Node2D {
 		// TODO: Rework this to work with the new error handling system ? (see if this is doable)
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 		GD.Print(codeEditors);
+		GD.Print(editorName);
 
 		foreach (CodeEdit editor in codeEditors)
 		{
@@ -51,7 +52,7 @@ public partial class ErrorHandler : Node2D {
 				var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
 				if (existing != null)
 				{
-					existing.QueueFree();
+					existing.Free();
 				}
 
 				// Create error label
@@ -75,7 +76,7 @@ public partial class ErrorHandler : Node2D {
 				errorLabel.Position = new Vector2(0, editor.Size.Y - 20);
 
 				// Highlight error line
-				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f));
+				editor.HighlightLine(lineNumber, new Color(1, 0, 0, 0.25f), true);
 
 				//TODO - delete
 				GD.Print($"[ParserError] {editorName}: Line {lineNumber} -> {message}");
