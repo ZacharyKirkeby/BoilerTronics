@@ -16,6 +16,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
+		private Parser _parser;
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
@@ -31,8 +32,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		public void Step() {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			//E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
+			if (_parser == null)
+			{
+				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
+				return;
+			}
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void RegisterSteppable() {
@@ -51,19 +58,38 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			}
 			this.heldObject = null;
 			base.ResetPos();
-			
+
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
 			ResetFrame();
+			_parser.Reset();
+			heldObject = null;
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
+			// Maybe need to make a call to our codeEdit/interrputer?
 		}
 
 		// Scriptable interface
 
 
 		// Methods to deal with terminals
-		public CodeEdit GetTerminal() {
+		public CodeEdit GetTerminal()
+		{
 			return E;
 		}
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+        {
+			return this._parser;
+        }
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -235,6 +261,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		// Command methods
 		public ClawObject(int OGX, int OGY, int altTitle) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+			_parser = new Parser();
+			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 			
@@ -259,5 +287,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-	}
+    }
 }
