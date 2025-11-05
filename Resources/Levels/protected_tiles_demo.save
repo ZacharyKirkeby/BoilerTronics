@@ -1,6 +1,6 @@
 {"metadata":{"levelId":0,"mapSize":[30,30],"saveSlot":-1}}
 {"clawLayer":{"objects":[{"OGX":5,"OGY":11,"altTitle":"null","atlasPosX":0,"atlasPosY":0,"sourceId":1}],"uneditableTiles":[]}}
 {"factoryLayer":{"objects":[{"OGX":9,"OGY":12,"altTitle":"null","atlasPosX":0,"atlasPosY":0,"sourceId":0}],"uneditableTiles":[]}}
-{"floorLayer":{"objects":[],"uneditableTiles":[[0, 0]]}}
+{"floorLayer":{"objects":[],"uneditableTiles":[[15, 15]]}}
 {"movementlayer":{"objects":[{"OGX":6,"OGY":13,"altTitle":"null","atlasPosX":0,"atlasPosY":0,"sourceId":2}],"uneditableTiles":[]}}
 {"railLayer":{"objects":[{"OGX":11,"OGY":11,"altTitle":"null","atlasPosX":0,"atlasPosY":1,"sourceId":1}],"uneditableTiles":[]}}

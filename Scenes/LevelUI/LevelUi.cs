@@ -39,7 +39,8 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
-		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
+		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
 
 
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
@@ -85,14 +86,21 @@ public partial class LevelUi : Node2D
 		//AddChild(autoTest);
 		
 		// Set fullscreen toggle
-		var fullscreenButton = GetNode<Button>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen");
-		fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
-			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
-
+		
+		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		var fullscreenButton = GetNodeOrNull<Button>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen");
+		if (fullscreenButton != null) {
+			fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
+				|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
+		}
+		
 		// Set volume slider
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
-		var volSlider = GetNode<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
-		volSlider.Value = soundManager.GetCurrentVolume();
+		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		var volSlider = GetNodeOrNull<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
+		if (volSlider != null) {
+			volSlider.Value = soundManager.GetCurrentVolume();
+		}
 	}
 
 	public override void _Process(double delta) {

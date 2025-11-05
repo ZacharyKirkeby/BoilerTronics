@@ -599,9 +599,9 @@ public partial class Parser : Node2D
 	{
 		_stepConsumingInstructionCount++;
 		if (!this._decayFlag)
-        {
+		{
 			return;
-        }
+		}
 
 		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
 		{
@@ -623,9 +623,9 @@ public partial class Parser : Node2D
 	}
 
 	public void setDecayFlag(bool input)
-    {
+	{
 		this._decayFlag = input;
-    }
+	}
 
 
 
