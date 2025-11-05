@@ -271,16 +271,26 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			// If there is no factory object, return
 			if (factoryObj == null) return;
 			// If there is we want to check if it's moveable, if not return
-			if (!(factoryObj is Movable mObj)) return;
+			if (factoryObj is Movable mObj) {
+				// If it is, then we want to try to pick it up (or it's contents)
+				heldObject = mObj.PickUp();
+				GD.Print("Pickedup: ", heldObject);
 
-			// If it is, then we want to try to pick it up (or it's contents)
-			heldObject = mObj.PickUp();
-			GD.Print("Pickedup: ", heldObject);
-			
-			// FRAME SYSTEM
-			// update current frame to "display" a successful grab
-			SetFrameIndex(2);
-			manager.currLevel.cLayer.UpdateObject(this);
+				// FRAME SYSTEM
+				// update current frame to "display" a successful grab
+				SetFrameIndex(2);
+				manager.currLevel.cLayer.UpdateObject(this);
+			} else if (factoryObj is BigMovable bmObj) {
+				// If it is, then we want to try to pick it up (or it's contents)
+				heldObject = bmObj.PickUp(this.GetCurrPos());
+				GD.Print("Pickedup: ", heldObject);
+				GD.Print("TS is big");
+
+				// FRAME SYSTEM
+				// update current frame to "display" a successful grab
+				SetFrameIndex(2);
+				manager.currLevel.cLayer.UpdateObject(this);
+			}
 		}
 
 		public void Drop(string[] args) {
@@ -302,7 +312,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			} else if (factoryObj is Movable mObj) {
 				GD.Print("Placing object in factory object");
 				if (mObj.Place(heldObject)) heldObject = null;
+			} else if (factoryObj is BigMovable bmObj) {
+				GD.Print("Placing object in big factory object");
+				if (bmObj.Place(heldObject, this.GetCurrPos())) heldObject = null;
 			}
+
+			GD.Print("The fuck is this?");
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index

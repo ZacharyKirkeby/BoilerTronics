@@ -128,14 +128,36 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 		
-		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
-		// i.e. this object must somehow get the reference of the claw that is interacting
-		// with this object, then return "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
-		public PlaceableObject PickUp(Vector2I pos) {
+		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
+			foreach (PlaceableBigData BD in D) {
+				if (BD.GetPosition(this.GetCurrPos()) == P) return BD;
+			}
+
 			return null;
+		}
+
+		public PlaceableObject PickUp(Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject obj = BD.GetInternalObj();
+			// Get the obj if we can
+			PlaceableObject ret = null;
+			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
+			// Return the obj
+			return ret;
 		}
 		
 		public bool Place(PlaceableObject obj, Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject iObj = BD.GetInternalObj();
+			// Place in the obj if we can
+			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
+			// Otherwise we don't want that shit
 			return false;
 		}
 
@@ -217,13 +239,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public override List<PlaceableBigData> GetTextureGrid(Direction inDir) {
 			switch (inDir) {
 				case Direction.UP:
-					return textureGrid[0];
+					return objectData[0];
 				case Direction.DOWN:
-					return textureGrid[1];
+					return objectData[1];
 				case Direction.LEFT:
-					return textureGrid[2];
+					return objectData[2];
 				case Direction.RIGHT:
-					return textureGrid[3];
+					return objectData[3];
 			}
 			return null;
 		}
