@@ -77,7 +77,6 @@ public partial class DragableObjectControl : Control {
 				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
 			}
 			else if (selection == 3)
-			{
 				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);

@@ -32,7 +32,7 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(5, new Vector2I(1, 3)), 32);	//PipeBrokenFloorObject - Right
 			
 			// Materials
-			objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 200);	//factorymaterial
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 4)), 200);	//factorymaterial
 			
 			
 			// Claw/rail layer
@@ -52,6 +52,13 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(2, new Vector2I(0, 1)), 151); //conveyorrightdefault
 			objectMap.Add(hashCoords(2, new Vector2I(0, 2)), 152); //rotatordefault
 			objectMap.Add(hashCoords(2, new Vector2I(1, 0)), 153); //switch
+
+			// Materials
+			objectMap.Add(hashCoords(9, new Vector2I(0, 0)), 200); //coal
+			objectMap.Add(hashCoords(9, new Vector2I(1, 0)), 201); //ironore
+			objectMap.Add(hashCoords(9, new Vector2I(2, 0)), 202); //ironbar
+			objectMap.Add(hashCoords(9, new Vector2I(3, 0)), 203); //ironplate
+			objectMap.Add(hashCoords(9, new Vector2I(0, 1)), 204); //ironrod
 			
 			hasInitializedObjectMap = true;
 		}
