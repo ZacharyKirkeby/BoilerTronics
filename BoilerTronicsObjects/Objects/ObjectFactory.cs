@@ -45,54 +45,52 @@ namespace BoilerTronicsObjects.Objects
 				return null;
 			}
 			
-			switch (objectId) {
+			
+			return GenerateObject(objectId, x, y);
+		}
+
+		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
+			switch (objectID) {
 				case -1:
-					target = null;
-					GD.Print("ERROR: input objectId was invalid!");
-					GD.Print("sequence: %d, (%d, %d)", sourceId, atlasPos.X, atlasPos.Y);
-					break;
+					return null;
 				case 0:
 					//factoryin
-					target = new FactoryInputObject(x, y, 0);
-					break;
+					return new FactoryInputObject(x, y, 0);
 				case 1:
 					//factoryout
-					target = new FactoryOutputObject(x, y, 0);
-					break;
+					return new FactoryOutputObject(x, y, 0);
 				case 2:
 					//floordefault
-					target = new FloorTileObject(x, y, 0);
-					break;
+					return new FloorTileObject(x, y, 0);
+				case 3:
+					//factory machine
+					return new FactoryTestMachine(x, y, 0);
+				case 4:
+					//floordefault
+					return new FactoryTestMaterial(x, y, 0);
 				case 50:
 					//clawdefault
-					target = new ClawObject(x, y, 0);
-					break;
+					return new ClawObject(x, y, 0);
 				case 100:
 					//railleftdefault
-					target = new TrackObject(x, y, 0, 0);
-					break;
+					return new TrackObject(x, y, 0, 0);
 				case 101:
 					//railrightdefault
-					target = new TrackObject(x, y, 1, 0);
-					break;
+					return new TrackObject(x, y, 1, 0);
 				case 150:
 					//conveyorleftdefault
-					target = new ConveyorObject(x, y, 0, 0);
-					break;
+					return new ConveyorObject(x, y, 0, 0);
 				case 151:
 					//conveyorrightdefault
-					target = new ConveyorObject(x, y, 1, 0);
-					break;
+					return new ConveyorObject(x, y, 1, 0);
 				case 152:
 					//rotatordefault
-					target = new ConveyorRotatorObject(x, y, 0);
-					break;
-				case '_':
+					return new ConveyorRotatorObject(x, y, 0);
+				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
-					break;
+					return null;
 			}
-			
-			return target;//new ClawObject(x, y, 0);
 		}
 	}
+
 }

@@ -32,9 +32,11 @@ public partial class BoilerTronicsLevel : Node2D
 	public ErrorHandler E;
 	
 	//statistics variables for cutoffs values
-	public float ppsCutoff;
-	public float costCutoff;
-	public int stepsCutoff;
+	//TODO: set dynamically from avtual level file
+	public float ppsCutoff = 10;
+	public float costCutoff = 250;
+	public int stepsCutoff = 20;
+	public int targetProduction;
 	
 	//statistics variables for solution values
 	public float ppsSolution;
@@ -76,11 +78,10 @@ public partial class BoilerTronicsLevel : Node2D
 		levelUi.SetStatisticDefaults();
 	}
 	
-	public void UpdateCutoffs(float ppsC, float costC, int stepsC) {
-		ppsCutoff = ppsC;
-		costCutoff = costC;
-		stepsCutoff = stepsC;
-		levelUi.UpdateSolutionCutoffs(ppsC, costC, stepsC);
+	public void UpdateCutoffs() {
+		if(levelUi != null) {
+			levelUi.UpdateSolutionCutoffs(ppsCutoff, costCutoff, stepsCutoff);
+		}
 	}
 	private BoilerTronicsLevel.GameRunState RunState;
 
@@ -229,6 +230,12 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerRail.ZIndex = 3;
 		manager.layerMovement.ZIndex = 4;
 
+		manager.layerFloor.YSortEnabled = true;
+		manager.layerFactory.YSortEnabled = true;
+		manager.layerClaw.YSortEnabled = true;
+		manager.layerRail.YSortEnabled = true;
+		manager.layerMovement.YSortEnabled = true;
+
 		// Shift layers
 		manager.layerClaw.Position = new Vector2(0, -32);
 		manager.layerRail.Position = new Vector2(0, -32);
@@ -343,6 +350,10 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
+
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
 		
 		foreach (Runnable rObj in runnableList)
 		{
@@ -416,13 +427,6 @@ public partial class BoilerTronicsLevel : Node2D
 			rObj.Step();
 		}
 		StepCount++;
-		//test for stats
-		if(StepCount == 1) {
-			UpdateCutoffs(5,6,7);
-		}
-		else if(StepCount == 5) {
-			UpdateSolutionStats();
-		}
 	}
 
 	public override void _Process(double delta) {

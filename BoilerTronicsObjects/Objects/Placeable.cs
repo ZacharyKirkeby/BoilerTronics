@@ -94,7 +94,7 @@ namespace BoilerTronicsObjects.Placeable
 			CurrY = OGY;
 		}
 
-		public Texture GetTexture()
+		public virtual Texture GetTexture()
 		{
 			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
 			int sourceid = tileSet.GetSourceId(this.GetSourceID());
@@ -115,6 +115,7 @@ namespace BoilerTronicsObjects.Placeable
 		// NOTE: this should be very redundant, given that "is interface" exists!
 		// I (Ethen) didn't do enough research at the time;
 		// consider this as redundant!
+		// DEPRECATED
 		public bool Scriptable() {
 			return false;
 		}

@@ -1,6 +1,6 @@
+/*
 using Godot;
 using System;
-using Parsing;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
@@ -9,22 +9,19 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorRotatorObject : PlaceableObject, Scriptable, Runnable {
+	public class SwitchObject : PlaceableObject, Scriptable, Runnable {
 
 		static int layerSourceId = 2;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 
-		static Vector2I objectAtlasPos = new Vector2I(0, 2);
-		private Parser _parser;
+		static Vector2I objectAtlasPos = new Vector2I(0, 3);
 		CodeEdit E;
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
-			_parser = new Parser();
-			_parser._Ready();
+		public SwitchObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 		} // create object
@@ -37,7 +34,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
-			E.Name = "Rotator";
+			E.Name = "Switch";
 			
 			E.SetCorrespondingObject(this);
 		}
@@ -52,42 +49,19 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			E.Text = script;
 		}
 
-		public string GetScript()
-		{
+		public string GetScript() {
 			return E.Text;
-		}
-		
-		public void SetParser(Parser parser)
-		{
-			this._parser = parser;
-		}
-		
-		public Parser GetParser()
-		{
-			return this._parser;
 		}
 
 		public void Step() {
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (_parser == null)
-			{
-				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
-				return;
-			}
-			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+			manager.currLevel.P.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
 		}
 
 		public void Reset() {
 			base.ResetPos();
-			_parser.Reset();
-			E.ClearAllHighlights();
-			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
-			if (existing != null)
-			{
-				existing.QueueFree();
-			}
 		}
 
 		public void RegisterSteppable() {
@@ -114,28 +88,18 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		public void Rotate(string[] args) {
-			// Rotate rail object below us
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			// Get track obj on rail layer
-			PlaceableObject rail = manager.currLevel.rLayer.FindObject(this.GetPos());
-			GD.Print("Rail:", rail);
-			if (rail == null) return; // Can't rotate if there's no rail
-			if (!(rail is TrackObject tObj)) return; // This is not a rail object
-			GD.Print("tObj:", tObj);
+			// This will be the placeholder command for the switch command, this will be changed once the new interpreter system is pushed to main and pulled into this branch
+			// Get element on first position (This may be both a claw and a rail)
+			// Get element on second position (This may be both a claw and a rail)
 
-			// Change its position
-			int currdir = tObj.GetDir();
-			GD.Print("currDir:", currdir);
-			switch (currdir) {
-				case 0:
-					tObj.ChangeDir(1);
-					break;
-				case 1:
-					tObj.ChangeDir(0);
-					break;
-			}
+			// Add a check to make sure that the claw is not moving (This will eventually be overhauled with a new movement system when I get time, but is not needed for this sprint)
 
-			GD.Print("newDir:", tObj.GetDir());
+			// Remove element 1 from their layer
+			// Remove element 2 from their layer
+
+			// Place element 1 where elemet 2 is placed
+			// Place element 2 where elemet 1 is placed
+
 		}
 
 		// Override 'save' function to also return a script's information
@@ -148,3 +112,5 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 	}
 }
+
+*/

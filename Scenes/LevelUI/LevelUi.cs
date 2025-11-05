@@ -107,6 +107,7 @@ public partial class LevelUi : Node2D
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateCost(manager.currLevel.cost);
 		SetStatisticDefaults();
+		manager.currLevel.UpdateCutoffs();
 		manager.currLevel.E = new ErrorHandler();
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
