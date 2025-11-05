@@ -502,9 +502,11 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
-			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
+			GD.Print("collision but showing rail");
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
+			GD.Print("actual collision");
 		}
 	}
 
