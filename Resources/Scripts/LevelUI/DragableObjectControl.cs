@@ -1,8 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Data;
 
 // this script will be 
 public partial class DragableObjectControl : Control {
@@ -19,6 +21,7 @@ public partial class DragableObjectControl : Control {
 	Button submitButton;
 	Window priceChangeWindow;
 	LineEdit priceBox;
+	PlaceableBig.Direction dir;
 	// int itemNumber;
 
 	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel)
@@ -33,18 +36,17 @@ public partial class DragableObjectControl : Control {
 		this.vboxPanel = vboxPanel;
 		this.priceLabel = priceLabel;
 		this.sourceID = sourceID;
+		dir = PlaceableBig.Direction.UP; // Up by default
 		// this.itemNumber = itemNumber;
 	}
 
 	public override void _Ready() {
 		CustomMinimumSize = new Vector2(171, 171); // 256,256
-		
 	}
 
 	public override void _GuiInput(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed
-			&& allowDrag)
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.Pressed && allowDrag)
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
@@ -54,6 +56,9 @@ public partial class DragableObjectControl : Control {
 
 			// We now need to make the object so that we place it :D
 			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords);
+			GD.Print(obj);
+
+			if (obj is PlaceableBig bObj) bObj.SetDir(dir);
 
 			// We want to spawn a new draggable object and pass in all the correct values
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, obj);
@@ -85,10 +90,33 @@ public partial class DragableObjectControl : Control {
 			GD.Print("Created new dragable:", draggable);
 		}
 		// else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")
-		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right) // Right click will rotate if the object we are displaying is big
+		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && buttonEvent2.Pressed)
 		{
-			// DragableObjectMenu(buttonEvent2);
-			// Do something here to rotate lol (unsure what that looks like tbh)
+			// Change our direction
+			switch (dir) {
+				case PlaceableBig.Direction.UP:
+					dir = PlaceableBig.Direction.DOWN;
+					break;
+				case PlaceableBig.Direction.DOWN:
+					dir = PlaceableBig.Direction.LEFT;
+					break;
+				case PlaceableBig.Direction.LEFT:
+					dir = PlaceableBig.Direction.RIGHT;
+					break;
+				case PlaceableBig.Direction.RIGHT:
+					dir = PlaceableBig.Direction.UP;
+					break;
+			}
+
+			// Try to get data
+			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(this.sourceID, this.atlasCords)], dir);
+
+			// If we can get data (it's a big object)
+			if (data != null) {
+				// Then we can update the texture
+				ImageTexture texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+				sprite.Texture = texture;
+			}
 		}
 		else
 		{
