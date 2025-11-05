@@ -9,10 +9,10 @@ using BoilerTronicsObjects.Interfaces;
 using Parsing;
 using System.Collections;
 
-namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
-
+namespace BoilerTronicsObjects.Objects.ClawLayerObjects
+{
 	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
-		
+
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
@@ -29,7 +29,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		// Runnable Interface
-		public void Step() {
+		public void Step()
+		{
 			// Make a call to the parser
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			//E.HighlightLine(E.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
@@ -39,24 +40,29 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				return;
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+
 			if (highlight >= 0) {
 				E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 				if (manager.currLevel.E.HasError()) {
 					E.HighlightLine(highlight, new Color(1, 0, 0, 0.3f));
 				}
-				GD.Print("normal highlight");
 			}
+
+			UpdateRegisterDisplay();
 		}
 
-		public void RegisterSteppable() {
+		public void RegisterSteppable()
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.RegisterRunnable(this);
 		}
 
-		public void UnRegisterSteppable() {
+		public void UnRegisterSteppable()
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.UnRegisterRunnable(this);
 		}
+
 
 		public void Reset() {
 			if (this.heldObject != null) {
@@ -65,18 +71,21 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			this.heldObject = null;
 			base.ResetPos();
 			_parser.Reset();
-			heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 			if (existing != null)
 			{
 				existing.QueueFree();
 			}
+
 			// Maybe need to make a call to our codeEdit/interrupter?
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
 			ResetFrame();
+
+			// Maybe need to make a call to our codeEdit/interrputer?
+			UpdateRegisterDisplay();
 		}
 
 		// Scriptable interface
@@ -97,29 +106,57 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			return this._parser;
 		}
 
-		public void CreateTerminal() {
+		private void UpdateRegisterDisplay()
+		{
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
+			}
+		}
+
+		public void CreateTerminal()
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			E = manager.terminalContainer.AddEditor();
 			E.Name = "Claw";
-			
+
 			E.SetCorrespondingObject(this);
 		}
 
-		public void DestroyTerminal() {
+		public void DestroyTerminal()
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.terminalContainer.RemoveEditor(E);
 			E = null;
 		}
 
-		public void SetScript(string script) {
+		public void SetScript(string script)
+		{
 			E.Text = script;
 		}
 
-		public string GetScript() {
+		public string GetScript()
+		{
 			return E.Text;
 		}
 
-		private void throwError(ErrorHandler.ErrorType errorCode) {
+		private void throwError(ErrorHandler.ErrorType errorCode)
+		{
 			BoilerTronicsLevel level = BoilerTronicsGlobalManager.GlobalManager.currLevel;
 
 			Layer parentLayer = this.GetParentLayer();
@@ -134,13 +171,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		// Methods that we can use via commands
-		public void Move(string[] args) {
+		public void Move(string[] args)
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			if (args == null) return; // Error, no command
-			// else if (args[0] != "mov") return; // Not the correct command
+									  // else if (args[0] != "mov") return; // Not the correct command
 			else if (args.Length != 2) return; // Error, invalid args
-			else if (this.moving) {
+			else if (this.moving)
+			{
 				// Error, already moving
 				manager.currLevel.HaultObjects();
 			}
@@ -148,7 +187,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			Vector2I MoveVector;
 			int targetDir;
 
-			switch (args[1]) {
+			switch (args[1])
+			{
 				case "u":
 					MoveVector = new Vector2I(1, -1);
 					targetDir = TrackObject.Left;
@@ -176,7 +216,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			int maxY = level.y;
 
 			//check if coords are out of bounds
-			if (targetGrid.X < 0 || targetGrid.Y < 0 || targetGrid.X >= maxX || targetGrid.Y >= maxY) {
+			if (targetGrid.X < 0 || targetGrid.Y < 0 || targetGrid.X >= maxX || targetGrid.Y >= maxY)
+			{
 				throwError(ErrorHandler.ErrorType.ClawOutOfBounds);
 				return;
 			}
@@ -185,7 +226,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			PlaceableObject currObj = manager.currLevel.rLayer.FindObject(this.GetPos());
 
 			// Error: rail we are on is either none existant or the wrong direction
-			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir) {
+			if (!(currObj is TrackObject tCurrObj) || tCurrObj.GetDir() != targetDir)
+			{
 				throwError(ErrorHandler.ErrorType.ClawRail);
 				return;
 			}
@@ -194,10 +236,13 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			PlaceableObject targetObj = manager.currLevel.rLayer.FindObject(this.GetPos() + MoveVector);
 
 			// Error: rail we are going to is either none existant or the wrong direction
-			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir) {
+			if (!(targetObj is TrackObject tTargetObj) || tTargetObj.GetDir() != targetDir)
+			{
 				throwError(ErrorHandler.ErrorType.ClawRail);
 				return;
 			}
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Move);
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
@@ -261,7 +306,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			}
 		}
 
-		public void Rotate(string[] args) {
+		public void Rotate(string[] args)
+		{
 			return; // Throw error
 		}
 
@@ -285,10 +331,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			AddFrame(new TileTex(new Vector2I(0, 1), 10));
 		} // create object
 
-		~ClawObject() {
+		~ClawObject()
+		{
 			DestroyTerminal(); // Destries the terminal for this scriptable
 		}
-		
+
 		// Override 'save' function to also return a script's information
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
