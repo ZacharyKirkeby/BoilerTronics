@@ -175,30 +175,32 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
+			//TODO: Verify these
+			
 			// UP
 
-			objectData[0][0].SetInternalObj(null);
-			objectData[0][1].SetInternalObj(null);
-			objectData[0][2].SetInternalObj(null);
+			objectData[0][0].SetInternalObj(materialOut);
+			objectData[0][1].SetInternalObj(materialIn);
+			objectData[0][2].SetInternalObj(coalIn);
 			objectData[0][3].SetInternalObj(null);
 
 			// DOWN
-			objectData[1][0].SetInternalObj(null);
+			objectData[1][0].SetInternalObj(materialIn);
 			objectData[1][1].SetInternalObj(null);
-			objectData[1][2].SetInternalObj(null);
-			objectData[1][3].SetInternalObj(null);
+			objectData[1][2].SetInternalObj(materialOut);
+			objectData[1][3].SetInternalObj(coalIn);
 
 			// LEFT
 			objectData[2][0].SetInternalObj(null);
-			objectData[2][1].SetInternalObj(null);
-			objectData[2][2].SetInternalObj(null);
-			objectData[2][3].SetInternalObj(null);
+			objectData[2][1].SetInternalObj(coalIn);
+			objectData[2][2].SetInternalObj(materialIn);
+			objectData[2][3].SetInternalObj(materialOut);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(null);
+			objectData[3][0].SetInternalObj(coalIn);
 			objectData[3][1].SetInternalObj(null);
-			objectData[3][2].SetInternalObj(null);
-			objectData[3][3].SetInternalObj(null);
+			objectData[3][2].SetInternalObj(materialOut);
+			objectData[3][3].SetInternalObj(materialIn);
 
 			
 			SetDir(Direction.UP);

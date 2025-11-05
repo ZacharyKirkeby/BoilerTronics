@@ -304,5 +304,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			return; // Throw error
 		}
 
+		public void Switch(string[] args) {
+			return; // Throw error
+		}
 	}
 }

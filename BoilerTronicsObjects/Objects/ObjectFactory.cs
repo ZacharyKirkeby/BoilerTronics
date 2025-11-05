@@ -62,7 +62,7 @@ namespace BoilerTronicsObjects.Objects
 					return FactoryRoller.StaticGetTextureGrid(dir);
 				case 153:
 					//switch
-					return Switch.StaticGetTextureGrid(dir);
+					return SwitchObject.StaticGetTextureGrid(dir);
 			}
 
 			return null;
@@ -134,7 +134,7 @@ namespace BoilerTronicsObjects.Objects
 					return new ConveyorRotatorObject(x, y, 0);
 				case 153:
 					//rotatordefault
-					return new Switch(x, y, 0);
+					return new SwitchObject(x, y, 0);
 				case 200:
 					//factorytestmaterial
 					return new FactoryTestMaterial(x, y, 0);

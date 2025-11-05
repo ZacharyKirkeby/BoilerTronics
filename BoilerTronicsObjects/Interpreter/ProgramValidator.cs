@@ -40,6 +40,12 @@ public static partial class ProgramValidator
 	[GeneratedRegex(@"^\s*grb\s+\S+")]
 	private static partial Regex GrbWithArgRegex();
 
+	[GeneratedRegex(@"^\s*swt\s*$")]
+	private static partial Regex SwtValidRegex();
+
+	[GeneratedRegex(@"^\s*swt\s+\S+")]
+	private static partial Regex SwtWithArgRegex();
+
 	// Write command
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
 	private static partial Regex WrtValidRegex();
@@ -248,6 +254,9 @@ public static partial class ProgramValidator
 
 		if (GrbValidRegex().IsMatch(line)) return null;
 		if (GrbWithArgRegex().IsMatch(line)) return "Grab takes no arguments";
+
+		if (SwtValidRegex().IsMatch(line)) return null;
+		if (SwtWithArgRegex().IsMatch(line)) return "Switch takes no arguments";
 
 		// Write command
 		if (WrtValidRegex().IsMatch(line)) return null;

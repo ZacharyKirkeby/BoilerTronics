@@ -133,26 +133,28 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
+			// TODO: Verify these 
+
 			// UP
 
 			objectData[0][0].SetInternalObj(null);
-			objectData[0][1].SetInternalObj(null);
-			objectData[0][2].SetInternalObj(null);
+			objectData[0][1].SetInternalObj(Input);
+			objectData[0][2].SetInternalObj(Output);
 
 			// DOWN
-			objectData[1][0].SetInternalObj(null);
+			objectData[1][0].SetInternalObj(Input);
 			objectData[1][1].SetInternalObj(null);
-			objectData[1][2].SetInternalObj(null);
+			objectData[1][2].SetInternalObj(Output);
 
 			// LEFT
-			objectData[2][0].SetInternalObj(null);
-			objectData[2][1].SetInternalObj(null);
+			objectData[2][0].SetInternalObj(Input);
+			objectData[2][1].SetInternalObj(Output);
 			objectData[2][2].SetInternalObj(null);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(null);
+			objectData[3][0].SetInternalObj(Input);
 			objectData[3][1].SetInternalObj(null);
-			objectData[3][2].SetInternalObj(null);
+			objectData[3][2].SetInternalObj(Output);
 			
 			SetDir(Direction.UP);
 		}
