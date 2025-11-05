@@ -166,6 +166,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			*/
 
 			// Deepcopy grid
+			objectData = PlaceableBigData.Copy2DList(textureGrid);
 			
 			// internal insert, output objects
 			materialIn = new FactoryBigObjectInput(0, 0, 0);

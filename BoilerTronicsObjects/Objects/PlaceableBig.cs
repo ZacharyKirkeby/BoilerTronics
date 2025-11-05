@@ -153,21 +153,21 @@ namespace BoilerTronicsObjects.Placeable
 			return output;
 		}
 
-		public static PlaceableBigData[] CopyList(PlaceableBigData[] input) {
-			PlaceableBigData[] newList = new PlaceableBigData[input.Length];
-
-			for (int i = 0; i < input.Length; ++i) {
-				newList[i] = Copy(input[i]);
+		public static List<PlaceableBigData> CopyList(List<PlaceableBigData> input) {
+			List<PlaceableBigData> newList = new List<PlaceableBigData>();
+			
+			foreach (PlaceableBigData L in input) {
+				newList.Add(Copy(L));
 			}
 
 			return newList;
 		}
 
-		public static List<PlaceableBigData[]> Copy2DList(List<PlaceableBigData[]> input) {
-			List<PlaceableBigData[]> newList = new List<PlaceableBigData[]>();
+		public static List<PlaceableBigData>[] Copy2DList(List<PlaceableBigData>[] input) {
+			List<PlaceableBigData>[] newList = new List<PlaceableBigData>[input.Length];
 			
-			foreach (PlaceableBigData[] L in input) {
-				newList.Add(CopyList(L));
+			for (int i = 0; i < input.Length; ++i) {
+				newList[i] = CopyList(input[i]);
 			}
 
 			return newList;
