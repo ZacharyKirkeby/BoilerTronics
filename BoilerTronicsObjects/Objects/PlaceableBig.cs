@@ -103,6 +103,11 @@ namespace BoilerTronicsObjects.Placeable
 		public TileTex GetFrame() {
 			return frames[frameIndex];
 		}
+		public TileTex GetFrame(int index) {
+			if (index < 0) { return null; }
+			if (index >= frames.Count) { return null; }
+			return frames[index];
+		}
 		
 		// adds a frame to the internal list of frames
 		// should only ever be called by child objects
@@ -119,9 +124,33 @@ namespace BoilerTronicsObjects.Placeable
 			frameIndex = index;
 		}
 		
+		// returns the # of frames
+		public int GetFrameCount() {
+			return frames.Count;
+		}
+		
 		// resets the frame back to this object's original visuals
 		public void ResetFrame() {
 			frameIndex = 0;
+		}
+		
+		// TODO: is there something better syntaxically for this sort of operation?
+		// i.e. produces a deep copy of the input
+		public static PlaceableBigData Copy(PlaceableBigData input) {
+			PlaceableBigData output = new PlaceableBigData(
+				input.GetOffset(),
+				input.GetTileTex(),
+				input.GetInternalObj()
+			);
+			
+			// TODO: copy over the frames accordingly!
+			int frameCount = input.GetFrameCount();
+			// '0' is always going to be the base frame, so skip that
+			for (int i = 1; i < frameCount; i++) {
+				output.AddFrame(TileTex.Copy(input.GetFrame(i)));
+			}
+			
+			return output;
 		}
 	}
 	
