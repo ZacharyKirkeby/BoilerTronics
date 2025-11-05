@@ -17,6 +17,9 @@ namespace BoilerTronicsObjects.Layers
 		// NOTE: Currently unused; separate code already restricts dragging to when steps aren't running.
 		public static bool allowDrag = true;
 		
+		// determines if system should render protected tiles or not
+		private bool renderProtectedTiles = false;
+		
 		// default layer dimensions, if left unspecified
 		static int startX = 10;
 		static int startY = 10;
@@ -101,7 +104,9 @@ namespace BoilerTronicsObjects.Layers
 				for (int y = 0; y <= maxY; y++) {
 					// if protected tile, insert into protected list
 					if (!editableTable[x, y]) {
+						GD.Print("Layer.cs: SetEditable: ", "Adding to protectedList");
 						protectedList.Add(new Vector2I(x, y));
+						QueueRedraw();
 					}
 					editableTiles[x, y] = editableTable[x, y];
 				}
@@ -113,22 +118,27 @@ namespace BoilerTronicsObjects.Layers
 		public bool SetTileEditable(Vector2I coordinates, bool value) {
 			// check if OOB
 			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
-			if (coordinates.X < 0 || coordinates.Y < maxY) { return false; }
+			if (coordinates.X < 0 || coordinates.Y < 0) { return false; }
 			
 			// if not OOB, then set value
 			editableTiles[coordinates.X, coordinates.Y] = value;
 			
 			bool protectedListContains = protectedList.Contains(coordinates);
+			GD.Print("Layer.cs: protectedListContains: ", protectedListContains);
 			
 			// if this is to be a protected tile and it's not in the protected list,
 			// then insert coords into the protected list!
 			if (!value && !protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Adding to protectedList");
 				protectedList.Add(coordinates);
+				QueueRedraw();
 				
 			// else, if this is to be an editable tile and the protectedList contains the input coordinates,
 			// then remove coords from the list!
 			} else if (value && protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Removing from protectedList");
 				protectedList.Remove(coordinates);
+				QueueRedraw();
 			}
 			
 			return true;
@@ -385,6 +395,13 @@ namespace BoilerTronicsObjects.Layers
 			if (IsInstanceValid(this)) QueueRedraw();
 		}
 		
+		// Given the value of 'toggle', toggles on/off this layer rendering protected tiles
+		// Then queues redrawing and etc
+		public void HighlightProtectedTiles(bool toggle) {
+			renderProtectedTiles = toggle;
+			QueueRedraw();
+		}
+		
 		public override void _Draw() {
 			// GD.Print("Layer: trying to draw");
 			// GD.Print("Highlight Position: ", highlightTarget);
@@ -412,6 +429,35 @@ namespace BoilerTronicsObjects.Layers
 				}
 				// draw from 'maxI' to 'minI'
 				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+			}
+			
+			if (renderProtectedTiles) {
+				// GD.Print("protectedList count: ", protectedList.Count);
+				foreach (Vector2I coords in protectedList) {
+					Vector2 localPos = MapToLocal(coords);
+					// TODO: draw efficiently
+					// for now, just create an array of Vector2
+					Godot.Collections.Array coordinates = new Godot.Collections.Array();
+					
+					// generate a polygonal shape
+					coordinates.Add(new Vector2(-20, -10));
+					coordinates.Add(new Vector2(0, -20));
+					coordinates.Add(new Vector2(20, -10));
+					
+					coordinates.Add(new Vector2(20, 10));
+					coordinates.Add(new Vector2(0, 20));
+					coordinates.Add(new Vector2(-20, 10));
+					
+					Color drawColor = Colors.Blue;
+					float lineWeight = 3.0f;
+					
+					// draw connecting from 'i-1' to 'i'
+					for (int i = 1; i < coordinates.Count; i++) {
+						DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
+					}
+					// draw from 'maxI' to 'minI'
+					DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+				}
 			}
 		}
 

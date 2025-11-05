@@ -164,7 +164,8 @@ public partial class BoilerTronicsLevel : Node2D
 		// enable protected tiles
 		foreach(Vector2I pos in protectedTiles)
 		{
-			bool success = input.SetTileEditable(pos, true);
+			GD.Print("BoilerTronicsLeveL: added protected tile: ", pos);
+			bool success = input.SetTileEditable(pos, false);
 			// TODO: create error if this coordinate was bad?
 		}
 	}
@@ -244,11 +245,19 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		if (loadedSave) {
 			// attempt to reconstruct level based off the loaded information: update layers
-			// TODO: does not properly
+			GD.Print("BoilerTronicsLevel: loading layer: ", "floor");
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
 			// handle ConveyorGroup case
