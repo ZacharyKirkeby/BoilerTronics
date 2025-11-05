@@ -9,7 +9,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryFurnace : PlaceableBig, Movable {
+	public class FactoryFurnace : PlaceableBig, BigMovable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(2, 0);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -18,9 +18,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		static int layerSourceId = 3;
 		private int _objectID;
 		
-		private PlaceableObject materialIn;
-		private PlaceableObject coalIn;
-		private PlaceableObject materialOut;
+		private FactoryBigObjectInput materialIn;
+		private FactoryBigObjectInput coalIn;
+		private FactoryBigObjectOutput materialOut;
 		private List<PlaceableBigData>[] objectData;
 
 		/*
@@ -131,22 +131,20 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
 		// i.e. this object must somehow get the reference of the claw that is interacting
 		// with this object, then return "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
-		public PlaceableObject PickUp() {
-			
-			// PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
-			// GD.Print("Generating obj: ", obj);
-			// return obj;
-			
+		public PlaceableObject PickUp(Vector2I pos) {
 			return null;
 		}
 		
-		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
-		// i.e. this object must somehow get the reference of the claw that is interacting
-		// with this object, then get "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
-		// as a PlaceableObject (i.e. 'dataObj')
-		// then return the output of "dataObj.Place(obj)"
-		public bool Place(PlaceableObject obj) {
+		public bool Place(PlaceableObject obj, Vector2I pos) {
 			return false;
+		}
+
+		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
+			return false; // We do not want this object
+		}
+
+		public PlaceableObject RequestObject(int requestId, PlaceableObject childObj) {
+			return null; // We don't ahve that object
 		}
 		
 		// REMINDER:
@@ -170,9 +168,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// Deepcopy grid
 			
 			// internal insert, output objects
-			materialIn = new FactoryFurnaceInput(0, 0, 0);
-			coalIn = new FactoryFurnaceInput(0, 0, 0);
-			materialOut = new FactoryFurnaceOutput(0, 0, 0);
+			materialIn = new FactoryBigObjectInput(0, 0, 0);
+			coalIn = new FactoryBigObjectInput(0, 0, 0);
+			materialOut = new FactoryBigObjectOutput(0, 0, 0);
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
