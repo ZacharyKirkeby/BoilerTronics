@@ -11,8 +11,8 @@ using System.Collections;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
-
 	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
+
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
@@ -77,7 +77,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			{
 				existing.QueueFree();
 			}
-
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
