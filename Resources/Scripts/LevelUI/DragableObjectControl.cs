@@ -61,7 +61,26 @@ public partial class DragableObjectControl : Control {
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
 			// spawn terminal perhap?
-
+			
+			// set layer to be semi transparent if not being placed on
+			if (selection == 1)
+			{
+				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
+			}
+			else if (selection == 3)
+			{
+				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
+			} else if (selection == 2)
+			{
+				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
+				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
+			}
 			GD.Print("Created new dragable:", draggable);
 		}
 		// else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")

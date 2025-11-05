@@ -97,6 +97,10 @@ public partial class LevelUi : Node2D
 	private void _on_open_button_pressed() {
 		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
 	}
+	
+	private void _on_visibility_button_pressed() {
+		GetNode<Window>("VisibilityWindow").Visible = true;
+	}
 
 	private void _on_reset_button_pressed()
 	{
@@ -229,11 +233,57 @@ public partial class LevelUi : Node2D
 	private void _on_level_statistics_menu_close_requested() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = false;
 	}
+	
+	private void _on_visibility_window_close_requested() {
+		GetNode<Window>("VisibilityWindow").Visible = false;
+	}
 
 	private void _on_level_statistics_pressed() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
 	}
 
+	private void _on_movement_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerMovement.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerMovement.Visible = false;
+		}
+	}
+
+	private void _on_factory_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = true;
+			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = false;
+			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = false;
+		}
+	}
+	
+	private void _on_claw_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerClaw.Visible = true;
+			BoilerTronicsGlobalManager.GlobalManager.layerRail.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerClaw.Visible = false;
+			BoilerTronicsGlobalManager.GlobalManager.layerRail.Visible = false;
+		}
+	}
 
 	private void _on_save_button_pressed() {
 
