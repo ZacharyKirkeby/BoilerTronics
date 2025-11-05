@@ -57,6 +57,7 @@ public partial class ObjectPicker : HBoxContainer
 		// This should be called when we change the type of object that we are wanting to select
 		// The currSelect in the manager should be set beforehand as it will use that value to change teh sprites it contains
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currSlection = selection;
 
 		switch (selection) {
 			case 1: // Movement
