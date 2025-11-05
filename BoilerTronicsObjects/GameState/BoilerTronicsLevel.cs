@@ -304,7 +304,7 @@ public partial class BoilerTronicsLevel : Node2D
 		// Clear errors
 		E.ClearError();
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
+		
 		foreach (CodeEdit editor in manager.terminalContainer.GetAllEditors())
 		{
 
