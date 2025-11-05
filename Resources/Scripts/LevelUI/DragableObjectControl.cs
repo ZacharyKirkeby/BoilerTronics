@@ -67,6 +67,7 @@ public partial class DragableObjectControl : Control {
 			subView.AddChild(draggable);
 			// spawn terminal perhap?
 
+			int selection = manager.currSlection;
 			// set layer to be semi transparent if not being placed on
 			if (selection == 1)
 			{
