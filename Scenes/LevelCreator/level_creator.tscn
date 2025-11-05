@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_wuwu2"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_js8ol"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_dpg53"]
-[ext_resource type="Theme" uid="uid://d68aun80r0yt" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_wmnsp"]
+[ext_resource type="Theme" uid="uid://doo374ukjh36b" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_wmnsp"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_fsp7g"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_4npyk"]
 [ext_resource type="Texture2D" uid="uid://dlpjkwqv3ugl1" path="res://Resources/Icons/shield.png" id="8_h0dp1"]
@@ -862,7 +862,6 @@ oversampling_override = 1.0
 title = "Load Level"
 initial_position = 1
 size = Vector2i(600, 500)
-visible = false
 
 [node name="TabContainer" type="TabContainer" parent="CreatorLoadWindow"]
 custom_minimum_size = Vector2(600, 500)
