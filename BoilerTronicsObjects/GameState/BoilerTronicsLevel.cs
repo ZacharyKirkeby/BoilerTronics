@@ -50,6 +50,9 @@ public partial class BoilerTronicsLevel : Node2D
 	private Vector2 c3;
 	private Vector2 c4;
 	
+	public void UpdateCost(int addition) {
+		cost += addition;
+	}
 	//when solution reached, update solution statistics
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
