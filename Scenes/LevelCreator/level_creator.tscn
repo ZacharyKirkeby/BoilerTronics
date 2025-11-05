@@ -304,7 +304,6 @@ script = ExtResource("1_hjyc6")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
-visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme_override_constants/separation = 0
@@ -588,7 +587,7 @@ size_flags_vertical = 3
 handle_input_locally = false
 size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
-render_target_update_mode = 0
+render_target_update_mode = 4
 
 [node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("10_ebwh2")]
 
@@ -863,6 +862,7 @@ oversampling_override = 1.0
 title = "Load Level"
 initial_position = 1
 size = Vector2i(600, 500)
+visible = false
 
 [node name="TabContainer" type="TabContainer" parent="CreatorLoadWindow"]
 custom_minimum_size = Vector2(600, 500)
