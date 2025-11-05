@@ -505,6 +505,17 @@ namespace BoilerTronicsObjects.Layers
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;
+					
+					// when picking up an object, be sure to modulate the 
+					// LAZY: modulate all layers
+					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+					manager.layerRail.Modulate = manager.layerDeselectedVisibility;
+					
+					// unmodulate this layer
+					this.Modulate = manager.layerDefaultVisibility;
+					
 				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);

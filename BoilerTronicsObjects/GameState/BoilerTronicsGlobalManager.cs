@@ -12,12 +12,17 @@ using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Layers;
 
 public partial class BoilerTronicsGlobalManager : Node
-{
+{	
 	/* Game State Vars */
 	private int[] levelIDs = [0, 0]; // sets the range of viable level IDs: [min, max]
 	private int levelID = 0;
 	private int[] levelLoadSlots = [0, 2]; // sets the range of viable level saves: [min, max]
 	private int levelLoadSlot = -1;	// -1 means load actual default level setup, -2 means autosave
+	
+	// important for systems to modulate how visibile layers are
+	// ex: when picking up an object, all other layers should be "deselected"
+	public Color layerDefaultVisibility = new Color(1, 1, 1, 1.0f);
+	public Color layerDeselectedVisibility = new Color(1, 1, 1, 0.3f);
 	
 	// TODO:
 	// For current demo, when pressing "New Game" for the very first time, this loads 'level0'
