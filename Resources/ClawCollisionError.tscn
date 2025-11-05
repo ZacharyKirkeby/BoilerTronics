@@ -2,10 +2,18 @@
 
 [node name="ClawCollisionError" type="AcceptDialog"]
 oversampling_override = 1.0
+<<<<<<< HEAD
 title = "Claw Collision"
+=======
+title = "Collision"
+>>>>>>> ae24d0b55e2ac1a37524f71bcceb8273883fc930
 initial_position = 2
 size = Vector2i(400, 300)
 visible = true
 ok_button_text = "OK"
+<<<<<<< HEAD
 dialog_text = "It appears that two claws are colliding in your solution! Please check your code terminals to find out why the error is occurring and the level to see where it is occuring. Try altering the order of commands in your terminals to avoid a collision."
+=======
+dialog_text = "It appears that two claws (or rails) are colliding in your solution! Please check your code terminals to find out why the error is occurring and the level to see where it is occuring. Try altering the order of commands in your terminals to avoid a collision."
+>>>>>>> ae24d0b55e2ac1a37524f71bcceb8273883fc930
 dialog_autowrap = true
