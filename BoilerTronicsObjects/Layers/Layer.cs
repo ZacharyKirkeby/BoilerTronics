@@ -151,16 +151,16 @@ namespace BoilerTronicsObjects.Layers
 			switch (newPlaceable)
 			{
 				case ClawObject:
-					costToAdd = 50;
+					costToAdd = 100;
 					break;
 				case TrackObject:
-					costToAdd = 10;
+					costToAdd = 100;
 					break;
 				case ConveyorObject:
-					costToAdd = 20;
+					costToAdd = 100;
 					break;
 				case ConveyorRotatorObject:
-					costToAdd = 20;
+					costToAdd = 100;
 					break;
 				case FactoryInputObject:
 					costToAdd = 100;
@@ -174,7 +174,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			GD.Print(GetPath());
-			manager.currLevel.cost += costToAdd;
+			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
@@ -195,16 +195,16 @@ namespace BoilerTronicsObjects.Layers
 			switch (objectToRemove)
 			{
 				case ClawObject:
-					costToAdd = -50;
+					costToAdd = -100;
 					break;
 				case TrackObject:
-					costToAdd = -10;
+					costToAdd = -100;
 					break;
 				case ConveyorObject:
-					costToAdd = -20;
+					costToAdd = -100;
 					break;
 				case ConveyorRotatorObject:
-					costToAdd = -20;
+					costToAdd = -100;
 					break;
 				case FactoryInputObject:
 					costToAdd = -100;
@@ -217,8 +217,8 @@ namespace BoilerTronicsObjects.Layers
 					break;
 			}
 
-			GD.Print(GetPath());
-			manager.currLevel.cost += costToAdd;
+			GD.Print("deleting object");
+			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
 

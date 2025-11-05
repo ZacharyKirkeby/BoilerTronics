@@ -431,6 +431,10 @@ public partial class LevelUi : Node2D
 	}
 	
 	public void UpdateCost(int cost) {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		if(manager.currLevel.GetGameRunState() != 0) {
+			return;
+		}
 		if (costCountLabel == null) {
 			return;
 		}
