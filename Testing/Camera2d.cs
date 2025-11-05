@@ -4,9 +4,32 @@ using System;
 namespace BoilerTronicsObjects.GameCamera {
 	public partial class Camera2d : Camera2D
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// tracks right mouse button held
 		private bool rmbHeld = false;
-		private float zoomDiff = (float) 0.05;
-		private Vector2 zoomFloat = new Vector2((float) 0.05, (float) 0.05);
+		
+		// camera offset to reach the center of the screen
+		// viewport size is (1408, 750)
+		private const float cameraOffsetY = -525;
+		private static Vector2 cameraOffset = new Vector2(-200, cameraOffsetY);
+		
+		// how much beyond the min/max of a level the camera can move
+		private const float cameraBoundaryBufferAmount = 10;
+		private static Vector2 cameraBoundaryBuffer = new Vector2(cameraBoundaryBufferAmount, cameraBoundaryBufferAmount);
+		
+		// general multiplier for the boundary of the camera
+		private const float cameraBoundaryMult = 0.8f;
+		
+		// zoom factor
+		private const float zoomFactor = 0.1f;
+		
+		// additive zoom
+		private Vector2 zoomFloat = new Vector2(zoomFactor,  zoomFactor);
+		
+		// multiplicative zoom
+		private Vector2 zoomMultP = new Vector2(1f + zoomFactor, 1f + zoomFactor);
+		private Vector2 zoomMultN = new Vector2(1f - zoomFactor, 1f - zoomFactor);
 		
 		private Vector2 maxZoom = new Vector2((float) 3.0, (float) 3.0);
 		private Vector2 minZoom = new Vector2((float) 0.5, (float) 0.5);
@@ -14,67 +37,112 @@ namespace BoilerTronicsObjects.GameCamera {
 		private Vector2 errorPosition = new Vector2(150,500);
 		private Sprite2D errorSprite;
 
-		// general zoom function to zoom specifically at the mouse; TODO
+
+		// general zoom function to zoom specifically at the mouse
 		public void zoomToTarget(Vector2 zoomTarget) {
-			
-			// note: following code is from the Godot forum -- will need tweaking!
-			/*
-			Vector2 halfSize = GetViewport().GetVisibleRect().Size / (float) 2.0;
-			Vector2 cameraPosition = this.Position;
-			Vector2 point = GetLocalMousePosition();
-			Vector2 newCameraPosition;
-			Vector2 z0 = this.Zoom;
-			Vector2 z1 = zoomTarget;
-
-			newCameraPosition = cameraPosition + (-halfSize + point) * (z0 - z1);
-			this.SetZoom(zoomTarget);
-			this.Position = newCameraPosition;
-			*/
-			
-			// Vector2 p0 = GetLocalMousePosition();
+			// move zoom target to center of screen
+			Vector2 p0 = GetLocalMousePosition();
 			this.Zoom = zoomTarget;
-			// Vector2 p1 = GetLocalMousePosition();
-			// Vector2 diff = p0 - p1;
+			Vector2 p1 = GetLocalMousePosition();
+			Vector2 diff = p1 - p0;
 			// GD.Print("diff: ",  diff);
-			// this.Position += diff;
-
+			this.Position -= diff;
 		}
 		
-		public override void _Input(InputEvent @event)
-			{
-				// Note: these inputs will still "pass through" and Layer.cs could theoretically receive this
-				// Be advised!
+		
+		// makes sure that the screen is within "bounds"
+		public void validateScreenPos() {
+			// try and get the global manager
+			// if it still doesn't exist, crash.
+			if (manager == null) {
+				manager = BoilerTronicsGlobalManager.GlobalManager;
+				
+				if (manager == null) { return; }
+			}
+		
+			// cameraOffset = GetViewport().GetVisibleRect().Size;
+			// GD.Print("camera size: ", GetViewport().GetVisibleRect().Size);
+			// GD.Print("camera size2: ", GetParent().GetViewport().GetVisibleRect().Size);
+			
+			// get min, max coordinates
+			// these are the local positions of the floor tilemap's edges
+			Vector2 minCoords = manager.currLevel.minCoords;
+			Vector2 maxCoords = manager.currLevel.maxCoords;
+			
+			// apply camera offset, camera boundary buffer to calculate the min/max valid coordinates that
+			// the camera can exist in
+			Vector2 minValidCoords = ((minCoords - cameraBoundaryBuffer) * this.GetZoom().X * cameraBoundaryMult + cameraOffset);
+			Vector2 maxValidCoords = ((maxCoords + cameraBoundaryBuffer) * this.GetZoom().X * cameraBoundaryMult + cameraOffset);
+			
+			// GD.Print("\ncurr camera coords: ", this.Position);
+			// GD.Print("min camera coords: ", minValidCoords);
+			// GD.Print("max camera coords: ", maxValidCoords);
+			
+			// restrict camera panning
+			if (this.Position.X < minValidCoords.X) { 
+				this.SetPosition(new Vector2(minValidCoords.X, this.Position.Y));
+			}
+			if (this.Position.Y < minValidCoords.Y) { 
+				this.SetPosition(new Vector2(this.Position.X, minValidCoords.Y));
+			}
+			if (this.Position.X > maxValidCoords.X) { 
+				this.SetPosition(new Vector2(maxValidCoords.X, this.Position.Y));
+			}
+			if (this.Position.Y > maxValidCoords.Y) { 
+				this.SetPosition(new Vector2(this.Position.X, maxValidCoords.Y));
+			}
+			// GD.Print("updated camera coords: ", this.Position, "\n");
+		}
+		
+		// handle mouse inputs (RMB, scroll wheel)
+		public override void _Input(InputEvent @event) {
+			// Note: these inputs will still "pass through" and Layer.cs could theoretically receive this (?)
+			// Be advised!
 
-				if (@event is InputEventMouseButton buttonEvent) {
-					
-					if (buttonEvent.ButtonIndex == MouseButton.Right) {
-						if (buttonEvent.Pressed) {
-							rmbHeld = true;
-						} else {
-							rmbHeld = false;
-						}
-					} else if (buttonEvent.ButtonIndex == MouseButton.WheelUp) {
+			// all mouse button events
+			if (@event is InputEventMouseButton buttonEvent) {
+				
+				// catch all button events related to RMB
+				if (buttonEvent.ButtonIndex == MouseButton.Right) {
+					if (buttonEvent.Pressed) {
+						rmbHeld = true;
+					} else {
+						rmbHeld = false;
+					}
+				}
+				
+				// "@event.IsPressed()" is important to avoid double-catching inputs!
+				// only works if we're looking to see if the event was pressed, however
+				if (@event.IsPressed()) {
+					if (buttonEvent.ButtonIndex == MouseButton.WheelUp) {
 						// zoom in
-						
-						Vector2 zoomIn = this.GetZoom() + zoomFloat;
+						Vector2 zoomIn = this.GetZoom() * zoomMultP;//this.GetZoom() + zoomFloat;
 						if (zoomIn < maxZoom) {
+							// GD.Print("zoom in");
 							zoomToTarget(zoomIn);
 						}
 					} else if (buttonEvent.ButtonIndex == MouseButton.WheelDown) {
 						// zoom out
-						
-						Vector2 zoomOut = this.GetZoom() - zoomFloat;
+						Vector2 zoomOut = this.GetZoom() * zoomMultN;//this.GetZoom() - zoomFloat;
 						if (zoomOut > minZoom) {
+							// GD.Print("zoom out");
 							zoomToTarget(zoomOut);
 						}
 					}
+					
+					validateScreenPos();
 				}
-				
-				if (@event is InputEventMouseMotion eventMouseMotion && rmbHeld) {
-					// need to account for zoom level!
-					this.Position += eventMouseMotion.GetScreenRelative() * -1 / this.GetZoom().X;//new Vector2(5, 5);
-				}
+				// end
 			}
+			
+			
+			if (@event is InputEventMouseMotion eventMouseMotion && rmbHeld) {
+				// need to account for zoom level!
+				this.Position += eventMouseMotion.GetScreenRelative() * -1 / this.GetZoom().X;//new Vector2(5, 5);
+			
+				validateScreenPos();
+			}
+		}
 			
 		public void SpawnErrorSprite(Vector2 errorPosition) {
 			//if coords are negative/invalid do not spawn

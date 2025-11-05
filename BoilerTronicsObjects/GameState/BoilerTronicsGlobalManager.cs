@@ -12,12 +12,17 @@ using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Layers;
 
 public partial class BoilerTronicsGlobalManager : Node
-{
+{	
 	/* Game State Vars */
 	private int[] levelIDs = [0, 0]; // sets the range of viable level IDs: [min, max]
 	private int levelID = 0;
 	private int[] levelLoadSlots = [0, 2]; // sets the range of viable level saves: [min, max]
 	private int levelLoadSlot = -1;	// -1 means load actual default level setup, -2 means autosave
+	
+	// important for systems to modulate how visibile layers are
+	// ex: when picking up an object, all other layers should be "deselected"
+	public Color layerDefaultVisibility = new Color(1, 1, 1, 1.0f);
+	public Color layerDeselectedVisibility = new Color(1, 1, 1, 0.3f);
 	
 	// TODO:
 	// For current demo, when pressing "New Game" for the very first time, this loads 'level0'
@@ -31,6 +36,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	public int GetLevelID() { return levelID; }
 	public int GetLevelLoadSlot() { return levelLoadSlot; }
 	
+	// NOTE: why is this "testing"? this is fully functional atm
 	/***** Testing vars *****/
 	public int currSlection;
 	public int placingObject;
@@ -46,7 +52,14 @@ public partial class BoilerTronicsGlobalManager : Node
 	public CodeEdit lastSelectedTerminal;
 
 	/* Save Data Vars: */
-	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
+	// TODO: saveState updated to be a publicly available variable!
+	// Update systems accordingly (TODO)
+	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
+	
+	// should only ever be used by the level creator UI
+	// i.e. level creator UI should be able to save/load levels of ANY name,
+	// regardless of if the level actually follows the naming scheme (i.e. level#.save)
+	public string loadLevelName = "";
 	
 	/* Hold addresses to the layer objects; required for the save function! */
 	public Layer 	layerClaw;

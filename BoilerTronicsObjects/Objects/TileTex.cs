@@ -42,6 +42,10 @@ namespace BoilerTronicsObjects.Placeable {
 			this.atlasPos.X = atlasPos.X;
 			this.atlasPos.Y = atlasPos.Y;
 		}
+		public void SetAtlasPos(int x, int y) {
+			this.atlasPos.X = x;
+			this.atlasPos.Y = y;
+		}
 		
 		public void SetSourceId(int input) {
 			this.sourceId = input;

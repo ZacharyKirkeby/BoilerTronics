@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Numerics;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Objects;
@@ -52,14 +53,20 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
 	};
 
-	public void Update(int selection) 
+	static ItemInfo[] DeveloperSection =
+	{
+		new ItemInfo("Placeholder", 100, 4, new Vector2I(0,0), new Vector2I(85, 85), false)
+	};
+
+	public void Update(int selection)
 	{
 		// This should be called when we change the type of object that we are wanting to select
 		// The currSelect in the manager should be set beforehand as it will use that value to change teh sprites it contains
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currSlection = selection;
 
-		switch (selection) {
+		switch (selection)
+		{
 			case 1: // Movement
 				SetMovement();
 				break;
@@ -68,6 +75,9 @@ public partial class ObjectPicker : HBoxContainer
 				break;
 			case 3: // Claw
 				SetClaw();
+				break;
+			case 4: // Dev
+				SetDeveloper();
 				break;
 			default:
 				break;
@@ -106,7 +116,6 @@ public partial class ObjectPicker : HBoxContainer
 			GD.Print(item.table, " is not a valid id for the sprite tabel");
 			return; // make sure it exists
 		}
-
 		AddChild(new Control()); // Creates left padding so its not smushed against container
 		ImageTexture texture = new ImageTexture();
 
@@ -203,6 +212,14 @@ public partial class ObjectPicker : HBoxContainer
 		// This will spawn the children for all of the different kinds of movement layer elements
 		loadSprites(MovementSection);
 		manager.currSlection = 1;
+	}
+
+	void SetDeveloper()
+	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		KillChildren();
+		loadSprites(DeveloperSection);
+		manager.currSlection = 4;
 	}
 
 	public override void _Ready()
