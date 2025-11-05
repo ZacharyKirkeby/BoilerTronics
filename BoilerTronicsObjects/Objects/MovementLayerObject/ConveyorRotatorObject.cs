@@ -22,7 +22,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
+		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script

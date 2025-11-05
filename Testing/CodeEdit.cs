@@ -21,7 +21,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	private Layer highlightedLayer;
 	private bool highlightingObject = false;
 
-    public override void _Ready()
+	public override void _Ready()
 	{
 		AddToGroup("CodeTerminals");
 		HighlightCurrentLine = true;
@@ -192,7 +192,7 @@ public partial class CodeEdit : Godot.CodeEdit
 			SetLineBackgroundColor(lineNumber, color);
 			QueueRedraw();
 			return;
-        }
+		}
 
 		int totalLines = GetLineCount();
 		if (totalLines == 0) {
