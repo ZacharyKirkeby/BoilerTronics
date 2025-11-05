@@ -13,7 +13,7 @@ namespace BoilerTronicsObjects.Placeable
 		private int CurrX;
 		private int CurrY;
 		private bool Garbage;
-		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
+		int sourceId { get; set; }             // This is the id of the tile map that the sprite belongs to
 		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
@@ -83,6 +83,10 @@ namespace BoilerTronicsObjects.Placeable
 			return new Vector2I(CurrX, CurrY);
 		}
 
+		public virtual void SetSourceID(int input)
+		{
+			this.sourceId = input;
+		}
 		public virtual int GetSourceID()
 		{
 			return sourceId;
