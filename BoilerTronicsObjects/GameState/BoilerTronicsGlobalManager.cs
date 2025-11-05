@@ -51,6 +51,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	// Update systems accordingly (TODO)
 	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
+	// should only ever be used by the level creator UI
+	// i.e. level creator UI should be able to save/load levels of ANY name,
+	// regardless of if the level actually follows the naming scheme (i.e. level#.save)
+	public string loadLevelName = "";
+	
 	/* Hold addresses to the layer objects; required for the save function! */
 	public Layer 	layerClaw;
 	public Layer 	layerFactory;

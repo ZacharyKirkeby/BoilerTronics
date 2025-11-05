@@ -206,6 +206,14 @@ public class BoilerTronicsSaveState
 		return LoadData(manager, SavePath);
 	}
 	
+	// load level name; automatically generate the save data info, given the level ID
+	// input should be handled automatically by the global manager
+	// returns success of loading the save data
+	public bool LoadLevelName(BoilerTronicsGlobalManager manager, String levelName) {
+		string SavePath = "res://Resources/Levels/" + levelName + ".save";
+		return LoadData(manager, SavePath);
+	}
+	
 	
 	// load save data; automatically generate the save data info, given the directory and etc
 	// input should be handled automatically by the global manager

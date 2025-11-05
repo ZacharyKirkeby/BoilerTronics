@@ -144,12 +144,12 @@ public partial class BoilerTronicsLevel : Node2D
 		Vector2 floor00 = flLayer.MapToLocal(new Vector2I(0, 0));
 		Vector2 moveDif = floor00 - fill00;
 		fillLayer.Position -= moveDif;
-		GD.Print("move dif: ", moveDif);
+		// GD.Print("move dif: ", moveDif);
 		
 		// offset this layer such that this layer properly surrounds the play area
 		moveDif = fill00 - flLayer.MapToLocal(new Vector2I(fillSurround, fillSurround));
 		fillLayer.Position += moveDif;
-		GD.Print("move dif 2: ", moveDif);
+		// GD.Print("move dif 2: ", moveDif);
 	}
 	
 	// Given a target layer, a list of Placeables, and a Vector2I array of protected tiles, update the layer!
@@ -190,7 +190,18 @@ public partial class BoilerTronicsLevel : Node2D
 		// if successful, then generate level
 		// if not, then ignore and make a new save (kinda)
 		// TODO: for specific levels, load specific saves corresponding to what the level should be at a baseline!
-		bool loadedSave = manager.LoadLevel();
+		bool loadedSave;
+		
+		if (manager.loadLevelName == "") {
+			loadedSave = manager.LoadLevel();
+		} else {
+			GD.Print("BoilerTronicsLevel: loading specific level");
+			// load the specific save and reset the system
+			loadedSave = manager.saveState.LoadLevelName(manager, manager.loadLevelName);
+			manager.loadLevelName = "";
+		}
+		
+		
 		
 		if (loadedSave) {
 			// reconstruct level based off the information loaded: load metadata
