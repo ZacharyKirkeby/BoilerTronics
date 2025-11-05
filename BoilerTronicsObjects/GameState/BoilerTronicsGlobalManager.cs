@@ -31,11 +31,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	public int GetLevelID() { return levelID; }
 	public int GetLevelLoadSlot() { return levelLoadSlot; }
 	
+	// NOTE: why is this "testing"? this is fully functional atm
 	/***** Testing vars *****/
 	public int currSlection;
 	public int placingObject;
 	public ObjectPicker picker;
-	public Vector2I objectToPlace;
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
 	public Terminals terminalContainer;
@@ -47,7 +47,9 @@ public partial class BoilerTronicsGlobalManager : Node
 	public CodeEdit lastSelectedTerminal;
 
 	/* Save Data Vars: */
-	private BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
+	// TODO: saveState updated to be a publicly available variable!
+	// Update systems accordingly (TODO)
+	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
 	/* Hold addresses to the layer objects; required for the save function! */
 	public Layer 	layerClaw;

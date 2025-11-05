@@ -9,7 +9,12 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorRotatorObject : MovementLayerObjects, Scriptable, Runnable {
+	public class ConveyorRotatorObject : PlaceableObject, Scriptable, Runnable {
+
+		static int layerSourceId = 2;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
 
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
 		private Parser _parser;
@@ -17,7 +22,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
+		public ConveyorRotatorObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
@@ -113,7 +114,29 @@ namespace BoilerTronicsObjects.Layers
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
 			return true;
 		}
+		
+		// special case for PlaceableBig objects
+		public bool CheckValidPos(int X, int Y, PlaceableBig obj)
+		{
+			// check base origin point
+			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			
+			Vector2I objOrigin = new Vector2I(X, Y);
+			
+			// iterate through 'obj' texture grid
+			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+				// check each individual data point
+				Vector2I dataCoords = data.GetPosition(objOrigin); // data.GetPosition(obj.GetPos());
+				X = dataCoords.X;
+				Y = dataCoords.Y;
+				// GD.Print("CheckValidPos: PlaceableBig case: ", dataCoords);
+				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			}
+			
+			return true;
+		}
 
+		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
 			// reset layer transparency
@@ -125,13 +148,63 @@ namespace BoilerTronicsObjects.Layers
 			
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			Vector2I pos = newPlaceable.GetPos();
-			if (FindObject(pos) != null) return;
-			if (!CheckValidPos(pos.X, pos.Y)) return;
+			
+			// very minor optimization
+			bool isPlaceableBig = (newPlaceable is PlaceableBig);
+			
+			// check ValidPos stuff differently for PlaceableBig
+			// check: are coordinates in bounds?
+			if (isPlaceableBig) {
+				if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) newPlaceable)) return;
+			} else {
+				if (!CheckValidPos(pos.X, pos.Y)) return;
+			}
+			
+			// check: are coordinates occupied?
+			if (isPlaceableBig) {
+				if (FindObject(pos, (PlaceableBig) newPlaceable) != null) return;
+			} else {
+				if (FindObject(pos) != null) return;
+			}
+			
+			// check: are the coordinates editable?
+			if (isPlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) newPlaceable;
+				// iterate through 'obj' texture grid
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					
+					// if any of the tile positions are marked as "not editable", return
+					if (!editableTiles[dataCoords.X, dataCoords.Y]) return;
+				}
+			} else {
+				if (!editableTiles[pos.X, pos.Y]) return;
+			}
+			
 
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
-			if (!editableTiles[pos.X, pos.Y]) return;
 			tiles[pos.X, pos.Y] = newPlaceable;
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
+			
+			// update tiles, cells to fill accordingly to the PlaceableBig data
+			if (isPlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) newPlaceable;
+				// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+				// the "origin" object will already be placed by the code above!
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					TileTex tex = data.GetTileTex();
+					
+					// update tiles to point to the origin (reference)
+					tiles[dataCoords.X, dataCoords.Y] = newPlaceable;
+					
+					// update tile grid 
+					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+				}
+			}
+			
 			// UpdateInternals();
 			GD.Print("Added object");
 			
@@ -141,32 +214,132 @@ namespace BoilerTronicsObjects.Layers
 			numItems++;
 		}
 
+		// system also should properly handle PlaceableBig objects
 		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
 			if (!objectList.Contains(objectToRemove)) return;
-			objectList.Remove(objectToRemove); // remove to object form the list
-			EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
 			Vector2I pos = objectToRemove.GetPos();
 			if (!editableTiles[pos.X, pos.Y]) return;
+			
+			objectList.Remove(objectToRemove); // remove to object form the list
+			EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
 			tiles[pos.X, pos.Y] = null; // remove from the tiles
+			
+			// PlaceableBig case
+			if (objectToRemove is PlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) objectToRemove;
+				
+				// iterate through appropriate tiles and delete accordingly
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					
+					// update tile grid
+					EraseCell(dataCoords);
+					
+					// update tile references
+					tiles[dataCoords.X, dataCoords.Y] = null;
+				}
+			}
+			
 			numItems--;
 		}
 
+		// returns the reference to the object at 'loc' position
+		// returns 'null' if object either does not exist, or 'loc' is OOB.
 		public virtual PlaceableObject FindObject(Vector2I loc)
 		{
 			if (!CheckValidPos(loc.X, loc.Y) ) return null;
 			return tiles[loc.X, loc.Y];
 		}
+		
+		// special case for PlaceableBig objects
+		// i.e. perform checks iteratively for all of a PlaceableBig object's grid offsets and etc
+		// returns 'null' if all of the tiles occupied by 'PlaceableBig' are unoccupied by anthing but said 'PlaceableBig' object
+		// otherwise, returns the first tile occupied by an object other than the 'PlaceableBig' within its tiles (i.e. PlaceableBigData's stuff)
+		public virtual PlaceableObject FindObject(Vector2I loc, PlaceableBig obj)
+		{	
+			// TODO: AddObject updated to already perform 'CheckValidPos' before 'FindObject' is called
+			// should this still be executed or should this below call be removed for performance optimization?
+			if (!CheckValidPos(loc.X, loc.Y, obj) ) return null;
+			
+			// iterate through 'obj' texture grid
+			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+				// check each individual data point
+				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				
+				// if tile is occupied, return tile reference
+				PlaceableObject objAt = tiles[dataCoords.X, dataCoords.Y];
+				if (objAt != null && objAt != obj) return objAt;
+			}
+			
+			return tiles[loc.X, loc.Y];
+		}
+
+		public virtual void UpdateObject(PlaceableObject obj) {
+			if (!objectList.Contains(obj)) return; // We don't care about this objcet if
+			if (FindObject(obj.GetCurrPos()) != obj) return; // Verify that the object is in the position we think it is in
+
+			SetCell(obj.GetCurrPos(), obj.GetSourceID(), obj.GetAtlasPos()); // Update cell for that object
+		}
 
 		public void Reset() {
+			ArrayList objsToRemove = new ArrayList();
 			foreach (PlaceableObject obj in objectList) {
-				Vector2I OldPos =  obj.GetPos();
-				tiles[OldPos.X, OldPos.Y] = null;
-				EraseCell(OldPos); // erase object from the map
+				Vector2I CurrPos =  obj.GetCurrPos();
+				Vector2I OGPos =  obj.GetOGPos();
+				tiles[CurrPos.X, CurrPos.Y] = null;
+				EraseCell(CurrPos); // erase object from the map
+
+				// PlaceableBig case, erase from map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					
+					// iterate through appropriate tiles and delete accordingly
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						
+						// update tile grid
+						EraseCell(dataCoords);
+						
+						// update tile references
+						tiles[dataCoords.X, dataCoords.Y] = null;
+					}
+				}
+				
+				if (obj.GetGarbage() == true) {
+					objsToRemove.Add(obj);
+					continue;
+				}
 				obj.ResetPos();
-				Vector2I NewPos = obj.GetPos();
-				tiles[NewPos.X, NewPos.Y] = obj;
-				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				
+				tiles[OGPos.X, OGPos.Y] = obj;
+				SetCell(OGPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				
+				
+				// PlaceableBig case, update map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+					// the "origin" object will already be placed by the code above!
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						TileTex tex = data.GetTileTex();
+						
+						// update tiles to point to the origin (reference)
+						tiles[dataCoords.X, dataCoords.Y] = obj;
+						
+						// update tile grid 
+						SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+					}
+				}
+				
+			}
+
+			foreach (PlaceableObject obj in objsToRemove) {
+				objectList.Remove(obj);
 			}
 		}
 		
@@ -214,7 +387,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
-		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
+		public void MouseInput(InputEvent @event, int targetSel)
 		{
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
@@ -237,11 +410,15 @@ namespace BoilerTronicsObjects.Layers
 			if (manager.placingObject == 1) {
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
+					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
+					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
+						GD.Print("Placement: Checking PlaceableBig object");
+						validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
+					}
 					// make sure nothing is there already
-					if (objAtPos != null || !CheckValidPos(tileCoords.X, tileCoords.Y)) {
+					if (objAtPos != null || !validPos) {
 						// reset so we don't place accidently
 						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-						manager.objectToPlace = new Vector2I(-1, -1);
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
@@ -256,19 +433,12 @@ namespace BoilerTronicsObjects.Layers
 					// This will happen if we are mopving an object
 					PlaceableObject obj = manager.objectToMove;
 
-					if (obj == null) {
-						// Not moving, placing a new object
-						Vector2I atlasCords = manager.objectToPlace;
-						AddObject(ObjectFactory.CreateObject(tileCoords, atlasID, atlasCords));
-					} else {
-						obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
-						Vector2I newPos = obj.GetPos();
-						AddObject(obj); // place object
-					}
+					obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
+					Vector2I newPos = obj.GetPos();
+					AddObject(obj); // place object
 
 					// reset to prevent multiple placements
 					manager.objectToMove = null;
-					manager.objectToPlace = new Vector2I(-1, -1);
 					manager.placingObject = 0;
 					
 					// queue redraw for highlighting after moving an object
@@ -291,17 +461,8 @@ namespace BoilerTronicsObjects.Layers
 
 					RemoveObject(objAtPos);
 
-					var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
-					int sourceid = tileSet.GetSourceId(objAtPos.GetSourceID());
-
-					TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
-
-					// get the tile
-					var tile = tileSetSource.GetTileTextureRegion(objAtPos.GetAtlasPos());
-					var fullTexture = tileSetSource.Texture.GetImage();
-					var imageTexture = fullTexture.GetRegion(tile);
-					var texture = new ImageTexture();
-					texture.SetImage(imageTexture);
+					// get the tile texture
+					Texture2D texture = objAtPos.GetTexture() as Texture2D;
 
 					Sprite2D sprite = new Sprite2D();
 					// get texture
@@ -309,11 +470,10 @@ namespace BoilerTronicsObjects.Layers
 					sprite.Scale = grabbedObjectScaling;
 					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
 
-					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos.GetAtlasPos());
+					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos);
 
 					SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 					subView.AddChild(draggable);
-					manager.objectToPlace = objAtPos.GetAtlasPos();
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;
