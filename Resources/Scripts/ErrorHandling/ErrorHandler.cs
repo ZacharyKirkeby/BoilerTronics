@@ -84,6 +84,9 @@ public partial class ErrorHandler : Node2D {
 			}
 		}
 
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		soundManager.PlaySound(SoundType.Error);
+
 		ShowErrorNotice(new Vector2I(0,0)); // Add the '!' icon | TODO: throw a handle error based on the actual error
 
 		ErrorPresent = true;
@@ -91,8 +94,12 @@ public partial class ErrorHandler : Node2D {
 
 	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
 	public void handleError(ErrorType type, CodeEdit E, Vector2 Pos) {
-		if (errorSceneInstance != null) return; // Already displaying error
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		soundManager.StopAllSound();
+		soundManager.PlaySound(SoundType.Error);
+
+		if (errorSceneInstance != null) return; // Already displaying error
 		manager.currLevel.HaultObjects();
 
 		//open error notice (exclamation mark) at coords of error
@@ -106,9 +113,8 @@ public partial class ErrorHandler : Node2D {
 		errorNoticeIcon.Position = errorCoords;*/
 
 		ShowErrorNotice(Pos);
-
 		if(E != null) {
-			E.HighlightLine(E.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+			E.HighlightLine(E.currentLine, new Color(1, 0, 0, 0.3f), true);
 		}
 
 		PackedScene packedErrorScene = null;
@@ -146,6 +152,7 @@ public partial class ErrorHandler : Node2D {
 		}
 
 		ErrorPresent = true;
+		soundManager.PlaySound(SoundType.Error);
 	}
 
 

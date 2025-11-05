@@ -1,4 +1,6 @@
+using BoilerTronicsObjects.Interfaces;
 using Godot;
+using Parsing;
 using System;
 using System.Collections.Generic;
 
@@ -104,13 +106,36 @@ public partial class Terminals : TabContainer
 
 	// when a new tab is selected, run
 	// TODO on tab selection, run error checker on both tabs
-	private void OnTabSelected(long tab)
+
+	private void OnTabSelected(long tabIdx)
 	{
-		GD.Print("Switched to tab: " + tab);
-		
+		var manager = BoilerTronicsGlobalManager.GlobalManager;
+		if (manager?.terminalContainer == null) return;
+
+		var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+		if (terminalVBox == null) return;
+
+		var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+		if (registerPanel == null) return;
+
+		var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+		if (registerLabel == null) return;
+
+		var currentEditor = GetTabControl((int)tabIdx) as CodeEdit;
+		if (currentEditor == null) return;
+
+		var obj = currentEditor.getObject();
+		if (obj == null) return;
+		Parser parser = null;
+		if (obj is Scriptable scriptabl)
+			parser = scriptabl.GetParser();
+		if (parser != null)
+			registerLabel.SetParser(parser);
+
 		UpdateSelectedTerminal();
 	}
-	
+
+
 	// update selected terminal; important for corresponding object highlighting!
 	public void UpdateSelectedTerminal() {
 		// run terminal selected functionality
