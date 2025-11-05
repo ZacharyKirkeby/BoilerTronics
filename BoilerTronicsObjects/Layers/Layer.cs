@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
@@ -116,7 +117,26 @@ namespace BoilerTronicsObjects.Layers
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
 			return true;
 		}
+		
+		// special case for PlaceableBig objects
+		public bool CheckValidPos(int X, int Y, PlaceableBig obj)
+		{
+			// check base origin point
+			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			
+			// iterate through 'obj' texture grid
+			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+				// check each individual data point
+				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				X = dataCoords.X;
+				Y = dataCoords.Y;
+				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			}
+			
+			return true;
+		}
 
+		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
 			// reset layer transparency
@@ -129,13 +149,63 @@ namespace BoilerTronicsObjects.Layers
 			
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			Vector2I pos = newPlaceable.GetPos();
-			if (FindObject(pos) != null) return;
-			if (!CheckValidPos(pos.X, pos.Y)) return;
+			
+			// very minor optimization
+			bool isPlaceableBig = (newPlaceable is PlaceableBig);
+			
+			// check ValidPos stuff differently for PlaceableBig
+			// check: are coordinates in bounds?
+			if (isPlaceableBig) {
+				if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) newPlaceable)) return;
+			} else {
+				if (!CheckValidPos(pos.X, pos.Y)) return;
+			}
+			
+			// check: are coordinates occupied?
+			if (isPlaceableBig) {
+				if (FindObject(pos, (PlaceableBig) newPlaceable) != null) return;
+			} else {
+				if (FindObject(pos) != null) return;
+			}
+			
+			// check: are the coordinates editable?
+			if (isPlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) newPlaceable;
+				// iterate through 'obj' texture grid
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					
+					// if any of the tile positions are marked as "not editable", return
+					if (!editableTiles[dataCoords.X, dataCoords.Y]) return;
+				}
+			} else {
+				if (!editableTiles[pos.X, pos.Y]) return;
+			}
+			
 
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
-			if (!editableTiles[pos.X, pos.Y]) return;
 			tiles[pos.X, pos.Y] = newPlaceable;
 			SetCell(newPlaceable.GetCurrPos(), newPlaceable.GetSourceID(), newPlaceable.GetAtlasPos()); // places new object
+			
+			// update tiles, cells to fill accordingly to the PlaceableBig data
+			if (isPlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) newPlaceable;
+				// iterate through expected tiles and fill accordingly
+				// the "origin" object will already be placed by the code above!
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					TileTex tex = data.GetTileTex();
+					
+					// update tiles to point to the origin (reference)
+					tiles[dataCoords.X, dataCoords.Y] = newPlaceable;
+					
+					// update tile grid 
+					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+				}
+			}
+			
 			// UpdateInternals();
 			GD.Print("Added object");
 			
@@ -178,14 +248,34 @@ namespace BoilerTronicsObjects.Layers
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
+		// system also should properly handle PlaceableBig objects
 		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
 			if (!objectList.Contains(objectToRemove)) return;
-			objectList.Remove(objectToRemove); // remove to object form the list
-			EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
 			Vector2I pos = objectToRemove.GetPos();
 			if (!editableTiles[pos.X, pos.Y]) return;
+			
+			objectList.Remove(objectToRemove); // remove to object form the list
+			EraseCell(objectToRemove.GetCurrPos()); // erase object from the map
 			tiles[pos.X, pos.Y] = null; // remove from the tiles
+			
+			// PlaceableBig case
+			if (objectToRemove is PlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) objectToRemove;
+				
+				// iterate through appropriate tiles and delete accordingly
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(obj.GetPos());
+					
+					// update tile grid
+					EraseCell(dataCoords);
+					
+					// update tile references
+					tiles[dataCoords.X, dataCoords.Y] = null;
+				}
+			}
+			
 			numItems--;
 			
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -222,9 +312,34 @@ namespace BoilerTronicsObjects.Layers
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
+		// returns the reference to the object at 'loc' position
+		// returns 'null' if object either does not exist, or 'loc' is OOB.
 		public virtual PlaceableObject FindObject(Vector2I loc)
 		{
 			if (!CheckValidPos(loc.X, loc.Y) ) return null;
+			return tiles[loc.X, loc.Y];
+		}
+		
+		// special case for PlaceableBig objects
+		// i.e. perform checks iteratively for all of a PlaceableBig object's grid offsets and etc
+		// returns 'null' if all of the tiles occupied by 'PlaceableBig' are unoccupied by anthing but said 'PlaceableBig' object
+		// otherwise, returns the first tile occupied by an object other than the 'PlaceableBig' within its tiles (i.e. PlaceableBigData's stuff)
+		public virtual PlaceableObject FindObject(Vector2I loc, PlaceableBig obj)
+		{	
+			// TODO: AddObject updated to already perform 'CheckValidPos' before 'FindObject' is called
+			// should this still be executed or should this below call be removed for performance optimization?
+			if (!CheckValidPos(loc.X, loc.Y, obj) ) return null;
+			
+			// iterate through 'obj' texture grid
+			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+				// check each individual data point
+				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				
+				// if tile is occupied, return tile reference
+				PlaceableObject objAt = tiles[dataCoords.X, dataCoords.Y];
+				if (objAt != null && objAt != obj) return objAt;
+			}
+			
 			return tiles[loc.X, loc.Y];
 		}
 
