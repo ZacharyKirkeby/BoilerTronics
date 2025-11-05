@@ -302,9 +302,9 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 
