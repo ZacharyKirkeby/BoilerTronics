@@ -22,9 +22,10 @@ public partial class DragableObjectControl : Control {
 	Window priceChangeWindow;
 	LineEdit priceBox;
 	PlaceableBig.Direction dir;
+	int sel;
 	// int itemNumber;
 
-	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel)
+	public DragableObjectControl(ImageTexture texture, Vector2I atlasCords, int sel, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel)
 	{
 		sprite = new Sprite2D();
 		// get texture
@@ -36,6 +37,7 @@ public partial class DragableObjectControl : Control {
 		this.vboxPanel = vboxPanel;
 		this.priceLabel = priceLabel;
 		this.sourceID = sourceID;
+		this.sel = sel;
 		dir = PlaceableBig.Direction.UP; // Up by default
 		// this.itemNumber = itemNumber;
 	}
@@ -65,6 +67,10 @@ public partial class DragableObjectControl : Control {
 
 			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 			subView.AddChild(draggable);
+
+			manager.currSlection = sel;
+
+			GD.Print("Curr Sel: ", manager.currSlection);
 
 			// spawn terminal perhap?
 			// set layer to be semi transparent if not being placed on
