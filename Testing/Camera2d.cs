@@ -75,8 +75,8 @@ namespace BoilerTronicsObjects.GameCamera {
 			Vector2 maxValidCoords = ((maxCoords + cameraBoundaryBuffer) * this.GetZoom().X * cameraBoundaryMult + cameraOffset);
 			
 			// GD.Print("\ncurr camera coords: ", this.Position);
-			GD.Print("min camera coords: ", minValidCoords);
-			GD.Print("max camera coords: ", maxValidCoords);
+			// GD.Print("min camera coords: ", minValidCoords);
+			// GD.Print("max camera coords: ", maxValidCoords);
 			
 			// restrict camera panning
 			if (this.Position.X < minValidCoords.X) { 

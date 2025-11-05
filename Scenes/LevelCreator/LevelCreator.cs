@@ -94,9 +94,22 @@ public partial class LevelCreator : LevelUi
 			if you need full path youll probably have to store it in a variable 
 			somewhere using logic later
 		*/
+		
+		// TODO: is this loading correctly?
+		// BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		// man.saveState.LoadLevelName(man, dropdown.GetItemText(dropdown.Selected));
+		// man.currLevel._Ready();
+		
+		
 		GetNode<Window>("%CreatorLoadWindow").Visible = false;
 		GetNode<VBoxContainer>("%MainVBox").Visible = true;
 		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+		
+		// updates manager field such that the level knows to load from a specific given level
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.loadLevelName = dropdown.GetItemText(dropdown.Selected);
+		GD.Print("LevelCreator: loading level: ", man.loadLevelName);
+		GetTree().ReloadCurrentScene();
 	}
 
 	private void _on_protected_tiles_pressed()

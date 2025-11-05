@@ -214,12 +214,12 @@ public partial class ObjectPicker : HBoxContainer
 	}
 
 	void SetDeveloper()
-    {
+	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		KillChildren();
 		loadSprites(DeveloperSection);
 		manager.currSlection = 4;
-    }
+	}
 
 	public override void _Ready()
 	{
