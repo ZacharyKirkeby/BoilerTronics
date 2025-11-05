@@ -115,18 +115,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public FactoryPress(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
-			
-			/*
-			
-			// Demo of creating specific slots to have specific behaviors
-			PlaceableObject insertionPoint = ObjectFactory.GenerateObject(int objectId, 0, 0);
-			
-			dir0.Add(new PlaceableBigData(
-				new Vector2I(0, 0),		// offset from object's origin
-				new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-				insertionPoint
-			));
-			*/
+
+			// Deep copy static data to object data
 			
 			// internal insert, output objects
 			insertObj = new FactoryFurnaceInput(0, 0, 0);
@@ -134,45 +124,22 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
-			/*
-			||[]			 
-			[]{}
-			*/
+			// UP
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]{}
-			||[]
-			*/
+			objectData[0][0].SetInternalObj(null);
+			objectData[0][1].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			{}[]
-			[]||
-			*/
+			// DOWN
+			objectData[1][0].SetInternalObj(null);
+			objectData[1][1].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]||
-			{}[]
-			*/
+			// LEFT
+			objectData[2][0].SetInternalObj(null);
+			objectData[2][1].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
+			// RIGHT
+			objectData[3][0].SetInternalObj(null);
+			objectData[3][1].SetInternalObj(null);
 			
 			SetDir(Direction.UP);
 		}
