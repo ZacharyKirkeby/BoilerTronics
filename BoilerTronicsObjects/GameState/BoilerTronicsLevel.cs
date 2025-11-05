@@ -433,7 +433,7 @@ public partial class BoilerTronicsLevel : Node2D
 
 	}
 
-	public void MovingCollisionReport(MovingObject mObj) {
+	public void MovingCollisionReport(MovingObject mObj, MovingObject other = null) {
 		if (mObj == null) return; // We can't report a moving object
 		if (!(mObj.obj is PlaceableObject pObj)) return; // We can't report a moving object
 
@@ -449,8 +449,16 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
+			CodeEdit terminalMain = sObj.GetTerminal();
+			CodeEdit terminalOther = null;
+			if (other != null && other.obj is Scriptable otherScript) {
+				terminalOther = otherScript.GetTerminal();
+			}
+			
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
-			GD.Print("collision but showing rail");
+
+			if (terminalOther != null && terminalOther != terminalMain)
+			terminalOther.HighlightLine(terminalOther.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
 			GD.Print("actual collision");
