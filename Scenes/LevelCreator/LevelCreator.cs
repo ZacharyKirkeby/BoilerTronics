@@ -133,7 +133,45 @@ public partial class LevelCreator : LevelUi
 	}
 	private void _on_protected_tiles_dropdown_item_selected(int index)
 	{
-		/* index values 1: none 2: Floor 3: Factory 4: Claw 5: Rail 6: Movement 
-			TODO: ethen link in protected tile highlighting based on which item is selected / clear if none*/
+		/* index values 
+			0: none 
+			1: Floor 
+			2: Factory 
+			3: Claw 
+			4: Rail 
+			5: Movement
+			
+			Ethen - thank you Ethan for the docs and etc
+		*/
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.layerFloor.HighlightProtectedTiles(false);
+		manager.layerFactory.HighlightProtectedTiles(false);
+		manager.layerClaw.HighlightProtectedTiles(false);
+		manager.layerRail.HighlightProtectedTiles(false);
+		manager.layerMovement.HighlightProtectedTiles(false);
+		
+		switch (index) {
+			case 0:
+				// do nothing; this is the "none" option
+				break;
+			case 1:
+				manager.layerFloor.HighlightProtectedTiles(true);
+				break;
+			case 2:
+				manager.layerFactory.HighlightProtectedTiles(true);
+				break;
+			case 3:
+				manager.layerClaw.HighlightProtectedTiles(true);
+				break;
+			case 4:
+				manager.layerRail.HighlightProtectedTiles(true);
+				break;
+			case 5:
+				manager.layerMovement.HighlightProtectedTiles(true);
+				break;
+			default:
+				GD.Print("LevelCreator.cs: Protected Tiles Dropdown Menu: Invalid Index: ", index);
+				break;
+		}
 	}
 }
