@@ -16,46 +16,57 @@ public partial class ObjectPicker : HBoxContainer
 		public Vector2I atPos; // Atlas position of the sprite (this will be the root if it's a big object)
 		public Vector2I offSet; // Amount we need to offset the sprite
 		public bool big; // Bool to tell us if this is a big object or not (this will affect the way the texture is rendered)
+		public int sel;
 
-		public ItemInfo(string name, int price, int table, Vector2I atPos, Vector2I offSet, bool big) {
+		public ItemInfo(string name, int price, int sel, int table, Vector2I atPos, Vector2I offSet, bool big) {
 			this.name = name;
 			this.price = price;
 			this.table = table;
 			this.atPos = atPos;
 			this.offSet = offSet;
 			this.big = big;
+			this.sel = sel;
 		}
 	}
 
 	// sprite table id for each table
-	static int MovementIndex = 0;
-	static int ClawIndex = 1;
+	static int MovementIndex = 1;
 	static int FactoryIndex = 2;
+	static int ClawIndex = 3;
 
 	static ItemInfo[] MovementSection = {
-		new ItemInfo("Vertical Conveyor", 100, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
-		new ItemInfo("Horizontal Conveyor", 100, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
-		new ItemInfo("Rotator", 100, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
-		new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
+		new ItemInfo("Vertical Conveyor", 100, 1, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
+		new ItemInfo("Horizontal Conveyor", 100, 1, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
+		new ItemInfo("Rotator", 100, 1, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
+		new ItemInfo("Switch", 100, 1, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
 	};
 
 	static ItemInfo[] ClawSection = {
-		new ItemInfo("Claw", 100, 1, new Vector2I(0,0), new Vector2I(85, 131), false),
-		new ItemInfo("Vertical Rail", 100, 1, new Vector2I(0,1), new Vector2I(85, 131), false),
-		new ItemInfo("Horizontal Rail", 100, 1, new Vector2I(0,2), new Vector2I(85, 131), false),
+		new ItemInfo("Claw", 100, 3, 1, new Vector2I(0,0), new Vector2I(85, 131), false),
+		new ItemInfo("Vertical Rail", 100, 3, 1, new Vector2I(0,1), new Vector2I(85, 131), false),
+		new ItemInfo("Horizontal Rail", 100, 3, 1, new Vector2I(0,2), new Vector2I(85, 131), false),
 	};
 
 	static ItemInfo[] FactorySection = {
-		new ItemInfo("Input", 100, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
-		new ItemInfo("Output", 100, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
-		new ItemInfo("Furnace", 100, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
-		new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
-		new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
+		// new ItemInfo("Input", 100, 2, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
+		// new ItemInfo("Output", 100, 2, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
+		new ItemInfo("Furnace", 100, 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
+		new ItemInfo("Roller", 100, 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
+		new ItemInfo("Press", 100, 2, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
 	};
 
 	static ItemInfo[] DeveloperSection =
 	{
-		new ItemInfo("Placeholder", 100, 4, new Vector2I(0,0), new Vector2I(85, 85), false)
+		new ItemInfo("Coal In", 0, 2, 0, new Vector2I(1,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Ore In", 0, 2, 0, new Vector2I(2,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Bar In", 0, 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Plate In", 0, 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Rod In", 0, 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false),
+		new ItemInfo("Coal Out", 0, 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Ore Out", 0, 2, 0, new Vector2I(2,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Bar Out", 0, 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Plate Out", 0, 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Rod Out", 0, 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false),
 	};
 
 	public void Update(int selection)
@@ -99,8 +110,8 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, sourceID, posX, posY, priceLabel, vboxPanel);
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sel, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, sel, sourceID, posX, posY, priceLabel, vboxPanel);
 		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
@@ -170,7 +181,8 @@ public partial class ObjectPicker : HBoxContainer
 		nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 		nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
-		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
+		GD.Print("Sel: ", item.sel);
+		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.sel, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
 
 		vbox.AddChild(background);
 		vbox.AddChild(nameLabel);

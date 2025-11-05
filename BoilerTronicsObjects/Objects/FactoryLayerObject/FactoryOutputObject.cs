@@ -74,6 +74,32 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			_TargetObjectID = targetID;
 			_TargetNum = targetNum;
 			_CurrNum = _TargetNum;
+			
+			switch(_TargetObjectID) {
+				case 200:
+					// coal variant
+					SetAtlasPos(new Vector2I(1, 1));
+					break;
+				case 201:
+					// iron ore variant
+					SetAtlasPos(new Vector2I(2, 1));
+					break;
+				case 202:
+					// iron bar variant
+					SetAtlasPos(new Vector2I(3, 1));
+					break;
+				case 203:
+					// iron plate variant
+					SetAtlasPos(new Vector2I(0, 3));
+					break;
+				case 204:
+					// iron rod variant
+					SetAtlasPos(new Vector2I(1, 3));
+					break;
+				default:
+					GD.Print("FactoryInputObject: Warning: InputObject does not have visual variant for object id: ", _TargetObjectID);
+					break;;
+			}
 		}
 	}
 }
