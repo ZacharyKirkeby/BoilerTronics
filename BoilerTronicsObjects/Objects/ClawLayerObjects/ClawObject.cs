@@ -69,7 +69,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			// resets this object's "displayed" visuals by resetting its frame index
 			ResetFrame();
 
-			_parser.Reset();
+			_parser.Reset(); //disposed object error?
+
 			heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
@@ -77,7 +78,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			{
 				existing.QueueFree();
 			}
-			// Maybe need to make a call to our codeEdit/interrputer?
+			// Maybe need to make a call to our codeEdit/interrupter?
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
 		}
 
 		// Scriptable interface

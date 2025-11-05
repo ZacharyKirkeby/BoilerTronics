@@ -43,11 +43,11 @@ public partial class DraggableObject : Node2D {
 			sprite.QueueFree();
 			QueueFree();
 			// reset layer transparency
-			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
-			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
-			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
-			manager.layerRail.Modulate = new Color(1, 1, 1, 1);
-			manager.layerMovement.Modulate = new Color(1, 1, 1, 1);
+			manager.layerClaw.Modulate = manager.layerDefaultVisibility;
+			manager.layerFactory.Modulate = manager.layerDefaultVisibility;
+			manager.layerFloor.Modulate =manager.layerDefaultVisibility;
+			manager.layerRail.Modulate = manager.layerDefaultVisibility;
+			manager.layerMovement.Modulate = manager.layerDefaultVisibility;
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
 		}

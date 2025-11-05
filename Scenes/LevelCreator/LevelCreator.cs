@@ -1,345 +1,142 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Parsing;
-public partial class LevelCreator : Node2D
+public partial class LevelCreator : LevelUi
 {
-	/* Editors */
-
-	private int currentLine = 0;
-	private TabContainer tabs;
-	private Parser parser;
-
-	/* Steps */
-
-	private Label stepCountLabel;
-
-	/* Save Box ? (Ethan Change name for clarification) */
-
-	private StyleBoxFlat FullSaveButtonTheme = new StyleBoxFlat();
-	private StyleBoxFlat EmptySaveButtonTheme = new StyleBoxFlat();
-	private StyleBoxFlat EmptySaveButtonHoverTheme = new StyleBoxFlat();
-	private StyleBoxFlat FullSaveButtonHoverTheme = new StyleBoxFlat();
-
-	/* Buttons */
-
-	private Button saveZero;
-	private Button saveOne;
-	private Button saveTwo;
-	private Button clearZero;
-	private Button clearOne;
-	private Button clearTwo;
-	private Button stepButton;
 
 	public override void _Ready()
 	{
-		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
-
-
-		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
-		saveOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Save 1");
-		saveTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Save 2");
-		clearZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Clear 0");
-		clearOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Clear 1");
-		clearTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Clear 2");
-		FullSaveButtonTheme.BgColor = new Color(1, 0, 0);
-		FullSaveButtonTheme.BorderColor = new Color(0, 0, 0);
-		FullSaveButtonTheme.SetBorderWidthAll(3);
-		FullSaveButtonTheme.SetCornerRadiusAll(20);
-		FullSaveButtonHoverTheme = FullSaveButtonTheme.Duplicate() as StyleBoxFlat;
-		FullSaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
-		EmptySaveButtonTheme.BgColor = new Color(0, 0.7f, 0);
-		EmptySaveButtonTheme.BorderColor = new Color(0, 0, 0);
-		EmptySaveButtonTheme.SetBorderWidthAll(3);
-		EmptySaveButtonTheme.SetCornerRadiusAll(20);
-		EmptySaveButtonHoverTheme = EmptySaveButtonTheme.Duplicate() as StyleBoxFlat;
-		EmptySaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
-		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		stepButton = GetNode<Button>("%Step Button");
-		UpdateStepCount(0);
-		// manager.SetDraggable(false); // debug; testing script
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.E = new ErrorHandler();
-		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
-
-		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
-		// parser.Connect(Parser.SignalName.ErrorRaised, new Callable(manager.currLevel.E, nameof(manager.currLevel.E.OnParserErrorRaised)));
-
-		// manager.currLevel.P = parser;
-
-		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
-		button.GrabFocus();
-
-		//run tests
-		var autoTest = new ErrorTest();
-		//AddChild(autoTest);
-	}
-
-	/* Button Fuctions */
-
-	private void _on_open_button_pressed() {
-		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
-	}
-
-	private void _on_reset_button_pressed()
-	{
-		// Tell the global manager that we are resetting
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-		manager.Reset();
-		manager.currLevel.Reset();
-
-		//reset highlighting in terminals
-		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-
-		foreach (CodeEdit editor in codeEditors)
+		base._Ready();
+		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
+		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		foreach (string saveFile in saveFiles)
 		{
-			editor.ClearAllHighlights();
-			var existing = editor.GetNodeOrNull<Label>("ErrorLabel");
-			if (existing != null)
-			{
-				existing.QueueFree();
-			}
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
 		}
+		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
+		var saveName = GetNode<Label>("%SaveName");
+		saveName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
+	}
+	private void _on_creatorsave_button_pressed()
+	{
+		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
+		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		foreach (string saveFile in saveFiles)
+		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		var saveName = GetNode<Label>("%SaveName");
+		saveName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
 
-		// reset terminal's highlighted objects
-		manager.terminalContainer.UpdateSelectedTerminal();
-
-		//refresh step count label
-		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
-
-		UpdateStepCount(manager.currLevel.StepCount);
-
-		manager.currLevel.E.ClearErrorNotice();
 	}
 
-	//called in test script to have access to auto resetting
-	private void _on_step_button_pressed() {
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	private void _on_creator_save_window_close_requested()
+	{
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		saveWindow.Visible = false;
+	}
+	private void _on_creator_load_window_close_requested()
+	{
+		var loadWindow = GetNode<Window>("%CreatorLoadWindow");
+		var loadName = GetNode<LineEdit>("%NewLevelName");
+		loadName.Text = "";
+		loadWindow.Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+	}
+	private void _on_new_level_button_pressed()
+	{
+		var levelName = GetNode<LineEdit>("%NewLevelName");
+		var fileName = GetNode<LineEdit>("%NewFileName");
+		var levelID = GetNode<LineEdit>("%NewLevelID");
+		var newLevelButton = GetNode<Button>("%NewLevelButton");
+		/* TODO: Ethen implement new level logic using name from lineedit */
+		GetNode<Window>("%CreatorLoadWindow").Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+	}
+	private void _on_existing_level_selector_item_selected(int index)
+	{
+		var saveName = GetNode<Label>("%SaveName");
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		saveName.Text = dropdown.GetItemText(index);
+	}
+	private void _on_existing_load_level_selector_item_selected(int index)
+	{
+		var loadName = GetNode<Label>("%LoadName");
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		loadName.Text = dropdown.GetItemText(index);
+	}
 
-		// on first step button press, trigger an autosave!
-		if (manager.currLevel.StepCount == 0) {
-			manager.SaveAutosave();
-
-			// also stop all highlighting
-			manager.terminalContainer.ClearHighlightedObjects();
-		}
-
-		// Tell the global manager that we are stepping
-		manager.Step(); // This will also call step on the level
-
-		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
-
-		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-		//update code terminal highlighting to next one regardless of error
-		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
-
-		/*
-		 * This will be moved into the step function of the scriptable objects
-		 foreach (CodeEdit editor in codeEditors)
-		 {
-		// NOTE - FUNNY STUFF
-		parser.ParseGetLine(null, null, editor.Text, stepCount, editor.Name);
-		editor.HighlightLine(editor.getLastHighlighted() + 1, new Color(1, 1, 1, 0.3f));
-		}
+	private void _on_overwrite_save_button_pressed()
+	{
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLevelSelector");
+		/* TODO: Ethen implement save logic 
+			you can find the file name selected with 
+			dropdown.GetItemText(dropdown.Selected);
+			if you need full path youll probably have to store it in a variable 
+			somewhere using logic later
 		*/
-	}
-
-	private void _on_run_button_pressed() {
-		// TODO: Implement
-		// On press we should look at our current run state
-		// If we have paused or are stepping, don't do anything
-		// If we are not running, go to 1x
-		// If we are at 1x, go to 2x
-		// If we are at 2x, go to submit speed
-		// If we are at submit speed, don't do anything
-	}
-
-	private void _on_pause_button_pressed() {
-		// If we are not running, don't do anything
-		// Otherwise, stop running
-	}
-
-	// return to main menu button
-	private void _on_exit_button_pressed()
-	{
-
-		// Get manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-		// set save data info to autosave
-		manager.SetTargetLevelSave(0, -2);
-		manager.SaveLevel();
-
-		CallDeferred(nameof(ChangeScene));
+		
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		
+		string levelname = dropdown.GetItemText(dropdown.Selected);
+		GD.Print("LevelCreator: overwriting level: ", levelname);
+		man.saveState.SaveDataTo(man, "LevelCreator", "/" + levelname);
 	}
 	
-
-	private void ChangeScene()
+	private void _on_load_level_button_pressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
-	}
-	private void _on_settings_button_pressed() {
-		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = true;
-	}
-	private void _on_exit_menu_close_requested() {
-		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = false;
-	}
-
-	private void _on_level_statistics_menu_close_requested() {
-		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = false;
-	}
-
-	private void _on_level_statistics_pressed() {
-		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
-	}
-
-
-	private void _on_save_button_pressed() {
-
-		// Don't allow saving while stepping!
-		// TODO: visually indicate that system cannot save	
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-		if (manager.currLevel.StepCount != 0) {
-			return;
-		}
-
-		saveZero.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
-		saveOne.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
-		saveTwo.AddThemeColorOverride("font_color_hover", new Color(0.8f, 0.8f, 0.8f));
-
-		if (manager.CheckSaveData(manager.GetLevelID(), 0))
-		{
-			full_theme(saveZero);
-			clearZero.Visible = true;
-		}
-		else
-		{
-			empty_theme(saveZero);
-			clearZero.Visible = false;
-		}
-
-		if (manager.CheckSaveData(manager.GetLevelID(), 1))
-		{
-			full_theme(saveOne);
-			clearOne.Visible = true;
-		}
-		else
-		{
-			empty_theme(saveOne);
-			clearOne.Visible = false;
-		}
-
-		if (manager.CheckSaveData(manager.GetLevelID(), 2))
-		{
-			full_theme(saveTwo);
-			clearTwo.Visible = true;
-		}
-		else
-		{
-			empty_theme(saveTwo);
-			clearTwo.Visible = false;
-		}
-
-		GetNode<Window>("Window").Visible = true;
+		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		/* TODO: Ethen implement load logic 
+			you can find the file name selected with 
+			dropdown.GetItemText(dropdown.Selected);
+			if you need full path youll probably have to store it in a variable 
+			somewhere using logic later
+		*/
+		
+		// TODO: is this loading correctly?
+		// BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		// man.saveState.LoadLevelName(man, dropdown.GetItemText(dropdown.Selected));
+		// man.currLevel._Ready();
+		
+		
+		GetNode<Window>("%CreatorLoadWindow").Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+		
+		// updates manager field such that the level knows to load from a specific given level
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.loadLevelName = dropdown.GetItemText(dropdown.Selected);
+		
+		GD.Print("LevelCreator: loading level: ", man.loadLevelName);
+		GetTree().ReloadCurrentScene();
+		
+		// TODO: fix "_push_unhandled_input_internal: Condition "is_inside_tree()" is true" errors
 	}
 
-	private void _on_save_0_pressed()
+	private void _on_protected_tiles_pressed()
 	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 0);
-		manager.SaveLevel();
-		full_theme(saveZero);
-		clearZero.Visible = true;
+		var protectedTilesWindow = GetNode<Window>("%ProtectedTilesWindow");
+		protectedTilesWindow.Visible = true;
 	}
 
-	private void _on_save_1_pressed()
+	private void _on_protected_tiles_window_close_requested()
 	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 1);
-		manager.SaveLevel();
-		full_theme(saveOne);
-		clearOne.Visible = true;
+		var protectedTilesWindow = GetNode<Window>("%ProtectedTilesWindow");
+		protectedTilesWindow.Visible = false;
 	}
-
-	private void _on_save_2_pressed()
+	private void _on_protected_tiles_dropdown_item_selected(int index)
 	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 2);
-		manager.SaveLevel();
-		full_theme(saveTwo);
-		clearTwo.Visible = true;
+		/* index values 1: none 2: Floor 3: Factory 4: Claw 5: Rail 6: Movement 
+			TODO: ethen link in protected tile highlighting based on which item is selected / clear if none*/
 	}
-
-	private void _on_clear_0_pressed()
-	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		DirAccess.RemoveAbsolute("user://level" + manager.GetLevelID() + "/save0.save");
-		empty_theme(saveZero);
-		clearZero.Visible = false;
-	}
-
-	private void _on_clear_1_pressed()
-	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		DirAccess.RemoveAbsolute("user://level" + manager.GetLevelID() + "/save1.save");
-		empty_theme(saveOne);
-		clearOne.Visible = false;
-	}
-
-	private void _on_clear_2_pressed()
-	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		DirAccess.RemoveAbsolute("user://level" + manager.GetLevelID() + "/save2.save");
-		empty_theme(saveTwo);
-		clearTwo.Visible = false;
-	}
-
-	private void _on_window_close_requested()
-	{
-		GetNode<Window>("Window").Visible = false;
-	}
-	
-	private void _on_price_change_window_close_requested() {
-		GetNode<Window>("PriceChangeWindow").Visible = false;
-	}
-	
-	/* Helper Funcitons */
-
-	private void UpdateStepCount(int stepCount)
-	{
-		stepCountLabel.Text = "Step Count: " + stepCount;
-	}
-
-	private void full_theme(Button button)
-	{
-		button.AddThemeStyleboxOverride("normal", FullSaveButtonTheme);
-		button.AddThemeStyleboxOverride("hover", FullSaveButtonHoverTheme);
-		button.AddThemeStyleboxOverride("focus", FullSaveButtonTheme);
-	}
-
-	private void empty_theme(Button button)
-	{
-		button.AddThemeStyleboxOverride("normal", EmptySaveButtonTheme);
-		button.AddThemeStyleboxOverride("hover", EmptySaveButtonHoverTheme);
-		button.AddThemeStyleboxOverride("focus", EmptySaveButtonTheme);
-	}
-
-	/* Testing Functions */
-
-	//called in test script to have access to auto stepping
-	public void simulateStep() {
-		_on_step_button_pressed();
-	}
-
-	public void simulateReset()
-	{
-		_on_reset_button_pressed();
-	}
-	
-	/* Level Creator Functions */
-
 }
