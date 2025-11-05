@@ -69,19 +69,16 @@ public partial class DragableObjectControl : Control {
 
 			int selection = manager.currSlection;
 			// set layer to be semi transparent if not being placed on
-			if (selection == 1)
-			{
+			if (selection == 1) {
 				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
-			}
-			else if (selection == 3)
+			} else if (selection == 3) {
 				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
-			} else if (selection == 2)
-			{
+			} else if (selection == 2) {
 				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
 				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
