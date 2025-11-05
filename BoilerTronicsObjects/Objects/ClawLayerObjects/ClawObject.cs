@@ -58,10 +58,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			}
 			this.heldObject = null;
 			base.ResetPos();
-
-			// FRAME SYSTEM
-			// resets this object's "displayed" visuals by resetting its frame index
-			ResetFrame();
 			_parser.Reset();
 			heldObject = null;
 			E.ClearAllHighlights();
@@ -70,7 +66,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			{
 				existing.QueueFree();
 			}
-			// Maybe need to make a call to our codeEdit/interrputer?
+			// Maybe need to make a call to our codeEdit/interrupter?
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
 		}
 
 		// Scriptable interface

@@ -1,25 +1,22 @@
-// TODO: implement in more detail
 using Godot;
 using System;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
-using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
-namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
+namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class FactoryFurnace : PlaceableBig, Movable {
+	public class  Switch: PlaceableBig, Movable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(2, 0);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		static int layerSourceId = 3;
+		static int layerSourceId = 2;
 		private int _objectID;
 		
-		private PlaceableObject insertObj;
-		private PlaceableObject outputObj;
 		private List<PlaceableBigData>[] objectData;
 
 		/*
@@ -33,91 +30,54 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 0, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 0, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Down direction
 			new List<PlaceableBigData> {
+				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(1, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 1),	// offset from object's origin
-						new TileTex(1, 0, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 1, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 1, 2),	// atlasX, atlasY, sourceId
 						null
 						),
-				new PlaceableBigData(
-						new Vector2I(0, 1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						)
 			},
 			// Left direction
 			new List<PlaceableBigData> {
+				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 0, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, 1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 0, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Right direction
 			new List<PlaceableBigData> {
+				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 1, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(2, 0, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(3, 1, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(1, 1, 2),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
@@ -150,7 +110,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		// REMINDER:
 		// the entirety of the object's visuals/internal objects are generated here!
-		public FactoryFurnace(int OGX, int OGY, int altTitle = 0, int objectID = 200)
+		public Switch(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
 			
@@ -167,8 +127,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			*/
 			
 			// internal insert, output objects
-			insertObj = new FactoryFurnaceInput(0, 0, 0);
-			outputObj = new FactoryFurnaceOutput(0, 0, 0);
+			// insertObj = new FactoryFurnaceInput(0, 0, 0);
+			// outputObj = new FactoryFurnaceOutput(0, 0, 0);
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
@@ -225,6 +185,20 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public override List<PlaceableBigData> GetTextureGrid(Direction inDir) {
 			switch (inDir) {
+				case Direction.UP:
+					return textureGrid[0];
+				case Direction.DOWN:
+					return textureGrid[1];
+				case Direction.LEFT:
+					return textureGrid[2];
+				case Direction.RIGHT:
+					return textureGrid[3];
+			}
+			return null;
+		}
+
+		public static List<PlaceableBigData> StaticGetTextureGrid(Direction dir) {
+			switch (dir) {
 				case Direction.UP:
 					return textureGrid[0];
 				case Direction.DOWN:
