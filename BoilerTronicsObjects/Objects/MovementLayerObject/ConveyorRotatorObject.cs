@@ -138,6 +138,10 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			GD.Print("newDir:", tObj.GetDir());
 		}
 
+		public void Switch(string[] args) {
+			return; // Throw error
+		}
+
 		// Override 'save' function to also return a script's information
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
