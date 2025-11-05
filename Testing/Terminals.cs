@@ -191,8 +191,6 @@ public partial class Terminals : TabContainer
 		}
 	}
 	
-	// === NEW: Error Checking Methods ===
-	
 	// Validate all editors
 	public void ValidateAllEditors()
 	{
@@ -201,7 +199,7 @@ public partial class Terminals : TabContainer
 			editor.ValidateAndHighlight();
 		}
 	}
-	
+
 	// Clear all errors from all editors
 	public void ClearAllErrors()
 	{

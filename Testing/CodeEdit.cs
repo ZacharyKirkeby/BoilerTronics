@@ -20,7 +20,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	private Color errorColor = new Color(1.0f, 0.0f, 0.0f, 0.25f);
 	private Dictionary<int, string> lineErrors = new();
 	private bool isDirty = false;
-
+	
 	// Object highlighting fields
 	private PlaceableObject correspondingObject;
 	private Layer highlightedLayer;
@@ -33,13 +33,13 @@ public partial class CodeEdit : Godot.CodeEdit
 		CaretBlink = true;
 		TextChanged += OnTextChanged;
 		currentLine = 0;
-
+		
 		// Create error label at bottom of terminal
 		CreateErrorLabel();
-
+		
 		// Initial validation
 		ValidateAndHighlight();
-
+		
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		if (manager.terminalContainer.GetCurrentEditor() == this)
 		{
@@ -57,7 +57,7 @@ public partial class CodeEdit : Godot.CodeEdit
 			AutowrapMode = TextServer.AutowrapMode.Word,
 			Visible = false
 		};
-
+		
 		AddChild(errorLabel);
 		errorLabel.AnchorLeft = 0;
 		errorLabel.AnchorRight = 1;
@@ -70,20 +70,17 @@ public partial class CodeEdit : Godot.CodeEdit
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
 		isDirty = true;
+		CallDeferred(nameof(ValidateAndHighlight));
 	}
 
 	// Called when terminal tab is selected
 	public void TerminalSelected()
 	{
 		GD.Print("terminal selected");
-
-		// Validate when selected
-		if (isDirty)
-		{
-			ValidateAndHighlight();
-			isDirty = false;
-		}
-
+		
+		// Always validate when selected
+		ValidateAndHighlight();
+		
 		TryHighlightingObject();
 	}
 
@@ -123,6 +120,7 @@ public partial class CodeEdit : Godot.CodeEdit
 
 		// Update error display
 		UpdateErrorLabel();
+		isDirty = false;
 	}
 
 	private void ClearSyntaxErrorHighlights()
@@ -153,12 +151,12 @@ public partial class CodeEdit : Godot.CodeEdit
 
 		// Clear any old runtime error label
 		var runtimeLabel = GetNodeOrNull<Label>("RuntimeErrorLabel");
-
+		
 		if (lineErrors.Count == 0)
 		{
 			errorLabel.Text = "";
 			errorLabel.Visible = false;
-
+			
 			// Position runtime label if it exists
 			if (runtimeLabel != null)
 			{
@@ -189,7 +187,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		errorLabel.Text = $"{lineNumbers} - {firstError}";
 		errorLabel.Visible = true;
 		errorLabel.Position = new Vector2(0, this.Size.Y - 20);
-
+		
 		// Position runtime label higher if it exists
 		if (runtimeLabel != null)
 		{
@@ -210,19 +208,19 @@ public partial class CodeEdit : Godot.CodeEdit
 					layer.HighlightTile(true, correspondingObject.GetCurrPos());
 					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 				}
-
+				
 				if (correspondingObject is ConveyorGroup)
 				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
-
+					
 					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).convList[0];
-
+					
 					if (obj == null)
 					{
 						GD.Print("CodeEdit: ConveyorGroup associated with terminal has no ConveyorObject objects!");
 						return;
 					}
-
+					
 					layer = obj.GetParentLayer();
 					if (layer != null)
 					{
@@ -252,7 +250,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	{
 		return Text;
 	}
-
+	
 	public int getLastHighlighted()
 	{
 		return lastHighlightedLine;
@@ -262,7 +260,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	public void HighlightLine(int lineNumber, Color color, bool error = false)
 	{
 		HighlightCurrentLine = false;
-
+		
 		// If this is an error highlight from ErrorHandler (runtime error)
 		if (error == true)
 		{
@@ -374,6 +372,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		}
 		lastHighlightedLine = -1;
 		HighlightCurrentLine = true;
+		CallDeferred(nameof(ValidateAndHighlight));
 	}
 
 	// Error checking API
@@ -400,6 +399,15 @@ public partial class CodeEdit : Godot.CodeEdit
 		{
 			errorLabel.Text = "";
 			errorLabel.Visible = false;
+		}
+	}
+	public void ClearRuntimeErrorLabel()
+	{
+		var runtimeLabel = GetNodeOrNull<Label>("RuntimeErrorLabel");
+		if (runtimeLabel != null)
+		{
+			runtimeLabel.QueueFree();
+			runtimeLabel.Free();
 		}
 	}
 

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using Parsing;
+using Microsoft.VisualBasic.FileIO;
 
 public partial class ErrorHandler : Node2D
 {
@@ -52,10 +53,14 @@ public partial class ErrorHandler : Node2D
 			if (editor.Name == editorName)
 			{
 				// Remove any existing runtime error label
-				var existing = editor.GetNodeOrNull<Label>("RuntimeErrorLabel");
-				if (existing != null)
+				var existingLabels = editor.GetChildren();
+				foreach (Node child in existingLabels)
 				{
-					existing.QueueFree();
+					if (child is Label label && label.Name == "RuntimeErrorLabel")
+					{
+						label.QueueFree();
+						label.Free();
+					}
 				}
 
 				// Create runtime error label (distinct from syntax error label)
