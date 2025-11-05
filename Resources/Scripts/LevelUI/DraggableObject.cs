@@ -36,7 +36,12 @@ public partial class DraggableObject : Node2D {
 			// If so we want to delete everything
 			sprite.QueueFree();
 			QueueFree();
-
+			// reset layer transparency
+			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
+			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
+			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
+			manager.layerRail.Modulate = new Color(1, 1, 1, 1);
+			manager.layerMovement.Modulate = new Color(1, 1, 1, 1);
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
 		}

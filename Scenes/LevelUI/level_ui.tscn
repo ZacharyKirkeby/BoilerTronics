@@ -478,7 +478,7 @@ theme = SubResource("Theme_r0au2")
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="Visibility" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
+[node name="VisibilityButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/icon_max_width = 25
@@ -761,12 +761,48 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Clear"
 
+[node name="VisibilityWindow" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Visibility"
+position = Vector2i(1645, 305)
+size = Vector2i(200, 100)
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VisibilityWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MovementVisibility" type="CheckBox" parent="VisibilityWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+button_pressed = true
+text = "Movement"
+
+[node name="ClawVisibility" type="CheckBox" parent="VisibilityWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+button_pressed = true
+text = "Claw"
+
+[node name="FactoryVisibility" type="CheckBox" parent="VisibilityWindow/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+button_pressed = true
+text = "Factory
+"
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics" to="." method="_on_level_statistics_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu" to="." method="_on_level_statistics_menu_close_requested"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/VisibilityButton" to="." method="_on_visibility_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
@@ -780,3 +816,7 @@ text = "Clear"
 [connection signal="pressed" from="Window/SaveContainer/Save1Cont/Clear 1" to="." method="_on_clear_1_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save2Cont/Save 2" to="." method="_on_save_2_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save2Cont/Clear 2" to="." method="_on_clear_2_pressed"]
+[connection signal="close_requested" from="VisibilityWindow" to="." method="_on_visibility_window_close_requested"]
+[connection signal="toggled" from="VisibilityWindow/VBoxContainer/MovementVisibility" to="." method="_on_movement_visibility_toggled"]
+[connection signal="toggled" from="VisibilityWindow/VBoxContainer/ClawVisibility" to="." method="_on_claw_visibility_toggled"]
+[connection signal="toggled" from="VisibilityWindow/VBoxContainer/FactoryVisibility" to="." method="_on_factory_visibility_toggled"]
