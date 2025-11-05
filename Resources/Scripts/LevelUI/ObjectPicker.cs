@@ -1,6 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
 using System.Reflection.Metadata;
+using BoilerTronicsObjects.Data;
 
 public partial class ObjectPicker : HBoxContainer
 {
@@ -102,13 +106,22 @@ public partial class ObjectPicker : HBoxContainer
 			return; // make sure it exists
 		}
 		AddChild(new Control()); // Creates left padding so its not smushed against container
+		ImageTexture texture = new ImageTexture();
 
-		// get the tile
-		var tile = tileSetSource.GetTileTextureRegion(item.atPos);
-		var fullTexture = tileSetSource.Texture.GetImage();
-		var imageTexture = fullTexture.GetRegion(tile);
-		var texture = new ImageTexture();
-		texture.SetImage(imageTexture);
+		if (item.big) {
+			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(item.table, item.atPos)], PlaceableBig.Direction.UP);
+			GD.Print(data);
+			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
+			double hScale = 32 / texture.GetHeight();
+			double wScale = 32 / texture.GetWidth();
+		} else {
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(item.atPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			texture.SetImage(imageTexture);
+		}
 
 		// Initialize vbox with styling for Name Label and Sprite
 		PanelContainer vboxPanel = new PanelContainer();
