@@ -124,69 +124,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			},
 		};
 
-		// reminder that the sourceID corresponds to the sprite sheet for a given layer
-		// and every layer will have their own sprite sheet. Consequently, layer-specific
-		// objects will have identical sourceIds.
-		
-		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
-			foreach (PlaceableBigData BD in D) {
-				if (BD.GetPosition(this.GetCurrPos()) == P) return BD;
-			}
-
-			return null;
-		}
-
-		public PlaceableObject PickUp(Vector2I pos) {
-			// Get our data at our current dir
-			List<PlaceableBigData> D = GetTextureGrid();
-			// Get the internal obj at this pos
-			PlaceableBigData BD = findDataAtPos(D, pos);
-			PlaceableObject obj = BD.GetInternalObj();
-			// Get the obj if we can
-			PlaceableObject ret = null;
-			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
-			// Return the obj
-			return ret;
-		}
-		
-		public bool Place(PlaceableObject obj, Vector2I pos) {
-			// Get our data at our current dir
-			List<PlaceableBigData> D = GetTextureGrid();
-			// Get the internal obj at this pos
-			PlaceableBigData BD = findDataAtPos(D, pos);
-			PlaceableObject iObj = BD.GetInternalObj();
-			// Place in the obj if we can
-			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
-			// Otherwise we don't want that shit
-			return false;
-		}
-
-		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
-			return false; // We do not want this object
-		}
-
-		public PlaceableObject RequestObject(int requestId, PlaceableObject childObj) {
-			return null; // We don't ahve that object
-		}
-		
-		// REMINDER:
-		// the entirety of the object's visuals/internal objects are generated here!
 		public FactoryFurnace(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
 			
-			/*
-			
-			// Demo of creating specific slots to have specific behaviors
-			PlaceableObject insertionPoint = ObjectFactory.GenerateObject(int objectId, 0, 0);
-			
-			dir0.Add(new PlaceableBigData(
-				new Vector2I(0, 0),		// offset from object's origin
-				new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-				insertionPoint
-			));
-			*/
-
 			// Deepcopy grid
 			objectData = PlaceableBigData.Copy2DList(textureGrid);
 			
@@ -195,10 +136,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			coalIn = new FactoryBigObjectInput(0, 0, 0);
 			materialOut = new FactoryBigObjectOutput(0, 0, 0);
 
+			// Set the parent to this object so that our ins and outs can make cbs
+			materialOut.SetParent(this);
+			materialIn.SetParent(this);
+			coalIn.SetParent(this);
+
 			/** The internal refrence to the input nad output objects must be set here **/
 
-			//TODO: Verify these
-			
 			// UP
 
 			objectData[0][0].SetInternalObj(materialOut);
@@ -228,6 +172,76 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			SetDir(Direction.UP);
 		}
 
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
+		
+		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
+			foreach (PlaceableBigData BD in D) {
+				if (BD.GetPosition(this.GetCurrPos()) == P) return BD;
+			}
+
+			return null;
+		}
+
+		public PlaceableObject PickUp(Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject obj = BD.GetInternalObj();
+			// Get the obj if we can
+			PlaceableObject ret = null;
+			// We don't really care what the object is, the actual checking for materials will be done in the call back functions that the child object will make to the parent
+			// These call will also provide a refrence to the child objct. Throught this refrence we can checl what specific IN/OUT it is and act accordlingly
+			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
+			// Return the obj
+			return ret;
+		}
+		
+		public bool Place(PlaceableObject obj, Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject iObj = BD.GetInternalObj();
+			// Place in the obj if we can
+			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
+			// Otherwise we don't want that shit
+			return false;
+		}
+
+		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
+			if (childObj == coalIn) {
+				// We need to check and see if the object coming in is coal
+				// If so we wnat to do somthing and return true to accept it
+			}
+			else if (childObj == materialIn) {
+				// We need to check and see if the object coming in is a smealtable material
+				// If so we wnat to do somthing and return true to accept it
+			}
+			else if (childObj == materialOut) {
+				return false; // Why the fuck is out output trying to give us something
+			}
+
+			return false; // WTF is this shit, fuck you
+		}
+
+		public PlaceableObject RequestObject(int requestId, PlaceableObject childObj) {
+			if (childObj == coalIn) {
+				return null; // Why is someone trying to take from our input?
+			}
+			else if (childObj == materialIn) {
+				return null; // Why is someone trying to take from our input?
+			}
+			else if (childObj == materialOut) {
+				// We need to check and see if we have the object that they are  requesting ready to return
+				// If so we wnat to retunr that obj and remove it from our inv
+			}
+
+			return null; // Invalid childObject
+		}
+		
 		public override Texture GetTexture() {
 			return GetBigTexture(GetTextureGrid());
 		}
