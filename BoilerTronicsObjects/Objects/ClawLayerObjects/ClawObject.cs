@@ -185,6 +185,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				throwError(ErrorHandler.ErrorType.ClawRail);
 				return;
 			}
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Move);
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
@@ -193,10 +195,16 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Grab(string[] args) {
+			GD.Print("Grab func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Grab);
 			return; // TODO: implement fully
 		}
 
 		public void Drop(string[] args) {
+			GD.Print("Drop func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Drop);
 			return; // TODO: implement fully
 		}
 
