@@ -300,6 +300,8 @@ TextEdit/styles/normal = SubResource("StyleBoxFlat_hjyc6")
 script = ExtResource("1_hjyc6")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme_override_constants/separation = 0
@@ -467,6 +469,8 @@ text = "Time Played: 0 hrs"
 horizontal_alignment = 1
 
 [node name="ButtonTray" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
 script = ExtResource("6_fsp7g")
 
 [node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray"]
@@ -581,7 +585,7 @@ size_flags_vertical = 3
 handle_input_locally = false
 size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("10_ebwh2")]
 
@@ -792,6 +796,7 @@ text = "Clear"
 [node name="CreatorSaveWindow" type="Window" parent="."]
 unique_name_in_owner = true
 oversampling_override = 1.0
+title = "Save Level"
 initial_position = 1
 size = Vector2i(600, 500)
 visible = false
@@ -875,6 +880,94 @@ custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
 theme = ExtResource("5_wmnsp")
 text = "Save Level"
+
+[node name="CreatorLoadWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Load Level"
+initial_position = 1
+size = Vector2i(600, 500)
+
+[node name="TabContainer" type="TabContainer" parent="CreatorLoadWindow"]
+custom_minimum_size = Vector2(600, 500)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = SubResource("Theme_8jlcq")
+current_tab = 0
+
+[node name="Existing Level" type="ScrollContainer" parent="CreatorLoadWindow/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreatorLoadWindow/TabContainer/Existing Level"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="ExistingLoadLevelSelector" type="OptionButton" parent="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 50
+
+[node name="LoadName" type="Label" parent="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("3_js8ol")
+theme_override_font_sizes/font_size = 50
+text = "Level Name"
+horizontal_alignment = 1
+
+[node name="LoadLevelButton" type="Button" parent="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
+theme = ExtResource("5_wmnsp")
+text = "Load Save"
+
+[node name="New Level" type="VBoxContainer" parent="CreatorLoadWindow/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreatorLoadWindow/TabContainer/New Level"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 30
+
+[node name="NewLevelName" type="LineEdit" parent="CreatorLoadWindow/TabContainer/New Level/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Level Name"
+alignment = 1
+
+[node name="NewLevelButton" type="Button" parent="CreatorLoadWindow/TabContainer/New Level/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme = ExtResource("5_wmnsp")
+text = "New Level"
 
 [node name="PriceChangeWindow" type="Window" parent="."]
 oversampling_override = 1.0
@@ -975,6 +1068,10 @@ popup/item_5/id = 5
 [connection signal="item_selected" from="CreatorSaveWindow/TabContainer/Existing Level/VBoxContainer/ExistingLevelSelector" to="." method="_on_existing_level_selector_item_selected"]
 [connection signal="pressed" from="CreatorSaveWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer/OverwriteSaveButton" to="." method="_on_overwrite_save_button_pressed"]
 [connection signal="pressed" from="CreatorSaveWindow/TabContainer/New Level/VBoxContainer/NewSaveButton" to="." method="_on_new_save_button_pressed"]
+[connection signal="close_requested" from="CreatorLoadWindow" to="." method="_on_creator_save_window_close_requested"]
+[connection signal="item_selected" from="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/ExistingLoadLevelSelector" to="." method="_on_existing_load_level_selector_item_selected"]
+[connection signal="pressed" from="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer/LoadLevelButton" to="." method="_on_load_level_button_pressed"]
+[connection signal="pressed" from="CreatorLoadWindow/TabContainer/New Level/VBoxContainer/NewLevelButton" to="." method="_on_new_level_button_pressed"]
 [connection signal="close_requested" from="PriceChangeWindow" to="." method="_on_price_change_window_close_requested"]
 [connection signal="close_requested" from="ProtectedTilesWindow" to="." method="_on_protected_tiles_window_close_requested"]
 [connection signal="item_selected" from="ProtectedTilesWindow/CenterContainer/ProtectedTilesDropdown" to="." method="_on_protected_tiles_dropdown_item_selected"]
