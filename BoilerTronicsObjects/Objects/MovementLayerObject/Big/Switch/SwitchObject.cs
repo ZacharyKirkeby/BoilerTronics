@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using Parsing;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -8,7 +9,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class  Switch: PlaceableBig, Movable {
+	public class  SwitchObject: PlaceableBig, Scriptable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(2, 0);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -16,6 +17,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		
 		static int layerSourceId = 2;
 		private int _objectID;
+		private Parser _parser;
+		private CodeEdit E;
 		
 		private List<PlaceableBigData>[] objectData;
 
@@ -82,97 +85,113 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 						),
 			},
 		};
-
-		// reminder that the sourceID corresponds to the sprite sheet for a given layer
-		// and every layer will have their own sprite sheet. Consequently, layer-specific
-		// objects will have identical sourceIds.
 		
-		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
-		// i.e. this object must somehow get the reference of the claw that is interacting
-		// with this object, then return "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
-		public PlaceableObject PickUp() {
-			
-			// PlaceableObject obj = ObjectFactory.GenerateObject(_objectID);
-			// GD.Print("Generating obj: ", obj);
-			// return obj;
-			
-			return null;
-		}
-		
-		// TODO: implement 'GetDataAtPos(int x, int y)' or 'GetDataAtPos(Vector2I)'
-		// i.e. this object must somehow get the reference of the claw that is interacting
-		// with this object, then get "GetDataAtPos(ClawObject.GetCurrPos()).GetInternalObj()"
-		// as a PlaceableObject (i.e. 'dataObj')
-		// then return the output of "dataObj.Place(obj)"
-		public bool Place(PlaceableObject obj) {
-			return false;
-		}
-		
-		// REMINDER:
-		// the entirety of the object's visuals/internal objects are generated here!
-		public Switch(int OGX, int OGY, int altTitle = 0, int objectID = 200)
+		public SwitchObject(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
-			
-			/*
-			
-			// Demo of creating specific slots to have specific behaviors
-			PlaceableObject insertionPoint = ObjectFactory.GenerateObject(int objectId, 0, 0);
-			
-			dir0.Add(new PlaceableBigData(
-				new Vector2I(0, 0),		// offset from object's origin
-				new TileTex(0, 0, 3),	// atlasX, atlasY, sourceId
-				insertionPoint
-			));
-			*/
-			
-			// internal insert, output objects
-			// insertObj = new FactoryFurnaceInput(0, 0, 0);
-			// outputObj = new FactoryFurnaceOutput(0, 0, 0);
 
-			/** The internal refrence to the input nad output objects must be set here **/
-
-			/*
-			||[]			 
-			[]{}
-			*/
-
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]{}
-			||[]
-			*/
-
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			{}[]
-			[]||
-			*/
-
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]||
-			{}[]
-			*/
-
-			// in
-			// in
-			// out
-			// null
+			_parser = new Parser();
+			_parser._Ready();
+			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
+			RegisterSteppable(); // Registers this as a runnable with the level state
 			
 			SetDir(Direction.UP);
+		}
+
+		// Runnable Interface
+
+		public void Step() {
+			// Make a call to the parser
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (_parser == null)
+			{
+				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
+				return;
+			}
+			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
+			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+		}
+
+		public void Reset() {
+			base.ResetPos();
+			_parser.Reset();
+			E.ClearAllHighlights();
+			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+			if (existing != null)
+			{
+				existing.QueueFree();
+			}
+		}
+
+		public void RegisterSteppable() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
+		}
+
+		public void UnRegisterSteppable() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
+		}
+
+		// Scriptable Interface
+
+		// Methods to deal with terminals
+		public CodeEdit GetTerminal() {
+			return E;
+		}
+
+		public void CreateTerminal() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			E = manager.terminalContainer.AddEditor();
+			E.Name = "Switch";
+			
+			E.SetCorrespondingObject(this);
+		}
+
+		public void DestroyTerminal() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.terminalContainer.RemoveEditor(E);
+			E = null;
+		}
+
+		public void SetScript(string script) {
+			E.Text = script;
+		}
+
+		public string GetScript()
+		{
+			return E.Text;
+		}
+		
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+		{
+			return this._parser;
+		}
+
+		// Methods that we can use via commands
+		public void Move(string[] args) {
+			return; // Throw error
+		}
+
+		public void Grab(string[] args) {
+			return; // Throw error
+		}
+
+		public void Drop(string[] args) {
+			return; // Throw error
+		}
+
+		public void Rotate(string[] args) {
+			return; // Throw error
+		}
+
+		public void Switch(string[] args) {
+			return; // Throw error
 		}
 
 		public override Texture GetTexture() {
