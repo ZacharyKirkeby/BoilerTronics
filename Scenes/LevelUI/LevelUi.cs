@@ -18,20 +18,20 @@ public partial class LevelUi : Node2D
 	
 	/* Statistics */
 	private Label ppsCutoffLabel;
-	private Label cpsCutoffLabel;
-	private Label rcCutoffLabel;
+	private Label costCutoffLabel;
+	private Label stepsCutoffLabel;
 	
 	private Label ppsSolutionLabel;
-	private Label cpsSolutionLabel;
-	private Label rcSolutionLabel;
+	private Label costSolutionLabel;
+	private Label stepsSolutionLabel;
 	
 	private Label ppsGradeLabel;
-	private Label cpsGradeLabel;
-	private Label rcGradeLabel;
+	private Label costGradeLabel;
+	private Label stepsGradeLabel;
 	
 	private Label ppsDifferenceLabel;
-	private Label cpsDifferenceLabel;
-	private Label rcDifferenceLabel;
+	private Label costDifferenceLabel;
+	private Label stepsDifferenceLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -86,15 +86,15 @@ public partial class LevelUi : Node2D
 		ppsGradeLabel = GetNode<Label>("%PPS Grade");
 		ppsDifferenceLabel = GetNode<Label>("%PPS Difference");
 		
-		cpsCutoffLabel = GetNode<Label>("%CPS Cutoff");
-		cpsSolutionLabel = GetNode<Label>("%CPS Solution");
-		cpsGradeLabel = GetNode<Label>("%CPS Grade");
-		cpsDifferenceLabel = GetNode<Label>("%CPS Difference");
+		costCutoffLabel = GetNode<Label>("%Cost Cutoff");
+		costSolutionLabel = GetNode<Label>("%Cost Solution");
+		costGradeLabel = GetNode<Label>("%Cost Grade");
+		costDifferenceLabel = GetNode<Label>("%Cost Difference");
 		
-		rcCutoffLabel = GetNode<Label>("%RC Cutoff");
-		rcSolutionLabel = GetNode<Label>("%RC Solution");
-		rcGradeLabel = GetNode<Label>("%RC Grade");
-		rcDifferenceLabel = GetNode<Label>("%RC Difference");
+		stepsCutoffLabel = GetNode<Label>("%Steps Cutoff");
+		stepsSolutionLabel = GetNode<Label>("%Steps Solution");
+		stepsGradeLabel = GetNode<Label>("%Steps Grade");
+		stepsDifferenceLabel = GetNode<Label>("%Steps Difference");
 		
 		UpdateStepCount(0);
 		// manager.SetDraggable(false); // debug; testing script
@@ -359,38 +359,38 @@ public partial class LevelUi : Node2D
 	
 	public void SetStatisticDefaults() {
 		ppsSolutionLabel.Text = "PPS: N/A";
-		cpsSolutionLabel.Text = "CPS: N/A";
-		rcSolutionLabel.Text = "RC: N/A";
+		costSolutionLabel.Text = "Cost: N/A";
+		stepsSolutionLabel.Text = "Steps: N/A";
 		
 		ppsDifferenceLabel.Text = "Diff: N/A";
-		cpsDifferenceLabel.Text = "Diff: N/A";
-		rcDifferenceLabel.Text = "Diff: N/A";
+		costDifferenceLabel.Text = "Diff: N/A";
+		stepsDifferenceLabel.Text = "Diff: N/A";
 		
 		ppsGradeLabel.Text = "Grade: N/A";
-		cpsGradeLabel.Text = "Grade: N/A";
-		rcGradeLabel.Text = "Grade: N/A";
+		costGradeLabel.Text = "Grade: N/A";
+		stepsGradeLabel.Text = "Grade: N/A";
 		
 		ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
 		ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
-		cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
-		cpsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
-		rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
-		rcGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		costGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
 	}
 	
 	public void UpdateSolutionStatistics(float pps, float cps, int rc) {
 		ppsSolutionLabel.Text = "PPS: " + pps.ToString("F2");
-		cpsSolutionLabel.Text = "CPS: $" + cps.ToString("F2");
-		rcSolutionLabel.Text = "RC: " + rc.ToString("F2");
+		costSolutionLabel.Text = "Cost: $" + cps.ToString("F2");
+		stepsSolutionLabel.Text = "Steps: " + rc.ToString("F2");
 	}
 	
 	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
 		ppsCutoffLabel.Text = "Cutoff PPS: " + pps.ToString("F2");
-		cpsCutoffLabel.Text = "Cutoff CPS: $" + cps.ToString("F2");
-		rcCutoffLabel.Text = "Cutoff RC: " + rc.ToString("F2");
+		costCutoffLabel.Text = "Cutoff Cost: $" + cps.ToString("F2");
+		stepsCutoffLabel.Text = "Cutoff Steps: " + rc.ToString("F2");
 	}
 
-	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float cpsCutoff, float cpsSol, int rcCutoff, int rcSol) {
+	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
 		//difference and grading labels
 		float[] grades = new float[3];
 		if(ppsCutoff <= ppsSol) {
@@ -409,37 +409,37 @@ public partial class LevelUi : Node2D
 			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
-		if(cpsCutoff >= cpsSol) {
+		if(costCutoff >= costSol) {
 			//good
-			cpsDifferenceLabel.Text = "Diff: " + (cpsCutoff - cpsSol).ToString("F2");
-			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, true).ToString("F2");
-			grades[1] =  CalculateGrade(cpsCutoff, cpsSol, true);
-			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
-			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			costDifferenceLabel.Text = "Diff: " + (costCutoff - costSol).ToString("F2");
+			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, true).ToString("F2");
+			grades[1] =  CalculateGrade(costCutoff, costSol, true);
+			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
 		else {
 			//bad
-			cpsDifferenceLabel.Text = "Diff: " + (cpsSol - cpsCutoff).ToString("F2");
-			cpsGradeLabel.Text = "Grade: " + CalculateGrade(cpsCutoff, cpsSol, false).ToString("F2");
-			grades[1] =  CalculateGrade(cpsCutoff, cpsSol, false);
-			cpsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
-			cpsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			costDifferenceLabel.Text = "Diff: " + (costSol - costCutoff).ToString("F2");
+			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, false).ToString("F2");
+			grades[1] =  CalculateGrade(costCutoff, costSol, false);
+			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			costGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
-		if(rcCutoff >= rcSol) {
+		if(stepsCutoff >= stepsSol) {
 			//good
-			rcDifferenceLabel.Text = "Diff: " + (rcCutoff - rcSol).ToString("F2");
-			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, true).ToString("F2");
-			grades[2] =  CalculateGrade(rcCutoff, rcSol, true);
-			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
-			rcGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			stepsDifferenceLabel.Text = "Diff: " + (stepsCutoff - stepsSol).ToString("F2");
+			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, true).ToString("F2");
+			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, true);
+			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
 		else {
 			//bad
-			rcDifferenceLabel.Text = "Diff: " + (rcSol - rcCutoff).ToString("F2");
-			rcGradeLabel.Text = "Grade: " + CalculateGrade(rcCutoff, rcSol, false).ToString("F2");
-			grades[2] =  CalculateGrade(rcCutoff, rcSol, false);
-			rcDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
-			rcGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			stepsDifferenceLabel.Text = "Diff: " + (stepsSol - stepsCutoff).ToString("F2");
+			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, false).ToString("F2");
+			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
+			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
 		return grades;
 	}
