@@ -24,6 +24,9 @@ namespace BoilerTronicsObjects.Layers
 		PlaceableObject[,] tiles;
 		bool[,] editableTiles;
 		
+		// for optimization purposes, keep track of all uneditable tiles
+		private List<Vector2I> protectedList = new List<Vector2I>();
+		
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
 		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
@@ -65,11 +68,13 @@ namespace BoilerTronicsObjects.Layers
 			// reset visuals
 			Clear();
 
+			// sets all tiles to editable
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
 					editableTiles[x, y] = true;
 				}
 			}
+			protectedList.Clear();
 		}
 		
 		// TODO: return this data safely rather than just returning the address
@@ -87,11 +92,17 @@ namespace BoilerTronicsObjects.Layers
 			return new Vector2I(maxX, maxY);
 		}
 		
+		// NOTE: unused?
 		public void SetEditable(bool[,] editableTable) {
 			if (!(editableTable.Length == (maxX + 1) * (maxY + 1))) return; // makes sure that the label has the same numbe of elements
 
+			protectedList.Clear();
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
+					// if protected tile, insert into protected list
+					if (!editableTable[x, y]) {
+						protectedList.Add(new Vector2I(x, y));
+					}
 					editableTiles[x, y] = editableTable[x, y];
 				}
 			}
@@ -106,12 +117,27 @@ namespace BoilerTronicsObjects.Layers
 			
 			// if not OOB, then set value
 			editableTiles[coordinates.X, coordinates.Y] = value;
+			
+			bool protectedListContains = protectedList.Contains(coordinates);
+			
+			// if this is to be a protected tile and it's not in the protected list,
+			// then insert coords into the protected list!
+			if (!value && !protectedListContains) {
+				protectedList.Add(coordinates);
+				
+			// else, if this is to be an editable tile and the protectedList contains the input coordinates,
+			// then remove coords from the list!
+			} else if (value && protectedListContains) {
+				protectedList.Remove(coordinates);
+			}
+			
 			return true;
 		}
 
 		public bool CheckValidPos(int X, int Y)
 		{
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!editableTiles[X, Y]) return false;
 			return true;
 		}
 		
@@ -120,6 +146,7 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// check base origin point
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!editableTiles[X, Y]) return false;
 			
 			Vector2I objOrigin = new Vector2I(X, Y);
 			
@@ -131,6 +158,7 @@ namespace BoilerTronicsObjects.Layers
 				Y = dataCoords.Y;
 				// GD.Print("CheckValidPos: PlaceableBig case: ", dataCoords);
 				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+				if (!editableTiles[X, Y]) return false;
 			}
 			
 			return true;
