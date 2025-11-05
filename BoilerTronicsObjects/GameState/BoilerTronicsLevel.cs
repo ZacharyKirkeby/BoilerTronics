@@ -30,13 +30,11 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	//statistics variables for cutoffs values
 	public float ppsCutoff;
-	public float cpsCutoff;
-	public int rcCutoff;
+	public float costCutoff;
+	public int stepsCutoff;
 	
 	//statistics variables for solution values
 	public float ppsSolution;
-	public float cpsSolution;
-	public int rcSolution;
 	
 	public float bestScore = 0;
 	
@@ -53,15 +51,12 @@ public partial class BoilerTronicsLevel : Node2D
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
 		ppsSolution = 0;
-		cpsSolution = cost / StepCount;
-		//TODO: rc is resources consumed
-		rcSolution = 0;
 		
 		//update leaderboard (min values for the 3 categories)
 		//update levelui stats labels
 		if(levelUi != null) {
-			levelUi.UpdateSolutionStatistics(ppsSolution, cpsSolution, rcSolution);
-			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, cpsCutoff, cpsSolution, rcCutoff, rcSolution);
+			levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount);
+			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
 			float solutionScore = grades[0] + grades[1] + grades[2];
 			solutionScore /= 3;
 			if(solutionScore > bestScore) {
@@ -72,16 +67,14 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	public void ResetSolutionStats() {
 		ppsSolution = 0;
-		cpsSolution = 0;
-		rcSolution = 0;
 		levelUi.SetStatisticDefaults();
 	}
 	
-	public void UpdateCutoffs(float pps, float cps, int rc) {
-		ppsCutoff = pps;
-		cpsCutoff = cps;
-		rcCutoff = rc;
-		levelUi.UpdateSolutionCutoffs(pps, cps, rc);
+	public void UpdateCutoffs(float ppsC, float costC, int stepsC) {
+		ppsCutoff = ppsC;
+		costCutoff = costC;
+		stepsCutoff = stepsC;
+		levelUi.UpdateSolutionCutoffs(ppsC, costC, stepsC);
 	}
 	
 	private Layer CreateMovementLayer() {
