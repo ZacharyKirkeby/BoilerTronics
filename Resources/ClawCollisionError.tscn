@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://div3i6es4xlcm"]
+
+[node name="ClawCollisionError" type="AcceptDialog"]
+oversampling_override = 1.0
+title = "Collision"
+initial_position = 2
+size = Vector2i(400, 300)
+visible = true
+ok_button_text = "OK"
+dialog_text = "It appears that two claws (or rails) are colliding in your solution! Please check your code terminals to find out why the error is occurring and the level to see where it is occuring. Try altering the order of commands in your terminals to avoid a collision."
+dialog_autowrap = true

@@ -34,7 +34,13 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 				return;
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+			if (highlight >= 0) {
+				E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+				if (manager.currLevel.E.HasError()) {
+					E.HighlightLine(highlight, new Color(1, 0, 0, 0.3f));
+				}
+				GD.Print("normal highlight");
+			}
 		}
 
 		public void RegisterSteppable() {
@@ -49,7 +55,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public void Reset() {
 			base.ResetPos();
-			_parser.Reset();
+			_parser.Reset(); //disposed object error?
 			heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
@@ -74,9 +80,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -218,5 +224,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-    }
+	}
 }

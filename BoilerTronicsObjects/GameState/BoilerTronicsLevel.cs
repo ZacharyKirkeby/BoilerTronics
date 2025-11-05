@@ -292,9 +292,9 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 
@@ -372,7 +372,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			  )
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running
@@ -445,9 +445,11 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
-			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
+			GD.Print("collision but showing rail");
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
+			GD.Print("actual collision");
 		}
 	}
 
