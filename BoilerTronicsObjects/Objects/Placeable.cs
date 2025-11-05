@@ -12,6 +12,7 @@ namespace BoilerTronicsObjects.Placeable
 		int OGY { get; set; }
 		private int CurrX;
 		private int CurrY;
+		private bool Garbage;
 		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
 		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
@@ -33,6 +34,15 @@ namespace BoilerTronicsObjects.Placeable
 
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
+			this.Garbage = false;
+		}
+
+		public void SetGarbage(bool isGarabage) {
+			this.Garbage = isGarabage;
+		}
+
+		public bool GetGarbage() {
+			return this.Garbage;
 		}
 		
 		// set parent layer info; mainly useful for the terminal highlighting mechanism
@@ -73,12 +83,12 @@ namespace BoilerTronicsObjects.Placeable
 			return new Vector2I(CurrX, CurrY);
 		}
 
-		public int GetSourceID()
+		public virtual int GetSourceID()
 		{
 			return sourceId;
 		}
 
-		public Vector2I GetAtlasPos()
+		public virtual Vector2I GetAtlasPos()
 		{
 			return atlasPos;
 		}
@@ -94,7 +104,7 @@ namespace BoilerTronicsObjects.Placeable
 			CurrY = OGY;
 		}
 
-		public Texture GetTexture()
+		public virtual Texture GetTexture()
 		{
 			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
 			int sourceid = tileSet.GetSourceId(this.GetSourceID());
@@ -115,6 +125,7 @@ namespace BoilerTronicsObjects.Placeable
 		// NOTE: this should be very redundant, given that "is interface" exists!
 		// I (Ethen) didn't do enough research at the time;
 		// consider this as redundant!
+		// DEPRECATED
 		public bool Scriptable() {
 			return false;
 		}
@@ -134,7 +145,7 @@ namespace BoilerTronicsObjects.Placeable
 				{ "sourceId", sourceId },
 				{ "atlasPosX", atlasPos.X },
 				{ "atlasPosY", atlasPos.Y },
-				{ "altTitle", "null" },
+				{ "altTitle", 0 },
 			};
 		}
 	}

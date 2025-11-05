@@ -28,6 +28,11 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 0; // id for which level this save is referring to
 	
+	// LAZY: this is public now
+	// default: a 50% darker version of the base floor tile, 2 tiles wide
+	public TileTex boundaryTex =  new TileTex(new Vector2I(0, 0), 6);
+	public int boundarySize = 2;
+	
 	private Vector2I levelDimensions;
 	private LayerInfo liClaw = new LayerInfo();
 	private LayerInfo liFactory = new LayerInfo();
@@ -161,13 +166,22 @@ public class BoilerTronicsSaveState
 			}
 		}
 		
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		
 		Godot.Collections.Dictionary<string, Variant> metadata = 
 			new Godot.Collections.Dictionary<string, Variant>()
 			{
 				{ "mapSize", new int[]{levelDimensions.X, levelDimensions.Y} },
 				{ "levelId", level_id },
 				{ "saveSlot", save_slot },
+				{ "boundarySize", boundarySize },
 			};
+			
+		if (this.boundaryTex != null) {
+			metadata["boundaryAtlasX"] = boundaryTex.GetAtlasPos().X;
+			metadata["boundaryAtlasY"] = boundaryTex.GetAtlasPos().Y;
+			metadata["boundarySourceId"] = boundaryTex.GetSourceId();
+		}
 		
 		// GD.Print("mapSize: " + metadata["mapSize"]);
 		// GD.Print("levelId: " + metadata["levelId"]);
@@ -244,7 +258,17 @@ public class BoilerTronicsSaveState
 					
 					this.levelDimensions = new Vector2I((int) mapSize[0], (int) mapSize[1]);
 					
-					GD.Print("metadata: " + level_id + ", " + save_slot + ", " + levelDimensions);
+					// if save data has "boundarySize", assume that it has all corresponding
+					// boundary data
+					if (node.ContainsKey("boundarySize")) {
+						this.boundarySize = (int) node["boundarySize"];
+						int atlasX = (int) node["boundaryAtlasX"];
+						int atlasY = (int) node["boundaryAtlasY"];
+						this.boundaryTex.SetAtlasPos(atlasX, atlasY);
+						this.boundaryTex.SetSourceId((int) node["boundarySourceId"]);
+					}
+					
+					GD.Print("metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
 					continue;
 				}
 				

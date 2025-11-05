@@ -119,7 +119,7 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			MouseInput(@event, 1, 2);
+			MouseInput(@event, 1);
 			base._Input(@event);
 		}
 	}

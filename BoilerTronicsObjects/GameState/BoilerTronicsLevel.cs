@@ -12,6 +12,8 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
+	public static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	
 	public int x;
 	public int y;
 	public int StepCount;
@@ -35,6 +37,11 @@ public partial class BoilerTronicsLevel : Node2D
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
+	
+	// store min, max of X, Y coordinates, based off the dimensions of the level
+	public Vector2 minCoords;
+	public Vector2 maxCoords;
+	
 	private BoilerTronicsLevel.GameRunState RunState;
 
 	private float StepDeltaTime = 1.0f; // 1 Second
@@ -118,6 +125,33 @@ public partial class BoilerTronicsLevel : Node2D
 		return flLayer;
 	}
 	
+	// should just automatically fill the "outside" of the layer with some uninteractable floor tiles
+	private void CreateFloorFillLayer() {
+		FloorFillLayer fillLayer = new FloorFillLayer();
+		fillLayer.TileSet = tileset;
+		
+		// Load boundary data from BoilerTronicsSaveState
+		int fillSurround = manager.saveState.boundarySize;
+		TileTex floorTex = manager.saveState.boundaryTex;
+		fillLayer.GenerateLayer(x, y, fillSurround, floorTex);
+		
+		// spawn in the tile map
+		AddChild(fillLayer);
+		
+		// translate the top-left edge of this TileMap to the top-left edge of the floor layer
+		// (SANITY CHECK)
+		Vector2 fill00 = fillLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 floor00 = flLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 moveDif = floor00 - fill00;
+		fillLayer.Position -= moveDif;
+		GD.Print("move dif: ", moveDif);
+		
+		// offset this layer such that this layer properly surrounds the play area
+		moveDif = fill00 - flLayer.MapToLocal(new Vector2I(fillSurround, fillSurround));
+		fillLayer.Position += moveDif;
+		GD.Print("move dif 2: ", moveDif);
+	}
+	
 	// Given a target layer, a list of Placeables, and a Vector2I array of protected tiles, update the layer!
 	// Should only be used when loading info
 	private void UpdateLayer(Layer input, ArrayList objects, Vector2I[] protectedTiles) {
@@ -174,6 +208,9 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw = CreateClawLayer();
 		manager.layerRail = CreateRailLayer();
 		manager.layerMovement = CreateMovementLayer();
+		
+		// fills the "outside" of the area with some basic, uninteractable floor tiles
+		CreateFloorFillLayer();
 
 		// Set Z-index
 		manager.layerFloor.ZIndex = 0;
@@ -181,6 +218,12 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw.ZIndex = 2;
 		manager.layerRail.ZIndex = 3;
 		manager.layerMovement.ZIndex = 4;
+
+		manager.layerFloor.YSortEnabled = true;
+		manager.layerFactory.YSortEnabled = true;
+		manager.layerClaw.YSortEnabled = true;
+		manager.layerRail.YSortEnabled = true;
+		manager.layerMovement.YSortEnabled = true;
 
 		// Shift layers
 		manager.layerClaw.Position = new Vector2(0, -32);
@@ -209,6 +252,10 @@ public partial class BoilerTronicsLevel : Node2D
 		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		
+		// update the min, max coordinates
+		minCoords = c1;
+		maxCoords = c3;
 
 		// Set the run state to Idle
 		RunState = BoilerTronicsLevel.GameRunState.Idle;
@@ -256,12 +303,18 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// Draws the border of the tile map
 		// only draw if corners have been determined
+		/*
+		
+		// DISABLED:
+		// Surrounding-floor-fill functionality already implemented
+		
 		if (c1 != null) {
 			DrawLine(c1, c2, Colors.Green, 3.0f);
 			DrawLine(c2, c3, Colors.Green, 3.0f);
 			DrawLine(c3, c4, Colors.Green, 3.0f);
 			DrawLine(c4, c1, Colors.Green, 3.0f);
 		}
+		*/
 	}
 
 	/* Reset Layer */
@@ -290,11 +343,15 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
+
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 
@@ -372,7 +429,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			  )
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			Step(); // Step while we are running

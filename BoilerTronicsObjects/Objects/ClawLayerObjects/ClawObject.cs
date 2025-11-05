@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
-	public class ClawObject : ClawLayerObjects, Scriptable, Runnable {
+	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
@@ -20,9 +20,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
+
+		static int layerSourceId = 1;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
-
+		
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser
@@ -48,6 +53,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		public void Reset() {
+			if (this.heldObject != null) {
+				this.heldObject.ResetPos();
+			}
+			this.heldObject = null;
 			base.ResetPos();
 			_parser.Reset();
 			heldObject = null;
@@ -57,7 +66,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			{
 				existing.QueueFree();
 			}
-			// Maybe need to make a call to our codeEdit/interrputer?
+			// Maybe need to make a call to our codeEdit/interrupter?
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
 		}
 
 		// Scriptable interface
@@ -74,9 +87,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -186,12 +199,60 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			return;
 		}
 
+		// TODO: Create some helper function so that we can update our current from based on our held object
+
 		public void Grab(string[] args) {
-			return; // TODO: implement fully
+			if (heldObject != null) return; // TODO: make this an error
+			GD.Print("Grabbing object");
+	
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			
+			// Get the factory object below the claw
+			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+			GD.Print("Factory obj: ", factoryObj);
+
+			// If there is no factory object, return
+			if (factoryObj == null) return;
+			// If there is we want to check if it's moveable, if not return
+			if (!(factoryObj is Movable mObj)) return;
+
+			// If it is, then we want to try to pick it up (or it's contents)
+			heldObject = mObj.PickUp();
+			GD.Print("Pickedup: ", heldObject);
+			
+			// FRAME SYSTEM
+			// update current frame to "display" a successful grab
+			SetFrameIndex(2);
+			manager.currLevel.cLayer.UpdateObject(this);
 		}
 
 		public void Drop(string[] args) {
-			return; // TODO: implement fully
+			if (heldObject == null) return; // Not an error ?
+			GD.Print("Dropping obj");
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			
+			// Get the factory object below the claw
+			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
+			GD.Print("Factory obj: ", factoryObj);
+
+			Vector2I pos = GetCurrPos();
+			heldObject.MoveCurrPos(pos.X, pos.Y);
+
+			if (factoryObj == null) {
+				GD.Print("Placing object on ground");
+				manager.currLevel.fLayer.AddObject(heldObject);
+				heldObject = null;
+			} else if (factoryObj is Movable mObj) {
+				GD.Print("Placing object in factory object");
+				if (mObj.Place(heldObject)) heldObject = null;
+			}
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			if (heldObject == null) {
+				ResetFrame();
+				manager.currLevel.cLayer.UpdateObject(this);
+			}
 		}
 
 		public void Rotate(string[] args) {
@@ -199,11 +260,19 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		}
 
 		// Command methods
-		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, objectAtlasPos, altTitle) {
+		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
+			
+			// adds two new frames to be used by the Frame system
+			// (0) is default visuals
+			// (1) is "grab empty"
+			AddFrame(new TileTex(new Vector2I(0, 0), 10));
+			
+			// (2) is "grabbed stone (or some other grey nondescript object"
+			AddFrame(new TileTex(new Vector2I(0, 1), 10));
 		} // create object
 
 		~ClawObject() {
@@ -218,5 +287,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-    }
+	}
 }
