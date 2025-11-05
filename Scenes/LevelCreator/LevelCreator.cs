@@ -57,4 +57,20 @@ public partial class LevelCreator : LevelUi
 		*/
 	}
 
+	private void _on_protected_tiles_pressed()
+	{
+		var protectedTilesWindow = GetNode<Window>("%ProtectedTilesWindow");
+		protectedTilesWindow.Visible = true;
+	}
+
+	private void _on_protected_tiles_window_close_requested()
+	{
+		var protectedTilesWindow = GetNode<Window>("%ProtectedTilesWindow");
+		protectedTilesWindow.Visible = false;
+	}
+	private void _on_protected_tiles_dropdown_item_selected(int index)
+	{
+		/* index values 1: none 2: Floor 3: Factory 4: Claw 5: Rail 6: Movement 
+			TODO: ethen link in protected tile highlighting based on which item is selected / clear if none*/
+	}
 }

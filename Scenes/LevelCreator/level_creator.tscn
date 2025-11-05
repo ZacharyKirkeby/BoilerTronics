@@ -912,10 +912,12 @@ theme = SubResource("Theme_h0dp1")
 alignment = 1
 
 [node name="ProtectedTilesWindow" type="Window" parent="."]
+unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Protected Tiles"
 initial_position = 1
 size = Vector2i(300, 200)
+visible = false
 
 [node name="CenterContainer" type="CenterContainer" parent="ProtectedTilesWindow"]
 custom_minimum_size = Vector2(300, 200)
@@ -933,8 +935,23 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="OptionButton" type="OptionButton" parent="ProtectedTilesWindow/CenterContainer"]
+[node name="ProtectedTilesDropdown" type="OptionButton" parent="ProtectedTilesWindow/CenterContainer"]
+unique_name_in_owner = true
 layout_mode = 2
+selected = 0
+item_count = 6
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Floor"
+popup/item_1/id = 1
+popup/item_2/text = "Factory"
+popup/item_2/id = 2
+popup/item_3/text = "Claw"
+popup/item_3/id = 3
+popup/item_4/text = "Rail"
+popup/item_4/id = 4
+popup/item_5/text = "Movement"
+popup/item_5/id = 5
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
@@ -959,3 +976,5 @@ layout_mode = 2
 [connection signal="pressed" from="CreatorSaveWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer/OverwriteSaveButton" to="." method="_on_overwrite_save_button_pressed"]
 [connection signal="pressed" from="CreatorSaveWindow/TabContainer/New Level/VBoxContainer/NewSaveButton" to="." method="_on_new_save_button_pressed"]
 [connection signal="close_requested" from="PriceChangeWindow" to="." method="_on_price_change_window_close_requested"]
+[connection signal="close_requested" from="ProtectedTilesWindow" to="." method="_on_protected_tiles_window_close_requested"]
+[connection signal="item_selected" from="ProtectedTilesWindow/CenterContainer/ProtectedTilesDropdown" to="." method="_on_protected_tiles_dropdown_item_selected"]
