@@ -130,7 +130,7 @@ public partial class Terminals : TabContainer
 			parser = scriptabl.GetParser();
 		if (parser != null)
 			registerLabel.SetParser(parser);
-			
+
 		UpdateSelectedTerminal();
 	}
 
