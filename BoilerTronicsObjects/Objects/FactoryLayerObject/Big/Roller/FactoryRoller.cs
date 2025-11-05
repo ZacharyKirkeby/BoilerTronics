@@ -102,11 +102,36 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			},
 		};
 
-		public PlaceableObject PickUp(Vector2I pos) {
+		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
+			foreach (PlaceableBigData BD in D) {
+				if (BD.GetPosition(this.GetCurrPos()) == P) return BD;
+			}
+
 			return null;
+		}
+
+		public PlaceableObject PickUp(Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject obj = BD.GetInternalObj();
+			// Get the obj if we can
+			PlaceableObject ret = null;
+			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
+			// Return the obj
+			return ret;
 		}
 		
 		public bool Place(PlaceableObject obj, Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject iObj = BD.GetInternalObj();
+			// Place in the obj if we can
+			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
+			// Otherwise we don't want that shit
 			return false;
 		}
 
