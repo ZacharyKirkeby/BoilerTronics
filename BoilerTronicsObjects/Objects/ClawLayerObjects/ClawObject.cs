@@ -63,34 +63,28 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			manager.currLevel.UnRegisterRunnable(this);
 		}
 
-
 		public void Reset() {
 			if (this.heldObject != null) {
 				this.heldObject.ResetPos();
 			}
+
 			this.heldObject = null;
 			base.ResetPos();
-			
-			// FRAME SYSTEM
-			// resets this object's "displayed" visuals by resetting its frame index
-			ResetFrame();
 
-			heldObject = null;
 			_parser.Reset();
+
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+
 			if (existing != null)
 			{
 				existing.QueueFree();
 			}
-
-			// Maybe need to make a call to our codeEdit/interrupter?
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
 			ResetFrame();
 
-			// Maybe need to make a call to our codeEdit/interrputer?
 			UpdateRegisterDisplay();
 		}
 
