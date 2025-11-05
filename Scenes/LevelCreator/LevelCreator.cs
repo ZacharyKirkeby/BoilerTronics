@@ -41,21 +41,22 @@ public partial class LevelCreator : LevelUi
 	private void _on_creator_save_window_close_requested()
 	{
 		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
-		var saveName = GetNode<LineEdit>("%NewSaveName");
-		saveName.Text = "";
 		saveWindow.Visible = false;
 	}
-
-	private void _on_new_save_button_pressed()
+	private void _on_creator_load_window_close_requested()
 	{
-		var saveName = GetNode<LineEdit>("%NewSaveName");
-		var saveButton = GetNode<Button>("%NewSaveButton");
-		/* TODO: Ethen implement save logic using name from lineedit */
-
+		var loadWindow = GetNode<Window>("%CreatorLoadWindow");
+		var loadName = GetNode<LineEdit>("%NewLevelName");
+		loadName.Text = "";
+		loadWindow.Visible = false;
+		GetNode<VBoxContainer>("%MainVBox").Visible = true;
+		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
 	}
 	private void _on_new_level_button_pressed()
 	{
 		var levelName = GetNode<LineEdit>("%NewLevelName");
+		var fileName = GetNode<LineEdit>("%NewFileName");
+		var levelID = GetNode<LineEdit>("%NewLevelID");
 		var newLevelButton = GetNode<Button>("%NewLevelButton");
 		/* TODO: Ethen implement new level logic using name from lineedit */
 		GetNode<Window>("%CreatorLoadWindow").Visible = false;
