@@ -6,12 +6,13 @@ using System.IO;
 using Parsing;
 public partial class LevelCreator : LevelUi
 {
+	string levelSavePath = ProjectSettings.GlobalizePath("user://LevelCreator/");
 
 	public override void _Ready()
 	{
 		base._Ready();
 		var fileLocation = GetNode<Label>("%FileLocation");
-		fileLocation.Text = "Level will be saved at " + ProjectSettings.GlobalizePath("res://Resources/Levels/" + ".save");
+		fileLocation.Text = "Level will be saved at " + levelSavePath;
 		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
 		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
@@ -58,7 +59,7 @@ public partial class LevelCreator : LevelUi
 	private void _on_new_file_name_text_changed(String text)
 	{
 		var fileLocation = GetNode<Label>("%FileLocation");
-		fileLocation.Text = "Level will be saved at " + ProjectSettings.GlobalizePath("res://Resources/Levels/" + text + ".save");
+		fileLocation.Text = "Level will be saved at " + levelSavePath + text + ".save";
 	} 
 	private void _on_existing_load_level_selector_item_selected(int index)
 	{
@@ -69,19 +70,23 @@ public partial class LevelCreator : LevelUi
 
 	private void _on_export_button_pressed()
 	{
-		var fileName = GetNode<LineEdit>("%NewFileName");
+		string fileName = GetNode<LineEdit>("%NewFileName").GetText();
 		/* TODO: Ethen implement save logic 
 			you can find the file name selected with 
 			dropdown.GetItemText(dropdown.Selected);
 			if you need full path youll probably have to store it in a variable 
 			somewhere using logic later
+			
+			Ethen - done, thank you for the docs.
 		*/
 		
 		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		GD.Print("LevelCreator: overwriting level: ", fileName);
+		man.saveState.SaveDataTo(man, "LevelCreator", "/" + fileName);
 		
-		string levelname = dropdown.GetItemText(dropdown.Selected);
-		GD.Print("LevelCreator: overwriting level: ", levelname);
-		man.saveState.SaveDataTo(man, "LevelCreator", "/" + levelname);
+		// close windows when done
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		saveWindow.Visible = false;
 	}
 	
 	private void _on_load_level_button_pressed()
@@ -92,12 +97,9 @@ public partial class LevelCreator : LevelUi
 			dropdown.GetItemText(dropdown.Selected);
 			if you need full path youll probably have to store it in a variable 
 			somewhere using logic later
+			
+			Ethen - done, thank you for the docs.
 		*/
-		
-		// TODO: is this loading correctly?
-		// BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
-		// man.saveState.LoadLevelName(man, dropdown.GetItemText(dropdown.Selected));
-		// man.currLevel._Ready();
 		
 		
 		GetNode<Window>("%CreatorLoadWindow").Visible = false;
@@ -109,9 +111,14 @@ public partial class LevelCreator : LevelUi
 		man.loadLevelName = dropdown.GetItemText(dropdown.Selected);
 		
 		GD.Print("LevelCreator: loading level: ", man.loadLevelName);
-		GetTree().ReloadCurrentScene();
 		
-		// TODO: fix "_push_unhandled_input_internal: Condition "is_inside_tree()" is true" errors
+		// fixes "_push_unhandled_input_internal: Condition "is_inside_tree()" is true" errors
+		CallDeferred(nameof(LoadedReloadScene));
+	}
+	
+	// reloads current scene
+	private void LoadedReloadScene() {
+		GetTree().ReloadCurrentScene();
 	}
 
 	private void _on_protected_tiles_pressed()
