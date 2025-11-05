@@ -72,9 +72,11 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+			UpdateRegisterDisplay();
 		}
 
-		public void Reset() {
+		public void Reset()
+		{
 			base.ResetPos();
 			_parser.Reset();
 			E.ClearAllHighlights();
@@ -83,6 +85,30 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			{
 				existing.QueueFree();
 			}
+			UpdateRegisterDisplay();
+		}
+		
+		private void UpdateRegisterDisplay()
+		{
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
+			}
 		}
 
 		public void RegisterSteppable() {
@@ -90,7 +116,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.RegisterRunnable(this);
 		}
 
-		public void UnRegisterSteppable() {
+		public void UnRegisterSteppable()
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.UnRegisterRunnable(this);
 		}

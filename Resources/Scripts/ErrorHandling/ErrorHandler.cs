@@ -113,9 +113,8 @@ public partial class ErrorHandler : Node2D {
 		errorNoticeIcon.Position = errorCoords;*/
 
 		ShowErrorNotice(Pos);
-
 		if(E != null) {
-			E.HighlightLine(E.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+			E.HighlightLine(E.currentLine, new Color(1, 0, 0, 0.3f), true);
 		}
 
 		PackedScene packedErrorScene = null;
