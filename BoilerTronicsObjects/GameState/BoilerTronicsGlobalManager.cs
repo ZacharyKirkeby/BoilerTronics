@@ -67,6 +67,7 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 
 		GlobalManager = this; // get this as the manager
+		
 	}
 
 	// This will allow for the step button to interact with the backend of the game

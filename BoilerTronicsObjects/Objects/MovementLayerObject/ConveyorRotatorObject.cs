@@ -156,6 +156,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 					tObj.ChangeDir(0);
 					break;
 			}
+			
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Rotate);
 
 			GD.Print("newDir:", tObj.GetDir());
 		}

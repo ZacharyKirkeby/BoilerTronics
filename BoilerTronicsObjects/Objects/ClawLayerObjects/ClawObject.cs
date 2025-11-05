@@ -37,9 +37,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				return;
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
-			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+
+			if (highlight >= 0) {
+				E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+				if (manager.currLevel.E.HasError()) {
+					E.HighlightLine(highlight, new Color(1, 0, 0, 0.3f));
+				}
+			}
+
 			UpdateRegisterDisplay();
-	
 		}
 
 		public void RegisterSteppable()
@@ -57,7 +63,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public void Reset()
 		{
 			base.ResetPos();
-			_parser.Reset();
+			_parser.Reset(); //disposed object error?
 			heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
@@ -81,7 +87,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		{
 			this._parser = parser;
 		}
-
+		
 		public Parser GetParser()
 		{
 			return this._parser;
@@ -222,6 +228,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				throwError(ErrorHandler.ErrorType.ClawRail);
 				return;
 			}
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Move);
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
@@ -229,13 +237,17 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			return;
 		}
 
-		public void Grab(string[] args)
-		{
+		public void Grab(string[] args) {
+			GD.Print("Grab func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Grab);
 			return; // TODO: implement fully
 		}
 
-		public void Drop(string[] args)
-		{
+		public void Drop(string[] args) {
+			GD.Print("Drop func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Drop);
 			return; // TODO: implement fully
 		}
 
@@ -265,6 +277,5 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			res["terminalCode"] = GetScript();
 			return res;
 		}
-
 	}
 }
