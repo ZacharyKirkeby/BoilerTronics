@@ -49,6 +49,25 @@ namespace BoilerTronicsObjects.Objects
 			return GenerateObject(objectId, x, y);
 		}
 
+		public static List<PlaceableBigData> GetBigObjectTileMap(int objectID, PlaceableBig.Direction dir) {
+			switch (objectID) {
+				case 4:
+					//factory furnace
+					return FactoryFurnace.StaticGetTextureGrid(dir);
+				case 5:
+					//factory press
+					return FactoryPress.StaticGetTextureGrid(dir);
+				case 6:
+					//factory roller
+					return FactoryRoller.StaticGetTextureGrid(dir);
+				case 153:
+					//switch
+					return Switch.StaticGetTextureGrid(dir);
+			}
+
+			return null;
+		}
+
 		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
 			switch (objectID) {
 				case -1:
@@ -68,6 +87,12 @@ namespace BoilerTronicsObjects.Objects
 				case 4:
 					//factory furnace
 					return new FactoryFurnace(x, y, 0);
+				case 5:
+					//factory furnace
+					return new FactoryPress(x, y, 0);
+				case 6:
+					//factory furnace
+					return new FactoryRoller(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
@@ -107,6 +132,9 @@ namespace BoilerTronicsObjects.Objects
 				case 152:
 					//rotatordefault
 					return new ConveyorRotatorObject(x, y, 0);
+				case 153:
+					//rotatordefault
+					return new Switch(x, y, 0);
 				case 200:
 					//factorytestmaterial
 					return new FactoryTestMaterial(x, y, 0);

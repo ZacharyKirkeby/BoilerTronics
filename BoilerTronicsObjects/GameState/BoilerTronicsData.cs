@@ -20,6 +20,8 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
 			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
 			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
+			objectMap.Add(hashCoords(3, new Vector2I(0, 3)), 5);	//factorypress
+			objectMap.Add(hashCoords(3, new Vector2I(0, 2)), 6);	//factoryroller
 			
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
@@ -49,6 +51,7 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(2, new Vector2I(0, 0)), 150); //conveyorleftdefault
 			objectMap.Add(hashCoords(2, new Vector2I(0, 1)), 151); //conveyorrightdefault
 			objectMap.Add(hashCoords(2, new Vector2I(0, 2)), 152); //rotatordefault
+			objectMap.Add(hashCoords(2, new Vector2I(1, 0)), 153); //switch
 			
 			hasInitializedObjectMap = true;
 		}
