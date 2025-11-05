@@ -28,7 +28,6 @@ public partial class LevelCreator : LevelUi
 	{
 		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
 		saveWindow.Visible = true;
-
 	}
 
 	private void _on_creator_save_window_close_requested()
