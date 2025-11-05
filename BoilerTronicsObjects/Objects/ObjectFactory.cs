@@ -136,8 +136,20 @@ namespace BoilerTronicsObjects.Objects
 					//rotatordefault
 					return new SwitchObject(x, y, 0);
 				case 200:
-					//factorytestmaterial
-					return new FactoryTestMaterial(x, y, 0);
+					//Coal
+					return new CoalObject(x, y, 0);
+				case 201:
+					//IronOre
+					return new IronOreObject(x, y, 0);
+				case 202:
+					//IronBar
+					return new IronBarObject(x, y, 0);
+				case 203:
+					//IronPlate
+					return new IronPlateObject(x, y, 0);
+				case 204:
+					//IronRod
+					return new IronRodObject(x, y, 0);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;
