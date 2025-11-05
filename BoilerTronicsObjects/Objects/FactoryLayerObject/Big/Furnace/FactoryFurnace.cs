@@ -18,8 +18,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		static int layerSourceId = 3;
 		private int _objectID;
 		
-		private PlaceableObject insertObj;
-		private PlaceableObject outputObj;
+		private PlaceableObject materialIn;
+		private PlaceableObject coalIn;
+		private PlaceableObject materialOut;
 		private List<PlaceableBigData>[] objectData;
 
 		/*
@@ -165,52 +166,41 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				insertionPoint
 			));
 			*/
+
+			// Deepcopy grid
 			
 			// internal insert, output objects
-			insertObj = new FactoryFurnaceInput(0, 0, 0);
-			outputObj = new FactoryFurnaceOutput(0, 0, 0);
+			materialIn = new FactoryFurnaceInput(0, 0, 0);
+			coalIn = new FactoryFurnaceInput(0, 0, 0);
+			materialOut = new FactoryFurnaceOutput(0, 0, 0);
 
 			/** The internal refrence to the input nad output objects must be set here **/
 
-			/*
-			||[]			 
-			[]{}
-			*/
+			// UP
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]{}
-			||[]
-			*/
+			objectData[0][0].SetInternalObj(null);
+			objectData[0][1].SetInternalObj(null);
+			objectData[0][2].SetInternalObj(null);
+			objectData[0][3].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			{}[]
-			[]||
-			*/
+			// DOWN
+			objectData[1][0].SetInternalObj(null);
+			objectData[1][1].SetInternalObj(null);
+			objectData[1][2].SetInternalObj(null);
+			objectData[1][3].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
-			
-			/*
-			[]||
-			{}[]
-			*/
+			// LEFT
+			objectData[2][0].SetInternalObj(null);
+			objectData[2][1].SetInternalObj(null);
+			objectData[2][2].SetInternalObj(null);
+			objectData[2][3].SetInternalObj(null);
 
-			// in
-			// in
-			// out
-			// null
+			// RIGHT
+			objectData[3][0].SetInternalObj(null);
+			objectData[3][1].SetInternalObj(null);
+			objectData[3][2].SetInternalObj(null);
+			objectData[3][3].SetInternalObj(null);
+
 			
 			SetDir(Direction.UP);
 		}

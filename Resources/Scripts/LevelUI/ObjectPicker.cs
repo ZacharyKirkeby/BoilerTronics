@@ -35,7 +35,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Vertical Conveyor", 100, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Horizontal Conveyor", 100, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Rotator", 100, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
-		// new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
+		new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
 	};
 
 	static ItemInfo[] ClawSection = {
