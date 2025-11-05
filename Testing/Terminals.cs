@@ -51,6 +51,7 @@ public partial class Terminals : TabContainer
 	{
 		if (editors.Contains(editor))
 		{
+			//TODO - delete should reflect change in count
 			editors.Remove(editor);
 			editor.QueueFree();
 		}
@@ -72,17 +73,17 @@ public partial class Terminals : TabContainer
 	// Enforces character length requirements
 	private void OnCodeEditInput(InputEvent @event, CodeEdit codeEdit)
 	{
-		
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
-		{			
+		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.currLevel.StepCount != 0) {
-				
+			if (manager.currLevel.StepCount != 0)
+			{
+
 				return;
-			} 
+			}
 			// TODO: inefficient call if this runs every time the terminal at all updates!
 			UpdateSelectedTerminal();
-		
+
 			long unicode = keyEvent.Unicode;
 			// Only printable characters
 			if (unicode < 32)
@@ -102,6 +103,7 @@ public partial class Terminals : TabContainer
 	}
 
 	// when a new tab is selected, run
+	// TODO on tab selection, run error checker on both tabs
 	private void OnTabSelected(long tab)
 	{
 		GD.Print("Switched to tab: " + tab);

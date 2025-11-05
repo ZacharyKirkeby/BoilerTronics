@@ -48,7 +48,12 @@ public partial class LevelUi : Node2D
 	private Button clearZero;
 	private Button clearOne;
 	private Button clearTwo;
-	private Button stepButton;
+	private Button pauseButton;
+	private Button playButton;
+
+	/* Icons */
+	private Texture2D playIcon;
+	private Texture2D submitIcon;
 
 	public override void _Ready()
 	{
@@ -78,7 +83,7 @@ public partial class LevelUi : Node2D
 		costCountLabel = GetNode<Label>("%Cost Count");
 		
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
-		stepButton = GetNode<Button>("%Step Button");
+		pauseButton = GetNode<Button>("%Pause Button");
 		
 		/* Statistics Labels */
 		ppsCutoffLabel = GetNode<Label>("%PPS Cutoff");
@@ -96,7 +101,8 @@ public partial class LevelUi : Node2D
 		stepsGradeLabel = GetNode<Label>("%Steps Grade");
 		stepsDifferenceLabel = GetNode<Label>("%Steps Difference");
 		
-		UpdateStepCount(0);
+		playButton = GetNode<Button>("%Play Button");
+
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateCost(manager.currLevel.cost);
@@ -105,22 +111,36 @@ public partial class LevelUi : Node2D
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
 		parser = GetNode<Parser>("/root/Node2D/MainVBox/TerminalLevelSplit/Parser");
-		parser.Connect(Parser.SignalName.ErrorRaised, new Callable(manager.currLevel.E, nameof(manager.currLevel.E.OnParserErrorRaised)));
 
 		manager.currLevel.P = parser;
 
 		var button = GetNode<Button>("MainVBox/PanelContainer/HBoxContainer/CategoryPicker/PlaceType1");
 		button.GrabFocus();
 
+		// Init icons for running and submittingnull
+		playIcon = GD.Load<Texture2D>("res://Resources/Icons/play.png");
+		submitIcon = GD.Load<Texture2D>("res://Resources/Icons/submission-speed.png");
+
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
+	}
+
+	public override void _Process(double delta) {
+		// Always update step count (this is for running)
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		UpdateStepCount(manager.currLevel.StepCount);
+
 	}
 
 	/* Button Fuctions */
 
 	private void _on_open_button_pressed() {
 		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
+	}
+	
+	private void _on_visibility_button_pressed() {
+		GetNode<Window>("VisibilityWindow").Visible = true;
 	}
 
 	private void _on_reset_button_pressed()
@@ -154,9 +174,11 @@ public partial class LevelUi : Node2D
 		//refresh step count label
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(0.67f, 0.67f, 0.67f, 0.86f));
 
-		UpdateStepCount(manager.currLevel.StepCount);
-
 		manager.currLevel.E.ClearErrorNotice();
+
+		// TODO: reset the play button
+		playButton.Text = ""; // Remove text
+		playButton.Icon = playIcon;
 	}
 
 	//called in test script to have access to auto resetting
@@ -173,8 +195,6 @@ public partial class LevelUi : Node2D
 
 		// Tell the global manager that we are stepping
 		manager.Step(); // This will also call step on the level
-
-		UpdateStepCount(manager.currLevel.StepCount); // Updates the step count
 
 		stepCountLabel.AddThemeColorOverride("font_color", new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -193,18 +213,32 @@ public partial class LevelUi : Node2D
 	}
 
 	private void _on_run_button_pressed() {
-		// TODO: Implement
-		// On press we should look at our current run state
-		// If we have paused or are stepping, don't do anything
-		// If we are not running, go to 1x
-		// If we are at 1x, go to 2x
-		// If we are at 2x, go to submit speed
-		// If we are at submit speed, don't do anything
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		manager.currLevel.IncRun(); // This will call run and increase the run speed
+
+		switch (manager.currLevel.GetGameRunState()) {
+			case BoilerTronicsLevel.GameRunState.SlowRun:
+				// 1X
+				playButton.Text = "1X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.FastRun:
+				// 2X
+				playButton.Text = "2X";
+				playButton.Icon = null;
+				break;
+			case BoilerTronicsLevel.GameRunState.SubmitSpeed:
+				// Submit speed
+				playButton.Text = "";
+				playButton.Icon = submitIcon; // This will be the submit speed
+				break;
+		}
 	}
 
 	private void _on_pause_button_pressed() {
-		// If we are not running, don't do anything
-		// Otherwise, stop running
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.Pause(); // Pauses
 	}
 
 	// return to main menu button
@@ -231,9 +265,56 @@ public partial class LevelUi : Node2D
 	private void _on_level_statistics_menu_close_requested() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = false;
 	}
+	
+	private void _on_visibility_window_close_requested() {
+		GetNode<Window>("VisibilityWindow").Visible = false;
+	}
 
 	private void _on_level_statistics_pressed() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
+	}
+
+	private void _on_movement_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerMovement.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerMovement.Visible = false;
+		}
+	}
+
+	private void _on_factory_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = true;
+			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = false;
+			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = false;
+		}
+	}
+	
+	private void _on_claw_visibility_toggled(bool toggled_on)
+	{
+		GD.Print(toggled_on);
+		if (toggled_on)
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerClaw.Visible = true;
+			BoilerTronicsGlobalManager.GlobalManager.layerRail.Visible = true;
+		}
+		else
+		{
+			BoilerTronicsGlobalManager.GlobalManager.layerClaw.Visible = false;
+			BoilerTronicsGlobalManager.GlobalManager.layerRail.Visible = false;
+		}
 	}
 
 	private void _on_save_button_pressed() {
