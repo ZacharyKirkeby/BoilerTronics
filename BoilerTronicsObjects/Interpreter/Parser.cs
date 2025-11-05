@@ -164,7 +164,7 @@ public partial class Parser : Node2D
 		{
 			GD.PrintErr("Error Found");
 			return -1;
-        }
+		}
 
 		// Check if program is halted or finished
 		if (_programHalted || _validLines.Count == 0)
