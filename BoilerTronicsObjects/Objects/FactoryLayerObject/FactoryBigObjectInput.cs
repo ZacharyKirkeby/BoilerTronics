@@ -15,6 +15,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		static int layerSourceId = 0;
 		private PlaceableBig parent;
+		private int _AcceptedObjectID = -1;
 
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
@@ -29,6 +30,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 
 		public void SetParent(PlaceableBig newParent) {
+			parent = newParent;
+		}
+
+		public void SetAcceptedObjectID(PlaceableBig newParent) {
 			parent = newParent;
 		}
 		

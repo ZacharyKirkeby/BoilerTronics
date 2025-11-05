@@ -265,6 +265,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 			return; // Throw error
 		}
 
+		public void Switch(string[] args) {
+			return; // Throw error
+		}
+
 		// Command methods
 		public ClawObject(int OGX, int OGY, int altTitle) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
