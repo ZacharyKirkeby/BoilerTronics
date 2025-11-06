@@ -27,6 +27,28 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private int _StepsTillCompletion;
 
 		/*
+			// Up direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(1, -1),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			// Down direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(-1, 0),	// offset from object's origin
+			new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
+			// Left direction
+			new Vector2I(-1, 1),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(3, 3, 3),	// atlasX, atlasY, sourceId
+			// Right direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(1, 3, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(-1, 0),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+		*/
+		/*
 		 * This is a static data structure that stores just the structure and texture data of the big object
 		 * This will be deep copied on instantiating an object
 		 * Other wise this will be used to stically create textures without instanciating an object
@@ -55,12 +77,12 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
@@ -77,13 +99,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(2, -1),	// offset from object's origin
-						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
@@ -91,17 +113,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
+						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
@@ -144,13 +166,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// LEFT
 			objectData[2][0].SetInternalObj(Input);
-			objectData[2][1].SetInternalObj(Output);
-			objectData[2][2].SetInternalObj(null);
+			objectData[2][1].SetInternalObj(null);
+			objectData[2][2].SetInternalObj(Output);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(Input);
-			objectData[3][1].SetInternalObj(null);
-			objectData[3][2].SetInternalObj(Output);
+			objectData[3][0].SetInternalObj(null);
+			objectData[3][1].SetInternalObj(Output);
+			objectData[3][2].SetInternalObj(Input);
 			
 			SetDir(Direction.UP);
 		}
