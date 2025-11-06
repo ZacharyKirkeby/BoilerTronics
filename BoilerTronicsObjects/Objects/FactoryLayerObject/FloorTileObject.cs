@@ -5,6 +5,9 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
+
+// NOTE:
+// Future floor tiles should ideally be a children of this tile!
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FloorTileObject : PlaceableObject {

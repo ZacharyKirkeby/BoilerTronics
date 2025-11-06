@@ -61,17 +61,33 @@ public partial class ObjectPicker : HBoxContainer
 
 	static ItemInfo[] DeveloperSection =
 	{
+		// Factory Input Objects
 		new ItemInfo("Coal In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,0), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Ore In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,0), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Rod In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false),
 		
+		// Factory Output Objects
 		new ItemInfo("Coal Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Ore Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,1), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false),
 		new ItemInfo("Iron Rod Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false),
+		
+		// Floor Tiles
+		new ItemInfo("Floor Tile 1", FloorTileObject.GetCostStatic(), 2, 4, new Vector2I(0,0), new Vector2I(85, 85), false),
+		
+		// Floor Obstructions
+		new ItemInfo("Floor Cracked Tile Object", FloorCrackedTileObject.GetCostStatic(), 2, 5, new Vector2I(0,0), new Vector2I(85, 85), false),
+		new ItemInfo("Broken Pipe: Floor Left", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(0,3), new Vector2I(85, 85), false),
+		new ItemInfo("Broken Pipe: Floor Right", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(1,3), new Vector2I(85, 85), false),
+		
+		// Ceiling (Rail Layer) Obstructions
+		new ItemInfo("StalagmiteObject", StalagmiteObject.GetCostStatic(), 3, 5, new Vector2I(0,1), new Vector2I(85, 85), false),
+		new ItemInfo("StalagmiteObjects", StalagmitesObject.GetCostStatic(), 3, 5, new Vector2I(1,1), new Vector2I(85, 85), false),
+		new ItemInfo("Broken Pipe: Ceiling Left", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(0,2), new Vector2I(85, 85), false),
+		new ItemInfo("Broken Pipe: Ceiling Right", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(1,2), new Vector2I(85, 85), false),
 	};
 
 	public void Update(int selection)
