@@ -44,6 +44,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
 	public Terminals terminalContainer;
+	public LevelUi levelUi;
 	/***** End Testing Vars *****/
 
 	// TODO:

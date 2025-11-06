@@ -195,6 +195,7 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// set default level dimension
 		if (!manager.creatingNewLevel) {
+			manager.saveState.levelName = "placeholder";
 			manager.saveState.SetLevelDimensions(new Vector2I(20, 20));
 		}
 		
@@ -297,20 +298,25 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// store four corners of the floor layer
 		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
-		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
+		// c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
-		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		// c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
 		
 		// update the min, max coordinates
 		minCoords = c1 - centerOffset;
 		maxCoords = c3 - centerOffset;
+		
+		// update the level to the specified level name
+		// if (manager.levelUi != null) {
+			// manager.levelUi.UpdateTitle(manager.saveState.levelName);
+		// }
 
 		// Set the run state to Idle
 		RunState = BoilerTronicsLevel.GameRunState.Idle;
 		DeltaTime = StepDeltaTime;
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
-		QueueRedraw();
+		// QueueRedraw();
 		
 		/*
 		// Prepare parsers for each scriptable element

@@ -68,6 +68,11 @@ namespace BoilerTronicsObjects.GameCamera {
 				
 				if (manager == null) { return; }
 			}
+			
+			if (manager.currLevel == null) {
+				GD.Print("Camera2d: manager.currLevel == null, aborting validateScreePos()");
+				return;
+			}
 		
 			// cameraOffset = GetViewport().GetVisibleRect().Size;
 			// GD.Print("camera size: ", GetViewport().GetVisibleRect().Size);

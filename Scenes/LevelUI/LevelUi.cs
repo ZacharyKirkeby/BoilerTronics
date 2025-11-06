@@ -14,6 +14,7 @@ public partial class LevelUi : Node2D
 	/* Steps */
 
 	private Label stepCountLabel;
+	private Label titleLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
@@ -42,6 +43,7 @@ public partial class LevelUi : Node2D
 		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
 		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
 
+		titleLabel = GetNode<Label>("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Label");
 
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
 		saveOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Save 1");
@@ -87,7 +89,7 @@ public partial class LevelUi : Node2D
 		
 		// Set fullscreen toggle
 		
-		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		// uses 'GetNodeOrNull' in case level_creator scene is missing (note: FIXED)
 		var fullscreenButton = GetNodeOrNull<Button>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen");
 		if (fullscreenButton != null) {
 			fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
@@ -96,11 +98,17 @@ public partial class LevelUi : Node2D
 		
 		// Set volume slider
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
-		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		// uses 'GetNodeOrNull' in case level_creator scene is missing (note: FIXED)
 		var volSlider = GetNodeOrNull<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
 		if (volSlider != null) {
 			volSlider.Value = soundManager.GetCurrentVolume();
 		}
+		
+		// link this to the manager
+		manager.levelUi = this;
+		
+		// update level name
+		UpdateTitle(manager.saveState.levelName);
 	}
 
 	public override void _Process(double delta) {
@@ -108,6 +116,11 @@ public partial class LevelUi : Node2D
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateStepCount(manager.currLevel.StepCount);
 
+	}
+	
+	// updates the title label to the specified input
+	public void UpdateTitle(string input) {
+		titleLabel.Text = input;
 	}
 
 	/* Button Fuctions */

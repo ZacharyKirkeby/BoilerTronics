@@ -176,6 +176,7 @@ public class BoilerTronicsSaveState
 			{
 				{ "mapSize", new int[]{levelDimensions.X, levelDimensions.Y} },
 				{ "levelId", level_id },
+				{ "levelName", levelName },
 				{ "saveSlot", save_slot },
 				{ "boundarySize", boundarySize },
 			};
@@ -279,7 +280,12 @@ public class BoilerTronicsSaveState
 						this.boundaryTex.SetSourceId((int) node["boundarySourceId"]);
 					}
 					
-					GD.Print("metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
+					if (node.ContainsKey("levelName")) {
+						this.levelName = (string) node["levelName"];
+					}
+					
+					GD.Print("SaveState: metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
+					GD.Print("SaveState: metadata: level name: ", levelName);
 					continue;
 				}
 				
