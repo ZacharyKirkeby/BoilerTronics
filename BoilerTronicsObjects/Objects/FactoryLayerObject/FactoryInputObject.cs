@@ -10,6 +10,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FactoryInputObject : PlaceableObject, Movable {
 		
+		public override int GetCost() { return 0; }
+		public new static int GetCostStatic() { return 0; }
+		
 		// default visuals
 		static int layerSourceId = 0;
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);

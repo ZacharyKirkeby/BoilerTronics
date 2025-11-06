@@ -9,6 +9,7 @@ using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;	// MovementLayer
 using Parsing;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -17,6 +18,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public int x;
 	public int y;
 	public int StepCount;
+	public int cost;
 	public float DeltaTime; // time we want it to take to move objects
 	public TileSet tileset;
 
@@ -32,16 +34,73 @@ public partial class BoilerTronicsLevel : Node2D
 	public Parser P;
 	public ErrorHandler E;
 	
+	//statistics variables for cutoffs values
+	//TODO: set dynamically from avtual level file
+	public float ppsCutoff = 1;
+	public float costCutoff = 250;
+	public int stepsCutoff = 20;
+	
+	public int targetProduction = 5; //default goal is 3 outputs
+	
+	//statistics variables for solution values
+	public float ppsSolution;
+	
+	public float bestScore = 0;
+	
+	//levelui reference
+	private LevelUi levelUi;
+	
 	// store all four corners of the placement grid
 	private Vector2 c1;
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
 	
+	public void UpdateCost(int addition) {
+		cost += addition;
+	}
+	//when solution reached, update solution statistics
+	public void UpdateSolutionStats() {
+		//TODO: pps based on production/step
+		ppsSolution = (float)targetProduction / (float)StepCount;
+		
+		//update leaderboard (min values for the 3 categories)
+		//update levelui stats labels
+		if(levelUi != null) {
+			levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount);
+			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
+			float solutionScore = grades[0] + grades[1] + grades[2];
+			solutionScore /= 3;
+			if(solutionScore > bestScore) {
+				bestScore = solutionScore;
+				GD.Print("bestscore is " + bestScore);
+				GD.Print("bestscore is " + grades[0]);
+				GD.Print("bestscore is " + grades[1]);
+				GD.Print("bestscore is " + grades[2]);
+			}
+		}
+	}
+	
+	public void ResetSolutionStats() {
+		ppsSolution = 0;
+		levelUi.SetStatisticDefaults();
+	}
+	
+	public void UpdateCutoffs() {
+		if(levelUi != null) {
+			levelUi.UpdateSolutionCutoffs(ppsCutoff, costCutoff, stepsCutoff);
+		}
+	}
+
+	public void UpdateProductionGoal(int num) {
+		targetProduction = num;
+	}
+
+
 	// store min, max of X, Y coordinates, based off the dimensions of the level
 	public Vector2 minCoords;
 	public Vector2 maxCoords;
-	
+
 	private BoilerTronicsLevel.GameRunState RunState;
 
 	private float StepDeltaTime = 1.0f; // 1 Second
@@ -317,6 +376,14 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
 		// QueueRedraw();
+		
+		//get levelui reference to be able to update labels
+		levelUi = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+		if (levelUi == null) {
+			GD.PrintErr("LevelUi not found! Statistics won't update.");
+		}
+		
+		UpdateProductionGoal(5);
 		
 		/*
 		// Prepare parsers for each scriptable element

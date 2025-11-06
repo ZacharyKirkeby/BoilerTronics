@@ -14,6 +14,25 @@ public partial class LevelUi : Node2D
 	/* Steps */
 
 	private Label stepCountLabel;
+	private Label costCountLabel;
+	
+	/* Statistics */
+	private Label ppsCutoffLabel;
+	private Label costCutoffLabel;
+	private Label stepsCutoffLabel;
+	
+	private Label ppsSolutionLabel;
+	private Label costSolutionLabel;
+	private Label stepsSolutionLabel;
+	
+	private Label ppsGradeLabel;
+	private Label costGradeLabel;
+	private Label stepsGradeLabel;
+	
+	private Label ppsDifferenceLabel;
+	private Label costDifferenceLabel;
+	private Label stepsDifferenceLabel;
+	
 	private Label titleLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
@@ -40,8 +59,12 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
+		// GD.Print(GetPath());
+		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
+		
 		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
 		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
+
 
 		titleLabel = GetNode<Label>("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Label");
 
@@ -51,6 +74,10 @@ public partial class LevelUi : Node2D
 		clearZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Clear 0");
 		clearOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Clear 1");
 		clearTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Clear 2");
+		
+		costCountLabel = GetNodeOrNull<Label>("%Cost Count");
+		
+
 		FullSaveButtonTheme.BgColor = new Color(1, 0, 0);
 		FullSaveButtonTheme.BorderColor = new Color(0, 0, 0);
 		FullSaveButtonTheme.SetBorderWidthAll(3);
@@ -63,12 +90,34 @@ public partial class LevelUi : Node2D
 		EmptySaveButtonTheme.SetCornerRadiusAll(20);
 		EmptySaveButtonHoverTheme = EmptySaveButtonTheme.Duplicate() as StyleBoxFlat;
 		EmptySaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
+		
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		pauseButton = GetNode<Button>("%Pause Button");
-		playButton = GetNode<Button>("%Play Button");
+		
+		/* Statistics Labels */
+		// TODO: Using 'GetNodeOrNull' because the level creator is still missing this content!
+		ppsCutoffLabel = GetNodeOrNull<Label>("%PPS Cutoff");
+		ppsSolutionLabel = GetNodeOrNull<Label>("%PPS Solution");
+		ppsGradeLabel = GetNodeOrNull<Label>("%PPS Grade");
+		ppsDifferenceLabel = GetNodeOrNull<Label>("%PPS Difference");
+		
+		costCutoffLabel = GetNodeOrNull<Label>("%Cost Cutoff");
+		costSolutionLabel = GetNodeOrNull<Label>("%Cost Solution");
+		costGradeLabel = GetNodeOrNull<Label>("%Cost Grade");
+		costDifferenceLabel = GetNodeOrNull<Label>("%Cost Difference");
+		
+		stepsCutoffLabel = GetNodeOrNull<Label>("%Steps Cutoff");
+		stepsSolutionLabel = GetNodeOrNull<Label>("%Steps Solution");
+		stepsGradeLabel = GetNodeOrNull<Label>("%Steps Grade");
+		stepsDifferenceLabel = GetNodeOrNull<Label>("%Steps Difference");
+		
+		playButton = GetNodeOrNull<Button>("%Play Button");
 
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		UpdateCost(manager.currLevel.cost);
+		SetStatisticDefaults();
+		manager.currLevel.UpdateCutoffs();
 		manager.currLevel.E = new ErrorHandler();
 		AddChild(manager.currLevel.E); // Add as child so that we can access elements in the level
 
@@ -142,6 +191,10 @@ public partial class LevelUi : Node2D
 		soundManager.StopAllSound();
 		manager.Reset();
 		manager.currLevel.Reset();
+
+		//reset statistics as solution is wiped
+		SetStatisticDefaults();
+		manager.currLevel.ResetSolutionStats();
 
 		//reset highlighting in terminals
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
@@ -462,6 +515,126 @@ public partial class LevelUi : Node2D
 	private void UpdateStepCount(int stepCount)
 	{
 		stepCountLabel.Text = "Step Count: " + stepCount;
+	}
+	
+	public void UpdateCost(int cost) {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		if(manager.currLevel.GetGameRunState() != 0) {
+			return;
+		}
+		if (costCountLabel == null) {
+			return;
+		}
+		costCountLabel.Text = "Cost: $" + cost;
+		GD.Print("cost updated" + cost);
+	}
+	
+	public void SetStatisticDefaults() {
+		ppsSolutionLabel.Text = "PPS: N/A";
+		costSolutionLabel.Text = "Cost: N/A";
+		stepsSolutionLabel.Text = "Steps: N/A";
+		
+		ppsDifferenceLabel.Text = "Diff: N/A";
+		costDifferenceLabel.Text = "Diff: N/A";
+		stepsDifferenceLabel.Text = "Diff: N/A";
+		
+		ppsGradeLabel.Text = "Grade: N/A";
+		costGradeLabel.Text = "Grade: N/A";
+		stepsGradeLabel.Text = "Grade: N/A";
+		
+		ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		costGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+	}
+	
+	public void UpdateSolutionStatistics(float pps, float cps, int rc) {
+		ppsSolutionLabel.Text = "PPS: " + pps.ToString("F2");
+		costSolutionLabel.Text = "Cost: $" + cps.ToString("F2");
+		stepsSolutionLabel.Text = "Steps: " + rc.ToString("F2");
+	}
+	
+	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
+		ppsCutoffLabel.Text = "Cutoff PPS: " + pps.ToString("F2");
+		costCutoffLabel.Text = "Cutoff Cost: $" + cps.ToString("F2");
+		stepsCutoffLabel.Text = "Cutoff Steps: " + rc.ToString("F2");
+	}
+
+	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
+		//difference and grading labels
+		float[] grades = new float[3];
+		if(ppsCutoff <= ppsSol) {
+			//good
+			ppsDifferenceLabel.Text = "Diff: " + (ppsSol - ppsCutoff).ToString("F2");
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true).ToString("F2");
+			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, true);
+			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+		}
+		else {
+			//bad
+			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol).ToString("F2");
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true).ToString("F2");
+			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, true);
+			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+		}
+		if(costCutoff >= costSol) {
+			//good
+			costDifferenceLabel.Text = "Diff: " + (costCutoff - costSol).ToString("F2");
+			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, false).ToString("F2");
+			grades[1] =  CalculateGrade(costCutoff, costSol, false);
+			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+		}
+		else {
+			//bad
+			costDifferenceLabel.Text = "Diff: " + (costSol - costCutoff).ToString("F2");
+			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, false).ToString("F2");
+			grades[1] =  CalculateGrade(costCutoff, costSol, false);
+			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			costGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+		}
+		if(stepsCutoff >= stepsSol) {
+			//good
+			stepsDifferenceLabel.Text = "Diff: " + (stepsCutoff - stepsSol).ToString("F2");
+			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, false).ToString("F2");
+			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
+			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+		}
+		else {
+			//bad
+			stepsDifferenceLabel.Text = "Diff: " + (stepsSol - stepsCutoff).ToString("F2");
+			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, false).ToString("F2");
+			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
+			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+		}
+		return grades;
+	}
+
+	public float CalculateGrade(float cutoff, float solution, bool good) {
+		if (cutoff <= 0) return 0;
+
+		float ratio = solution / cutoff;
+		float grade;
+
+		if (good) {
+			if (ratio >= 1.0f)
+				grade = 100f + 50f * (1f - (float)Math.Exp(-2f * (ratio - 1f)));
+			else
+				grade = 100f * (float)Math.Exp(-3f * (1f - ratio));
+		} else {
+			if (ratio <= 1.0f)
+				grade = 100f + 50f * (1f - (float)Math.Exp(-2f * (1f - ratio)));
+			else
+				grade = 100f * (float)Math.Exp(-3f * (ratio - 1f));
+		}
+
+		return Math.Clamp(grade, 0f, 150f);
 	}
 
 	private void full_theme(Button button)

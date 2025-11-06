@@ -6,6 +6,9 @@ using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -179,6 +182,7 @@ namespace BoilerTronicsObjects.Layers
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
 			// reset layer transparency
+			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
 			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
 			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
@@ -251,6 +255,54 @@ namespace BoilerTronicsObjects.Layers
 			newPlaceable.SetParentLayer(this);
 			
 			numItems++;
+
+			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = newPlaceable.GetCost();
+			if (costToAdd > 0) {
+				GD.Print("Layer.cs: cost to add > 0, obj: ", newPlaceable);
+			}
+			
+			if (newPlaceable is FactoryOutputObject ) {
+				manager.currLevel.targetProduction = ((FactoryOutputObject) newPlaceable).getTargetNum();
+				GD.Print("Layer.cs: found FactoryOutputObject, overriding manager.currLevel.targetProduction " + manager.currLevel.targetProduction);
+			}
+			/*
+			switch (newPlaceable)
+			{
+				case ClawObject:
+					costToAdd = 100;
+					break;
+				case TrackObject:
+					costToAdd = 100;
+					break;
+				case ConveyorObject:
+					costToAdd = 100;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = 100;
+					break;
+				case FactoryInputObject:
+					costToAdd = 100;
+					break;
+				case FactoryOutputObject f:
+					costToAdd = 100;
+					// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+					// if (manager.currLevel != null) {
+						// f.setTargetNum(manager.currLevel.targetProduction);
+						// GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
+					// }
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+			*/
+
+			GD.Print(GetPath());
+			manager.currLevel.UpdateCost(costToAdd);
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		// system also should properly handle PlaceableBig objects
@@ -282,6 +334,39 @@ namespace BoilerTronicsObjects.Layers
 			}
 			
 			numItems--;
+			
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = 0;
+			switch (objectToRemove)
+			{
+				case ClawObject:
+					costToAdd = -100;
+					break;
+				case TrackObject:
+					costToAdd = -100;
+					break;
+				case ConveyorObject:
+					costToAdd = -100;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = -100;
+					break;
+				case FactoryInputObject:
+					costToAdd = -100;
+					break;
+				case FactoryOutputObject:
+					costToAdd = -100;
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+
+			GD.Print("deleting object");
+			manager.currLevel.UpdateCost(costToAdd);
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		// returns the reference to the object at 'loc' position

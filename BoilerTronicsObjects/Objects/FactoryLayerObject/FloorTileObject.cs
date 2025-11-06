@@ -9,6 +9,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FloorTileObject : PlaceableObject {
 		
+		public override int GetCost() { return 0; }
+		public new static int GetCostStatic() { return 0; }
+		
 		static int layerSourceId = 4;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
