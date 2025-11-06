@@ -348,7 +348,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 		~ClawObject()
 		{
-			DestroyTerminal(); // Destries the terminal for this scriptable
+			DestroyTerminal(); // Destroys the terminal for this scriptable
 		}
 
 		// Override 'save' function to also return a script's information

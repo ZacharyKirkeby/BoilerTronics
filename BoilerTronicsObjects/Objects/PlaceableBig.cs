@@ -373,5 +373,16 @@ namespace BoilerTronicsObjects.Placeable
 
 			return texture;
 		}
+		
+		
+		public override Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+
+			// also save the direction of the object!
+			
+			res["dir"] = (int) dir;
+			return res;
+		}
 	}
 }

@@ -28,12 +28,15 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 0; // id for which level this save is referring to
 	
+	// TODO: implement into saving/loading
+	public string levelName = "placeholder";
+	
 	// LAZY: this is public now
 	// default: a 50% darker version of the base floor tile, 2 tiles wide
 	public TileTex boundaryTex =  new TileTex(new Vector2I(0, 0), 6);
 	public int boundarySize = 2;
 	
-	private Vector2I levelDimensions;
+	private Vector2I levelDimensions = new Vector2I(20, 20);
 	private LayerInfo liClaw = new LayerInfo();
 	private LayerInfo liFactory = new LayerInfo();
 	private LayerInfo liFloor = new LayerInfo();
@@ -173,6 +176,7 @@ public class BoilerTronicsSaveState
 			{
 				{ "mapSize", new int[]{levelDimensions.X, levelDimensions.Y} },
 				{ "levelId", level_id },
+				{ "levelName", levelName },
 				{ "saveSlot", save_slot },
 				{ "boundarySize", boundarySize },
 			};
@@ -276,7 +280,12 @@ public class BoilerTronicsSaveState
 						this.boundaryTex.SetSourceId((int) node["boundarySourceId"]);
 					}
 					
-					GD.Print("metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
+					if (node.ContainsKey("levelName")) {
+						this.levelName = (string) node["levelName"];
+					}
+					
+					GD.Print("SaveState: metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
+					GD.Print("SaveState: metadata: level name: ", levelName);
 					continue;
 				}
 				
@@ -372,6 +381,14 @@ public class BoilerTronicsSaveState
 					
 					((ConveyorObject) target).SetToLoadText(conveyorCode);
 					GD.Print("SaveState: successfully loaded terminal code -- conveyor variant");
+				}
+			}
+			
+			// get direction, if relevant
+			if (target is PlaceableBig) {
+				if (targetObj.ContainsKey("dir")) {
+					int dir = (int) targetObj["dir"];
+					((PlaceableBig) target).SetDir((PlaceableBig.Direction) dir);
 				}
 			}
 			

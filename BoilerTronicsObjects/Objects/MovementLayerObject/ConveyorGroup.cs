@@ -45,9 +45,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		// Verify Group
 		public void VerifyGroup() {

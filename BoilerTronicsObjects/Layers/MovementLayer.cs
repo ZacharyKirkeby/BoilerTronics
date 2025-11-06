@@ -37,6 +37,12 @@ namespace BoilerTronicsObjects.Layers
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			base.AddObject(newPlaceable);
+			
+			// handle cases where the object fails to place correctly -- specifically, for ConveyorObjects
+			// *should* solve issues where a terminal is created even when it shouldn't have
+			if (!objectList.Contains(newPlaceable)) {
+				return;
+			}
 
 			if (newPlaceable is ConveyorObject cObj) {
 				GD.Print("MovementLayer: Inserting into Conveyor");

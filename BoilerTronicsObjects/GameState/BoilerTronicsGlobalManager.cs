@@ -44,6 +44,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	public PlaceableObject objectToMove;
 	public BoilerTronicsLevel currLevel;
 	public Terminals terminalContainer;
+	public LevelUi levelUi;
 	/***** End Testing Vars *****/
 
 	// TODO:
@@ -55,6 +56,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	// TODO: saveState updated to be a publicly available variable!
 	// Update systems accordingly (TODO)
 	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
+	
+	// TODO: used only by the level creator UI
+	// if 'true', then BoilerTronicsLevel will not load level, and will instead create a new level
+	// given the params already in the save state
+	public bool creatingNewLevel = false;
 	
 	// should only ever be used by the level creator UI
 	// i.e. level creator UI should be able to save/load levels of ANY name,
