@@ -42,6 +42,11 @@ public partial class CodeEdit : Godot.CodeEdit
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
 	}	
+
+	public PlaceableObject getObject()
+	{
+		return this.correspondingObject;
+	}
 	
 	// custom function, called by Terminals.cs
 	// intention is to use this function to check if 'correspondingObject' exists
@@ -189,6 +194,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		
 		if (error == true)
 		{
+			GD.PrintErr(lineNumber);
 			SetLineBackgroundColor(lineNumber, color);
 			QueueRedraw();
 			return;
