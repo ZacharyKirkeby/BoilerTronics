@@ -148,8 +148,14 @@ public partial class MovingObject : Area2D {
 		collided = true; // Set flag for this collision
 		// We have collided with something else, this is a problem and shouldn't happen :(
 		// This will trigger an error and then halt all movement
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.MovingCollisionReport(this);
+		if (body is MovingObject otherMoving) {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.MovingCollisionReport(this, otherMoving);
+		}
+		else {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.MovingCollisionReport(this);
+		}
 	}
 
 	public void Halt() {

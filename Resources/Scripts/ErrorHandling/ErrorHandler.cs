@@ -91,24 +91,27 @@ public partial class ErrorHandler : Node2D
 			}
 		}
 
-		ShowErrorNotice(new Vector2I(0, 0)); // Add the '!' icon
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		soundManager.PlaySound(SoundType.Error);
+
+		ShowErrorNotice(new Vector2I(0,0)); // Add the '!' icon | TODO: throw a handle error based on the actual error
 
 		ErrorPresent = true;
 	}
 
-	// Displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
-	public void handleError(ErrorType type, CodeEdit E, Vector2 Pos)
-	{
-		if (errorSceneInstance != null) return; // Already displaying error
-
+	//displays error (specific error popup, location of error on level ui, specific code terminal highlighted red)
+	public void handleError(ErrorType type, CodeEdit E, Vector2 Pos) {
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		soundManager.StopAllSound();
+		soundManager.PlaySound(SoundType.Error);
+
+		if (errorSceneInstance != null) return; // Already displaying error
 		manager.currLevel.HaultObjects();
 
 		ShowErrorNotice(Pos);
-
-		if (E != null)
-		{
-			E.HighlightLine(E.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
+		if(E != null) {
+			E.HighlightLine(E.currentLine, new Color(1, 0, 0, 0.3f), true);
 		}
 
 		PackedScene packedErrorScene = null;
@@ -147,6 +150,7 @@ public partial class ErrorHandler : Node2D
 		GetTree().CurrentScene.AddChild(errorSceneInstance);
 
 		ErrorPresent = true;
+		soundManager.PlaySound(SoundType.Error);
 	}
 
 	// Be able to call for error popup from this script

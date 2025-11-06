@@ -73,9 +73,16 @@ public partial class CodeEdit : Godot.CodeEdit
 		CallDeferred(nameof(ValidateAndHighlight));
 	}
 
-	// Called when terminal tab is selected
-	public void TerminalSelected()
-	{
+	public PlaceableObject getObject()
+    {
+		return this.correspondingObject;
+    }
+	
+	// custom function, called by Terminals.cs
+	// intention is to use this function to check if 'correspondingObject' exists
+	// if so, try and "highlight" the object
+	// TODO: current Terminals.cs implementation doesn't call this properly on initial level creation
+	public void TerminalSelected() {
 		GD.Print("terminal selected");
 		
 		// Always validate when selected
@@ -264,6 +271,7 @@ public partial class CodeEdit : Godot.CodeEdit
 		// If this is an error highlight from ErrorHandler (runtime error)
 		if (error == true)
 		{
+			GD.PrintErr(lineNumber);
 			SetLineBackgroundColor(lineNumber, color);
 			lastHighlightedLine = lineNumber;
 			QueueRedraw();
