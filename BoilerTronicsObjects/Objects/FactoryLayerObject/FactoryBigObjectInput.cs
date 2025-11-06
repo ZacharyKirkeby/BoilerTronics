@@ -22,10 +22,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// objects will have identical sourceIds.
 		
 		public PlaceableObject PickUp() {
-			return null;
+			return null; // We can't pick something up from an input
 		}
 		
 		public bool Place(PlaceableObject obj) {
+			if (parent is BigMovable bmP) return bmP.GiveObject(obj, this);
 			return false;
 		}
 
