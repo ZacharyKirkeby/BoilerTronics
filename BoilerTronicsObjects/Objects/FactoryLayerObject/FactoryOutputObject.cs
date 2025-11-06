@@ -10,6 +10,9 @@ using BoilerTronicsObjects.Data;
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FactoryOutputObject : PlaceableObject, Movable {
+		
+		public override int GetCost() { return 0; }
+		public new static int GetCostStatic() { return 0; }
 
 		/*
 		 * Ideas that could work to make the output better:

@@ -13,6 +13,10 @@ using System.Collections;
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
 	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
+		
+		public override int GetCost() { return 100; }
+		public new static int GetCostStatic() { return 100; }
+		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
