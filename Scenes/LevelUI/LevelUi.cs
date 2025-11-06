@@ -490,16 +490,16 @@ public partial class LevelUi : Node2D
 		else {
 			//bad
 			ppsDifferenceLabel.Text = "Diff: " + (ppsCutoff - ppsSol).ToString("F2");
-			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, false).ToString("F2");
-			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, false);
+			ppsGradeLabel.Text = "Grade: " + CalculateGrade(ppsCutoff, ppsSol, true).ToString("F2");
+			grades[0] =  CalculateGrade(ppsCutoff, ppsSol, true);
 			ppsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			ppsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
 		if(costCutoff >= costSol) {
 			//good
 			costDifferenceLabel.Text = "Diff: " + (costCutoff - costSol).ToString("F2");
-			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, true).ToString("F2");
-			grades[1] =  CalculateGrade(costCutoff, costSol, true);
+			costGradeLabel.Text = "Grade: " + CalculateGrade(costCutoff, costSol, false).ToString("F2");
+			grades[1] =  CalculateGrade(costCutoff, costSol, false);
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
@@ -514,8 +514,8 @@ public partial class LevelUi : Node2D
 		if(stepsCutoff >= stepsSol) {
 			//good
 			stepsDifferenceLabel.Text = "Diff: " + (stepsCutoff - stepsSol).ToString("F2");
-			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, true).ToString("F2");
-			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, true);
+			stepsGradeLabel.Text = "Grade: " + CalculateGrade(stepsCutoff, stepsSol, false).ToString("F2");
+			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 		}
@@ -531,39 +531,24 @@ public partial class LevelUi : Node2D
 	}
 
 	public float CalculateGrade(float cutoff, float solution, bool good) {
-		//check for dividing by 0
-		if (cutoff == 0) {
-			return 0;
-		}
+		if (cutoff <= 0) return 0;
 
 		float ratio = solution / cutoff;
 		float grade;
 
 		if (good) {
-			if (ratio < 1.0f) {
-				grade = 100f * ratio;
-			}
-			else {
-				grade = 100f + 20f * (float)Math.Log10(ratio);
-			}
-		}
-		else {
-			if (ratio > 1.0f) {
-				grade = 100f / ratio;
-			}
-			else {
-				grade = 100f + 20f * (float)Math.Log10(1f / ratio);
-			}
+			if (ratio >= 1.0f)
+				grade = 100f + 50f * (1f - (float)Math.Exp(-2f * (ratio - 1f)));
+			else
+				grade = 100f * (float)Math.Exp(-3f * (1f - ratio));
+		} else {
+			if (ratio <= 1.0f)
+				grade = 100f + 50f * (1f - (float)Math.Exp(-2f * (1f - ratio)));
+			else
+				grade = 100f * (float)Math.Exp(-3f * (ratio - 1f));
 		}
 
-		//ensure number is valid
-		if (grade < 0f) {
-			grade = 0f;
-		}
-		if (grade > 150f) {
-			grade = 150f;
-		}
-		return grade;
+		return Math.Clamp(grade, 0f, 150f);
 	}
 
 	private void full_theme(Button button)

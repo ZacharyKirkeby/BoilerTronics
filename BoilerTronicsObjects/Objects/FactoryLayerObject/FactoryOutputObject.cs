@@ -56,6 +56,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void setTargetNum(int newNum) {
 			_TargetNum = newNum;
+			_CurrNum = newNum;
 		}
 
 		public int getTargetNum() {
