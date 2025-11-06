@@ -72,7 +72,11 @@ public partial class MovingObject : Area2D {
 
 		// Create sprite
 		Sprite = new Sprite2D();
-		Sprite.Texture = this.obj.GetTexture() as Texture2D;
+		if (this.obj is PlaceableFramed fObj) {
+			Sprite.Texture = fObj.GetTexture() as Texture2D;
+		} else {
+			Sprite.Texture = this.obj.GetTexture() as Texture2D;
+		}
 		Sprite.Offset = new Vector2(0, 24);
 		Sprite.Position = this.Position;
 		// Sprite.Scale = new Vector2(10, 10);

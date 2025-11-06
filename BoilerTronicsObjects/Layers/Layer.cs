@@ -20,6 +20,10 @@ namespace BoilerTronicsObjects.Layers
 		// NOTE: Currently unused; separate code already restricts dragging to when steps aren't running.
 		public static bool allowDrag = true;
 		
+		// determines if system should render protected tiles or not
+		private bool renderProtectedTiles = false;
+		private bool editProtectedTiles = false;
+		
 		// default layer dimensions, if left unspecified
 		static int startX = 10;
 		static int startY = 10;
@@ -27,9 +31,12 @@ namespace BoilerTronicsObjects.Layers
 		PlaceableObject[,] tiles;
 		bool[,] editableTiles;
 		
+		// for optimization purposes, keep track of all uneditable tiles
+		private List<Vector2I> protectedList = new List<Vector2I>();
+		
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
-		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
+		protected ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
@@ -68,11 +75,13 @@ namespace BoilerTronicsObjects.Layers
 			// reset visuals
 			Clear();
 
+			// sets all tiles to editable
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
 					editableTiles[x, y] = true;
 				}
 			}
+			protectedList.Clear();
 		}
 		
 		// TODO: return this data safely rather than just returning the address
@@ -90,11 +99,19 @@ namespace BoilerTronicsObjects.Layers
 			return new Vector2I(maxX, maxY);
 		}
 		
+		// NOTE: unused?
 		public void SetEditable(bool[,] editableTable) {
 			if (!(editableTable.Length == (maxX + 1) * (maxY + 1))) return; // makes sure that the label has the same numbe of elements
 
+			protectedList.Clear();
 			for (int x = 0; x <= maxX; x++) {
 				for (int y = 0; y <= maxY; y++) {
+					// if protected tile, insert into protected list
+					if (!editableTable[x, y]) {
+						GD.Print("Layer.cs: SetEditable: ", "Adding to protectedList");
+						protectedList.Add(new Vector2I(x, y));
+						QueueRedraw();
+					}
 					editableTiles[x, y] = editableTable[x, y];
 				}
 			}
@@ -105,16 +122,36 @@ namespace BoilerTronicsObjects.Layers
 		public bool SetTileEditable(Vector2I coordinates, bool value) {
 			// check if OOB
 			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
-			if (coordinates.X < 0 || coordinates.Y < maxY) { return false; }
+			if (coordinates.X < 0 || coordinates.Y < 0) { return false; }
 			
 			// if not OOB, then set value
 			editableTiles[coordinates.X, coordinates.Y] = value;
+			
+			bool protectedListContains = protectedList.Contains(coordinates);
+			GD.Print("Layer.cs: protectedListContains: ", protectedListContains);
+			
+			// if this is to be a protected tile and it's not in the protected list,
+			// then insert coords into the protected list!
+			if (!value && !protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Adding to protectedList");
+				protectedList.Add(coordinates);
+				QueueRedraw();
+				
+			// else, if this is to be an editable tile and the protectedList contains the input coordinates,
+			// then remove coords from the list!
+			} else if (value && protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Removing from protectedList");
+				protectedList.Remove(coordinates);
+				QueueRedraw();
+			}
+			
 			return true;
 		}
 
 		public bool CheckValidPos(int X, int Y)
 		{
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!editableTiles[X, Y]) return false;
 			return true;
 		}
 		
@@ -123,14 +160,19 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// check base origin point
 			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!editableTiles[X, Y]) return false;
+			
+			Vector2I objOrigin = new Vector2I(X, Y);
 			
 			// iterate through 'obj' texture grid
 			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 				// check each individual data point
-				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				Vector2I dataCoords = data.GetPosition(objOrigin); // data.GetPosition(obj.GetPos());
 				X = dataCoords.X;
 				Y = dataCoords.Y;
+				// GD.Print("CheckValidPos: PlaceableBig case: ", dataCoords);
 				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+				if (!editableTiles[X, Y]) return false;
 			}
 			
 			return true;
@@ -191,7 +233,7 @@ namespace BoilerTronicsObjects.Layers
 			// update tiles, cells to fill accordingly to the PlaceableBig data
 			if (isPlaceableBig) {
 				PlaceableBig obj = (PlaceableBig) newPlaceable;
-				// iterate through expected tiles and fill accordingly
+				// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
 				// the "origin" object will already be placed by the code above!
 				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 					// check each individual data point
@@ -348,15 +390,70 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		public virtual void UpdateObject(PlaceableObject obj) {
+			if (!objectList.Contains(obj)) return; // We don't care about this objcet if
+			if (FindObject(obj.GetCurrPos()) != obj) return; // Verify that the object is in the position we think it is in
+
+			SetCell(obj.GetCurrPos(), obj.GetSourceID(), obj.GetAtlasPos()); // Update cell for that object
+		}
+
 		public void Reset() {
+			ArrayList objsToRemove = new ArrayList();
 			foreach (PlaceableObject obj in objectList) {
-				Vector2I OldPos =  obj.GetPos();
-				tiles[OldPos.X, OldPos.Y] = null;
-				EraseCell(OldPos); // erase object from the map
+				Vector2I CurrPos =  obj.GetCurrPos();
+				Vector2I OGPos =  obj.GetOGPos();
+				tiles[CurrPos.X, CurrPos.Y] = null;
+				EraseCell(CurrPos); // erase object from the map
+
+				// PlaceableBig case, erase from map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					
+					// iterate through appropriate tiles and delete accordingly
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						
+						// update tile grid
+						EraseCell(dataCoords);
+						
+						// update tile references
+						tiles[dataCoords.X, dataCoords.Y] = null;
+					}
+				}
+				
+				if (obj.GetGarbage() == true) {
+					objsToRemove.Add(obj);
+					continue;
+				}
 				obj.ResetPos();
-				Vector2I NewPos = obj.GetPos();
-				tiles[NewPos.X, NewPos.Y] = obj;
-				SetCell(NewPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				
+				tiles[OGPos.X, OGPos.Y] = obj;
+				SetCell(OGPos, obj.GetSourceID(), obj.GetAtlasPos()); // places new object
+				
+				
+				// PlaceableBig case, update map accordingly
+				if (obj is PlaceableBig) {
+					PlaceableBig objB = (PlaceableBig) obj;
+					// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+					// the "origin" object will already be placed by the code above!
+					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(objB.GetPos());
+						TileTex tex = data.GetTileTex();
+						
+						// update tiles to point to the origin (reference)
+						tiles[dataCoords.X, dataCoords.Y] = obj;
+						
+						// update tile grid 
+						SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+					}
+				}
+				
+			}
+
+			foreach (PlaceableObject obj in objsToRemove) {
+				objectList.Remove(obj);
 			}
 		}
 		
@@ -374,9 +471,26 @@ namespace BoilerTronicsObjects.Layers
 			if (IsInstanceValid(this)) QueueRedraw();
 		}
 		
+		// Given the value of 'toggle', toggles on/off this layer rendering protected tiles
+		// Then queues redrawing and etc
+		public void HighlightProtectedTiles(bool toggle) {
+			renderProtectedTiles = toggle;
+			
+			// check: is this instance queued for deletion -- needed to mitigate debug spam!
+			if (IsInstanceValid(this)) QueueRedraw();
+		}
+		
+		// Given the value of 'toggle', toggles on/off this layer allowing the editing of protected
+		// tiles via keybinds (i.e. toggle behavior under _Input)
+		public void EditProtectedTiles(bool toggle) {
+			editProtectedTiles = toggle;
+		}
+		
 		public override void _Draw() {
 			// GD.Print("Layer: trying to draw");
 			// GD.Print("Highlight Position: ", highlightTarget);
+			
+			// Highlight a terminal's corresponding object
 			if (highlighting) {
 				Vector2 localPos = MapToLocal(highlightTarget);
 				// TODO: draw efficiently
@@ -402,9 +516,47 @@ namespace BoilerTronicsObjects.Layers
 				// draw from 'maxI' to 'minI'
 				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
 			}
+			
+			// Render projected tiles
+			if (renderProtectedTiles) {
+				RenderProtectedTiles();
+			}
+		}
+		
+		
+		// specific, configuration y-offset for the below function
+		protected int yRenderProtectedTileOffset = 25;
+		
+		// the function that actually renders protected tiles
+		// "virtual" so offsets can be handled better by unique cases
+		public virtual void RenderProtectedTiles() {
+			// GD.Print("protectedList count: ", protectedList.Count);
+			foreach (Vector2I coords in protectedList) {
+				Vector2 localPos = MapToLocal(coords);
+				// TODO: draw efficiently
+				// for now, just create an array of Vector2
+				Godot.Collections.Array coordinates = new Godot.Collections.Array();
+				
+				// generate a polygonal shape
+				int yOffset = yRenderProtectedTileOffset;
+				coordinates.Add(new Vector2(-18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + -18));
+				coordinates.Add(new Vector2(18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + 0));
+				
+				Color drawColor = Colors.Blue;
+				float lineWeight = 3.0f;
+				
+				// draw connecting from 'i-1' to 'i'
+				for (int i = 1; i < coordinates.Count; i++) {
+					DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
+				}
+				// draw from 'maxI' to 'minI'
+				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+			}
 		}
 
-		public void MouseInput(InputEvent @event, int targetSel, int atlasID)
+		public void MouseInput(InputEvent @event, int targetSel)
 		{
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
@@ -427,15 +579,31 @@ namespace BoilerTronicsObjects.Layers
 			if (manager.placingObject == 1) {
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
+					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
+					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
+						GD.Print("Placement: Checking PlaceableBig object");
+						validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
+					}
 					// make sure nothing is there already
-					if (objAtPos != null || !CheckValidPos(tileCoords.X, tileCoords.Y)) {
+					if (objAtPos != null || !validPos) {
 						// reset so we don't place accidently
-						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-						manager.objectToPlace = new Vector2I(-1, -1);
+						GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
 							AddObject(manager.objectToMove); // move the object back to it's original position
+							
+							// handle cases where freshly spawned scriptable objects still create
+							// a terminal, even if they should have been destroyed.
+							if (!objectList.Contains(manager.objectToMove)) {
+								if (manager.objectToMove is Scriptable) {
+									GD.Print("Layer.cs: Destroying Terminal");
+									((Scriptable) manager.objectToMove).DestroyTerminal();
+								}
+							}
+							
+							
+							// GD.Print("Layer.cs: objectToMove: ", manager.objectToMove);
 							manager.objectToMove = null;
 						}
 
@@ -446,19 +614,12 @@ namespace BoilerTronicsObjects.Layers
 					// This will happen if we are mopving an object
 					PlaceableObject obj = manager.objectToMove;
 
-					if (obj == null) {
-						// Not moving, placing a new object
-						Vector2I atlasCords = manager.objectToPlace;
-						AddObject(ObjectFactory.CreateObject(tileCoords, atlasID, atlasCords));
-					} else {
-						obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
-						Vector2I newPos = obj.GetPos();
-						AddObject(obj); // place object
-					}
+					obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
+					Vector2I newPos = obj.GetPos();
+					AddObject(obj); // place object
 
 					// reset to prevent multiple placements
 					manager.objectToMove = null;
-					manager.objectToPlace = new Vector2I(-1, -1);
 					manager.placingObject = 0;
 					
 					// queue redraw for highlighting after moving an object
@@ -470,10 +631,12 @@ namespace BoilerTronicsObjects.Layers
 				// Left mouse click on a spot where an object exitsts
 				// Handles creating a new draggable object when clicking on a tile
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
-					&& allowDrag) {
+					&& allowDrag)
+				{
 
 					// we don't went to do anything if we can;t find anything there
-					if (objAtPos == null) {
+					if (objAtPos == null)
+					{
 						return;
 					}
 
@@ -481,17 +644,8 @@ namespace BoilerTronicsObjects.Layers
 
 					RemoveObject(objAtPos);
 
-					var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
-					int sourceid = tileSet.GetSourceId(objAtPos.GetSourceID());
-
-					TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
-
-					// get the tile
-					var tile = tileSetSource.GetTileTextureRegion(objAtPos.GetAtlasPos());
-					var fullTexture = tileSetSource.Texture.GetImage();
-					var imageTexture = fullTexture.GetRegion(tile);
-					var texture = new ImageTexture();
-					texture.SetImage(imageTexture);
+					// get the tile texture
+					Texture2D texture = objAtPos.GetTexture() as Texture2D;
 
 					Sprite2D sprite = new Sprite2D();
 					// get texture
@@ -499,15 +653,27 @@ namespace BoilerTronicsObjects.Layers
 					sprite.Scale = grabbedObjectScaling;
 					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
 
-					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos.GetAtlasPos());
+					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos);
 
 					SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
 					subView.AddChild(draggable);
-					manager.objectToPlace = objAtPos.GetAtlasPos();
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;
-				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
+
+					// when picking up an object, be sure to modulate the 
+					// LAZY: modulate all layers
+					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+					manager.layerRail.Modulate = manager.layerDeselectedVisibility;
+
+					// unmodulate this layer
+					this.Modulate = manager.layerDefaultVisibility;
+
+				}
+				else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed())
+				{
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
 					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
@@ -516,9 +682,34 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		// very specific variable for a very specific purpose:
+		// by introducing an offset to the mouse cursor, we can pick a tile that better selects a tile at where the cursor is *actually* looking at
+		protected Vector2 protectedToggleMouseOffset = new Vector2(0f, -10f);
+		
 		public override void _Input(InputEvent @event)
 		{
 			base._Input(@event);
+			
+			// Handle keyboard inputs
+			// Mainly used to handle toggling on/off protected tiles
+			if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+				
+				switch (keyEvent.Keycode) {
+					// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
+					case Key.Up:
+						
+						// slightly offset the mouse position to get a better selected tile
+						Vector2 localMousePos = GetLocalMousePosition() + protectedToggleMouseOffset;
+						Vector2I tileCoords = LocalToMap(localMousePos);
+						
+						if (!editProtectedTiles) return; // exit immediately if not in "edit procted tiles" mode
+						
+						// toggle protected tile status at mouse position
+						SetTileEditable(tileCoords, !(editableTiles[tileCoords.X, tileCoords.Y]));
+						
+						break;
+				}
+			}
 		}
 
 	}

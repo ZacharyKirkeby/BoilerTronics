@@ -24,6 +24,15 @@ namespace BoilerTronicsObjects.Placeable {
 			this.sourceId = sourceId;
 		}
 		
+		// this one works too
+		public TileTex(int inX, int inY, int sourceId) {
+			
+			this.atlasPos.X = inX;
+			this.atlasPos.Y = inY;
+			
+			this.sourceId = sourceId;
+		}
+		
 		// updates the values accordingly; does NOT replace this object's internal representation!
 		public void SetAtlasPos(Vector2I atlasPos) {
 			if (atlasPos == null) {
@@ -32,6 +41,10 @@ namespace BoilerTronicsObjects.Placeable {
 			
 			this.atlasPos.X = atlasPos.X;
 			this.atlasPos.Y = atlasPos.Y;
+		}
+		public void SetAtlasPos(int x, int y) {
+			this.atlasPos.X = x;
+			this.atlasPos.Y = y;
 		}
 		
 		public void SetSourceId(int input) {

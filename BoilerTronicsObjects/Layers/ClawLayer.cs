@@ -14,26 +14,34 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// TODO: add code to verify that this is the correct type of object
 			base.AddObject(newPlaceable);
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public override void RemoveObject(PlaceableObject objectToRemove)
 		{
 			// TODO: add code to verify that this is the correct type of object
 			base.RemoveObject(objectToRemove);
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public override void _Input(InputEvent @event)
 		{
 			// add a check to make sure that we are only trying to place claws
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
-				MouseInput(@event, 3, 1);
+			if (manager.objectToMove is ClawObject) {
+				MouseInput(@event, 3);
 				// GD.Print("Claw");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				GD.Print("Claw");
-				MouseInput(@event, 3, 1);
+				// GD.Print("Claw");
+				MouseInput(@event, 3);
 				return;
 			}
 			base._Input(@event);

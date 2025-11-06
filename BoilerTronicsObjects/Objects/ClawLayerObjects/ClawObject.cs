@@ -11,9 +11,7 @@ using System.Collections;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
-
-	public class ClawObject : PlaceableObject, Scriptable, Runnable {
-		
+	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
@@ -65,17 +63,24 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		public void Reset() {
-			GD.Print("Claw reset");
+			if (this.heldObject != null) {
+				this.heldObject.ResetPos();
+			}
 			this.heldObject = null;
 			base.ResetPos();
 			_parser.Reset(); //disposed object error?
-			heldObject = null;
+			// heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 			if (existing != null)
 			{
 				existing.QueueFree();
 			}
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			ResetFrame();
+
 			// Maybe need to make a call to our codeEdit/interrputer?
 			UpdateRegisterDisplay();
 		}
@@ -242,10 +247,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			return;
 		}
 
+		// TODO: Create some helper function so that we can update our current from based on our held object
+
 		public void Grab(string[] args) {
+
 			GD.Print("Grab func called");
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Grab);
+
 			if (heldObject != null) return; // TODO: make this an error
 			GD.Print("Grabbing object");
 	
@@ -255,7 +264,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
 			GD.Print("Factory obj: ", factoryObj);
 
-			// If there is no factory objecy, return
+			// If there is no factory object, return
 			if (factoryObj == null) return;
 			// If there is we want to check if it's moveable, if not return
 			if (!(factoryObj is Movable mObj)) return;
@@ -263,6 +272,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			// If it is, then we want to try to pick it up (or it's contents)
 			heldObject = mObj.PickUp();
 			GD.Print("Pickedup: ", heldObject);
+			
+			// FRAME SYSTEM
+			// update current frame to "display" a successful grab
+			SetFrameIndex(2);
+			manager.currLevel.cLayer.UpdateObject(this);
 		}
 
 		public void Drop(string[] args) {
@@ -288,10 +302,21 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				GD.Print("Placing object in factory object");
 				if (mObj.Place(heldObject)) heldObject = null;
 			}
+			
+			// FRAME SYSTEM
+			// resets this object's "displayed" visuals by resetting its frame index
+			if (heldObject == null) {
+				ResetFrame();
+				manager.currLevel.cLayer.UpdateObject(this);
+			}
 		}
 
 		public void Rotate(string[] args)
 		{
+			return; // Throw error
+		}
+
+		public void Switch(string[] args) {
 			return; // Throw error
 		}
 
@@ -301,11 +326,19 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
+			
+			// adds two new frames to be used by the Frame system
+			// (0) is default visuals
+			// (1) is "grab empty"
+			AddFrame(new TileTex(new Vector2I(0, 0), 10));
+			
+			// (2) is "grabbed stone (or some other grey nondescript object"
+			AddFrame(new TileTex(new Vector2I(0, 1), 10));
 		} // create object
 
 		~ClawObject()
 		{
-			DestroyTerminal(); // Destries the terminal for this scriptable
+			DestroyTerminal(); // Destroys the terminal for this scriptable
 		}
 
 		// Override 'save' function to also return a script's information
