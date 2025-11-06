@@ -235,8 +235,13 @@ namespace BoilerTronicsObjects.Layers
 				case FactoryInputObject:
 					costToAdd = 100;
 					break;
-				case FactoryOutputObject:
+				case FactoryOutputObject f:
 					costToAdd = 100;
+					BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+					if (manager.currLevel != null) {
+						f.setTargetNum(manager.currLevel.targetProduction);
+						GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
+					}
 					break;
 				default:
 					costToAdd = 0;

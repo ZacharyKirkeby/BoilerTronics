@@ -9,6 +9,7 @@ using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;	// MovementLayer
 using Parsing;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -33,10 +34,11 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	//statistics variables for cutoffs values
 	//TODO: set dynamically from avtual level file
-	public float ppsCutoff = 10;
+	public float ppsCutoff = 1;
 	public float costCutoff = 250;
 	public int stepsCutoff = 20;
-	public int targetProduction;
+	
+	public int targetProduction = 5; //default goal is 3 outputs
 	
 	//statistics variables for solution values
 	public float ppsSolution;
@@ -58,7 +60,7 @@ public partial class BoilerTronicsLevel : Node2D
 	//when solution reached, update solution statistics
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
-		ppsSolution = 0;
+		ppsSolution = (float)targetProduction / (float)StepCount;
 		
 		//update leaderboard (min values for the 3 categories)
 		//update levelui stats labels
@@ -69,6 +71,10 @@ public partial class BoilerTronicsLevel : Node2D
 			solutionScore /= 3;
 			if(solutionScore > bestScore) {
 				bestScore = solutionScore;
+				GD.Print("bestscore is " + bestScore);
+				GD.Print("bestscore is " + grades[0]);
+				GD.Print("bestscore is " + grades[1]);
+				GD.Print("bestscore is " + grades[2]);
 			}
 		}
 	}
@@ -83,6 +89,12 @@ public partial class BoilerTronicsLevel : Node2D
 			levelUi.UpdateSolutionCutoffs(ppsCutoff, costCutoff, stepsCutoff);
 		}
 	}
+
+	public void UpdateProductionGoal(int num) {
+		targetProduction = num;
+	}
+
+
 	private BoilerTronicsLevel.GameRunState RunState;
 
 	private float StepDeltaTime = 1.0f; // 1 Second
@@ -276,6 +288,8 @@ public partial class BoilerTronicsLevel : Node2D
 		if (levelUi == null) {
 			GD.PrintErr("LevelUi not found! Statistics won't update.");
 		}
+		
+		UpdateProductionGoal(5);
 		
 		/*
 		// Prepare parsers for each scriptable element
