@@ -6,10 +6,11 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryFurnace : PlaceableBig, BigMovable {
+	public class FactoryFurnace : PlaceableBig, BigMovable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -17,6 +18,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		static int layerSourceId = 3;
 		private int _objectID;
+
+		private int _Fule;
+		private PlaceableObject _Inv;
+		private bool _Working;
+		private int _StepsTillCompletion;
 		
 		private FactoryBigObjectInput materialIn;
 		private FactoryBigObjectInput coalIn;
@@ -141,6 +147,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			materialIn.SetParent(this);
 			coalIn.SetParent(this);
 
+			RegisterSteppable();
+
 			/** The internal refrence to the input nad output objects must be set here **/
 
 			// UP
@@ -215,10 +223,28 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (childObj == coalIn) {
 				// We need to check and see if the object coming in is coal
 				// If so we wnat to do somthing and return true to accept it
+				if (obj is CoalObject) {
+					GD.Print("We go fule");
+					_Fule += 5;
+					return true;
+				}
 			}
 			else if (childObj == materialIn) {
 				// We need to check and see if the object coming in is a smealtable material
 				// If so we wnat to do somthing and return true to accept it
+				if ((!_Working) && (obj is IronOreObject) && (_Inv == null)) {
+					GD.Print("We go ore");
+					_StepsTillCompletion = 2;
+					_Inv = new IronBarObject(0, 0, 0) as PlaceableObject;
+					_Inv.SetGarbage(true);
+					_Working = true;
+					materialOut.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
+					return true;
+				} else {
+					GD.Print(_Working);
+					GD.Print(obj);
+					GD.Print(_Inv);
+				}
 			}
 			else if (childObj == materialOut) {
 				return false; // Why the fuck is out output trying to give us something
@@ -237,6 +263,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			else if (childObj == materialOut) {
 				// We need to check and see if we have the object that they are  requesting ready to return
 				// If so we wnat to retunr that obj and remove it from our inv
+				if ((_Inv != null) && (BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())] == requestId) && !_Working) {
+					PlaceableObject tmp = _Inv;
+					_Inv = null;
+					return tmp;
+				}
 			}
 
 			return null; // Invalid childObject
@@ -277,5 +308,47 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			}
 			return null;
 		}
+
+		// Runnable Interface
+		public void Step()
+		{
+			// If we are working and have fule
+			if (_Working && _Fule > 0) {
+				GD.Print("We be working");
+				// Then we tak a step to completion
+				_StepsTillCompletion--;
+				// And use some fule
+				_Fule--;
+
+				// Once we are done
+				if (_StepsTillCompletion == 0) {
+					GD.Print("We done");
+					// Stop working
+					_Working = false;
+				}
+			}
+		}
+
+		public void RegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
+		}
+
+		public void UnRegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
+		}
+
+		public void Reset() {
+			_Working = false;
+			_Fule = 0;
+			_StepsTillCompletion = 0;
+
+			if (_Inv != null) _Inv.ResetPos();
+			_Inv = null;
+		}
+
 	}
 }
