@@ -36,6 +36,11 @@ public partial class ErrorHandler : Node2D
 		return ErrorPresent;
 	}
 
+	public void setError(bool value)
+    {
+		ErrorPresent = value;
+    }
+
 	public void ClearError()
 	{
 		ErrorPresent = false;
@@ -45,6 +50,9 @@ public partial class ErrorHandler : Node2D
 	// Function to throw an error from the parser (runtime errors during execution)
 	public void OnParserErrorRaised(int lineNumber, string message, string editorName)
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.HaultObjects();
+		ErrorPresent = true;
 		var codeEditors = GetTree().GetNodesInGroup("CodeTerminals");
 		GD.Print($"[ParserError] Looking for editor: {editorName}");
 
@@ -54,6 +62,7 @@ public partial class ErrorHandler : Node2D
 			{
 				// Remove any existing runtime error label
 				var existingLabels = editor.GetChildren();
+				GD.Print(existingLabels);
 				foreach (Node child in existingLabels)
 				{
 					if (child is Label label && label.Name == "RuntimeErrorLabel")

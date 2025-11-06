@@ -78,6 +78,11 @@ public partial class Terminals : TabContainer
 			}
 
 			UpdateSelectedTerminal();
+			if (HasAnySyntaxErrors())
+            {
+				//set error state higher up
+				manager.currLevel.E.setError(true);
+            }
 			
 			// Check if Enter/Return was pressed (new line) - trigger validation
 			if (keyEvent.Keycode == Key.Enter || keyEvent.Keycode == Key.KpEnter)
@@ -105,6 +110,13 @@ public partial class Terminals : TabContainer
 				codeEdit.SetLine(caretLine, lineText);
 				int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
 				codeEdit.SetCaretColumn(caretCol);
+			}
+
+			if (HasAnySyntaxErrors())
+			{
+				//set error state higher up
+				manager.currLevel.E.setError(true);
+
 			}
 		}
 	}
@@ -144,7 +156,7 @@ public partial class Terminals : TabContainer
 		var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
 		if (registerLabel == null) return;
 
-		var currentEditor = GetTabControl((int)tabIdx) as CodeEdit;
+		var currentEditor = GetTabControl((int)tab) as CodeEdit;
 		if (currentEditor == null) return;
 
 		var obj = currentEditor.getObject();
