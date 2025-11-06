@@ -15,6 +15,9 @@ public partial class DraggableObject : Node2D {
 		this.sprite = spritToDrag.Duplicate() as Sprite2D;
 		this.sprite.Scale = new Vector2I(1, 1);
 		this.obj = obj; // This will keep track of the object that we are placing
+		
+		// Set to very high Z-index such that this block is visibly above all other blocks
+		this.ZIndex = 1000;
 
 		AddChild(this.sprite);
 	}

@@ -50,11 +50,51 @@ public partial class LevelCreator : LevelUi
 		var levelName = GetNode<LineEdit>("%NewLevelName");
 		var levelID = GetNode<LineEdit>("%NewLevelID");
 		var newLevelButton = GetNode<Button>("%NewLevelButton");
+		
+		var lengthNode = GetNode<LineEdit>("%NewLength");
+		var widthNode = GetNode<LineEdit>("%NewWidth");
+		
 		/* TODO: Ethen implement new level logic using name from lineedit */
-		GetNode<Window>("%CreatorLoadWindow").Visible = false;
-		GetNode<VBoxContainer>("%MainVBox").Visible = true;
-		GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		if (levelName.GetText() != ""
+		&& levelID.GetText() != ""
+		&& lengthNode.GetText() != ""
+		&& widthNode.GetText() != "") {
+			
+			int levelIDNum = 0;
+			int levelDimX = 5;
+			int levelDimY = 5;
+			try {
+				levelIDNum = Int32.Parse(levelID.GetText());
+				levelDimX = Int32.Parse(widthNode.GetText());
+				levelDimY = Int32.Parse(lengthNode.GetText());
+			} catch (FormatException e) {
+				GD.Print("LevelCreator.cs: failed to create level, error: ", e.Message);
+				return;
+			}
+			
+			manager.saveState.levelName = levelName.GetText();
+			manager.saveState.SetLevelID(levelIDNum);
+			manager.saveState.SetLevelDimensions(new Vector2I(
+				levelDimX,
+				levelDimY
+			));
+			
+			manager.creatingNewLevel = true;
+			
+			GetNode<Window>("%CreatorLoadWindow").Visible = false;
+			GetNode<VBoxContainer>("%MainVBox").Visible = true;
+			GetNode<CanvasLayer>("%ButtonTray").Visible = true;
+			
+			GD.Print("LevelCreator: creating new level: ", levelName.GetText());
+		
+			// fixes "_push_unhandled_input_internal: Condition "is_inside_tree()" is true" errors
+			CallDeferred(nameof(LoadedReloadScene));
+		}
 	}
+	
 	private void _on_new_file_name_text_changed(String text)
 	{
 		var fileLocation = GetNode<Label>("%FileLocation");
@@ -150,24 +190,36 @@ public partial class LevelCreator : LevelUi
 		manager.layerRail.HighlightProtectedTiles(false);
 		manager.layerMovement.HighlightProtectedTiles(false);
 		
+		manager.layerFloor.EditProtectedTiles(false);
+		manager.layerFactory.EditProtectedTiles(false);
+		manager.layerClaw.EditProtectedTiles(false);
+		manager.layerRail.EditProtectedTiles(false);
+		manager.layerMovement.EditProtectedTiles(false);
+		
+		
 		switch (index) {
 			case 0:
 				// do nothing; this is the "none" option
 				break;
 			case 1:
 				manager.layerFloor.HighlightProtectedTiles(true);
+				manager.layerFloor.EditProtectedTiles(true);
 				break;
 			case 2:
 				manager.layerFactory.HighlightProtectedTiles(true);
+				manager.layerFactory.EditProtectedTiles(true);
 				break;
 			case 3:
 				manager.layerClaw.HighlightProtectedTiles(true);
+				manager.layerClaw.EditProtectedTiles(true);
 				break;
 			case 4:
 				manager.layerRail.HighlightProtectedTiles(true);
+				manager.layerRail.EditProtectedTiles(true);
 				break;
 			case 5:
 				manager.layerMovement.HighlightProtectedTiles(true);
+				manager.layerMovement.EditProtectedTiles(true);
 				break;
 			default:
 				GD.Print("LevelCreator.cs: Protected Tiles Dropdown Menu: Invalid Index: ", index);
