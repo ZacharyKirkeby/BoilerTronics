@@ -1,10 +1,11 @@
-[gd_scene load_steps=67 format=3 uid="uid://dbyevtgjtslm8"]
+[gd_scene load_steps=68 format=3 uid="uid://dbyevtgjtslm8"]
 
 [ext_resource type="Script" uid="uid://dmk70fc4hqsoi" path="res://Scenes/LevelCreator/LevelCreator.cs" id="1_hjyc6"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_wuwu2"]
 [ext_resource type="Script" uid="uid://dncowxuyc231n" path="res://BoilerTronicsObjects/Interpreter/RegisterLabel.cs" id="2_xc2rq"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="4_dpg53"]
+[ext_resource type="Texture2D" uid="uid://c2a3vnbbuc4yr" path="res://Resources/Icons/edit.png" id="5_na8sh"]
 [ext_resource type="Theme" uid="uid://doo374ukjh36b" path="res://Resources/ButtonThemes/buttontheme.tres" id="5_wmnsp"]
 [ext_resource type="Script" uid="uid://cpln3e3vmpbvo" path="res://Scenes/LevelUI/ButtonTray.cs" id="6_fsp7g"]
 [ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="6_xc2rq"]
@@ -338,7 +339,6 @@ script = ExtResource("1_hjyc6")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
-visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 theme_override_constants/separation = 0
@@ -393,6 +393,15 @@ size_flags_horizontal = 2
 theme_override_fonts/font = ExtResource("3_xc2rq")
 text = "Level Creator: TODO"
 horizontal_alignment = 2
+
+[node name="EditButton" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 25
+icon = ExtResource("5_na8sh")
+icon_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -717,7 +726,7 @@ size_flags_vertical = 3
 handle_input_locally = false
 size = Vector2i(1408, 750)
 size_2d_override = Vector2i(1408, 0)
-render_target_update_mode = 0
+render_target_update_mode = 4
 
 [node name="Node2D" parent="MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport" instance=ExtResource("10_ebwh2")]
 
@@ -1027,6 +1036,7 @@ oversampling_override = 1.0
 title = "Load Level"
 initial_position = 1
 size = Vector2i(600, 500)
+visible = false
 
 [node name="TabContainer" type="TabContainer" parent="CreatorLoadWindow"]
 custom_minimum_size = Vector2(600, 500)
@@ -1229,6 +1239,85 @@ popup/item_4/id = 4
 popup/item_5/text = "Movement"
 popup/item_5/id = 5
 
+[node name="MetadataWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Change Level Metadata"
+initial_position = 1
+size = Vector2i(500, 300)
+visible = false
+
+[node name="CenterContainer" type="CenterContainer" parent="MetadataWindow"]
+custom_minimum_size = Vector2(500, 300)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MetadataWindow/CenterContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 30
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MetadataWindow/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Level Name: "
+
+[node name="MetaLevelName" type="LineEdit" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MetadataWindow/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Background Tiles: "
+
+[node name="BackgroundTilesSelector" type="OptionButton" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Placeholder"
+popup/item_0/id = 0
+popup/item_1/text = "Placeholder"
+popup/item_1/id = 1
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="MetadataWindow/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+text = "Dimensions: "
+
+[node name="MetaLength" type="LineEdit" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Label2" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+text = "x"
+
+[node name="MetaWidth" type="LineEdit" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="ChangeMetadataButton" type="Button" parent="MetadataWindow/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+theme = ExtResource("5_wmnsp")
+text = "Change Metadata"
+
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/EditButton" to="." method="_on_edit_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_creatorsave_button_pressed"]
@@ -1269,3 +1358,5 @@ popup/item_5/id = 5
 [connection signal="close_requested" from="PriceChangeWindow" to="." method="_on_price_change_window_close_requested"]
 [connection signal="close_requested" from="ProtectedTilesWindow" to="." method="_on_protected_tiles_window_close_requested"]
 [connection signal="item_selected" from="ProtectedTilesWindow/CenterContainer/ProtectedTilesDropdown" to="." method="_on_protected_tiles_dropdown_item_selected"]
+[connection signal="close_requested" from="MetadataWindow" to="." method="_on_metadata_window_close_requested"]
+[connection signal="pressed" from="MetadataWindow/CenterContainer/VBoxContainer/ChangeMetadataButton" to="." method="_on_change_metadata_button_pressed"]

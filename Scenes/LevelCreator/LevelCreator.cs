@@ -25,6 +25,23 @@ public partial class LevelCreator : LevelUi
 		loadName.Text = dropdown.GetItemText(dropdown.Selected);
 		saveWindow.Visible = true;
 	}
+	private void _on_edit_button_pressed()
+	{
+		GetNode<Window>("%MetadataWindow").Visible = true;
+	}
+	private void _on_metadata_window_close_requested()
+	{
+		GetNode<Window>("%MetadataWindow").Visible = false;
+	}
+	private void _on_change_metadata_button_pressed()
+	{
+		var metadataButton = GetNode<Button>("ChangeMetadataButton");
+		var levelName = GetNode<LineEdit>("%MetaLevelName");
+		var length = GetNode<LineEdit>("%MetaLength");
+		var width = GetNode<LineEdit>("%MetaWidth");
+		var backgroundTilesSelector = GetNode<OptionButton>("BackgroundTilesSelector");
+		/* TODO: Ethen change stuff when pressed */
+	}
 	private void _on_creatorsave_button_pressed()
 	{
 		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
