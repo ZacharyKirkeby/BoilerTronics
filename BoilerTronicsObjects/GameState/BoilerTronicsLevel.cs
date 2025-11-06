@@ -65,6 +65,10 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	/* Create layers */
 
+	// variable to better "center" all objects and etc
+	// defined in CreateFloorLayer
+	private Vector2 centerOffset = new Vector2(0, 0);
+	
 	private Layer CreateMovementLayer() {
 		mLayer = new MovementLayer();
 		mLayer.RedefineLayer(x, y);
@@ -73,7 +77,7 @@ public partial class BoilerTronicsLevel : Node2D
 		AddChild(mLayer);
 		
 		// move center of the tilemap to center of the screen
-		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
+		mLayer.Position -= centerOffset;
 		return mLayer;
 	}
 
@@ -85,7 +89,7 @@ public partial class BoilerTronicsLevel : Node2D
 		AddChild(rLayer);
 		
 		// move center of the tilemap to center of the screen
-		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
+		rLayer.Position -= centerOffset;
 		return rLayer;
 	}
 
@@ -97,7 +101,7 @@ public partial class BoilerTronicsLevel : Node2D
 		AddChild(cLayer);
 		
 		// move center of the tilemap to center of the screen
-		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
+		cLayer.Position -= centerOffset;
 		return cLayer;
 	}
 
@@ -109,7 +113,7 @@ public partial class BoilerTronicsLevel : Node2D
 		AddChild(fLayer);
 		
 		// move center of the tilemap to center of the screen
-		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
+		fLayer.Position -= centerOffset;
 		return fLayer;
 	}
 
@@ -120,8 +124,11 @@ public partial class BoilerTronicsLevel : Node2D
 		flLayer.TileSet = tileset;
 		AddChild(flLayer);
 		
+		// sets the 'center offset' value
+		centerOffset = flLayer.MapToLocal(new Vector2I(x/2, y/2));
+		
 		// move center of the tilemap to center of the screen
-		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
+		flLayer.Position -= centerOffset;
 		return flLayer;
 	}
 	
@@ -141,13 +148,16 @@ public partial class BoilerTronicsLevel : Node2D
 		// translate the top-left edge of this TileMap to the top-left edge of the floor layer
 		// (SANITY CHECK)
 		Vector2 fill00 = fillLayer.MapToLocal(new Vector2I(0, 0));
-		Vector2 floor00 = flLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 floor00 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
 		Vector2 moveDif = floor00 - fill00;
 		fillLayer.Position -= moveDif;
 		// GD.Print("move dif: ", moveDif);
 		
+		// move center of the tilemap to center of the screen
+		fillLayer.Position -= centerOffset;
+		
 		// offset this layer such that this layer properly surrounds the play area
-		moveDif = fill00 - flLayer.MapToLocal(new Vector2I(fillSurround, fillSurround));
+		moveDif = fill00 - manager.layerFloor.MapToLocal(new Vector2I(fillSurround, fillSurround));
 		fillLayer.Position += moveDif;
 		// GD.Print("move dif 2: ", moveDif);
 	}
@@ -292,8 +302,8 @@ public partial class BoilerTronicsLevel : Node2D
 		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
 		
 		// update the min, max coordinates
-		minCoords = c1;
-		maxCoords = c3;
+		minCoords = c1 - centerOffset;
+		maxCoords = c3 - centerOffset;
 
 		// Set the run state to Idle
 		RunState = BoilerTronicsLevel.GameRunState.Idle;
