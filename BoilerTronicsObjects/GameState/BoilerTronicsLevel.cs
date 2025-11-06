@@ -71,9 +71,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// mLayer = new MovementLayer(x, y);
 		mLayer.TileSet = tileset;
 		AddChild(mLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
 		return mLayer;
 	}
 
@@ -83,9 +83,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// rLayer = new RailLayer(x, y);
 		rLayer.TileSet = tileset;
 		AddChild(rLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
 		return rLayer;
 	}
 
@@ -95,9 +95,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// cLayer = new ClawLayer(x, y);
 		cLayer.TileSet = tileset;
 		AddChild(cLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
 		return cLayer;
 	}
 
@@ -107,9 +107,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// fLayer = new FactoryLayer(x, y);
 		fLayer.TileSet = tileset;
 		AddChild(fLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
 		return fLayer;
 	}
 
@@ -119,9 +119,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// flLayer = new FloorLayer(x, y);
 		flLayer.TileSet = tileset;
 		AddChild(flLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position = flLayer.MapToLocal(new Vector2I(0, 0)) - flLayer.Position;
 		return flLayer;
 	}
 	
@@ -170,20 +170,29 @@ public partial class BoilerTronicsLevel : Node2D
 		}
 	}
 
-	/* init values fpr layer */
+	/* init values for layer */
 
 	public override void _Ready()
 	{
+		// Get manager
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		GD.Print("Generating Level...");
 		
 		// Create all of the different layers and read in the corresponding data from the manager
 		// Temp, this will be replaced by a read from the global manager's game state
 		tileset = GD.Load<TileSet>("res://Resources/objects.tres");
-		x = 20;
-		y = 20;
 		
-		// Get manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// set default level dimension
+		if (!manager.creatingNewLevel) {
+			manager.saveState.SetLevelDimensions(new Vector2I(20, 20));
+		}
+		
+		Vector2I startingDim = manager.saveState.GetLevelDimensions();
+		x = startingDim.X;
+		y = startingDim.Y;
+		
+		
 
 		// For stepping and level interactions
 		manager.currLevel = this;
@@ -191,15 +200,24 @@ public partial class BoilerTronicsLevel : Node2D
 		// if successful, then generate level
 		// if not, then ignore and make a new save (kinda)
 		// TODO: for specific levels, load specific saves corresponding to what the level should be at a baseline!
-		bool loadedSave;
+		bool loadedSave = false;
 		
-		if (manager.loadLevelName == "") {
-			loadedSave = manager.LoadLevel();
+		if (manager.creatingNewLevel) {
+			manager.creatingNewLevel = false;
+			
+			// TODO: creating new level stuff
+			// mainly, don't load levels at all!
+			// dimensions already set above
+			
 		} else {
-			GD.Print("BoilerTronicsLevel: loading specific level");
-			// load the specific save and reset the system
-			loadedSave = manager.saveState.LoadLevelName(manager, manager.loadLevelName);
-			manager.loadLevelName = "";
+			if (manager.loadLevelName == "") {
+				loadedSave = manager.LoadLevel();
+			} else {
+				GD.Print("BoilerTronicsLevel: loading specific level");
+				// load the specific save and reset the system
+				loadedSave = manager.saveState.LoadLevelName(manager, manager.loadLevelName);
+				manager.loadLevelName = "";
+			}
 		}
 		
 		
@@ -238,9 +256,9 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerMovement.YSortEnabled = true;
 
 		// Shift layers
-		manager.layerClaw.Position = new Vector2(0, -32);
-		manager.layerRail.Position = new Vector2(0, -32);
-		manager.layerMovement.Position = new Vector2(0, -32);
+		manager.layerClaw.Position += new Vector2(0, -32);
+		manager.layerRail.Position += new Vector2(0, -32);
+		manager.layerMovement.Position += new Vector2(0, -32);
 
 		
 		if (loadedSave) {
