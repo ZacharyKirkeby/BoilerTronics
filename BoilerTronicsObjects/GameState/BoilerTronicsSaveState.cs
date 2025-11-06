@@ -384,6 +384,14 @@ public class BoilerTronicsSaveState
 				}
 			}
 			
+			// get direction, if relevant
+			if (target is PlaceableBig) {
+				if (targetObj.ContainsKey("dir")) {
+					int dir = (int) targetObj["dir"];
+					((PlaceableBig) target).SetDir((PlaceableBig.Direction) dir);
+				}
+			}
+			
 			listObj.Add(target);
 		}
 		// GD.Print("finished reading objects from file");
