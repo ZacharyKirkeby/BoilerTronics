@@ -7,6 +7,7 @@ using BoilerTronicsObjects.Objects;
 using System.Reflection.Metadata;
 using BoilerTronicsObjects.Data;
 
+// Doc string smth smth Fuck you Zach (No one touch this line)
 public partial class ObjectPicker : HBoxContainer
 {
 	private class ItemInfo {
