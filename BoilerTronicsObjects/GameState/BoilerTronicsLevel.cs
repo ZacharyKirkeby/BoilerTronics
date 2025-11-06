@@ -313,6 +313,13 @@ public partial class BoilerTronicsLevel : Node2D
 			{
 				existing.Free();
 			}
+
+			var existing2 = editor.GetNodeOrNull<Label>("RuntimeErrorLabel");
+			if (existing2 != null)
+			{
+				existing2.Free();
+			}
+
 		}
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
@@ -377,7 +384,7 @@ public partial class BoilerTronicsLevel : Node2D
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-			  )
+			)
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
 			if (E.HasError())
