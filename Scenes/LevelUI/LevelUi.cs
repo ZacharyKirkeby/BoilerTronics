@@ -93,6 +93,10 @@ public partial class LevelUi : Node2D
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		var volSlider = GetNode<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
 		volSlider.Value = soundManager.GetCurrentVolume();
+
+		// Starts on first hint
+		GetNode<Button>("%HintBack").Visible = false;
+
 	}
 
 	public override void _Process(double delta) {
@@ -102,7 +106,7 @@ public partial class LevelUi : Node2D
 
 	}
 
-	/* Button Fuctions */
+	/* Button Functions */
 
 	private void _on_open_button_pressed() {
 		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
@@ -147,7 +151,6 @@ public partial class LevelUi : Node2D
 		playButton.Text = ""; // Remove text
 		playButton.Icon = playIcon;
 	}
-
 	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -443,6 +446,25 @@ public partial class LevelUi : Node2D
 		button.AddThemeStyleboxOverride("focus", sbe);
 	}
 
+	private void _on_hints_pressed()
+	{
+		GetNode<Window>("%HintsWindow").Visible = true;
+	}
+	private void _on_hints_window_close_requested()
+	{
+		GetNode<Window>("%HintsWindow").Visible = false;
+	}
+	private void _on_hint_back_pressed()
+	{
+		/* TODO: Zach if this causes u to be on hint one make button invisible 
+				populate last hint */
+	}
+	private void _on_hint_forward_pressed()
+	{
+		/* TODO: Zach if this causes u to be on last hint make button invisible
+			populate next hint */
+		
+	}
 	/* Testing Functions */
 
 	//called in test script to have access to auto stepping
