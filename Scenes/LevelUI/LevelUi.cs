@@ -204,7 +204,7 @@ public partial class LevelUi : Node2D
 		titleLabel.Text = input;
 	}
 
-	/* Button Fuctions */
+	/* Button Functions */
 
 	private void _on_open_button_pressed() {
 		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
@@ -253,7 +253,6 @@ public partial class LevelUi : Node2D
 		playButton.Text = ""; // Remove text
 		playButton.Icon = playIcon;
 	}
-
 	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -683,6 +682,27 @@ public partial class LevelUi : Node2D
 		button.AddThemeStyleboxOverride("focus", EmptySaveButtonTheme);
 	}
 
+	private void _on_hints_pressed()
+	{
+		GetNode<Window>("%HintsWindow").Visible = true;
+	}
+	private void _on_hints_window_close_requested()
+	{
+		GetNode<Window>("%HintsWindow").Visible = false;
+	}
+	private void _on_hint_back_pressed()
+	{
+		// my way
+		hintIndex--;
+		UpdateHintDisplay();
+	}
+	private void _on_hint_forward_pressed()
+	{
+		// i like thisway better
+		hintIndex++;
+		UpdateHintDisplay();
+		
+	}
 	/* Testing Functions */
 
 	//called in test script to have access to auto stepping
@@ -704,15 +724,6 @@ public partial class LevelUi : Node2D
 		GetNode<Window>("%ManualWindow").Visible = false;
 	}
 
-	private void _on_hints_pressed()
-	{
-		GetNode<Window>("%HintsWindow").Visible = true;
-	}
-	private void _on_hints_window_close_requested()
-	{
-		GetNode<Window>("%HintsWindow").Visible = false;
-	}
-
 	private void UpdateHintDisplay()
 	{
 		GetNode<Label>("%HintLabel").Text = hints[hintIndex];
@@ -721,17 +732,4 @@ public partial class LevelUi : Node2D
 		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
 	}
-	private void _on_hint_back_pressed()
-	{
-		// my way
-		hintIndex--;
-		UpdateHintDisplay();
-	}
-	private void _on_hint_forward_pressed()
-	{
-		// i like thisway better
-		hintIndex++;
-		UpdateHintDisplay();
-	}
-
 }
