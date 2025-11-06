@@ -17,6 +17,10 @@ namespace BoilerTronicsObjects.Layers
 		// NOTE: Currently unused; separate code already restricts dragging to when steps aren't running.
 		public static bool allowDrag = true;
 		
+		// determines if system should render protected tiles or not
+		private bool renderProtectedTiles = false;
+		private bool editProtectedTiles = false;
+		
 		// default layer dimensions, if left unspecified
 		static int startX = 10;
 		static int startY = 10;
@@ -29,7 +33,7 @@ namespace BoilerTronicsObjects.Layers
 		
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
-		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
+		protected ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
@@ -101,7 +105,9 @@ namespace BoilerTronicsObjects.Layers
 				for (int y = 0; y <= maxY; y++) {
 					// if protected tile, insert into protected list
 					if (!editableTable[x, y]) {
+						GD.Print("Layer.cs: SetEditable: ", "Adding to protectedList");
 						protectedList.Add(new Vector2I(x, y));
+						QueueRedraw();
 					}
 					editableTiles[x, y] = editableTable[x, y];
 				}
@@ -113,22 +119,27 @@ namespace BoilerTronicsObjects.Layers
 		public bool SetTileEditable(Vector2I coordinates, bool value) {
 			// check if OOB
 			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
-			if (coordinates.X < 0 || coordinates.Y < maxY) { return false; }
+			if (coordinates.X < 0 || coordinates.Y < 0) { return false; }
 			
 			// if not OOB, then set value
 			editableTiles[coordinates.X, coordinates.Y] = value;
 			
 			bool protectedListContains = protectedList.Contains(coordinates);
+			GD.Print("Layer.cs: protectedListContains: ", protectedListContains);
 			
 			// if this is to be a protected tile and it's not in the protected list,
 			// then insert coords into the protected list!
 			if (!value && !protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Adding to protectedList");
 				protectedList.Add(coordinates);
+				QueueRedraw();
 				
 			// else, if this is to be an editable tile and the protectedList contains the input coordinates,
 			// then remove coords from the list!
 			} else if (value && protectedListContains) {
+				GD.Print("Layer.cs: SetTileEditable: ", "Removing from protectedList");
 				protectedList.Remove(coordinates);
+				QueueRedraw();
 			}
 			
 			return true;
@@ -385,9 +396,26 @@ namespace BoilerTronicsObjects.Layers
 			if (IsInstanceValid(this)) QueueRedraw();
 		}
 		
+		// Given the value of 'toggle', toggles on/off this layer rendering protected tiles
+		// Then queues redrawing and etc
+		public void HighlightProtectedTiles(bool toggle) {
+			renderProtectedTiles = toggle;
+			
+			// check: is this instance queued for deletion -- needed to mitigate debug spam!
+			if (IsInstanceValid(this)) QueueRedraw();
+		}
+		
+		// Given the value of 'toggle', toggles on/off this layer allowing the editing of protected
+		// tiles via keybinds (i.e. toggle behavior under _Input)
+		public void EditProtectedTiles(bool toggle) {
+			editProtectedTiles = toggle;
+		}
+		
 		public override void _Draw() {
 			// GD.Print("Layer: trying to draw");
 			// GD.Print("Highlight Position: ", highlightTarget);
+			
+			// Highlight a terminal's corresponding object
 			if (highlighting) {
 				Vector2 localPos = MapToLocal(highlightTarget);
 				// TODO: draw efficiently
@@ -412,6 +440,34 @@ namespace BoilerTronicsObjects.Layers
 				}
 				// draw from 'maxI' to 'minI'
 				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+			}
+			
+			// Render projected tiles
+			if (renderProtectedTiles) {
+				// GD.Print("protectedList count: ", protectedList.Count);
+				foreach (Vector2I coords in protectedList) {
+					Vector2 localPos = MapToLocal(coords);
+					// TODO: draw efficiently
+					// for now, just create an array of Vector2
+					Godot.Collections.Array coordinates = new Godot.Collections.Array();
+					
+					// generate a polygonal shape
+					int yOffset = 25;
+					coordinates.Add(new Vector2(-20, 	yOffset + -10));
+					coordinates.Add(new Vector2(0, 		yOffset + -20));
+					coordinates.Add(new Vector2(20, 	yOffset + -10));
+					coordinates.Add(new Vector2(0, 		yOffset + 0));
+					
+					Color drawColor = Colors.Blue;
+					float lineWeight = 3.0f;
+					
+					// draw connecting from 'i-1' to 'i'
+					for (int i = 1; i < coordinates.Count; i++) {
+						DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
+					}
+					// draw from 'maxI' to 'minI'
+					DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+				}
 			}
 		}
 
@@ -446,11 +502,23 @@ namespace BoilerTronicsObjects.Layers
 					// make sure nothing is there already
 					if (objAtPos != null || !validPos) {
 						// reset so we don't place accidently
-						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
+						GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
 							AddObject(manager.objectToMove); // move the object back to it's original position
+							
+							// handle cases where freshly spawned scriptable objects still create
+							// a terminal, even if they should have been destroyed.
+							if (!objectList.Contains(manager.objectToMove)) {
+								if (manager.objectToMove is Scriptable) {
+									GD.Print("Layer.cs: Destroying Terminal");
+									((Scriptable) manager.objectToMove).DestroyTerminal();
+								}
+							}
+							
+							
+							// GD.Print("Layer.cs: objectToMove: ", manager.objectToMove);
 							manager.objectToMove = null;
 						}
 
@@ -505,6 +573,17 @@ namespace BoilerTronicsObjects.Layers
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;
+					
+					// when picking up an object, be sure to modulate the 
+					// LAZY: modulate all layers
+					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+					manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+					manager.layerRail.Modulate = manager.layerDeselectedVisibility;
+					
+					// unmodulate this layer
+					this.Modulate = manager.layerDefaultVisibility;
+					
 				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
@@ -517,6 +596,26 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			base._Input(@event);
+			
+			// Handle keyboard inputs
+			// Mainly used to handle toggling on/off protected tiles
+			if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+				
+				// get corresponding tile coords, regardless of input
+				Vector2 localMousePos = GetLocalMousePosition();
+				Vector2I tileCoords = LocalToMap(localMousePos);
+				
+				switch (keyEvent.Keycode) {
+					// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
+					case Key.Up:
+						if (!editProtectedTiles) return; // exit immediately if not in "edit procted tiles" mode
+						
+						// toggle protected tile status at mouse position
+						SetTileEditable(tileCoords, !(editableTiles[tileCoords.X, tileCoords.Y]));
+						
+						break;
+				}
+			}
 		}
 
 	}

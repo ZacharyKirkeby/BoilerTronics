@@ -1,0 +1,17 @@
+Note: most functionality can be visibly interacted with (i.e. UI), this doc is just to highlight some specific less-obvious functionality.
+
+
+
+[ Loading a Level ]
+- by default, the system should load 'level0' first
+- if not, the dropdown menu will allow you to load a level from /Resources/Levels/
+
+- when clicking "load", the scene will "reload"
+	- to access the now loaded level, click the small 'x' at the corner of the Load menu!
+
+
+[ Editing Protected Tiles ]
+- on the left, click the shield icon
+- From the dropdown menu, choose the corresponding layer that you wish to view/adjust
+	- "Protected" tiles will have a blue highlight around them
+	- press the "up" arrow to toggle a tile's "protected" status

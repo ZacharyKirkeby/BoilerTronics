@@ -198,7 +198,7 @@ public partial class CodeEdit : Godot.CodeEdit
 			SetLineBackgroundColor(lineNumber, color);
 			QueueRedraw();
 			return;
-        }
+		}
 
 		int totalLines = GetLineCount();
 		if (totalLines == 0) {

@@ -63,22 +63,21 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			manager.currLevel.UnRegisterRunnable(this);
 		}
 
-
 		public void Reset() {
 			if (this.heldObject != null) {
 				this.heldObject.ResetPos();
 			}
 			this.heldObject = null;
 			base.ResetPos();
-			_parser.Reset();
+
+			_parser.Reset(); //disposed object error?
+			// heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 			if (existing != null)
 			{
 				existing.QueueFree();
 			}
-
-			// Maybe need to make a call to our codeEdit/interrupter?
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
@@ -333,7 +332,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 		~ClawObject()
 		{
-			DestroyTerminal(); // Destries the terminal for this scriptable
+			DestroyTerminal(); // Destroys the terminal for this scriptable
 		}
 
 		// Override 'save' function to also return a script's information

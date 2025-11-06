@@ -69,19 +69,23 @@ public partial class DragableObjectControl : Control {
 
 			int selection = manager.currSlection;
 			// set layer to be semi transparent if not being placed on
-			if (selection == 1) {
-				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
-			} else if (selection == 3) {
-				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerFactory.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerFloor.Modulate = new Color(1, 1, 1, 0.3f);
-			} else if (selection == 2) {
-				manager.layerMovement.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerClaw.Modulate = new Color(1, 1, 1, 0.3f);
-				manager.layerRail.Modulate = new Color(1, 1, 1, 0.3f);
+			if (selection == 1)
+			{
+				manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+				manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+				manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+				manager.layerRail.Modulate = manager.layerDeselectedVisibility;
+			}
+			else if (selection == 3)
+			{
+				manager.layerMovement.Modulate = manager.layerDeselectedVisibility;
+				manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+				manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+			} else if (selection == 2)
+			{
+				manager.layerMovement.Modulate = manager.layerDeselectedVisibility;
+				manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+				manager.layerRail.Modulate = manager.layerDeselectedVisibility;
 			}
 			GD.Print("Created new dragable:", draggable);
 		}
