@@ -5,10 +5,11 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryRoller : PlaceableBig, BigMovable {
+	public class FactoryRoller : PlaceableBig, BigMovable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 2);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -21,6 +22,32 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private FactoryBigObjectOutput Output;
 		private List<PlaceableBigData>[] objectData;
 
+		private PlaceableObject _Inv;
+		private bool _Working;
+		private int _StepsTillCompletion;
+
+		/*
+			// Up direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(1, -1),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			// Down direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(-1, 0),	// offset from object's origin
+			new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
+			// Left direction
+			new Vector2I(-1, 1),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(3, 3, 3),	// atlasX, atlasY, sourceId
+			// Right direction
+			new Vector2I(0, 0),	// offset from object's origin
+			new TileTex(1, 3, 3),	// atlasX, atlasY, sourceId
+			new Vector2I(-1, 0),	// offset from object's origin
+			new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+		*/
 		/*
 		 * This is a static data structure that stores just the structure and texture data of the big object
 		 * This will be deep copied on instantiating an object
@@ -50,12 +77,12 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
@@ -72,7 +99,25 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(2, -1),	// offset from object's origin
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+			},
+			// Right direction
+			new List<PlaceableBigData> {
+				new PlaceableBigData(
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(0, 2, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(-1, 0),	// offset from object's origin
 						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
 						null
 						),
@@ -82,44 +127,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						null
 						),
 			},
-			// Right direction
-			new List<PlaceableBigData> {
-				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(1, 2, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-				new PlaceableBigData(
-						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(2, 2, 3),	// atlasX, atlasY, sourceId
-						null
-						),
-			},
 		};
 
-		public PlaceableObject PickUp(Vector2I pos) {
-			return null;
-		}
-		
-		public bool Place(PlaceableObject obj, Vector2I pos) {
-			return false;
-		}
-
-		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
-			return false; // We do not want this object
-		}
-
-		public PlaceableObject RequestObject(int requestId, PlaceableObject childObj) {
-			return null; // We don't ahve that object
-		}
-		
-		// REMINDER:
-		// the entirety of the object's visuals/internal objects are generated here!
 		public FactoryRoller(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
@@ -131,9 +140,18 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			Input = new FactoryBigObjectInput(0, 0, 0);
 			Output = new FactoryBigObjectOutput(0, 0, 0);
 
-			/** The internal refrence to the input nad output objects must be set here **/
+			// Set the parent object of our in and out, this will allow for cbs
+			Input.SetParent(this);
+			Output.SetParent(this);
 
-			// TODO: Verify these 
+			// Set values we use to do the prcess
+			_Inv = null;
+			_Working = false;
+			_StepsTillCompletion = 0;
+
+			RegisterSteppable();
+
+			/** The internal refrence to the input nad output objects must be set here **/
 
 			// UP
 
@@ -148,17 +166,90 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// LEFT
 			objectData[2][0].SetInternalObj(Input);
-			objectData[2][1].SetInternalObj(Output);
-			objectData[2][2].SetInternalObj(null);
+			objectData[2][1].SetInternalObj(null);
+			objectData[2][2].SetInternalObj(Output);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(Input);
-			objectData[3][1].SetInternalObj(null);
-			objectData[3][2].SetInternalObj(Output);
+			objectData[3][0].SetInternalObj(null);
+			objectData[3][1].SetInternalObj(Output);
+			objectData[3][2].SetInternalObj(Input);
 			
 			SetDir(Direction.UP);
 		}
 
+		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
+			foreach (PlaceableBigData BD in D) {
+				if (BD.GetPosition(this.GetCurrPos()) == P) return BD;
+			}
+
+			return null;
+		}
+
+		public PlaceableObject PickUp(Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject obj = BD.GetInternalObj();
+			// Get the obj if we can
+			PlaceableObject ret = null;
+			// We don't really care what the object is, the actual checking for materials will be done in the call back functions that the child object will make to the parent
+			// These call will also provide a refrence to the child objct. Throught this refrence we can checl what specific IN/OUT it is and act accordlingly
+			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
+			// Return the obj
+			return ret;
+		}
+		
+		public bool Place(PlaceableObject obj, Vector2I pos) {
+			// Get our data at our current dir
+			List<PlaceableBigData> D = GetTextureGrid();
+			// Get the internal obj at this pos
+			PlaceableBigData BD = findDataAtPos(D, pos);
+			PlaceableObject iObj = BD.GetInternalObj();
+			// Place in the obj if we can
+			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
+			// Otherwise we don't want that shit
+			return false;
+		}
+
+		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
+			if (childObj == Input) {
+				if ((!_Working) && (obj is IronPlateObject) && (_Inv == null)) {
+					GD.Print("We go ore");
+					_StepsTillCompletion = 1;
+					_Inv = new IronRodObject(0, 0, 0) as PlaceableObject;
+					_Inv.SetGarbage(true);
+					_Working = true;
+					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
+					return true;
+				}
+				// We need to check and see if the object coming in is valid
+				// If so we wnat to do somthing and return true to accept it
+			}
+			else if (childObj == Output) {
+				return false; // Why the fuck is out output trying to give us something
+			}
+
+			return false; // WTF is this shit, fuck you
+		}
+
+		public PlaceableObject RequestObject(int requestId, PlaceableObject childObj) {
+			if (childObj == Input) {
+				return null; // Why is someone trying to take from our input?
+			}
+			else if (childObj == Output) {
+				// We need to check and see if we have the object that they are  requesting ready to return
+				// If so we wnat to retunr that obj and remove it from our inv
+				if ((_Inv != null) && (BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())] == requestId) && !_Working) {
+					PlaceableObject tmp = _Inv;
+					_Inv = null;
+					return tmp;
+				}
+			}
+
+			return null; // Invalid childObject
+		}
+		
 		public override Texture GetTexture() {
 			return GetBigTexture(GetTextureGrid());
 		}
@@ -170,13 +261,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public override List<PlaceableBigData> GetTextureGrid(Direction inDir) {
 			switch (inDir) {
 				case Direction.UP:
-					return textureGrid[0];
+					return objectData[0];
 				case Direction.DOWN:
-					return textureGrid[1];
+					return objectData[1];
 				case Direction.LEFT:
-					return textureGrid[2];
+					return objectData[2];
 				case Direction.RIGHT:
-					return textureGrid[3];
+					return objectData[3];
 			}
 			return null;
 		}
@@ -193,6 +284,42 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					return textureGrid[3];
 			}
 			return null;
+		}
+
+		// Runnable Interface
+		public void Step()
+		{
+			// If we are working and have fule
+			if (_Working) {
+				// Then we tak a step to completion
+				_StepsTillCompletion--;
+
+				// Once we are done
+				if (_StepsTillCompletion == 0) {
+					// Stop working
+					_Working = false;
+				}
+			}
+		}
+
+		public void RegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
+		}
+
+		public void UnRegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
+		}
+
+		public void Reset() {
+			_Working = false;
+			_StepsTillCompletion = 0;
+
+			if (_Inv != null) _Inv.ResetPos();
+			_Inv = null;
 		}
 	}
 }

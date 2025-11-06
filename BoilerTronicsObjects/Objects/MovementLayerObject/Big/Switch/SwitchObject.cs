@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Parsing;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -191,7 +192,63 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		public void Switch(string[] args) {
-			return; // Throw error
+			Vector2I off;
+
+			switch (GetDir()) {
+				case Direction.UP:
+					off = new Vector2I(1, -1);
+					break;
+				case Direction.LEFT:
+					off = new Vector2I(-1, 1);
+					break;
+				// Down and Right are the same
+				case Direction.DOWN:
+				case Direction.RIGHT:
+					off = new Vector2I(-1, 0);
+					break;
+				default:
+					return; // Not a valid position ( This should never happen )
+			}
+
+			Vector2I pos1 = GetCurrPos();		// Position of orgin
+			Vector2I pos2 = GetCurrPos() + off;	// Position of the other spot
+			
+			// Get manager so that we can access the diffrent layers
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+			// Get rail and claw on pos 1 and remove them from the layer
+			ClawObject C1 = manager.currLevel.cLayer.FindObject(pos1) as ClawObject;
+			if (C1 != null) manager.currLevel.cLayer.RemoveObject(C1);
+			TrackObject R1 = manager.currLevel.rLayer.FindObject(pos1) as TrackObject;
+			if (R1 != null) manager.currLevel.rLayer.RemoveObject(R1);
+
+			// Get rail and claw on pos 2 and remove them from the layer
+			ClawObject C2 = manager.currLevel.cLayer.FindObject(pos2) as ClawObject;
+			if (C2 != null) manager.currLevel.cLayer.RemoveObject(C2);
+			TrackObject R2 = manager.currLevel.rLayer.FindObject(pos2) as TrackObject;
+			if (R2 != null) manager.currLevel.rLayer.RemoveObject(R2);
+
+			// Place rail and claw from pos 1 on pos 2
+			if (C1 != null) {
+				C1.MoveCurrPos(pos2.X, pos2.Y);
+				manager.currLevel.cLayer.AddObject(C1);
+			}
+
+			if (R1 != null) {
+				R1.MoveCurrPos(pos2.X, pos2.Y);
+				manager.currLevel.rLayer.AddObject(R1);
+			}
+
+			// Place rail and claw from pos 2 on pos 1
+			if (C2 != null) {
+				C2.MoveCurrPos(pos1.X, pos1.Y);
+				manager.currLevel.cLayer.AddObject(C2);
+			}
+
+			if (R2 != null) {
+				R2.MoveCurrPos(pos1.X, pos1.Y);
+				manager.currLevel.rLayer.AddObject(R2);
+			}
 		}
 
 		public override Texture GetTexture() {

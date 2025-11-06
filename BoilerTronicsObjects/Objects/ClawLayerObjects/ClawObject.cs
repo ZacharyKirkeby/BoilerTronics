@@ -6,6 +6,7 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using Parsing;
 using System.Collections;
 
@@ -66,12 +67,14 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			if (this.heldObject != null) {
 				this.heldObject.ResetPos();
 			}
+
 			this.heldObject = null;
 			base.ResetPos();
 			_parser.Reset(); //disposed object error?
 			// heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
+
 			if (existing != null)
 			{
 				existing.QueueFree();
@@ -81,7 +84,6 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			// resets this object's "displayed" visuals by resetting its frame index
 			ResetFrame();
 
-			// Maybe need to make a call to our codeEdit/interrputer?
 			UpdateRegisterDisplay();
 		}
 
@@ -248,6 +250,25 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		// TODO: Create some helper function so that we can update our current from based on our held object
+		private void UpdateFrame() {
+			if (heldObject is CoalObject) {
+				SetFrameIndex(2);
+			} else if (heldObject is IronOreObject) {
+				SetFrameIndex(3);
+			} else if (heldObject is IronBarObject) {
+				SetFrameIndex(4);
+			} else if (heldObject is IronPlateObject) {
+				SetFrameIndex(5);
+			} else if (heldObject is IronRodObject) {
+				SetFrameIndex(6);
+			} else {
+				SetFrameIndex(0);
+			}
+
+			// Update on the layer
+			BoilerTronicsLevel level = BoilerTronicsGlobalManager.GlobalManager.currLevel;
+			level.cLayer.SetCell(this.GetCurrPos(), GetFrame().GetSourceID(), GetFrame().GetAtlasPos());
+		}
 
 		public void Grab(string[] args) {
 
@@ -256,27 +277,29 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			soundManager.PlaySound(SoundType.Grab);
 
 			if (heldObject != null) return; // TODO: make this an error
-			GD.Print("Grabbing object");
 	
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			
 			// Get the factory object below the claw
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
-			GD.Print("Factory obj: ", factoryObj);
 
 			// If there is no factory object, return
 			if (factoryObj == null) return;
 			// If there is we want to check if it's moveable, if not return
-			if (!(factoryObj is Movable mObj)) return;
+			if (factoryObj is Movable mObj) {
+				// If it is, then we want to try to pick it up (or it's contents)
+				heldObject = mObj.PickUp();
 
-			// If it is, then we want to try to pick it up (or it's contents)
-			heldObject = mObj.PickUp();
-			GD.Print("Pickedup: ", heldObject);
-			
-			// FRAME SYSTEM
-			// update current frame to "display" a successful grab
-			SetFrameIndex(2);
-			manager.currLevel.cLayer.UpdateObject(this);
+				manager.currLevel.cLayer.UpdateObject(this);
+			} else if (factoryObj is BigMovable bmObj) {
+				// If it is, then we want to try to pick it up (or it's contents)
+				heldObject = bmObj.PickUp(this.GetCurrPos());
+
+				manager.currLevel.cLayer.UpdateObject(this);
+			}
+
+			// Call to some update frame function that will update based on the held item
+			UpdateFrame();
 		}
 
 		public void Drop(string[] args) {
@@ -284,31 +307,24 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Drop);
 			if (heldObject == null) return; // Not an error ?
-			GD.Print("Dropping obj");
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			
 			// Get the factory object below the claw
 			PlaceableObject factoryObj = manager.currLevel.fLayer.FindObject(this.GetCurrPos());
-			GD.Print("Factory obj: ", factoryObj);
 
 			Vector2I pos = GetCurrPos();
 			heldObject.MoveCurrPos(pos.X, pos.Y);
 
 			if (factoryObj == null) {
-				GD.Print("Placing object on ground");
 				manager.currLevel.fLayer.AddObject(heldObject);
 				heldObject = null;
 			} else if (factoryObj is Movable mObj) {
-				GD.Print("Placing object in factory object");
 				if (mObj.Place(heldObject)) heldObject = null;
+			} else if (factoryObj is BigMovable bmObj) {
+				if (bmObj.Place(heldObject, this.GetCurrPos())) heldObject = null;
 			}
-			
-			// FRAME SYSTEM
-			// resets this object's "displayed" visuals by resetting its frame index
-			if (heldObject == null) {
-				ResetFrame();
-				manager.currLevel.cLayer.UpdateObject(this);
-			}
+
+			UpdateFrame();
 		}
 
 		public void Rotate(string[] args)
@@ -331,9 +347,22 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			// (0) is default visuals
 			// (1) is "grab empty"
 			AddFrame(new TileTex(new Vector2I(0, 0), 10));
-			
-			// (2) is "grabbed stone (or some other grey nondescript object"
+
+			// (2) is "grab coal"
 			AddFrame(new TileTex(new Vector2I(0, 1), 10));
+			
+			// (3) is "grab iron ore"
+			AddFrame(new TileTex(new Vector2I(0, 2), 10));
+			
+			// (4) is "grab iron bar"
+			AddFrame(new TileTex(new Vector2I(0, 3), 10));
+
+			// (5) is "grab iron plate"
+			AddFrame(new TileTex(new Vector2I(0, 4), 10));
+
+			// (6) is "grab iron rod"
+			AddFrame(new TileTex(new Vector2I(0, 5), 10));
+
 		} // create object
 
 		~ClawObject()
