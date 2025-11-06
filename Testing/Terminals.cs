@@ -78,25 +78,19 @@ public partial class Terminals : TabContainer
 			}
 
 			UpdateSelectedTerminal();
-			if (HasAnySyntaxErrors())
-            {
-				//set error state higher up
-				manager.currLevel.E.setError(true);
-            } else
-            {
-                manager.currLevel.E.setError(false);
-            }
 			
 			// Check if Enter/Return was pressed (new line) - trigger validation
 			if (keyEvent.Keycode == Key.Enter || keyEvent.Keycode == Key.KpEnter)
 			{
 				CallDeferred(nameof(ValidateCurrentEditor), "newline");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
 			}
 			
 			// Check if up/down arrow (line selection change) - trigger validation
 			if (keyEvent.Keycode == Key.Up || keyEvent.Keycode == Key.Down)
 			{
 				CallDeferred(nameof(ValidateCurrentEditor), "navigation");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
 			}
 
 			long unicode = keyEvent.Unicode;
@@ -114,16 +108,6 @@ public partial class Terminals : TabContainer
 				int caretCol = Math.Min(codeEdit.GetCaretColumn(), maxLineLength);
 				codeEdit.SetCaretColumn(caretCol);
 			}
-
-			if (HasAnySyntaxErrors())
-			{
-				//set error state higher up
-				manager.currLevel.E.setError(true);
-
-			} else
-            {
-                manager.currLevel.E.setError(false);
-            }
 		}
 	}
 
