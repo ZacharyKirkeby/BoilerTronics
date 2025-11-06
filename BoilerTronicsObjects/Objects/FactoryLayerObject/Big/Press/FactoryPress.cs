@@ -5,10 +5,11 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryPress : PlaceableBig, BigMovable {
+	public class FactoryPress : PlaceableBig, BigMovable, Runnable {
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 3);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
@@ -20,6 +21,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private FactoryBigObjectInput Input;
 		private FactoryBigObjectOutput Output;
 		private List<PlaceableBigData>[] objectData;
+
+		private PlaceableObject _Inv;
+		private bool _Working;
+		private int _StepsTillCompletion;
 
 		/*
 		 * This is a static data structure that stores just the structure and texture data of the big object
@@ -100,6 +105,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			Input.SetParent(this);
 			Output.SetParent(this);
 
+			// Set values we use to do the prcess
+			_Inv = null;
+			_Working = false;
+			_StepsTillCompletion = 0;
+
+			RegisterSteppable();
+
 			/** The internal refrence to the input nad output objects must be set here **/
 
 			// UP
@@ -159,6 +171,14 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
 			if (childObj == Input) {
+				if ((!_Working) && (obj is IronBarObject) && (_Inv == null)) {
+					_StepsTillCompletion = 1;
+					_Inv = new IronPlateObject(0, 0, 0) as PlaceableObject;
+					_Inv.SetGarbage(true);
+					_Working = true;
+					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
+					return true;
+				}
 				// We need to check and see if the object coming in is valid
 				// If so we wnat to do somthing and return true to accept it
 			}
@@ -176,6 +196,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			else if (childObj == Output) {
 				// We need to check and see if we have the object that they are  requesting ready to return
 				// If so we wnat to retunr that obj and remove it from our inv
+				if ((_Inv != null) && (BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())] == requestId) && !_Working) {
+					PlaceableObject tmp = _Inv;
+					_Inv = null;
+					return tmp;
+				}
 			}
 
 			return null; // Invalid childObject
@@ -192,13 +217,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public override List<PlaceableBigData> GetTextureGrid(Direction inDir) {
 			switch (inDir) {
 				case Direction.UP:
-					return textureGrid[0];
+					return objectData[0];
 				case Direction.DOWN:
-					return textureGrid[1];
+					return objectData[1];
 				case Direction.LEFT:
-					return textureGrid[2];
+					return objectData[2];
 				case Direction.RIGHT:
-					return textureGrid[3];
+					return objectData[3];
 			}
 			return null;
 		}
@@ -215,6 +240,42 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					return textureGrid[3];
 			}
 			return null;
+		}
+
+		// Runnable Interface
+		public void Step()
+		{
+			// If we are working and have fule
+			if (_Working) {
+				// Then we tak a step to completion
+				_StepsTillCompletion--;
+
+				// Once we are done
+				if (_StepsTillCompletion == 0) {
+					// Stop working
+					_Working = false;
+				}
+			}
+		}
+
+		public void RegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
+		}
+
+		public void UnRegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
+		}
+
+		public void Reset() {
+			_Working = false;
+			_StepsTillCompletion = 0;
+
+			if (_Inv != null) _Inv.ResetPos();
+			_Inv = null;
 		}
 	}
 }
