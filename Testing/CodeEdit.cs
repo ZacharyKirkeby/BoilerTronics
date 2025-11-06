@@ -19,6 +19,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	private Label errorLabel;
 	private Color errorColor = new Color(1.0f, 0.0f, 0.0f, 0.25f);
 	private Dictionary<int, string> lineErrors = new();
+	public bool error = false;
 	private bool isDirty = false;
 	
 	// Object highlighting fields
@@ -111,7 +112,10 @@ public partial class CodeEdit : Godot.CodeEdit
 
 		string code = this.Text;
 		var errors = ProgramValidator.ValidateProgram(code);
-
+		if (errors != null)
+        {
+            this.error = true;
+        }
 		// Process each error
 		foreach (var (lineNum, errorMsg) in errors)
 		{
@@ -391,7 +395,7 @@ public partial class CodeEdit : Godot.CodeEdit
 
 	public bool HasErrors()
 	{
-		return lineErrors.Count > 0;
+		return this.error;
 	}
 
 	public Dictionary<int, string> GetLineErrors()

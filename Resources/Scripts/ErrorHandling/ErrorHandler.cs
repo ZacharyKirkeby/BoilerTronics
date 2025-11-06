@@ -26,6 +26,7 @@ public partial class ErrorHandler : Node2D
 	// We need to track the scene so that we can remove it later
 	private Node errorSceneInstance;
 	private bool ErrorPresent;
+	private bool SyntaxError;
 
 	public ErrorHandler()
 	{
@@ -33,12 +34,17 @@ public partial class ErrorHandler : Node2D
 
 	public bool HasError()
 	{
-		return ErrorPresent;
+		return !(ErrorPresent && SyntaxError);
 	}
 
 	public void setError(bool value)
-    {
+	{
 		ErrorPresent = value;
+	}
+	
+	public void setSyntaxError(bool value)
+    {
+		SyntaxError = value;
     }
 
 	public void ClearError()
