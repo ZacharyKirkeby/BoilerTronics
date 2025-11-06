@@ -7,10 +7,10 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMaterial : PlaceableObject, Movable {
+	public class CoalObject : PlaceableObject, Movable {
 		
-		private static Vector2I objectAtlasPos = new Vector2I(0, 4); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
-		private static int layerSourceId = 0;
+		private static Vector2I objectAtlasPos = new Vector2I(0, 0); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
+		private static int layerSourceId = 9;
 
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
@@ -32,10 +32,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.fLayer.RemoveObject(this);
 			this.MoveObject(-1, -1); // Move to an invalid position
-		    	base.ResetPos();
+			base.ResetPos();
 		}
 
-		public FactoryTestMaterial(int OGX, int OGY, int altTitle = 0) 
+		public CoalObject(int OGX, int OGY, int altTitle = 0) 
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
 	}
 }

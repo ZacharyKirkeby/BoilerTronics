@@ -1,24 +1,32 @@
 using Godot;
 using System;
+using BoilerTronicsObjects.Placeable;
 
 public partial class DraggableObject : Node2D {
 	
 	private Vector2 mouse_offset;
+	private PlaceableObject obj;
 	private Sprite2D sprite;
-	private Vector2I atlasCords;
 
-	public DraggableObject(Vector2 mouse_offset, Sprite2D spritToDrag, Vector2I atlasCords) {
+	public DraggableObject(Vector2 mouse_offset, Sprite2D spritToDrag, PlaceableObject obj) {
 		this.mouse_offset = mouse_offset;
+
 		// Copy Sprite and make it a child
-		sprite = spritToDrag.Duplicate() as Sprite2D;
-		sprite.Scale = new Vector2I(1, 1);
-		AddChild(sprite);
+		this.sprite = spritToDrag.Duplicate() as Sprite2D;
+		this.sprite.Scale = new Vector2I(1, 1);
+		this.obj = obj; // This will keep track of the object that we are placing
+		
+		// Set to very high Z-index such that this block is visibly above all other blocks
+		this.ZIndex = 1000;
+
+		AddChild(this.sprite);
 	}
 
 	public override void _Ready() {
 		// We may need to communicate somthing to the manager
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.objectToPlace = atlasCords;
+
+		manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
 	}
 
 	// this will allow for the draggable object to follow the mouse
@@ -29,6 +37,7 @@ public partial class DraggableObject : Node2D {
 	public override void _Input(InputEvent @event)
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// manager.objectToMove = null;
 
 		// Check if we let go (attempt to place)
 		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
@@ -37,11 +46,11 @@ public partial class DraggableObject : Node2D {
 			sprite.QueueFree();
 			QueueFree();
 			// reset layer transparency
-			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
-			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
-			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
-			manager.layerRail.Modulate = new Color(1, 1, 1, 1);
-			manager.layerMovement.Modulate = new Color(1, 1, 1, 1);
+			manager.layerClaw.Modulate = manager.layerDefaultVisibility;
+			manager.layerFactory.Modulate = manager.layerDefaultVisibility;
+			manager.layerFloor.Modulate =manager.layerDefaultVisibility;
+			manager.layerRail.Modulate = manager.layerDefaultVisibility;
+			manager.layerMovement.Modulate = manager.layerDefaultVisibility;
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
 		}

@@ -1,27 +1,83 @@
 using Godot;
 using System;
+using System.Numerics;
+using System.Collections.Generic;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
+using System.Reflection.Metadata;
+using BoilerTronicsObjects.Data;
 
 public partial class ObjectPicker : HBoxContainer
 {
-	// sprite table id for each table
-	static int FactorySpriteTable = 0;
-	static int ClawSpriteTable = 1;
-	static int MovementSpriteTable = 2;
+	private class ItemInfo {
+		public String name; // Name of the item that we want in the picker
+		public int price; // Price of the item in the picker
+		public int table; // ID of the table that contains the sprite
+		public Vector2I atPos; // Atlas position of the sprite (this will be the root if it's a big object)
+		public Vector2I offSet; // Amount we need to offset the sprite
+		public bool big; // Bool to tell us if this is a big object or not (this will affect the way the texture is rendered)
 
-	public void Update(int selection) 
+		public ItemInfo(string name, int price, int table, Vector2I atPos, Vector2I offSet, bool big) {
+			this.name = name;
+			this.price = price;
+			this.table = table;
+			this.atPos = atPos;
+			this.offSet = offSet;
+			this.big = big;
+		}
+	}
+
+	// sprite table id for each table
+	static int MovementIndex = 0;
+	static int ClawIndex = 1;
+	static int FactoryIndex = 2;
+
+	static ItemInfo[] MovementSection = {
+		new ItemInfo("Vertical Conveyor", 100, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
+		new ItemInfo("Horizontal Conveyor", 100, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
+		new ItemInfo("Rotator", 100, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
+		new ItemInfo("Switch", 100, 2, new Vector2I(1,0), new Vector2I(85, 85), true), // Placeholder sprite ATM
+	};
+
+	static ItemInfo[] ClawSection = {
+		new ItemInfo("Claw", 100, 1, new Vector2I(0,0), new Vector2I(85, 131), false),
+		new ItemInfo("Vertical Rail", 100, 1, new Vector2I(0,1), new Vector2I(85, 131), false),
+		new ItemInfo("Horizontal Rail", 100, 1, new Vector2I(0,2), new Vector2I(85, 131), false),
+	};
+
+	static ItemInfo[] FactorySection = {
+		new ItemInfo("Input", 100, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
+		new ItemInfo("Output", 100, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
+		new ItemInfo("Furnace", 100, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
+		new ItemInfo("Roller", 100, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
+		new ItemInfo("Press", 100, 3, new Vector2I(0,3), new Vector2I(85, 85), true),
+	};
+
+	static ItemInfo[] DeveloperSection =
+	{
+		new ItemInfo("Placeholder", 100, 4, new Vector2I(0,0), new Vector2I(85, 85), false)
+	};
+
+	public void Update(int selection)
 	{
 		// This should be called when we change the type of object that we are wanting to select
 		// The currSelect in the manager should be set beforehand as it will use that value to change teh sprites it contains
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		switch (selection) {
+		manager.currSlection = selection;
+
+		switch (selection)
+		{
 			case 1: // Movement
-				SetMovement(selection);
+				SetMovement();
 				break;
 			case 2: // Factory
-				SetFactory(selection);
+				SetFactory();
 				break;
 			case 3: // Claw
-				SetClaw(selection);
+				SetClaw();
+				break;
+			case 4: // Dev
+				SetDeveloper();
 				break;
 			default:
 				break;
@@ -43,61 +99,127 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int posX, int posY, int selection) {
-		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, posX, posY, selection);
-		objectController.SetSize(new Vector2I(128, 128));
+	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
+		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, sourceID, posX, posY, priceLabel, vboxPanel);
+		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
 		return objectController;
 	}
 
-	void loadSprites(int source_idx, int posX, int posY, int selection) {
+	void loadSprite(ItemInfo item) {
 		var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
-		int sourceid = tileSet.GetSourceId(source_idx);
+		int sourceid = tileSet.GetSourceId(item.table);
 
 		TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
-		if (tileSetSource == null) {
-			GD.Print(source_idx, " is not a valid id for the sprite tabel");
+		if (tileSetSource == null)
+		{
+			GD.Print(item.table, " is not a valid id for the sprite tabel");
 			return; // make sure it exists
 		}
-		for (int i = 0; i < tileSetSource.GetTilesCount(); i++) {
-			var atlasCords = tileSetSource.GetTileId(i);
-			if (atlasCords == null) continue; // make sure that the cords exist
+		AddChild(new Control()); // Creates left padding so its not smushed against container
+		ImageTexture texture = new ImageTexture();
 
+		if (item.big) {
+			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(item.table, item.atPos)], PlaceableBig.Direction.UP);
+			GD.Print(data);
+			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
+			double hScale = 32 / texture.GetHeight();
+			double wScale = 32 / texture.GetWidth();
+		} else {
 			// get the tile
-			var tile = tileSetSource.GetTileTextureRegion(atlasCords);
+			var tile = tileSetSource.GetTileTextureRegion(item.atPos);
 			var fullTexture = tileSetSource.Texture.GetImage();
 			var imageTexture = fullTexture.GetRegion(tile);
-			var texture = new ImageTexture();
 			texture.SetImage(imageTexture);
+		}
 
-			AddChild(createBoilerObjectSelector(texture, atlasCords, posX, posY, selection));
+		// Initialize vbox with styling for Name Label and Sprite
+		PanelContainer vboxPanel = new PanelContainer();
+		StyleBoxFlat vboxStyle = new StyleBoxFlat();
+		vboxPanel.AddThemeStyleboxOverride("panel", vboxStyle);
+		vboxPanel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+		VBoxContainer vbox = new VBoxContainer();
+		vbox.AddThemeConstantOverride("separation", 20);
 
-			// GD.Print(GetChildren());
+		AddChild(vboxPanel);
+		vboxPanel.AddChild(vbox);
+		PanelContainer background = new PanelContainer();
+
+		// Initialize stylebox for the panel behind sprite
+		StyleBoxFlat backgroundStyle = new StyleBoxFlat();
+		backgroundStyle.ExpandMarginTop = 10;
+		backgroundStyle.BgColor = new Color(0.35f, 0.35f, 0.35f, 1);
+		backgroundStyle.BorderColor = new Color(0, 0, 0, 1);
+		backgroundStyle.SetBorderWidthAll(2);
+		backgroundStyle.SetCornerRadiusAll(10);
+		background.AddThemeStyleboxOverride("panel", backgroundStyle);
+
+		// Set name label to the name of the object.
+		Label nameLabel = new Label();
+		Label priceLabel = new Label();
+		nameLabel.Text = item.name;
+		priceLabel.Text = "Price: $" + item.price;
+
+		FontFile pixelFont = ResourceLoader.Load<FontFile>("Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+		priceLabel.AddThemeFontOverride("font", pixelFont);
+		priceLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+		priceLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+		nameLabel.AddThemeFontOverride("font", pixelFont);
+		nameLabel.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+		nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+
+		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
+
+		vbox.AddChild(background);
+		vbox.AddChild(nameLabel);
+		vbox.AddChild(priceLabel);
+	}
+
+	void loadSprites(ItemInfo[] selection) {
+
+		foreach (ItemInfo item in selection) {
+			loadSprite(item);
 		}
 	}
 
-	void SetClaw(int selection)
+	void SetClaw()
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of claw layer elements
-		loadSprites(ClawSpriteTable, 128, 196, selection);
+		loadSprites(ClawSection);
+		manager.currSlection = 3;
 	}
 
-	void SetFactory(int selection)
+	void SetFactory()
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of factory layer elements
-		loadSprites(FactorySpriteTable, 128, 128, selection);
+		loadSprites(FactorySection);
+		manager.currSlection = 2;
 	}
 
-	void SetMovement(int selection)
+	void SetMovement()
 	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// Kill the current children to ensure that only children that we want exist
 		KillChildren();
 		// This will spawn the children for all of the different kinds of movement layer elements
-		loadSprites(MovementSpriteTable, 128, 128, selection);		
+		loadSprites(MovementSection);
+		manager.currSlection = 1;
+	}
+
+	void SetDeveloper()
+	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		KillChildren();
+		loadSprites(DeveloperSection);
+		manager.currSlection = 4;
 	}
 
 	public override void _Ready()
@@ -105,6 +227,6 @@ public partial class ObjectPicker : HBoxContainer
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.picker = this;
 		// This will allow us to have the default selection set here
-		SetMovement(1);
+		SetMovement();
 	}
 }

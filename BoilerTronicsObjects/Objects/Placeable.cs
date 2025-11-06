@@ -12,7 +12,8 @@ namespace BoilerTronicsObjects.Placeable
 		int OGY { get; set; }
 		private int CurrX;
 		private int CurrY;
-		int sourceId { get; init; }             // This is the id of the tile map that the sprite belongs to
+		private bool Garbage;
+		int sourceId { get; set; }             // This is the id of the tile map that the sprite belongs to
 		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
@@ -33,6 +34,15 @@ namespace BoilerTronicsObjects.Placeable
 
 			this.atlasPos = atlasPos;
 			this.altTitle = altTitle;
+			this.Garbage = false;
+		}
+
+		public void SetGarbage(bool isGarabage) {
+			this.Garbage = isGarabage;
+		}
+
+		public bool GetGarbage() {
+			return this.Garbage;
 		}
 		
 		// set parent layer info; mainly useful for the terminal highlighting mechanism
@@ -73,12 +83,16 @@ namespace BoilerTronicsObjects.Placeable
 			return new Vector2I(CurrX, CurrY);
 		}
 
-		public int GetSourceID()
+		public virtual void SetSourceID(int input)
+		{
+			this.sourceId = input;
+		}
+		public virtual int GetSourceID()
 		{
 			return sourceId;
 		}
 
-		public Vector2I GetAtlasPos()
+		public virtual Vector2I GetAtlasPos()
 		{
 			return atlasPos;
 		}
@@ -135,8 +149,25 @@ namespace BoilerTronicsObjects.Placeable
 				{ "sourceId", sourceId },
 				{ "atlasPosX", atlasPos.X },
 				{ "atlasPosY", atlasPos.Y },
-				{ "altTitle", "null" },
+				{ "altTitle", 0 },
 			};
+		}
+		
+		// Used for ArrayList.Contains and etc
+		// Not 100% conclusive! Potential edge case is if two objects, identical on the surface level
+		// and sharing the same coordinates, but on different Layers, this will
+		// incorrectly return 'true'!
+		public override bool Equals(object? obj) {
+			if (!(obj is PlaceableObject)) return false;
+			
+			PlaceableObject cObj = (PlaceableObject) obj;
+			
+			return (
+				this.GetOGPos() == cObj.GetOGPos() &&
+				this.GetPos() == cObj.GetPos() &&
+				this.GetSourceID() == cObj.GetSourceID() &&
+				this.GetAtlasPos() == cObj.GetAtlasPos()
+			);
 		}
 	}
 }

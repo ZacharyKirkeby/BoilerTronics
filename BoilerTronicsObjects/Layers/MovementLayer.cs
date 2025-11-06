@@ -15,10 +15,18 @@ namespace BoilerTronicsObjects.Layers
 
 		public MovementLayer(int x, int y) : base(x,y) {
 			ConvGroupList = new ArrayList(); // Create a list of groups
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public MovementLayer() : base() {
 			ConvGroupList = new ArrayList(); // Create a list of groups
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public ConveyorGroup GetGroup(ConveyorObject cObj) {
@@ -37,6 +45,12 @@ namespace BoilerTronicsObjects.Layers
 		public override void AddObject(PlaceableObject newPlaceable)
 		{
 			base.AddObject(newPlaceable);
+			
+			// handle cases where the object fails to place correctly -- specifically, for ConveyorObjects
+			// *should* solve issues where a terminal is created even when it shouldn't have
+			if (!objectList.Contains(newPlaceable)) {
+				return;
+			}
 
 			if (newPlaceable is ConveyorObject cObj) {
 				GD.Print("MovementLayer: Inserting into Conveyor");
@@ -116,10 +130,11 @@ namespace BoilerTronicsObjects.Layers
 				GD.Print("Num Groups: ", ConvGroupList.Count);
 			}
 		}
+		
 
 		public override void _Input(InputEvent @event)
 		{
-			MouseInput(@event, 1, 2);
+			MouseInput(@event, 1);
 			base._Input(@event);
 		}
 	}

@@ -137,7 +137,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		// Override 'save' function to also return a script's information
-		// CONDITIONAL: Only adds anything
+		// CONDITIONAL: Only adds anything if the script isn't empty.
+		// Only the "head" of a ConveyorGroup should store this information!
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();

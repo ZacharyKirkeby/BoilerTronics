@@ -26,13 +26,13 @@ namespace BoilerTronicsObjects.Layers
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			// make sure that it is not a floor
-			if (!(manager.objectToMove is FloorTileObject || manager.objectToPlace == new Vector2I(0, 2))) {
-				MouseInput(@event, 2, 0);
+			if (!(manager.objectToMove is FloorTileObject)) {
+				MouseInput(@event, 2);
 				// GD.Print("Factory");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				MouseInput(@event, 2, 0);
+				MouseInput(@event, 2);
 				return;
 			}
 			base._Input(@event);
