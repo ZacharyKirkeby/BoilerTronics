@@ -444,30 +444,40 @@ namespace BoilerTronicsObjects.Layers
 			
 			// Render projected tiles
 			if (renderProtectedTiles) {
-				// GD.Print("protectedList count: ", protectedList.Count);
-				foreach (Vector2I coords in protectedList) {
-					Vector2 localPos = MapToLocal(coords);
-					// TODO: draw efficiently
-					// for now, just create an array of Vector2
-					Godot.Collections.Array coordinates = new Godot.Collections.Array();
-					
-					// generate a polygonal shape
-					int yOffset = 25;
-					coordinates.Add(new Vector2(-20, 	yOffset + -10));
-					coordinates.Add(new Vector2(0, 		yOffset + -20));
-					coordinates.Add(new Vector2(20, 	yOffset + -10));
-					coordinates.Add(new Vector2(0, 		yOffset + 0));
-					
-					Color drawColor = Colors.Blue;
-					float lineWeight = 3.0f;
-					
-					// draw connecting from 'i-1' to 'i'
-					for (int i = 1; i < coordinates.Count; i++) {
-						DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
-					}
-					// draw from 'maxI' to 'minI'
-					DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+				RenderProtectedTiles();
+			}
+		}
+		
+		
+		// specific, configuration y-offset for the below function
+		protected int yRenderProtectedTileOffset = 25;
+		
+		// the function that actually renders protected tiles
+		// "virtual" so offsets can be handled better by unique cases
+		public virtual void RenderProtectedTiles() {
+			// GD.Print("protectedList count: ", protectedList.Count);
+			foreach (Vector2I coords in protectedList) {
+				Vector2 localPos = MapToLocal(coords);
+				// TODO: draw efficiently
+				// for now, just create an array of Vector2
+				Godot.Collections.Array coordinates = new Godot.Collections.Array();
+				
+				// generate a polygonal shape
+				int yOffset = yRenderProtectedTileOffset;
+				coordinates.Add(new Vector2(-18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + -18));
+				coordinates.Add(new Vector2(18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + 0));
+				
+				Color drawColor = Colors.Blue;
+				float lineWeight = 3.0f;
+				
+				// draw connecting from 'i-1' to 'i'
+				for (int i = 1; i < coordinates.Count; i++) {
+					DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
 				}
+				// draw from 'maxI' to 'minI'
+				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
 			}
 		}
 
@@ -593,6 +603,10 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		// very specific variable for a very specific purpose:
+		// by introducing an offset to the mouse cursor, we can pick a tile that better selects a tile at where the cursor is *actually* looking at
+		protected Vector2 protectedToggleMouseOffset = new Vector2(0f, -10f);
+		
 		public override void _Input(InputEvent @event)
 		{
 			base._Input(@event);
@@ -601,13 +615,14 @@ namespace BoilerTronicsObjects.Layers
 			// Mainly used to handle toggling on/off protected tiles
 			if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
 				
-				// get corresponding tile coords, regardless of input
-				Vector2 localMousePos = GetLocalMousePosition();
-				Vector2I tileCoords = LocalToMap(localMousePos);
-				
 				switch (keyEvent.Keycode) {
 					// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
 					case Key.Up:
+						
+						// slightly offset the mouse position to get a better selected tile
+						Vector2 localMousePos = GetLocalMousePosition() + protectedToggleMouseOffset;
+						Vector2I tileCoords = LocalToMap(localMousePos);
+						
 						if (!editProtectedTiles) return; // exit immediately if not in "edit procted tiles" mode
 						
 						// toggle protected tile status at mouse position

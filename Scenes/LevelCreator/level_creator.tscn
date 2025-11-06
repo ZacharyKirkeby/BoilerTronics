@@ -19,7 +19,7 @@
 [ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/LevelUI/PlaceButton2.cs" id="13_7j21t"]
 [ext_resource type="Script" uid="uid://c666mnv40h7w1" path="res://Resources/Scripts/LevelUI/PlaceButton3.cs" id="14_0sjko"]
 [ext_resource type="StyleBox" uid="uid://dwq68t5xkaccy" path="res://Scenes/LevelUI/PanelContainer.tres" id="15_a8j57"]
-[ext_resource type="Script" path="res://Resources/Scripts/LevelUI/PlaceButton4.cs" id="16_03dyi"]
+[ext_resource type="Script" uid="uid://dgl46lh3suf2c" path="res://Resources/Scripts/LevelUI/PlaceButton4.cs" id="16_03dyi"]
 [ext_resource type="Script" uid="uid://g6u2wwsmuesh" path="res://Resources/Scripts/LevelUI/ObjectPicker.cs" id="16_xb7ai"]
 [ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="17_2fydo"]
 [ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="18_okopu"]
