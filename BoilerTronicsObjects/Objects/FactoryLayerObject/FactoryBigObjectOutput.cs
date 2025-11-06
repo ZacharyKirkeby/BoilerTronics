@@ -15,12 +15,14 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		static int layerSourceId = 0;
 		private PlaceableBig parent;
+		private int _ValidObj = 0;
 
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 		
 		public PlaceableObject PickUp() {
+			if (parent is BigMovable bmP) return bmP.RequestObject(_ValidObj, this);
 			return null;
 		}
 		
@@ -30,6 +32,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void SetParent(PlaceableBig newParent) {
 			parent = newParent;
+		}
+
+		public void SetValidObj(int V) {
+			_ValidObj = V;
 		}
 		
 		public FactoryBigObjectOutput(int OGX, int OGY, int altTitle = 0)
