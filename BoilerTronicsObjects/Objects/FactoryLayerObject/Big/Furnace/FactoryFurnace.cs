@@ -147,6 +147,12 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			materialIn.SetParent(this);
 			coalIn.SetParent(this);
 
+			// Set values we use to do the prcess
+			_Fule = 0;
+			_Inv = null;
+			_Working = false;
+			_StepsTillCompletion = 0;
+
 			RegisterSteppable();
 
 			/** The internal refrence to the input nad output objects must be set here **/
@@ -314,7 +320,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		{
 			// If we are working and have fule
 			if (_Working && _Fule > 0) {
-				GD.Print("We be working");
 				// Then we tak a step to completion
 				_StepsTillCompletion--;
 				// And use some fule
