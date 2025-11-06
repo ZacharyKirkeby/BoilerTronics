@@ -40,7 +40,7 @@ public partial class Leaderboard : CenterContainer
 		//leaderboard default values
 		leaderboard = new List<(string, float)>
 		{
-			("You", 100),
+			("You", 0),
 			("Ethan", 99),
 			("Abhi", 80),
 			("Keenan", 70),
