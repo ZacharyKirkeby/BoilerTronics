@@ -152,5 +152,22 @@ namespace BoilerTronicsObjects.Placeable
 				{ "altTitle", 0 },
 			};
 		}
+		
+		// Used for ArrayList.Contains and etc
+		// Not 100% conclusive! Potential edge case is if two objects, identical on the surface level
+		// and sharing the same coordinates, but on different Layers, this will
+		// incorrectly return 'true'!
+		public override bool Equals(object? obj) {
+			if (!(obj is PlaceableObject)) return false;
+			
+			PlaceableObject cObj = (PlaceableObject) obj;
+			
+			return (
+				this.GetOGPos() == cObj.GetOGPos() &&
+				this.GetPos() == cObj.GetPos() &&
+				this.GetSourceID() == cObj.GetSourceID() &&
+				this.GetAtlasPos() == cObj.GetAtlasPos()
+			);
+		}
 	}
 }
