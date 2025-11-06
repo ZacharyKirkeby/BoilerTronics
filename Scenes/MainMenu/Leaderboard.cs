@@ -40,12 +40,13 @@ public partial class Leaderboard : CenterContainer
 		//leaderboard default values
 		leaderboard = new List<(string, float)>
 		{
-			("You", 0),
+			("You", 5),
 			("Ethan", 99),
 			("Abhi", 80),
-			("Keenan", 70),
+			("Keenan", 85),
 			("Zach", 60),
-			("Ethen", 50)
+			("Ethen", 50),
+			("Bob", 200)
 		};
 		
 		// TODO: instead, load leaderboard data from a local save!
@@ -62,7 +63,7 @@ public partial class Leaderboard : CenterContainer
 		*/
 		
 		UpdateLeaderboard();
-		UpdateDisplay();
+		// UpdateDisplay();
 	}
 	private void _on_option_button_item_selected(int index) {
 		
