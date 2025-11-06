@@ -18,7 +18,7 @@ namespace BoilerTronicsObjects.Data {
 			// Floor layer
 			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
 			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
-			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
 			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
 			objectMap.Add(hashCoords(3, new Vector2I(0, 3)), 5);	//factorypress
 			objectMap.Add(hashCoords(3, new Vector2I(0, 2)), 6);	//factoryroller
@@ -67,6 +67,13 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(0, 2)), 253); 	//factoryin - iron plate
 			objectMap.Add(hashCoords(0, new Vector2I(1, 2)), 254); 	//factoryin - iron rod
 			
+			// Output Objects
+			objectMap.Add(hashCoords(0, new Vector2I(1, 1)), 300); 	//factoryout - coal
+			objectMap.Add(hashCoords(0, new Vector2I(2, 1)), 301); 	//factoryout - iron ore
+			objectMap.Add(hashCoords(0, new Vector2I(3, 1)), 302); 	//factoryout - iron bar
+			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 303); 	//factoryout - iron plate
+			objectMap.Add(hashCoords(0, new Vector2I(1, 3)), 304); 	//factoryout - iron rod
+			
 			hasInitializedObjectMap = true;
 		}
 		
@@ -77,6 +84,7 @@ namespace BoilerTronicsObjects.Data {
 		// 150-199:	movement layer
 		// 200-249: items
 		// 250-299: input items (ignoring basic input obj)
+		// 300-349: output items (ignoring basic output obj)
 		
 		// not exactly a perfect system, but so long as no single value exceeds ~1000,
 		// this will return a unique value very time.
@@ -85,6 +93,8 @@ namespace BoilerTronicsObjects.Data {
 			res += atlasPos.X * 1000;
 			res += atlasPos.Y * 1000000;
 			
+			GD.Print("hash coords: input: ", sourceId, ", atlasPos: ", atlasPos);
+			GD.Print("hash coords: output: ", res, "\n");
 			return res;
 		}
 	}

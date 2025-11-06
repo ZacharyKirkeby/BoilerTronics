@@ -82,9 +82,9 @@ namespace BoilerTronicsObjects.Objects
 				case 2:
 					//floordefault
 					return new FloorTileObject(x, y, 0);
-				case 3:
-					//factory machine
-					return new FactoryTestMachine(x, y, 0);
+				// case 3:
+					//factory machine - DISABLED
+					// return new FactoryTestMachine(x, y, 0);
 				case 4:
 					//factory furnace
 					return new FactoryFurnace(x, y, 0);
@@ -166,6 +166,21 @@ namespace BoilerTronicsObjects.Objects
 				case 254:
 					//factoryin - iron rod
 					return new FactoryInputObject(x, y, 0, 204);
+				case 300:
+					//factoryout - coal
+					return new FactoryOutputObject(x, y, 0, 200);
+				case 301:
+					//factoryout - iron ore
+					return new FactoryOutputObject(x, y, 0, 201);
+				case 302:
+					//factoryout - iron bar
+					return new FactoryOutputObject(x, y, 0, 202);
+				case 303:
+					//factoryout - iron plate
+					return new FactoryOutputObject(x, y, 0, 203);
+				case 304:
+					//factoryout - iron rod
+					return new FactoryOutputObject(x, y, 0, 204);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;
