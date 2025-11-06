@@ -19,6 +19,7 @@ namespace BoilerTronicsObjects.Layers
 		
 		// determines if system should render protected tiles or not
 		private bool renderProtectedTiles = false;
+		private bool editProtectedTiles = false;
 		
 		// default layer dimensions, if left unspecified
 		static int startX = 10;
@@ -399,12 +400,22 @@ namespace BoilerTronicsObjects.Layers
 		// Then queues redrawing and etc
 		public void HighlightProtectedTiles(bool toggle) {
 			renderProtectedTiles = toggle;
-			QueueRedraw();
+			
+			// check: is this instance queued for deletion -- needed to mitigate debug spam!
+			if (IsInstanceValid(this)) QueueRedraw();
+		}
+		
+		// Given the value of 'toggle', toggles on/off this layer allowing the editing of protected
+		// tiles via keybinds (i.e. toggle behavior under _Input)
+		public void EditProtectedTiles(bool toggle) {
+			editProtectedTiles = toggle;
 		}
 		
 		public override void _Draw() {
 			// GD.Print("Layer: trying to draw");
 			// GD.Print("Highlight Position: ", highlightTarget);
+			
+			// Highlight a terminal's corresponding object
 			if (highlighting) {
 				Vector2 localPos = MapToLocal(highlightTarget);
 				// TODO: draw efficiently
@@ -431,6 +442,7 @@ namespace BoilerTronicsObjects.Layers
 				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
 			}
 			
+			// Render projected tiles
 			if (renderProtectedTiles) {
 				// GD.Print("protectedList count: ", protectedList.Count);
 				foreach (Vector2I coords in protectedList) {
@@ -440,13 +452,11 @@ namespace BoilerTronicsObjects.Layers
 					Godot.Collections.Array coordinates = new Godot.Collections.Array();
 					
 					// generate a polygonal shape
-					coordinates.Add(new Vector2(-20, -10));
-					coordinates.Add(new Vector2(0, -20));
-					coordinates.Add(new Vector2(20, -10));
-					
-					coordinates.Add(new Vector2(20, 10));
-					coordinates.Add(new Vector2(0, 20));
-					coordinates.Add(new Vector2(-20, 10));
+					int yOffset = 25;
+					coordinates.Add(new Vector2(-20, 	yOffset + -10));
+					coordinates.Add(new Vector2(0, 		yOffset + -20));
+					coordinates.Add(new Vector2(20, 	yOffset + -10));
+					coordinates.Add(new Vector2(0, 		yOffset + 0));
 					
 					Color drawColor = Colors.Blue;
 					float lineWeight = 3.0f;
@@ -574,6 +584,26 @@ namespace BoilerTronicsObjects.Layers
 		public override void _Input(InputEvent @event)
 		{
 			base._Input(@event);
+			
+			// Handle keyboard inputs
+			// Mainly used to handle toggling on/off protected tiles
+			if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+				
+				// get corresponding tile coords, regardless of input
+				Vector2 localMousePos = GetLocalMousePosition();
+				Vector2I tileCoords = LocalToMap(localMousePos);
+				
+				switch (keyEvent.Keycode) {
+					// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
+					case Key.Up:
+						if (!editProtectedTiles) return; // exit immediately if not in "edit procted tiles" mode
+						
+						// toggle protected tile status at mouse position
+						SetTileEditable(tileCoords, !(editableTiles[tileCoords.X, tileCoords.Y]));
+						
+						break;
+				}
+			}
 		}
 
 	}

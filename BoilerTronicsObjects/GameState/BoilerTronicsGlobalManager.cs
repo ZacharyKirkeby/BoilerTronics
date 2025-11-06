@@ -56,6 +56,11 @@ public partial class BoilerTronicsGlobalManager : Node
 	// Update systems accordingly (TODO)
 	public BoilerTronicsSaveState saveState = new BoilerTronicsSaveState();
 	
+	// TODO: used only by the level creator UI
+	// if 'true', then BoilerTronicsLevel will not load level, and will instead create a new level
+	// given the params already in the save state
+	public bool creatingNewLevel = false;
+	
 	// should only ever be used by the level creator UI
 	// i.e. level creator UI should be able to save/load levels of ANY name,
 	// regardless of if the level actually follows the naming scheme (i.e. level#.save)

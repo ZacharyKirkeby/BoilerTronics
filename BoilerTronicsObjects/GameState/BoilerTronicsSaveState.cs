@@ -28,12 +28,15 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 0; // id for which level this save is referring to
 	
+	// TODO: implement into saving/loading
+	public string levelName = "placeholder";
+	
 	// LAZY: this is public now
 	// default: a 50% darker version of the base floor tile, 2 tiles wide
 	public TileTex boundaryTex =  new TileTex(new Vector2I(0, 0), 6);
 	public int boundarySize = 2;
 	
-	private Vector2I levelDimensions;
+	private Vector2I levelDimensions = new Vector2I(20, 20);
 	private LayerInfo liClaw = new LayerInfo();
 	private LayerInfo liFactory = new LayerInfo();
 	private LayerInfo liFloor = new LayerInfo();
