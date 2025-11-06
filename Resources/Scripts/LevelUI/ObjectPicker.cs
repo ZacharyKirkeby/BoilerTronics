@@ -54,6 +54,17 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Furnace", 100, 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
 		new ItemInfo("Roller", 100, 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
 		new ItemInfo("Press", 100, 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true),
+		
+		new ItemInfo("Coal In", 0, 2, 0, new Vector2I(1,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Ore In", 0, 2, 0, new Vector2I(2,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Bar In", 0, 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Plate In", 0, 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Rod In", 0, 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false),
+		new ItemInfo("Coal Out", 0, 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Ore Out", 0, 2, 0, new Vector2I(2,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Bar Out", 0, 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Plate Out", 0, 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false),
+		new ItemInfo("Iron Rod Out", 0, 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false),
 	};
 
 	static ItemInfo[] DeveloperSection =
