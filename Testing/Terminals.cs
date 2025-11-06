@@ -82,6 +82,9 @@ public partial class Terminals : TabContainer
             {
 				//set error state higher up
 				manager.currLevel.E.setError(true);
+            } else
+            {
+                manager.currLevel.E.setError(false);
             }
 			
 			// Check if Enter/Return was pressed (new line) - trigger validation
@@ -117,7 +120,10 @@ public partial class Terminals : TabContainer
 				//set error state higher up
 				manager.currLevel.E.setError(true);
 
-			}
+			} else
+            {
+                manager.currLevel.E.setError(false);
+            }
 		}
 	}
 
