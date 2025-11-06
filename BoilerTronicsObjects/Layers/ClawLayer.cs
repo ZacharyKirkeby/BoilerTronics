@@ -14,12 +14,20 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// TODO: add code to verify that this is the correct type of object
 			base.AddObject(newPlaceable);
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public override void RemoveObject(PlaceableObject objectToRemove)
 		{
 			// TODO: add code to verify that this is the correct type of object
 			base.RemoveObject(objectToRemove);
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public override void _Input(InputEvent @event)
