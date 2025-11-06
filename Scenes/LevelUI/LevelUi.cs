@@ -60,7 +60,7 @@ public partial class LevelUi : Node2D
 	public override void _Ready()
 	{
 		// GD.Print(GetPath());
-		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
+		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
 		
 		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
 		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
@@ -74,21 +74,8 @@ public partial class LevelUi : Node2D
 		clearZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Clear 0");
 		clearOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Clear 1");
 		clearTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Clear 2");
-
-		sbf.BgColor = new Color(1, 0, 0);
-		sbf.BorderColor = new Color(0, 0, 0);
-		sbf.SetBorderWidthAll(3);
-		sbf.SetCornerRadiusAll(20);
-		sbfh = sbf.Duplicate() as StyleBoxFlat;
-		sbfh.BorderColor = new Color(1, 1, 1);
-		sbe.BgColor = new Color(0, 0.7f, 0);
-		sbe.BorderColor = new Color(0, 0, 0);
-		sbe.SetBorderWidthAll(3);
-		sbe.SetCornerRadiusAll(20);
-		sbeh = sbe.Duplicate() as StyleBoxFlat;
-		sbeh.BorderColor = new Color(1, 1, 1);
 		
-		costCountLabel = GetNode<Label>("%Cost Count");
+		costCountLabel = GetNodeOrNull<Label>("%Cost Count");
 		
 
 		FullSaveButtonTheme.BgColor = new Color(1, 0, 0);
@@ -108,22 +95,23 @@ public partial class LevelUi : Node2D
 		pauseButton = GetNode<Button>("%Pause Button");
 		
 		/* Statistics Labels */
-		ppsCutoffLabel = GetNode<Label>("%PPS Cutoff");
-		ppsSolutionLabel = GetNode<Label>("%PPS Solution");
-		ppsGradeLabel = GetNode<Label>("%PPS Grade");
-		ppsDifferenceLabel = GetNode<Label>("%PPS Difference");
+		// TODO: Using 'GetNodeOrNull' because the level creator is still missing this content!
+		ppsCutoffLabel = GetNodeOrNull<Label>("%PPS Cutoff");
+		ppsSolutionLabel = GetNodeOrNull<Label>("%PPS Solution");
+		ppsGradeLabel = GetNodeOrNull<Label>("%PPS Grade");
+		ppsDifferenceLabel = GetNodeOrNull<Label>("%PPS Difference");
 		
-		costCutoffLabel = GetNode<Label>("%Cost Cutoff");
-		costSolutionLabel = GetNode<Label>("%Cost Solution");
-		costGradeLabel = GetNode<Label>("%Cost Grade");
-		costDifferenceLabel = GetNode<Label>("%Cost Difference");
+		costCutoffLabel = GetNodeOrNull<Label>("%Cost Cutoff");
+		costSolutionLabel = GetNodeOrNull<Label>("%Cost Solution");
+		costGradeLabel = GetNodeOrNull<Label>("%Cost Grade");
+		costDifferenceLabel = GetNodeOrNull<Label>("%Cost Difference");
 		
-		stepsCutoffLabel = GetNode<Label>("%Steps Cutoff");
-		stepsSolutionLabel = GetNode<Label>("%Steps Solution");
-		stepsGradeLabel = GetNode<Label>("%Steps Grade");
-		stepsDifferenceLabel = GetNode<Label>("%Steps Difference");
+		stepsCutoffLabel = GetNodeOrNull<Label>("%Steps Cutoff");
+		stepsSolutionLabel = GetNodeOrNull<Label>("%Steps Solution");
+		stepsGradeLabel = GetNodeOrNull<Label>("%Steps Grade");
+		stepsDifferenceLabel = GetNodeOrNull<Label>("%Steps Difference");
 		
-		playButton = GetNode<Button>("%Play Button");
+		playButton = GetNodeOrNull<Button>("%Play Button");
 
 		// manager.SetDraggable(false); // debug; testing script
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
