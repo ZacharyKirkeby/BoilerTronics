@@ -10,6 +10,9 @@ using BoilerTronicsObjects.Data;
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FactoryOutputObject : PlaceableObject, Movable {
+		
+		public override int GetCost() { return 0; }
+		public new static int GetCostStatic() { return 0; }
 
 		/*
 		 * Ideas that could work to make the output better:
@@ -43,7 +46,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			GD.Print("Recived: ", objID);
 			if (objID == _TargetObjectID) _CurrNum--;
 			GD.Print("Objects Left: ", _CurrNum);
-			if (_CurrNum == 0) GD.Print("You Won!"); // this will be a function call to the level later
+			if (_CurrNum == 0) {
+				GD.Print("You Won!"); // this will be a function call to the level later
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.UpdateSolutionStats();
+			}
 			return true;
 		}
 
@@ -55,6 +62,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void setTargetNum(int newNum) {
 			_TargetNum = newNum;
+			_CurrNum = newNum;
 		}
 
 		public int getTargetNum() {
