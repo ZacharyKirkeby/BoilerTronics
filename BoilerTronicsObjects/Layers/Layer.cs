@@ -33,7 +33,7 @@ namespace BoilerTronicsObjects.Layers
 		
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
-		ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
+		protected ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
@@ -502,11 +502,23 @@ namespace BoilerTronicsObjects.Layers
 					// make sure nothing is there already
 					if (objAtPos != null || !validPos) {
 						// reset so we don't place accidently
-						GD.Print("Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
+						GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 						manager.placingObject = 0;
 
 						if (manager.objectToMove != null) {
 							AddObject(manager.objectToMove); // move the object back to it's original position
+							
+							// handle cases where freshly spawned scriptable objects still create
+							// a terminal, even if they should have been destroyed.
+							if (!objectList.Contains(manager.objectToMove)) {
+								if (manager.objectToMove is Scriptable) {
+									GD.Print("Layer.cs: Destroying Terminal");
+									((Scriptable) manager.objectToMove).DestroyTerminal();
+								}
+							}
+							
+							
+							// GD.Print("Layer.cs: objectToMove: ", manager.objectToMove);
 							manager.objectToMove = null;
 						}
 
