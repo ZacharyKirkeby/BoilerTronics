@@ -259,7 +259,16 @@ namespace BoilerTronicsObjects.Layers
 			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
 
-			int costToAdd = 0;
+			int costToAdd = newPlaceable.GetCost();
+			if (costToAdd > 0) {
+				GD.Print("Layer.cs: cost to add > 0, obj: ", newPlaceable);
+			}
+			
+			if (newPlaceable is FactoryOutputObject ) {
+				manager.currLevel.targetProduction = ((FactoryOutputObject) newPlaceable).getTargetNum();
+				GD.Print("Layer.cs: found FactoryOutputObject, overriding manager.currLevel.targetProduction " + manager.currLevel.targetProduction);
+			}
+			/*
 			switch (newPlaceable)
 			{
 				case ClawObject:
@@ -279,16 +288,17 @@ namespace BoilerTronicsObjects.Layers
 					break;
 				case FactoryOutputObject f:
 					costToAdd = 100;
-					BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-					if (manager.currLevel != null) {
-						f.setTargetNum(manager.currLevel.targetProduction);
-						GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
-					}
+					// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+					// if (manager.currLevel != null) {
+						// f.setTargetNum(manager.currLevel.targetProduction);
+						// GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
+					// }
 					break;
 				default:
 					costToAdd = 0;
 					break;
 			}
+			*/
 
 			GD.Print(GetPath());
 			manager.currLevel.UpdateCost(costToAdd);

@@ -10,6 +10,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 	public class ConveyorObject : PlaceableObject {
 
+		public override int GetCost() { return 100; }
+		public new static int GetCostStatic() { return 100; }
+
 		int direction; // 0 = left; 1 = right;
 
 		public const int Left = 0;

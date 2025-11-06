@@ -10,6 +10,9 @@ using BoilerTronicsObjects.Interfaces;
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 	public class ConveyorRotatorObject : PlaceableObject, Scriptable, Runnable {
+		
+		public override int GetCost() { return 100; }
+		public new static int GetCostStatic() { return 100; }
 
 		static int layerSourceId = 2;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
