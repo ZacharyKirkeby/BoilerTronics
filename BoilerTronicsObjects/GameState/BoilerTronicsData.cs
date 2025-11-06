@@ -93,8 +93,8 @@ namespace BoilerTronicsObjects.Data {
 			res += atlasPos.X * 1000;
 			res += atlasPos.Y * 1000000;
 			
-			GD.Print("hash coords: input: ", sourceId, ", atlasPos: ", atlasPos);
-			GD.Print("hash coords: output: ", res, "\n");
+			// GD.Print("hash coords: input: ", sourceId, ", atlasPos: ", atlasPos);
+			// GD.Print("hash coords: output: ", res, "\n");
 			return res;
 		}
 	}
