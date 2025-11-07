@@ -177,16 +177,16 @@ theme = ExtResource("3_w5buf")
 theme_override_constants/separation = 20
 
 [node name="Panel" type="Panel" parent="SettingsMenu/VBoxContainer"]
-custom_minimum_size = Vector2(1100, 500)
+custom_minimum_size = Vector2(1100, 550)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_t1dhk")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="SettingsMenu/VBoxContainer/Panel"]
 layout_mode = 0
 offset_left = 211.0
-offset_top = 42.0
+offset_top = 20.0
 offset_right = 856.0
-offset_bottom = 420.0
+offset_bottom = 520.0
 theme_override_constants/separation = 150
 
 [node name="Settings" type="Label" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer"]
@@ -242,6 +242,12 @@ theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 50
 text = "Fullscreen"
 alignment = 1
+
+[node name="OpenPDF" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Open Manual (PDF)"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -571,3 +577,4 @@ script = ExtResource("12_rlg4b")
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]

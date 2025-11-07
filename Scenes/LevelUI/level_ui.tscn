@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=63 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
@@ -25,6 +25,8 @@
 [ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="17_l4peq"]
 [ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="18_oen8g"]
 [ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="19_g4s26"]
+[ext_resource type="Texture2D" uid="uid://bwkfrqjmrfgmo" path="res://Resources/Icons/arrow-left-2.png" id="23_uqjh5"]
+[ext_resource type="Texture2D" uid="uid://b3n57xvq1tw8s" path="res://Resources/Icons/arrow-right-2.png" id="24_bsnj2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -1036,8 +1038,183 @@ text = "Claw"
 layout_mode = 2
 size_flags_horizontal = 4
 button_pressed = true
-text = "Factory
-"
+text = "Factory"
+
+[node name="HintsWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Hints"
+initial_position = 1
+size = Vector2i(600, 300)
+visible = false
+
+[node name="CenterContainer" type="CenterContainer" parent="HintsWindow"]
+custom_minimum_size = Vector2(600, 300)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HintsWindow/CenterContainer"]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+
+[node name="HintBack" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 40
+icon = ExtResource("23_uqjh5")
+
+[node name="HintLabel" type="Label" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xc2rq")
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HintForward" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 40
+icon = ExtResource("24_bsnj2")
+
+[node name="ManualWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Reference Manual"
+initial_position = 1
+size = Vector2i(900, 700)
+visible = false
+
+[node name="TabContainer" type="TabContainer" parent="ManualWindow"]
+offset_right = 900.0
+offset_bottom = 700.0
+current_tab = 0
+
+[node name="Arithmetic" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Arithmetic"]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[font_size=24][b]Arithmetic Instructions[/b][/font_size]
+
+[code]add <op1> <op2>
+sub <op1> <op2>
+mul <op1> <op2>
+div <op1> <op2>
+cmp <op1> <op2>[/code]
+
+[font_size=18][b]CMP Result:[/b][/font_size]
+  [code]cmp = 0[/code]  if op1 = op2
+  [code]cmp = -1[/code] if op1 < op2
+  [code]cmp = 1[/code]  if op1 > op2"
+fit_content = true
+
+[node name="Registers" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Registers"]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[font_size=24][b]Registers[/b][/font_size]
+
+[font_size=18][b]r0[/b][/font_size]
+  Primary accumulator register (arithmetic results)
+
+[font_size=18][b]r1[/b][/font_size]
+  General-purpose register
+
+[font_size=18][b]r2[/b][/font_size]
+  General-purpose register
+
+[font_size=18][b]cmp[/b][/font_size]
+  Comparison result register:
+  [code]-1[/code] (less), [code]0[/code] (equal), [code]1[/code] (greater)"
+fit_content = true
+
+[node name="Control Flow" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Control Flow"]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[font_size=24][b]Control Flow Instructions[/b][/font_size]
+
+[code]jmp <label>[/code]
+  Unconditional jump to label
+
+[code]jeq <label>[/code]
+  Jump if cmp == 0
+
+[code]jne <label>[/code]
+  Jump if cmp != 0
+
+[code]jgt <label>[/code]
+  Jump if cmp > 0
+
+[code]jlt <label>[/code]
+  Jump if cmp < 0
+
+[code]jge <label>[/code]
+  Jump if cmp >= 0
+
+[code]jle <label>[/code]
+  Jump if cmp <= 0"
+fit_content = true
+
+[node name="Instructions" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Instructions"]
+custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[font_size=24][b]Step-Consuming Instructions[/b][/font_size]
+
+These instructions consume one simulation step:
+
+- [code]mov [l|r|u|d][/code] - Move in direction
+- [code]rot [l|r][/code] - Rotate left/right
+- [code]grb[/code] - Grab object
+- [code]drp[/code] - Drop object
+- [code]swt[/code] - Switch/toggle
+- [code]wait[/code] - Wait one step
+
+
+[font_size=24][b]Free Instructions[/b][/font_size]
+
+These instructions execute instantly (no step cost):
+
+[font_size=18][b]Arithmetic:[/b][/font_size]
+- [code]add[/code], [code]sub[/code], [code]mul[/code], [code]div[/code], [code]cmp[/code]
+
+[font_size=18][b]Control Flow:[/b][/font_size]
+- [code]jmp[/code], [code]jeq[/code], [code]jne[/code], [code]jgt[/code]
+- [code]jlt[/code], [code]jge[/code], [code]jle[/code]
+
+[font_size=18][b]Other:[/b][/font_size]
+- [code]wrt[/code] - Write to output"
+fit_content = true
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
@@ -1051,6 +1228,8 @@ text = "Factory
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/VisibilityButton" to="." method="_on_visibility_button_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Hints" to="." method="_on_hints_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
@@ -1068,3 +1247,7 @@ text = "Factory
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/MovementVisibility" to="." method="_on_movement_visibility_toggled"]
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/ClawVisibility" to="." method="_on_claw_visibility_toggled"]
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/FactoryVisibility" to="." method="_on_factory_visibility_toggled"]
+[connection signal="close_requested" from="HintsWindow" to="." method="_on_hints_window_close_requested"]
+[connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
+[connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
+[connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]

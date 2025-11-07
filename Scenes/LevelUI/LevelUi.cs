@@ -57,6 +57,31 @@ public partial class LevelUi : Node2D
 	private Texture2D playIcon;
 	private Texture2D submitIcon;
 
+	private int hintIndex = 0;
+	private String[] hints =
+	{
+		"Sometimes you cannot place machinery on certain areas of the map",
+		"Poor Quality machines are subject to memory corruption",
+		"Null values are not your friends",
+		"If your code won't compile, try reading!",
+		"Control flow structures like loops sometimes help with code complexity",
+		"If you can't hear anything, check your volume!",
+		"Have you considered more interchangable code",
+		"Struggling with what to do in the level? Try reading the hints!",
+		"Unsure how to approach a problem? Don't fail CS 307!",
+		"Some machinery cannot do the same things that other machines do",
+		"Some materials are worse than they seem",
+		"More expensive machinery comes with programatic benefits",
+		"Sometimes it may be hard to solve your problems if you are on fent",
+		"Try Caffiene Instead!",
+		"Higher quality machines will lead to more stable memory",
+		"Avoid crashing",
+		"Have you tried using loops?",
+		"Have you tried using arithmetic operations",
+		"Have you tried not using loops?",
+		"If you see too big of a button, make sure you aren't deleting 67085 lines of code"
+	};
+
 	public override void _Ready()
 	{
 		// GD.Print(GetPath());
@@ -155,9 +180,10 @@ public partial class LevelUi : Node2D
 		
 		// link this to the manager
 		manager.levelUi = this;
-		
+
 		// update level name
 		UpdateTitle(manager.saveState.levelName);
+	
 	}
 
 	public override void _Process(double delta) {
@@ -172,7 +198,7 @@ public partial class LevelUi : Node2D
 		titleLabel.Text = input;
 	}
 
-	/* Button Fuctions */
+	/* Button Functions */
 
 	private void _on_open_button_pressed() {
 		GetNode<AnimationPlayer>("MainVBox/TerminalLevelSplit/LevelToolbarContainer/CanvasLayer/VerticalButtonTray/AnimationPlayer").Play("tray_open");
@@ -221,7 +247,6 @@ public partial class LevelUi : Node2D
 		playButton.Text = ""; // Remove text
 		playButton.Icon = playIcon;
 	}
-
 	//called in test script to have access to auto resetting
 	private void _on_step_button_pressed() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -651,6 +676,30 @@ public partial class LevelUi : Node2D
 		button.AddThemeStyleboxOverride("focus", EmptySaveButtonTheme);
 	}
 
+	private void _on_hints_pressed()
+	{
+		GetNode<Button>("%HintBack").Visible = false;
+		GetNode<Button>("%HintForward").Visible = true;
+		GetNode<Label>("%HintLabel").Text = hints[0];
+		GetNode<Window>("%HintsWindow").Visible = true;
+	}
+	private void _on_hints_window_close_requested()
+	{
+		GetNode<Window>("%HintsWindow").Visible = false;
+	}
+	private void _on_hint_back_pressed()
+	{
+		// my way
+		hintIndex--;
+		UpdateHintDisplay();
+	}
+	private void _on_hint_forward_pressed()
+	{
+		// i like thisway better
+		hintIndex++;
+		UpdateHintDisplay();
+		
+	}
 	/* Testing Functions */
 
 	//called in test script to have access to auto stepping
@@ -658,8 +707,26 @@ public partial class LevelUi : Node2D
 		_on_step_button_pressed();
 	}
 
-	public void simulateReset() {
+	public void simulateReset()
+	{
 		_on_reset_button_pressed();
 	}
+	private void _on_documentation_pressed()
+	{
+		GetNode<Window>("%ManualWindow").Visible = true;
+	}
 
+	private void _on_manual_window_close_requested()
+	{
+		GetNode<Window>("%ManualWindow").Visible = false;
+	}
+
+	private void UpdateHintDisplay()
+	{
+		GetNode<Label>("%HintLabel").Text = hints[hintIndex];
+
+		// Toggle button visibility
+		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
+		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
+	}
 }
