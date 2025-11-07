@@ -34,3 +34,7 @@ window/stretch/mode="canvas_items"
 [dotnet]
 
 project/assembly_name="BoilerTronics"
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.18000486, 0.1800049, 0.1800048, 1)
