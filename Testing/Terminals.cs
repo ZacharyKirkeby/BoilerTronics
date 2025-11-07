@@ -84,13 +84,22 @@ public partial class Terminals : TabContainer
 			{
 				CallDeferred(nameof(ValidateCurrentEditor), "newline");
 				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
 			}
-			
+
 			// Check if up/down arrow (line selection change) - trigger validation
 			if (keyEvent.Keycode == Key.Up || keyEvent.Keycode == Key.Down)
 			{
 				CallDeferred(nameof(ValidateCurrentEditor), "navigation");
 				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
+			}
+
+			else if (keyEvent.Keycode == Key.Backspace || keyEvent.Keycode == Key.Delete)
+			{
+				CallDeferred(nameof(ValidateCurrentEditor), "deletion");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
 			}
 
 			long unicode = keyEvent.Unicode;
@@ -123,7 +132,10 @@ public partial class Terminals : TabContainer
 			else if (trigger == "navigation")
 			{
 				currentEditor.OnLineNavigation();
-			}
+			} else if (trigger == "deletion")
+            {
+				currentEditor.OnDeletion();
+            }
 			else
 			{
 				currentEditor.ValidateAndHighlight();
