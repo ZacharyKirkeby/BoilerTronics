@@ -80,14 +80,23 @@ public partial class MainMenu : Node2D
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		soundManager.SetCurrentVolume(val);
 	}
-	
+
 	private void _on_mute_pressed()
 	{
 		//move slider to 0
 		var slider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		slider.Value = 0;
-		
+
 		//actually make volume 0
 		_on_main_vol_slider_value_changed(0);
+	}
+
+	private void _on_open_pdf_pressed()
+	{
+		string pdfPath = "res://docs/AssemblyManual.pdf";
+		if (FileAccess.FileExists(pdfPath))
+			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
+		else
+			GD.PrintErr($"PDF not found: {pdfPath}");
 	}
 }
