@@ -118,7 +118,7 @@ public partial class LevelUi : Node2D
 
 		// Starts on first hint
 		GetNode<Button>("%HintBack").Visible = false;
-		
+		GetNode<Label>("%HintLabel").Text = "First Hint";
 
 	}
 
@@ -481,12 +481,15 @@ public partial class LevelUi : Node2D
 	{
 		/* TODO: Zach if this causes u to be on hint one make button invisible 
 				populate last hint */
+		/* GetNode<Label>("%HintLabel").Text = hintarray[i-1];
+		if i = 1 then GetNode<Button>("%HintBack").Visible = false; */
 	}
 	private void _on_hint_forward_pressed()
 	{
 		/* TODO: Zach if this causes u to be on last hint make button invisible
 			populate next hint */
-		
+		/* GetNode<Label>("%HintLabel").Text = hintarray[i+1]; 
+		if i = hintarray.size() then GetNode<Button>("%HintForward").Visible = false; */
 	}
 	/* Testing Functions */
 
