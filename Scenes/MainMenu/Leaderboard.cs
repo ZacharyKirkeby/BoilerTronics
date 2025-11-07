@@ -296,7 +296,7 @@ public partial class Leaderboard : CenterContainer
 	
 	// Load the user's score (just one!)
 	// Returns if successfully retreived or not
-	public bool LoadScore(int levelId, List<(string, float)> scoreList) {
+	public static bool LoadScore(int levelId, List<(string, float)> scoreList) {
 		string SavePath = "user://Leaderboard/leaderboard" + levelId + ".leaderboard";
 		
 		if (!FileAccess.FileExists(SavePath)) {

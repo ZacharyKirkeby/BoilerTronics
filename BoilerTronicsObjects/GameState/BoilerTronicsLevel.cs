@@ -265,6 +265,15 @@ public partial class BoilerTronicsLevel : Node2D
 		x = startingDim.X;
 		y = startingDim.Y;
 		
+		// try and load the user's best saved score
+		List<(string name, float score)> retrievedScore = new List<(string, float)>();
+		bool gotScore = Leaderboard.LoadScore(manager.GetLevelID(), retrievedScore);
+		if (!gotScore) {
+			this.bestScore = 0;
+		} else {
+			this.bestScore = retrievedScore[0].score;
+		}
+		
 		
 
 		// For stepping and level interactions
