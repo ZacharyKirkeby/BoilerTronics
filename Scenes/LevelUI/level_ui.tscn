@@ -1068,3 +1068,8 @@ text = "Factory
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/MovementVisibility" to="." method="_on_movement_visibility_toggled"]
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/ClawVisibility" to="." method="_on_claw_visibility_toggled"]
 [connection signal="toggled" from="VisibilityWindow/VBoxContainer/FactoryVisibility" to="." method="_on_factory_visibility_toggled"]
+[connection signal="close_requested" from="HintsWindow" to="." method="_on_hints_window_close_requested"]
+[connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
+[connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
+[connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
