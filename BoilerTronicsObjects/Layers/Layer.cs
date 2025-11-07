@@ -121,8 +121,7 @@ namespace BoilerTronicsObjects.Layers
 		// returns if operation was successful
 		public bool SetTileEditable(Vector2I coordinates, bool value) {
 			// check if OOB
-			if (coordinates.X > maxX || coordinates.Y > maxY) { return false; }
-			if (coordinates.X < 0 || coordinates.Y < 0) { return false; }
+			if (!CheckInBounds(coordinates.X, coordinates.Y)) return false;
 			
 			// if not OOB, then set value
 			editableTiles[coordinates.X, coordinates.Y] = value;
@@ -147,10 +146,15 @@ namespace BoilerTronicsObjects.Layers
 			
 			return true;
 		}
+		
+		// check coordinates are within layer bounds
+		public bool CheckInBounds(int X, int Y) {
+			return !(X < 0 || X > maxX || Y < 0 || Y > maxY);
+		}
 
 		public bool CheckValidPos(int X, int Y)
 		{
-			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!CheckInBounds(X, Y)) return false;
 			if (!editableTiles[X, Y]) return false;
 			return true;
 		}
@@ -159,7 +163,7 @@ namespace BoilerTronicsObjects.Layers
 		public bool CheckValidPos(int X, int Y, PlaceableBig obj)
 		{
 			// check base origin point
-			if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+			if (!CheckInBounds(X, Y)) return false;
 			if (!editableTiles[X, Y]) return false;
 			
 			Vector2I objOrigin = new Vector2I(X, Y);
@@ -171,7 +175,7 @@ namespace BoilerTronicsObjects.Layers
 				X = dataCoords.X;
 				Y = dataCoords.Y;
 				// GD.Print("CheckValidPos: PlaceableBig case: ", dataCoords);
-				if (X < 0 || X > maxX || Y < 0 || Y > maxY) return false;
+				if (!CheckInBounds(X, Y)) return false;
 				if (!editableTiles[X, Y]) return false;
 			}
 			
@@ -370,10 +374,10 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		// returns the reference to the object at 'loc' position
-		// returns 'null' if object either does not exist, or 'loc' is OOB.
+		// returns 'null' if object either does not exist, or if 'loc' is OOB.
 		public virtual PlaceableObject FindObject(Vector2I loc)
 		{
-			if (!CheckValidPos(loc.X, loc.Y) ) return null;
+			if (!CheckInBounds(loc.X, loc.Y)) return null;
 			return tiles[loc.X, loc.Y];
 		}
 		
@@ -383,9 +387,8 @@ namespace BoilerTronicsObjects.Layers
 		// otherwise, returns the first tile occupied by an object other than the 'PlaceableBig' within its tiles (i.e. PlaceableBigData's stuff)
 		public virtual PlaceableObject FindObject(Vector2I loc, PlaceableBig obj)
 		{	
-			// TODO: AddObject updated to already perform 'CheckValidPos' before 'FindObject' is called
-			// should this still be executed or should this below call be removed for performance optimization?
-			if (!CheckValidPos(loc.X, loc.Y, obj) ) return null;
+			// verify coordinates are within bounds
+			if (!CheckInBounds(loc.X, loc.Y)) {return null;}
 			
 			// iterate through 'obj' texture grid
 			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
