@@ -8,6 +8,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
 	public class TrackObject : PlaceableObject {
 		
+		public override int GetCost() { return 100; }
+		public new static int GetCostStatic() { return 100; }
+		
 		static int layerSourceId = 1;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer
 		// and every layer will have their own sprite sheet. Consequently, layer-specific

@@ -15,10 +15,18 @@ namespace BoilerTronicsObjects.Layers
 
 		public MovementLayer(int x, int y) : base(x,y) {
 			ConvGroupList = new ArrayList(); // Create a list of groups
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public MovementLayer() : base() {
 			ConvGroupList = new ArrayList(); // Create a list of groups
+			
+			// handle offsets for rendering protected tiles
+			yRenderProtectedTileOffset = 10;
+			protectedToggleMouseOffset = new Vector2(0f, -0f);
 		}
 
 		public ConveyorGroup GetGroup(ConveyorObject cObj) {
@@ -122,6 +130,7 @@ namespace BoilerTronicsObjects.Layers
 				GD.Print("Num Groups: ", ConvGroupList.Count);
 			}
 		}
+		
 
 		public override void _Input(InputEvent @event)
 		{

@@ -77,9 +77,9 @@ public partial class CodeEdit : Godot.CodeEdit
 	}
 
 	public PlaceableObject getObject()
-    {
+	{
 		return this.correspondingObject;
-    }
+	}
 	
 	// custom function, called by Terminals.cs
 	// intention is to use this function to check if 'correspondingObject' exists

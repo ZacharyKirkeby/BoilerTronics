@@ -7,6 +7,10 @@ namespace BoilerTronicsObjects.Placeable
 {
 	public abstract class PlaceableObject
 	{
+		// keep track of prices
+		public virtual int GetCost() { return 0; }
+		public static int GetCostStatic() { return 0; } // should be overwritten in children via 'new' keyword
+		
 		// Values used to keep track of the position of the object and what sprite it is
 		int OGX { get; set; }
 		int OGY { get; set; }

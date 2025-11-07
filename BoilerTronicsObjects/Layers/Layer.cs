@@ -6,6 +6,9 @@ using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.GameCamera;
 using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 
 namespace BoilerTronicsObjects.Layers
 {
@@ -179,6 +182,7 @@ namespace BoilerTronicsObjects.Layers
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
 			// reset layer transparency
+			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
 			manager.layerFactory.Modulate = new Color(1, 1, 1, 1);
 			manager.layerFloor.Modulate = new Color(1, 1, 1, 1);
@@ -251,6 +255,54 @@ namespace BoilerTronicsObjects.Layers
 			newPlaceable.SetParentLayer(this);
 			
 			numItems++;
+
+			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = newPlaceable.GetCost();
+			if (costToAdd > 0) {
+				GD.Print("Layer.cs: cost to add > 0, obj: ", newPlaceable);
+			}
+			
+			if (newPlaceable is FactoryOutputObject ) {
+				manager.currLevel.targetProduction = ((FactoryOutputObject) newPlaceable).getTargetNum();
+				GD.Print("Layer.cs: found FactoryOutputObject, overriding manager.currLevel.targetProduction " + manager.currLevel.targetProduction);
+			}
+			/*
+			switch (newPlaceable)
+			{
+				case ClawObject:
+					costToAdd = 100;
+					break;
+				case TrackObject:
+					costToAdd = 100;
+					break;
+				case ConveyorObject:
+					costToAdd = 100;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = 100;
+					break;
+				case FactoryInputObject:
+					costToAdd = 100;
+					break;
+				case FactoryOutputObject f:
+					costToAdd = 100;
+					// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+					// if (manager.currLevel != null) {
+						// f.setTargetNum(manager.currLevel.targetProduction);
+						// GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
+					// }
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+			*/
+
+			GD.Print(GetPath());
+			manager.currLevel.UpdateCost(costToAdd);
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		// system also should properly handle PlaceableBig objects
@@ -282,6 +334,39 @@ namespace BoilerTronicsObjects.Layers
 			}
 			
 			numItems--;
+			
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = 0;
+			switch (objectToRemove)
+			{
+				case ClawObject:
+					costToAdd = -100;
+					break;
+				case TrackObject:
+					costToAdd = -100;
+					break;
+				case ConveyorObject:
+					costToAdd = -100;
+					break;
+				case ConveyorRotatorObject:
+					costToAdd = -100;
+					break;
+				case FactoryInputObject:
+					costToAdd = -100;
+					break;
+				case FactoryOutputObject:
+					costToAdd = -100;
+					break;
+				default:
+					costToAdd = 0;
+					break;
+			}
+
+			GD.Print("deleting object");
+			manager.currLevel.UpdateCost(costToAdd);
+			ui?.UpdateCost(manager.currLevel.cost);
 		}
 
 		// returns the reference to the object at 'loc' position
@@ -444,30 +529,40 @@ namespace BoilerTronicsObjects.Layers
 			
 			// Render projected tiles
 			if (renderProtectedTiles) {
-				// GD.Print("protectedList count: ", protectedList.Count);
-				foreach (Vector2I coords in protectedList) {
-					Vector2 localPos = MapToLocal(coords);
-					// TODO: draw efficiently
-					// for now, just create an array of Vector2
-					Godot.Collections.Array coordinates = new Godot.Collections.Array();
-					
-					// generate a polygonal shape
-					int yOffset = 25;
-					coordinates.Add(new Vector2(-20, 	yOffset + -10));
-					coordinates.Add(new Vector2(0, 		yOffset + -20));
-					coordinates.Add(new Vector2(20, 	yOffset + -10));
-					coordinates.Add(new Vector2(0, 		yOffset + 0));
-					
-					Color drawColor = Colors.Blue;
-					float lineWeight = 3.0f;
-					
-					// draw connecting from 'i-1' to 'i'
-					for (int i = 1; i < coordinates.Count; i++) {
-						DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
-					}
-					// draw from 'maxI' to 'minI'
-					DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
+				RenderProtectedTiles();
+			}
+		}
+		
+		
+		// specific, configuration y-offset for the below function
+		protected int yRenderProtectedTileOffset = 25;
+		
+		// the function that actually renders protected tiles
+		// "virtual" so offsets can be handled better by unique cases
+		public virtual void RenderProtectedTiles() {
+			// GD.Print("protectedList count: ", protectedList.Count);
+			foreach (Vector2I coords in protectedList) {
+				Vector2 localPos = MapToLocal(coords);
+				// TODO: draw efficiently
+				// for now, just create an array of Vector2
+				Godot.Collections.Array coordinates = new Godot.Collections.Array();
+				
+				// generate a polygonal shape
+				int yOffset = yRenderProtectedTileOffset;
+				coordinates.Add(new Vector2(-18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + -18));
+				coordinates.Add(new Vector2(18, 	yOffset + -9));
+				coordinates.Add(new Vector2(0, 		yOffset + 0));
+				
+				Color drawColor = Colors.Blue;
+				float lineWeight = 3.0f;
+				
+				// draw connecting from 'i-1' to 'i'
+				for (int i = 1; i < coordinates.Count; i++) {
+					DrawLine(localPos + (Vector2) coordinates[i-1], localPos + (Vector2) coordinates[i], drawColor, lineWeight);
 				}
+				// draw from 'maxI' to 'minI'
+				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
 			}
 		}
 
@@ -546,10 +641,12 @@ namespace BoilerTronicsObjects.Layers
 				// Left mouse click on a spot where an object exitsts
 				// Handles creating a new draggable object when clicking on a tile
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
-					&& allowDrag) {
+					&& allowDrag)
+				{
 
 					// we don't went to do anything if we can;t find anything there
-					if (objAtPos == null) {
+					if (objAtPos == null)
+					{
 						return;
 					}
 
@@ -573,18 +670,20 @@ namespace BoilerTronicsObjects.Layers
 					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
 
 					manager.placingObject = 1;
-					
+
 					// when picking up an object, be sure to modulate the 
 					// LAZY: modulate all layers
 					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
 					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
 					manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
 					manager.layerRail.Modulate = manager.layerDeselectedVisibility;
-					
+
 					// unmodulate this layer
 					this.Modulate = manager.layerDefaultVisibility;
-					
-				} else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed()) {
+
+				}
+				else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed())
+				{
 					// We want to delete
 					if (objAtPos != null) RemoveObject(objAtPos);
 					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
@@ -593,6 +692,10 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		// very specific variable for a very specific purpose:
+		// by introducing an offset to the mouse cursor, we can pick a tile that better selects a tile at where the cursor is *actually* looking at
+		protected Vector2 protectedToggleMouseOffset = new Vector2(0f, -10f);
+		
 		public override void _Input(InputEvent @event)
 		{
 			base._Input(@event);
@@ -601,13 +704,14 @@ namespace BoilerTronicsObjects.Layers
 			// Mainly used to handle toggling on/off protected tiles
 			if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
 				
-				// get corresponding tile coords, regardless of input
-				Vector2 localMousePos = GetLocalMousePosition();
-				Vector2I tileCoords = LocalToMap(localMousePos);
-				
 				switch (keyEvent.Keycode) {
 					// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
 					case Key.Up:
+						
+						// slightly offset the mouse position to get a better selected tile
+						Vector2 localMousePos = GetLocalMousePosition() + protectedToggleMouseOffset;
+						Vector2I tileCoords = LocalToMap(localMousePos);
+						
 						if (!editProtectedTiles) return; // exit immediately if not in "edit procted tiles" mode
 						
 						// toggle protected tile status at mouse position

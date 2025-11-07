@@ -14,7 +14,7 @@ using BoilerTronicsObjects.Layers;
 public partial class BoilerTronicsGlobalManager : Node
 {	
 	/* Game State Vars */
-	private int[] levelIDs = [0, 0]; // sets the range of viable level IDs: [min, max]
+	private int[] levelIDs = [0, 1]; // sets the range of viable level IDs: [min, max]
 	private int levelID = 0;
 	private int[] levelLoadSlots = [0, 2]; // sets the range of viable level saves: [min, max]
 	private int levelLoadSlot = -1;	// -1 means load actual default level setup, -2 means autosave
@@ -132,6 +132,8 @@ public partial class BoilerTronicsGlobalManager : Node
 	// level 0, default level: SetTargetLevelSave(0, -1);
 	// level 0, save slot 0: SetTargetLevelSave(0, 0);
 	public bool SetTargetLevelSave(int inId, int inSlot) {
+		// GD.Print("GlobalManager: SetTargetLevelSave: level: ", inId, ", inSlot: ", inSlot);
+		
 		// check if save slot is in bounds
 		// -1 is default level save
 		if (inSlot != -1 && inSlot != -2 &&
@@ -184,6 +186,7 @@ public partial class BoilerTronicsGlobalManager : Node
 	// returns if save was successful or not
 	public bool LoadLevel() {
 		string saveLocation;
+		// GD.Print("GlobalManager: SetTargetLevelSave: level: ", levelID, ", inSlot: ", levelLoadSlot);
 		
 		// determine save load locations
 		// for actual levels, load levels progamatically!
