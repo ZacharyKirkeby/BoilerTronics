@@ -1036,8 +1036,174 @@ text = "Claw"
 layout_mode = 2
 size_flags_horizontal = 4
 button_pressed = true
-text = "Factory
-"
+text = "Factory"
+
+[node name="HintsWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Hints"
+initial_position = 1
+size = Vector2i(600, 300)
+visible = false
+
+[node name="CenterContainer" type="CenterContainer" parent="HintsWindow"]
+custom_minimum_size = Vector2(600, 300)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HintsWindow/CenterContainer"]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+
+[node name="HintBack" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 40
+icon = ExtResource("23_uqjh5")
+
+[node name="HintLabel" type="Label" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xc2rq")
+horizontal_alignment = 1
+
+[node name="HintForward" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 40
+icon = ExtResource("24_bsnj2")
+
+[node name="ManualWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Reference Manual"
+initial_position = 1
+size = Vector2i(900, 700)
+visible = false
+
+[node name="TabContainer" type="TabContainer" parent="ManualWindow"]
+offset_right = 900.0
+offset_bottom = 700.0
+
+[node name="Arithmetic" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+layout_mode = 2
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Arithmetic"]
+layout_mode = 2
+custom_minimum_size = Vector2(850, 0)
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+fit_content = true
+text = "[font_size=24][b]Arithmetic Instructions[/b][/font_size]
+
+[code]add <op1> <op2>
+sub <op1> <op2>
+mul <op1> <op2>
+div <op1> <op2>
+cmp <op1> <op2>[/code]
+
+[font_size=18][b]CMP Result:[/b][/font_size]
+  [code]cmp = 0[/code]  if op1 = op2
+  [code]cmp = -1[/code] if op1 < op2
+  [code]cmp = 1[/code]  if op1 > op2"
+
+[node name="Registers" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+layout_mode = 2
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Registers"]
+layout_mode = 2
+custom_minimum_size = Vector2(850, 0)
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+fit_content = true
+text = "[font_size=24][b]Registers[/b][/font_size]
+
+[font_size=18][b]r0[/b][/font_size]
+  Primary accumulator register (arithmetic results)
+
+[font_size=18][b]r1[/b][/font_size]
+  General-purpose register
+
+[font_size=18][b]r2[/b][/font_size]
+  General-purpose register
+
+[font_size=18][b]cmp[/b][/font_size]
+  Comparison result register:
+  [code]-1[/code] (less), [code]0[/code] (equal), [code]1[/code] (greater)"
+
+[node name="Control Flow" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+layout_mode = 2
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Control Flow"]
+layout_mode = 2
+custom_minimum_size = Vector2(850, 0)
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+fit_content = true
+text = "[font_size=24][b]Control Flow Instructions[/b][/font_size]
+
+[code]jmp <label>[/code]
+  Unconditional jump to label
+
+[code]jeq <label>[/code]
+  Jump if cmp == 0
+
+[code]jne <label>[/code]
+  Jump if cmp != 0
+
+[code]jgt <label>[/code]
+  Jump if cmp > 0
+
+[code]jlt <label>[/code]
+  Jump if cmp < 0
+
+[code]jge <label>[/code]
+  Jump if cmp >= 0
+
+[code]jle <label>[/code]
+  Jump if cmp <= 0"
+
+[node name="Instructions" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+layout_mode = 2
+
+[node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Instructions"]
+layout_mode = 2
+custom_minimum_size = Vector2(850, 0)
+theme_override_fonts/normal_font = ExtResource("3_xc2rq")
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+fit_content = true
+text = "[font_size=24][b]Step-Consuming Instructions[/b][/font_size]
+
+These instructions consume one simulation step:
+
+- [code]mov [l|r|u|d][/code] - Move in direction
+- [code]rot [l|r][/code] - Rotate left/right
+- [code]grb[/code] - Grab object
+- [code]drp[/code] - Drop object
+- [code]swt[/code] - Switch/toggle
+- [code]wait[/code] - Wait one step
+
+
+[font_size=24][b]Free Instructions[/b][/font_size]
+
+These instructions execute instantly (no step cost):
+
+[font_size=18][b]Arithmetic:[/b][/font_size]
+- [code]add[/code], [code]sub[/code], [code]mul[/code], [code]div[/code], [code]cmp[/code]
+
+[font_size=18][b]Control Flow:[/b][/font_size]
+- [code]jmp[/code], [code]jeq[/code], [code]jne[/code], [code]jgt[/code]
+- [code]jlt[/code], [code]jge[/code], [code]jle[/code]
+
+[font_size=18][b]Other:[/b][/font_size]
+- [code]wrt[/code] - Write to output"
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
