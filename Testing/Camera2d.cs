@@ -171,10 +171,11 @@ namespace BoilerTronicsObjects.GameCamera {
 		}
 			
 		public void SpawnErrorSprite(Vector2 errorPosition) {
+			//GD.Print("Spawning Sprite?");
 			//if coords are negative/invalid do not spawn
-			if(errorPosition.X < 0 || errorPosition.Y < 0) {
+			/*if(errorPosition.X < 0 || errorPosition.Y < 0) {
 				return;
-			}
+			}*/
 
 			//remove sprite if already there
 			if (errorSprite != null && IsInstanceValid(errorSprite)) {
@@ -194,6 +195,7 @@ namespace BoilerTronicsObjects.GameCamera {
 
 			//have error notice display on level ui
 			this.GetParent().AddChild(errorSprite);
+			//GD.Print("Spawning Sprite");
 		}
 		
 		public void RemoveErrorSprite() {
