@@ -13,9 +13,9 @@ public partial class MainMenu : Node2D
 			|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
 
 		// Set volume slider
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
-		int masterBus = AudioServer.GetBusIndex("Master");
-		volSlider.Value = Mathf.DbToLinear(AudioServer.GetBusVolumeDb(masterBus));
+		volSlider.Value = soundManager.GetCurrentVolume();
 		
 		
 		
@@ -66,6 +66,10 @@ public partial class MainMenu : Node2D
 	{
 		GetTree().Quit();
 	}
+	
+	private void _on_documentation_pressed() {
+		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/level_creator.tscn");
+	}
 
 	private void _on_fullscreen_toggled(bool toggledOn)
 	{
@@ -77,7 +81,17 @@ public partial class MainMenu : Node2D
 
 	private void _on_main_vol_slider_value_changed(float val)
 	{
-		int masterBus = AudioServer.GetBusIndex("Master");
-		AudioServer.SetBusVolumeDb(masterBus, Mathf.LinearToDb(val));
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		soundManager.SetCurrentVolume(val);
+	}
+	
+	private void _on_mute_pressed()
+	{
+		//move slider to 0
+		var slider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
+		slider.Value = 0;
+		
+		//actually make volume 0
+		_on_main_vol_slider_value_changed(0);
 	}
 }

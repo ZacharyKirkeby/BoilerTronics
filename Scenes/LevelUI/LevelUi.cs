@@ -14,13 +14,14 @@ public partial class LevelUi : Node2D
 	/* Steps */
 
 	private Label stepCountLabel;
+	private Label titleLabel;
 
 	/* Save Box ? (Ethan Change name for clarification) */
 
-	private StyleBoxFlat sbf = new StyleBoxFlat();
-	private StyleBoxFlat sbe = new StyleBoxFlat();
-	private StyleBoxFlat sbeh = new StyleBoxFlat();
-	private StyleBoxFlat sbfh = new StyleBoxFlat();
+	private StyleBoxFlat FullSaveButtonTheme = new StyleBoxFlat();
+	private StyleBoxFlat EmptySaveButtonTheme = new StyleBoxFlat();
+	private StyleBoxFlat EmptySaveButtonHoverTheme = new StyleBoxFlat();
+	private StyleBoxFlat FullSaveButtonHoverTheme = new StyleBoxFlat();
 
 	/* Buttons */
 
@@ -39,8 +40,10 @@ public partial class LevelUi : Node2D
 
 	public override void _Ready()
 	{
-		tabs = GetNode<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalContainer");
+		// TODO: using 'GetNodeOrNull' because scene 'level_creator' is missing these nodes
+		tabs = GetNodeOrNull<TabContainer>("/root/Node2D/MainVBox/TerminalLevelSplit/TerminalVBox/TerminalContainer");
 
+		titleLabel = GetNode<Label>("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/Label");
 
 		saveZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Save 0");
 		saveOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Save 1");
@@ -48,18 +51,18 @@ public partial class LevelUi : Node2D
 		clearZero = GetNode<Button>("Window/SaveContainer/Save0Cont/Clear 0");
 		clearOne = GetNode<Button>("Window/SaveContainer/Save1Cont/Clear 1");
 		clearTwo = GetNode<Button>("Window/SaveContainer/Save2Cont/Clear 2");
-		sbf.BgColor = new Color(1, 0, 0);
-		sbf.BorderColor = new Color(0, 0, 0);
-		sbf.SetBorderWidthAll(3);
-		sbf.SetCornerRadiusAll(20);
-		sbfh = sbf.Duplicate() as StyleBoxFlat;
-		sbfh.BorderColor = new Color(1, 1, 1);
-		sbe.BgColor = new Color(0, 0.7f, 0);
-		sbe.BorderColor = new Color(0, 0, 0);
-		sbe.SetBorderWidthAll(3);
-		sbe.SetCornerRadiusAll(20);
-		sbeh = sbe.Duplicate() as StyleBoxFlat;
-		sbeh.BorderColor = new Color(1, 1, 1);
+		FullSaveButtonTheme.BgColor = new Color(1, 0, 0);
+		FullSaveButtonTheme.BorderColor = new Color(0, 0, 0);
+		FullSaveButtonTheme.SetBorderWidthAll(3);
+		FullSaveButtonTheme.SetCornerRadiusAll(20);
+		FullSaveButtonHoverTheme = FullSaveButtonTheme.Duplicate() as StyleBoxFlat;
+		FullSaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
+		EmptySaveButtonTheme.BgColor = new Color(0, 0.7f, 0);
+		EmptySaveButtonTheme.BorderColor = new Color(0, 0, 0);
+		EmptySaveButtonTheme.SetBorderWidthAll(3);
+		EmptySaveButtonTheme.SetCornerRadiusAll(20);
+		EmptySaveButtonHoverTheme = EmptySaveButtonTheme.Duplicate() as StyleBoxFlat;
+		EmptySaveButtonHoverTheme.BorderColor = new Color(1, 1, 1);
 		stepCountLabel = GetNode<Label>("%Step Count"); //unique identifier for the step counter
 		pauseButton = GetNode<Button>("%Pause Button");
 		playButton = GetNode<Button>("%Play Button");
@@ -83,6 +86,29 @@ public partial class LevelUi : Node2D
 		//run tests
 		var autoTest = new ErrorTest();
 		//AddChild(autoTest);
+		
+		// Set fullscreen toggle
+		
+		// uses 'GetNodeOrNull' in case level_creator scene is missing (note: FIXED)
+		var fullscreenButton = GetNodeOrNull<Button>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen");
+		if (fullscreenButton != null) {
+			fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
+				|| DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen;
+		}
+		
+		// Set volume slider
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		// uses 'GetNodeOrNull' in case level_creator scene is missing (note: FIXED)
+		var volSlider = GetNodeOrNull<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
+		if (volSlider != null) {
+			volSlider.Value = soundManager.GetCurrentVolume();
+		}
+		
+		// link this to the manager
+		manager.levelUi = this;
+		
+		// update level name
+		UpdateTitle(manager.saveState.levelName);
 	}
 
 	public override void _Process(double delta) {
@@ -90,6 +116,11 @@ public partial class LevelUi : Node2D
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		UpdateStepCount(manager.currLevel.StepCount);
 
+	}
+	
+	// updates the title label to the specified input
+	public void UpdateTitle(string input) {
+		titleLabel.Text = input;
 	}
 
 	/* Button Fuctions */
@@ -106,7 +137,9 @@ public partial class LevelUi : Node2D
 	{
 		// Tell the global manager that we are resetting
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 
+		soundManager.StopAllSound();
 		manager.Reset();
 		manager.currLevel.Reset();
 
@@ -172,6 +205,14 @@ public partial class LevelUi : Node2D
 
 		manager.currLevel.IncRun(); // This will call run and increase the run speed
 
+		// on first step button press, trigger an autosave!
+		if (manager.currLevel.StepCount == 0) {
+			manager.SaveAutosave();
+
+			// also stop all highlighting
+			manager.terminalContainer.ClearHighlightedObjects();
+		}
+
 		switch (manager.currLevel.GetGameRunState()) {
 			case BoilerTronicsLevel.GameRunState.SlowRun:
 				// 1X
@@ -207,9 +248,14 @@ public partial class LevelUi : Node2D
 		manager.SetTargetLevelSave(0, -2);
 		manager.SaveLevel();
 
+		CallDeferred(nameof(ChangeScene));
+	}
+	
+
+	private void ChangeScene()
+	{
 		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
 	}
-
 	private void _on_settings_button_pressed() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu").Visible = true;
 	}
@@ -227,6 +273,38 @@ public partial class LevelUi : Node2D
 
 	private void _on_level_statistics_pressed() {
 		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu").Visible = true;
+	}
+	
+	private void _on_edit_settings_button_pressed() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu").Visible = true;
+	}
+	
+	private void _on_settings_menu_close_requested() {
+		GetNode<Window>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu").Visible = false;
+	}
+	
+	private void _on_fullscreen_toggled(bool toggledOn)
+	{
+		if (toggledOn)
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.ExclusiveFullscreen);
+		else
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Maximized);
+	}
+
+	private void _on_main_vol_slider_value_changed(float val)
+	{
+		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+		soundManager.SetCurrentVolume(val);
+	}
+	
+	private void _on_mute_pressed()
+	{
+		//move slider to 0
+		var slider = GetNode<HSlider>("MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider");
+		slider.Value = 0;
+		
+		//actually make volume 0
+		_on_main_vol_slider_value_changed(0);
 	}
 
 	private void _on_movement_visibility_toggled(bool toggled_on)
@@ -325,7 +403,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 0);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 0);
 		manager.SaveLevel();
 		full_theme(saveZero);
 		clearZero.Visible = true;
@@ -334,7 +412,7 @@ public partial class LevelUi : Node2D
 	private void _on_save_1_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 1);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 1);
 		manager.SaveLevel();
 		full_theme(saveOne);
 		clearOne.Visible = true;
@@ -343,12 +421,13 @@ public partial class LevelUi : Node2D
 	private void _on_save_2_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.SetTargetLevelSave(0, 2);
+		manager.SetTargetLevelSave(manager.GetLevelID(), 2);
 		manager.SaveLevel();
 		full_theme(saveTwo);
 		clearTwo.Visible = true;
 	}
 
+	// TODO: Ethen should update these to use 'SaveManager' specific functions for consistency and etc
 	private void _on_clear_0_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -387,16 +466,16 @@ public partial class LevelUi : Node2D
 
 	private void full_theme(Button button)
 	{
-		button.AddThemeStyleboxOverride("normal", sbf);
-		button.AddThemeStyleboxOverride("hover", sbfh);
-		button.AddThemeStyleboxOverride("focus", sbf);
+		button.AddThemeStyleboxOverride("normal", FullSaveButtonTheme);
+		button.AddThemeStyleboxOverride("hover", FullSaveButtonHoverTheme);
+		button.AddThemeStyleboxOverride("focus", FullSaveButtonTheme);
 	}
 
 	private void empty_theme(Button button)
 	{
-		button.AddThemeStyleboxOverride("normal", sbe);
-		button.AddThemeStyleboxOverride("hover", sbeh);
-		button.AddThemeStyleboxOverride("focus", sbe);
+		button.AddThemeStyleboxOverride("normal", EmptySaveButtonTheme);
+		button.AddThemeStyleboxOverride("hover", EmptySaveButtonHoverTheme);
+		button.AddThemeStyleboxOverride("focus", EmptySaveButtonTheme);
 	}
 
 	/* Testing Functions */

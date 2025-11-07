@@ -45,9 +45,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		public Parser GetParser()
-        {
+		{
 			return this._parser;
-        }
+		}
 
 		// Verify Group
 		public void VerifyGroup() {
@@ -191,6 +191,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			}
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
+			UpdateRegisterDisplay();
 		}
 
 		public void RegisterSteppable() {
@@ -216,14 +217,39 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			{
 				existing.QueueFree();
 			}
+			UpdateRegisterDisplay();
 		}
 
 		// Scriptable interface
 
 
 		// Methods to deal with terminals
-		public CodeEdit GetTerminal() {
+		public CodeEdit GetTerminal()
+		{
 			return E;
+		}
+		
+		private void UpdateRegisterDisplay()
+		{
+			var manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager?.terminalContainer == null) return;
+
+			// Get the register label from the scene
+			var terminalVBox = manager.terminalContainer.GetParent() as VBoxContainer;
+			if (terminalVBox == null) return;
+
+			var registerPanel = terminalVBox.GetNodeOrNull<PanelContainer>("RegisterPanel");
+			if (registerPanel == null) return;
+
+			var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
+			if (registerLabel == null) return;
+
+			// Only update if this terminal is currently visible
+			var currentTerminal = manager.terminalContainer.GetCurrentTabControl();
+			if (currentTerminal == E)
+			{
+				registerLabel.SetParser(_parser);
+			}
 		}
 
 		public void CreateTerminal() {
@@ -304,5 +330,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			return; // Throw error
 		}
 
+		public void Switch(string[] args) {
+			return; // Throw error
+		}
 	}
 }

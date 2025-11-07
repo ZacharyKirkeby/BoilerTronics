@@ -8,6 +8,7 @@ namespace BoilerTronicsObjects.Interfaces {
 		void Move(string[] args); // u d l r
 		void Grab(string[] args); // should be null
 		void Drop(string[] args); // should be null
+		void Switch(string[] args); // should be null
 		void Rotate(string[] args); // l r
 
 		// Methods to deal with terminals
@@ -18,5 +19,5 @@ namespace BoilerTronicsObjects.Interfaces {
 		string GetScript(); // sets the text of the code edit
 		void SetParser(Parser parser);
 		Parser GetParser();
-    }
+	}
 }

@@ -12,6 +12,8 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 
 public partial class BoilerTronicsLevel : Node2D
 {
+	public static BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	
 	public int x;
 	public int y;
 	public int StepCount;
@@ -35,6 +37,11 @@ public partial class BoilerTronicsLevel : Node2D
 	private Vector2 c2;
 	private Vector2 c3;
 	private Vector2 c4;
+	
+	// store min, max of X, Y coordinates, based off the dimensions of the level
+	public Vector2 minCoords;
+	public Vector2 maxCoords;
+	
 	private BoilerTronicsLevel.GameRunState RunState;
 
 	private float StepDeltaTime = 1.0f; // 1 Second
@@ -58,15 +65,19 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	/* Create layers */
 
+	// variable to better "center" all objects and etc
+	// defined in CreateFloorLayer
+	private Vector2 centerOffset = new Vector2(0, 0);
+	
 	private Layer CreateMovementLayer() {
 		mLayer = new MovementLayer();
 		mLayer.RedefineLayer(x, y);
 		// mLayer = new MovementLayer(x, y);
 		mLayer.TileSet = tileset;
 		AddChild(mLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		mLayer.Position -= centerOffset;
 		return mLayer;
 	}
 
@@ -76,9 +87,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// rLayer = new RailLayer(x, y);
 		rLayer.TileSet = tileset;
 		AddChild(rLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		rLayer.Position -= centerOffset;
 		return rLayer;
 	}
 
@@ -88,9 +99,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// cLayer = new ClawLayer(x, y);
 		cLayer.TileSet = tileset;
 		AddChild(cLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		cLayer.Position -= centerOffset;
 		return cLayer;
 	}
 
@@ -100,9 +111,9 @@ public partial class BoilerTronicsLevel : Node2D
 		// fLayer = new FactoryLayer(x, y);
 		fLayer.TileSet = tileset;
 		AddChild(fLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// move center of the tilemap to center of the screen
+		fLayer.Position -= centerOffset;
 		return fLayer;
 	}
 
@@ -112,10 +123,43 @@ public partial class BoilerTronicsLevel : Node2D
 		// flLayer = new FloorLayer(x, y);
 		flLayer.TileSet = tileset;
 		AddChild(flLayer);
-		// Place in elements here!
-		// This will be gotten from the save state in the global manager
-		// TODO: load from save here
+		
+		// sets the 'center offset' value
+		centerOffset = flLayer.MapToLocal(new Vector2I(x/2, y/2));
+		
+		// move center of the tilemap to center of the screen
+		flLayer.Position -= centerOffset;
 		return flLayer;
+	}
+	
+	// should just automatically fill the "outside" of the layer with some uninteractable floor tiles
+	private void CreateFloorFillLayer() {
+		FloorFillLayer fillLayer = new FloorFillLayer();
+		fillLayer.TileSet = tileset;
+		
+		// Load boundary data from BoilerTronicsSaveState
+		int fillSurround = manager.saveState.boundarySize;
+		TileTex floorTex = manager.saveState.boundaryTex;
+		fillLayer.GenerateLayer(x, y, fillSurround, floorTex);
+		
+		// spawn in the tile map
+		AddChild(fillLayer);
+		
+		// translate the top-left edge of this TileMap to the top-left edge of the floor layer
+		// (SANITY CHECK)
+		Vector2 fill00 = fillLayer.MapToLocal(new Vector2I(0, 0));
+		Vector2 floor00 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
+		Vector2 moveDif = floor00 - fill00;
+		fillLayer.Position -= moveDif;
+		// GD.Print("move dif: ", moveDif);
+		
+		// move center of the tilemap to center of the screen
+		fillLayer.Position -= centerOffset;
+		
+		// offset this layer such that this layer properly surrounds the play area
+		moveDif = fill00 - manager.layerFloor.MapToLocal(new Vector2I(fillSurround, fillSurround));
+		fillLayer.Position += moveDif;
+		// GD.Print("move dif 2: ", moveDif);
 	}
 	
 	// Given a target layer, a list of Placeables, and a Vector2I array of protected tiles, update the layer!
@@ -130,25 +174,36 @@ public partial class BoilerTronicsLevel : Node2D
 		// enable protected tiles
 		foreach(Vector2I pos in protectedTiles)
 		{
-			bool success = input.SetTileEditable(pos, true);
+			GD.Print("BoilerTronicsLeveL: added protected tile: ", pos);
+			bool success = input.SetTileEditable(pos, false);
 			// TODO: create error if this coordinate was bad?
 		}
 	}
 
-	/* init values fpr layer */
+	/* init values for layer */
 
 	public override void _Ready()
 	{
+		// Get manager
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
 		GD.Print("Generating Level...");
 		
 		// Create all of the different layers and read in the corresponding data from the manager
 		// Temp, this will be replaced by a read from the global manager's game state
 		tileset = GD.Load<TileSet>("res://Resources/objects.tres");
-		x = 20;
-		y = 20;
 		
-		// Get manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// set default level dimension
+		if (!manager.creatingNewLevel) {
+			manager.saveState.levelName = "placeholder";
+			manager.saveState.SetLevelDimensions(new Vector2I(20, 20));
+		}
+		
+		Vector2I startingDim = manager.saveState.GetLevelDimensions();
+		x = startingDim.X;
+		y = startingDim.Y;
+		
+		
 
 		// For stepping and level interactions
 		manager.currLevel = this;
@@ -156,7 +211,27 @@ public partial class BoilerTronicsLevel : Node2D
 		// if successful, then generate level
 		// if not, then ignore and make a new save (kinda)
 		// TODO: for specific levels, load specific saves corresponding to what the level should be at a baseline!
-		bool loadedSave = manager.LoadLevel();
+		bool loadedSave = false;
+		
+		if (manager.creatingNewLevel) {
+			manager.creatingNewLevel = false;
+			
+			// TODO: creating new level stuff
+			// mainly, don't load levels at all!
+			// dimensions already set above
+			
+		} else {
+			if (manager.loadLevelName == "") {
+				loadedSave = manager.LoadLevel();
+			} else {
+				GD.Print("BoilerTronicsLevel: loading specific level");
+				// load the specific save and reset the system
+				loadedSave = manager.saveState.LoadLevelName(manager, manager.loadLevelName);
+				manager.loadLevelName = "";
+			}
+		}
+		
+		
 		
 		if (loadedSave) {
 			// reconstruct level based off the information loaded: load metadata
@@ -174,6 +249,9 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerClaw = CreateClawLayer();
 		manager.layerRail = CreateRailLayer();
 		manager.layerMovement = CreateMovementLayer();
+		
+		// fills the "outside" of the area with some basic, uninteractable floor tiles
+		CreateFloorFillLayer();
 
 		// Set Z-index
 		manager.layerFloor.ZIndex = 0;
@@ -182,19 +260,33 @@ public partial class BoilerTronicsLevel : Node2D
 		manager.layerRail.ZIndex = 3;
 		manager.layerMovement.ZIndex = 4;
 
+		manager.layerFloor.YSortEnabled = true;
+		manager.layerFactory.YSortEnabled = true;
+		manager.layerClaw.YSortEnabled = true;
+		manager.layerRail.YSortEnabled = true;
+		manager.layerMovement.YSortEnabled = true;
+
 		// Shift layers
-		manager.layerClaw.Position = new Vector2(0, -32);
-		manager.layerRail.Position = new Vector2(0, -32);
-		manager.layerMovement.Position = new Vector2(0, -32);
+		manager.layerClaw.Position += new Vector2(0, -32);
+		manager.layerRail.Position += new Vector2(0, -32);
+		manager.layerMovement.Position += new Vector2(0, -32);
 
 		
 		if (loadedSave) {
 			// attempt to reconstruct level based off the loaded information: update layers
-			// TODO: does not properly
+			GD.Print("BoilerTronicsLevel: loading layer: ", "floor");
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+			
+			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
 			// handle ConveyorGroup case
@@ -206,16 +298,25 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// store four corners of the floor layer
 		c1 = manager.layerFloor.MapToLocal(new Vector2I(0, 0));
-		c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
+		// c2 = manager.layerFloor.MapToLocal(new Vector2I(0, y));
 		c3 = manager.layerFloor.MapToLocal(new Vector2I(x, y));
-		c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		// c4 = manager.layerFloor.MapToLocal(new Vector2I(x, 0));
+		
+		// update the min, max coordinates
+		minCoords = c1 - centerOffset;
+		maxCoords = c3 - centerOffset;
+		
+		// update the level to the specified level name
+		// if (manager.levelUi != null) {
+			// manager.levelUi.UpdateTitle(manager.saveState.levelName);
+		// }
 
 		// Set the run state to Idle
 		RunState = BoilerTronicsLevel.GameRunState.Idle;
 		DeltaTime = StepDeltaTime;
 		
 		// draw a rectangle representing the boundaries of the placement grid (sorta)
-		QueueRedraw();
+		// QueueRedraw();
 		
 		/*
 		// Prepare parsers for each scriptable element
@@ -256,12 +357,18 @@ public partial class BoilerTronicsLevel : Node2D
 		
 		// Draws the border of the tile map
 		// only draw if corners have been determined
+		/*
+		
+		// DISABLED:
+		// Surrounding-floor-fill functionality already implemented
+		
 		if (c1 != null) {
 			DrawLine(c1, c2, Colors.Green, 3.0f);
 			DrawLine(c2, c3, Colors.Green, 3.0f);
 			DrawLine(c3, c4, Colors.Green, 3.0f);
 			DrawLine(c4, c1, Colors.Green, 3.0f);
 		}
+		*/
 	}
 
 	/* Reset Layer */
@@ -290,11 +397,15 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
+
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
 		
 		foreach (Runnable rObj in runnableList)
-        {
+		{
 			rObj.Reset();
-        }
+		}
 		
 		StepCount = 0;
 
@@ -304,7 +415,7 @@ public partial class BoilerTronicsLevel : Node2D
 		// Clear errors
 		E.ClearError();
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
+		
 		foreach (CodeEdit editor in manager.terminalContainer.GetAllEditors())
 		{
 
@@ -313,6 +424,13 @@ public partial class BoilerTronicsLevel : Node2D
 			{
 				existing.Free();
 			}
+
+			var existing2 = editor.GetNodeOrNull<Label>("RuntimeErrorLabel");
+			if (existing2 != null)
+			{
+				existing2.Free();
+			}
+
 		}
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
@@ -355,7 +473,11 @@ public partial class BoilerTronicsLevel : Node2D
 	/* Stepping and Running */
 
 	public void Step() {
-		if (E.HasError()) return; // Can't step if there is an error
+		if (E.HasError()) {
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Error);
+			return; // Can't step if there is an error
+		}
 		if (movingList.Count != 0) return; // Can't step while stuff is moving
 		foreach (PlaceableObject obj in runnableList) {
 			if (!(obj is Runnable)) continue; // error here?
@@ -365,24 +487,32 @@ public partial class BoilerTronicsLevel : Node2D
 		StepCount++;
 	}
 
-	public override void _Process(double delta) {
+	public override void _Process(double delta)
+	{
 		// This is where our run will exist to allow for async running
 		if (
 			(RunState == BoilerTronicsLevel.GameRunState.SlowRun ||
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-		      )
+			)
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
+			if (E.HasError())
+			{
+				BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+				soundManager.PlaySound(SoundType.Error);
+				return; // Can't step if there is an error
+			}
 			Step(); // Step while we are running
 
 			// if we are on submit speed
-			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0)) {
+			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0))
+			{
 				// interpulate between our start and end submit time
-				
+
 				// get the percent that we want to interpolate (Current step / Total steps)
-				float interpalatePercent = (((float) (StepCount - SubmitStartStep) / (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps);
+				float interpalatePercent = (((float)(StepCount - SubmitStartStep) / (float)SubmitSpeedCahngeStep) / (float)SubmitSpeedSteps);
 				// don't continue if we are already at max
 				if (interpalatePercent > 1.0f) return;
 				// Interpolate between the max and min delta time
@@ -429,7 +559,7 @@ public partial class BoilerTronicsLevel : Node2D
 
 	}
 
-	public void MovingCollisionReport(MovingObject mObj) {
+	public void MovingCollisionReport(MovingObject mObj, MovingObject other = null) {
 		if (mObj == null) return; // We can't report a moving object
 		if (!(mObj.obj is PlaceableObject pObj)) return; // We can't report a moving object
 
@@ -445,9 +575,19 @@ public partial class BoilerTronicsLevel : Node2D
 
 		// Right now we only have collison for claws
 		if (pObj is Scriptable sObj) {
-			E.handleError(ErrorHandler.ErrorType.ClawRail, sObj.GetTerminal(), offsetPos);
+			CodeEdit terminalMain = sObj.GetTerminal();
+			CodeEdit terminalOther = null;
+			if (other != null && other.obj is Scriptable otherScript) {
+				terminalOther = otherScript.GetTerminal();
+			}
+			
+			E.handleError(ErrorHandler.ErrorType.ClawCollision, sObj.GetTerminal(), offsetPos);
+
+			if (terminalOther != null && terminalOther != terminalMain)
+			terminalOther.HighlightLine(terminalOther.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
+			GD.Print("actual collision");
 		}
 	}
 
