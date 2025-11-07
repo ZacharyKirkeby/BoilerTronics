@@ -25,8 +25,8 @@ public partial class ErrorHandler : Node2D
 
 	// We need to track the scene so that we can remove it later
 	private Node errorSceneInstance;
-	private bool ErrorPresent;
-	private bool SyntaxError;
+	private bool ErrorPresent = false;
+	private bool SyntaxError = false;
 
 	public ErrorHandler()
 	{
@@ -34,7 +34,7 @@ public partial class ErrorHandler : Node2D
 
 	public bool HasError()
 	{
-		return !(ErrorPresent && SyntaxError);
+		return (ErrorPresent || SyntaxError);
 	}
 
 	public void setError(bool value)
@@ -144,7 +144,7 @@ public partial class ErrorHandler : Node2D
 				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawCollisionError.tscn");
 				break;
 			case ErrorType.ClawInventory:
-				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindow/ClawInventoryError.tscn");
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawInventoryError.tscn");
 				break;
 			default:
 				return; // Invalid error code
