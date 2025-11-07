@@ -64,7 +64,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
 		ppsSolution = (float)targetProduction / (float)(StepCount+1);
-		GD.Print(targetProduction);
+		GD.Print("BoilerTronicsLevel: targetProduction: ", targetProduction);
 		
 		//update leaderboard (min values for the 3 categories)
 		//update levelui stats labels
@@ -75,10 +75,10 @@ public partial class BoilerTronicsLevel : Node2D
 			solutionScore /= 3;
 			if(solutionScore > bestScore) {
 				bestScore = solutionScore;
-				GD.Print("bestscore is " + bestScore);
-				GD.Print("bestscore is " + grades[0]);
-				GD.Print("bestscore is " + grades[1]);
-				GD.Print("bestscore is " + grades[2]);
+				GD.Print("BoilerTronicsLevel: bestscore is " + bestScore);
+				GD.Print("BoilerTronicsLevel: bestscore is " + grades[0]);
+				GD.Print("BoilerTronicsLevel: bestscore is " + grades[1]);
+				GD.Print("BoilerTronicsLevel: bestscore is " + grades[2]);
 			}
 			
 			Leaderboard.SaveScore(manager.GetLevelID(), "You", bestScore);
@@ -395,7 +395,7 @@ public partial class BoilerTronicsLevel : Node2D
 		//get levelui reference to be able to update labels
 		levelUi = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
 		if (levelUi == null) {
-			GD.PrintErr("LevelUi not found! Statistics won't update.");
+			GD.PrintErr("BoilerTronicsLevel: LevelUi not found! Statistics won't update.");
 		}
 		
 		//UpdateProductionGoal(5);
@@ -669,7 +669,7 @@ public partial class BoilerTronicsLevel : Node2D
 			terminalOther.HighlightLine(terminalOther.getLastHighlighted(), new Color(1, 0, 0, 0.3f));
 		} else {
 			E.handleError(ErrorHandler.ErrorType.ClawCollision, null, offsetPos);
-			GD.Print("actual collision");
+			GD.Print("BoilerTronicsLevel: MovingCollision Report: Actual Collision Detected");
 		}
 	}
 
