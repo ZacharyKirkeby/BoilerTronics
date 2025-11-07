@@ -415,7 +415,7 @@ public partial class BoilerTronicsLevel : Node2D
 		// Clear errors
 		E.ClearError();
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
+		
 		foreach (CodeEdit editor in manager.terminalContainer.GetAllEditors())
 		{
 
@@ -424,6 +424,13 @@ public partial class BoilerTronicsLevel : Node2D
 			{
 				existing.Free();
 			}
+
+			var existing2 = editor.GetNodeOrNull<Label>("RuntimeErrorLabel");
+			if (existing2 != null)
+			{
+				existing2.Free();
+			}
+
 		}
 
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
@@ -480,24 +487,32 @@ public partial class BoilerTronicsLevel : Node2D
 		StepCount++;
 	}
 
-	public override void _Process(double delta) {
+	public override void _Process(double delta)
+	{
 		// This is where our run will exist to allow for async running
 		if (
 			(RunState == BoilerTronicsLevel.GameRunState.SlowRun ||
 			RunState == BoilerTronicsLevel.GameRunState.FastRun ||
 			RunState == BoilerTronicsLevel.GameRunState.SubmitSpeed) &&
 			!E.HasError() // Stop running if there's an error
-			  )
+			)
 		{
 			BoilerTronicsGlobalManager.GlobalManager.lockTerminals();
+			if (E.HasError())
+			{
+				BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+				soundManager.PlaySound(SoundType.Error);
+				return; // Can't step if there is an error
+			}
 			Step(); // Step while we are running
 
 			// if we are on submit speed
-			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0)) {
+			if (RunState == GameRunState.SubmitSpeed && ((StepCount - SubmitStartStep) % SubmitSpeedCahngeStep == 0))
+			{
 				// interpulate between our start and end submit time
-				
+
 				// get the percent that we want to interpolate (Current step / Total steps)
-				float interpalatePercent = (((float) (StepCount - SubmitStartStep) / (float) SubmitSpeedCahngeStep) / (float) SubmitSpeedSteps);
+				float interpalatePercent = (((float)(StepCount - SubmitStartStep) / (float)SubmitSpeedCahngeStep) / (float)SubmitSpeedSteps);
 				// don't continue if we are already at max
 				if (interpalatePercent > 1.0f) return;
 				// Interpolate between the max and min delta time
