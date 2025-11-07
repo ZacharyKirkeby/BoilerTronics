@@ -6,7 +6,14 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
-	public class TrackObject : ClawLayerObjects {
+	public class TrackObject : PlaceableObject {
+		
+		static int layerSourceId = 1;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
+		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
+		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		int direction; // 0 = left; 1 = right;
 		int OGdir;
@@ -18,7 +25,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 2);
 
 		public TrackObject(int OGX, int OGY, int dir, int altTitle = 0) 
-		: base(OGX, OGY, dir == TrackObject.Right ? TrackObject.RightObjectAtlasPos : TrackObject.LeftObjectAtlasPos, altTitle) {
+		: base(OGX, OGY, layerSourceId, dir == TrackObject.Right ? TrackObject.RightObjectAtlasPos : TrackObject.LeftObjectAtlasPos, altTitle) {
 			if (dir != TrackObject.Right && dir != TrackObject.Left) return; // Error
 
 			direction = dir;

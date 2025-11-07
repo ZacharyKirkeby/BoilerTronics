@@ -28,7 +28,15 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 0; // id for which level this save is referring to
 	
-	private Vector2I levelDimensions;
+	// TODO: implement into saving/loading
+	public string levelName = "placeholder";
+	
+	// LAZY: this is public now
+	// default: a 50% darker version of the base floor tile, 2 tiles wide
+	public TileTex boundaryTex =  new TileTex(new Vector2I(0, 0), 6);
+	public int boundarySize = 2;
+	
+	private Vector2I levelDimensions = new Vector2I(20, 20);
 	private LayerInfo liClaw = new LayerInfo();
 	private LayerInfo liFactory = new LayerInfo();
 	private LayerInfo liFloor = new LayerInfo();
@@ -161,13 +169,23 @@ public class BoilerTronicsSaveState
 			}
 		}
 		
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		
 		Godot.Collections.Dictionary<string, Variant> metadata = 
 			new Godot.Collections.Dictionary<string, Variant>()
 			{
 				{ "mapSize", new int[]{levelDimensions.X, levelDimensions.Y} },
 				{ "levelId", level_id },
+				{ "levelName", levelName },
 				{ "saveSlot", save_slot },
+				{ "boundarySize", boundarySize },
 			};
+			
+		if (this.boundaryTex != null) {
+			metadata["boundaryAtlasX"] = boundaryTex.GetAtlasPos().X;
+			metadata["boundaryAtlasY"] = boundaryTex.GetAtlasPos().Y;
+			metadata["boundarySourceId"] = boundaryTex.GetSourceId();
+		}
 		
 		// GD.Print("mapSize: " + metadata["mapSize"]);
 		// GD.Print("levelId: " + metadata["levelId"]);
@@ -189,6 +207,14 @@ public class BoilerTronicsSaveState
 	// returns success of loading the save data
 	public bool LoadLevelData(BoilerTronicsGlobalManager manager, int levelId) {
 		string SavePath = "res://Resources/Levels/level" + levelId + ".save";
+		return LoadData(manager, SavePath);
+	}
+	
+	// load level name; automatically generate the save data info, given the level ID
+	// input should be handled automatically by the global manager
+	// returns success of loading the save data
+	public bool LoadLevelName(BoilerTronicsGlobalManager manager, String levelName) {
+		string SavePath = "res://Resources/Levels/" + levelName + ".save";
 		return LoadData(manager, SavePath);
 	}
 	
@@ -244,7 +270,22 @@ public class BoilerTronicsSaveState
 					
 					this.levelDimensions = new Vector2I((int) mapSize[0], (int) mapSize[1]);
 					
-					GD.Print("metadata: " + level_id + ", " + save_slot + ", " + levelDimensions);
+					// if save data has "boundarySize", assume that it has all corresponding
+					// boundary data
+					if (node.ContainsKey("boundarySize")) {
+						this.boundarySize = (int) node["boundarySize"];
+						int atlasX = (int) node["boundaryAtlasX"];
+						int atlasY = (int) node["boundaryAtlasY"];
+						this.boundaryTex.SetAtlasPos(atlasX, atlasY);
+						this.boundaryTex.SetSourceId((int) node["boundarySourceId"]);
+					}
+					
+					if (node.ContainsKey("levelName")) {
+						this.levelName = (string) node["levelName"];
+					}
+					
+					GD.Print("SaveState: metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
+					GD.Print("SaveState: metadata: level name: ", levelName);
 					continue;
 				}
 				
@@ -340,6 +381,14 @@ public class BoilerTronicsSaveState
 					
 					((ConveyorObject) target).SetToLoadText(conveyorCode);
 					GD.Print("SaveState: successfully loaded terminal code -- conveyor variant");
+				}
+			}
+			
+			// get direction, if relevant
+			if (target is PlaceableBig) {
+				if (targetObj.ContainsKey("dir")) {
+					int dir = (int) targetObj["dir"];
+					((PlaceableBig) target).SetDir((PlaceableBig.Direction) dir);
 				}
 			}
 			

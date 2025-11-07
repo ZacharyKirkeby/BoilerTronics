@@ -26,14 +26,14 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// add a check to make sure that we are only trying to place claws
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.objectToMove is ClawObject || manager.objectToPlace == new Vector2I(0, 0)) {
-				MouseInput(@event, 3, 1);
+			if (manager.objectToMove is ClawObject) {
+				MouseInput(@event, 3);
 				// GD.Print("Claw");
 			}
 			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				GD.Print("Claw");
-				MouseInput(@event, 3, 1);
+				// GD.Print("Claw");
+				MouseInput(@event, 3);
 				return;
 			}
 			base._Input(@event);

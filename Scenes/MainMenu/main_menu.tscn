@@ -547,6 +547,7 @@ text = "Back"
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Profile" to="." method="_on_profile_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Leaderboard" to="." method="_on_leaderboard_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
