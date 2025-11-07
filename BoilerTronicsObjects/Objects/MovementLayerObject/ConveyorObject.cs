@@ -8,12 +8,17 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorObject : MovementLayerObjects {
+	public class ConveyorObject : PlaceableObject {
 
 		int direction; // 0 = left; 1 = right;
 
 		public const int Left = 0;
 		public const int Right = 1;
+		
+		static int layerSourceId = 2;
+		// reminder that the sourceID corresponds to the sprite sheet for a given layer
+		// and every layer will have their own sprite sheet. Consequently, layer-specific
+		// objects will have identical sourceIds.
 
 		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
@@ -33,7 +38,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			manager.currLevel.mLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
 		}
 
-		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
+		public ConveyorObject(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, layerSourceId, dir == ConveyorObject.Right ? ConveyorObject.RightObjectAtlasPos : ConveyorObject.LeftObjectAtlasPos, altTitle) {
 			if (dir != ConveyorObject.Right && dir != ConveyorObject.Left) return; // Error
 
 			direction = dir;
@@ -67,6 +72,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			// Move track
 			MovingObject mObj = new MovingObject(tObj, vec, manager.currLevel.rLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Move);
 
 			// Move claw if there exists one
 			obj = manager.currLevel.cLayer.FindObject(this.GetCurrPos());
@@ -78,6 +85,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			MovingObject mcObj = new MovingObject(cObj, vec, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mcObj);
 			cObj.moving = true;
+			soundManager.PlaySound(SoundType.Move);
 		}
 		
 		// Methods to deal with terminals (inherit from the parent ConveyorGroup)
@@ -129,7 +137,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 		
 		// Override 'save' function to also return a script's information
-		// CONDITIONAL: Only adds anything
+		// CONDITIONAL: Only adds anything if the script isn't empty.
+		// Only the "head" of a ConveyorGroup should store this information!
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();
