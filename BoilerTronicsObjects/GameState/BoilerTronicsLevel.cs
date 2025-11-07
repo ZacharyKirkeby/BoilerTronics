@@ -398,7 +398,7 @@ public partial class BoilerTronicsLevel : Node2D
 			GD.PrintErr("LevelUi not found! Statistics won't update.");
 		}
 		
-		UpdateProductionGoal(5);
+		//UpdateProductionGoal(5);
 		
 		/*
 		// Prepare parsers for each scriptable element
