@@ -107,9 +107,9 @@ public partial class CodeEdit : Godot.CodeEdit
 	}
 
 	public void OnDeletion()
-    {
+	{
 		ValidateAndHighlight();
-    }
+	}
 
 	// Main validation and highlighting logic
 	public void ValidateAndHighlight()
@@ -120,12 +120,12 @@ public partial class CodeEdit : Godot.CodeEdit
 		string code = this.Text;
 		var errors = ProgramValidator.ValidateProgram(code);
 		if (errors != null && errors.Count > 0)
-        {
-            this.error = true;
-        } else
-        {
+		{
+			this.error = true;
+		} else
+		{
 			this.error = false;
-        }
+		}
 		// Process each error
 		foreach (var (lineNum, errorMsg) in errors)
 		{
