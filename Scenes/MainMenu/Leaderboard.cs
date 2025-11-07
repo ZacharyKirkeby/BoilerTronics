@@ -113,11 +113,12 @@ public partial class Leaderboard : CenterContainer
 	
 	public void UpdateLeaderboard() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		if(manager == null || manager.currLevel == null) {
+		// if (manager == null || manager.currLevel == null) {
 			leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
 			UpdateDisplay();
-			return;
-		}
+			// return;
+		// }
+		/*
 		float score = manager.currLevel.bestScore;
 		for (int i = 0; i < leaderboard.Count; i++) {
 			if (leaderboard[i].Name == "You") {
@@ -127,6 +128,7 @@ public partial class Leaderboard : CenterContainer
 		}
 		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
 		UpdateDisplay();
+		*/
 	}
 	
 	private void UpdateDisplay() {
@@ -297,7 +299,10 @@ public partial class Leaderboard : CenterContainer
 	public bool LoadScore(int levelId, List<(string, float)> scoreList) {
 		string SavePath = "user://Leaderboard/leaderboard" + levelId + ".leaderboard";
 		
-		if (!FileAccess.FileExists(SavePath)) {return false;} // not valid save location
+		if (!FileAccess.FileExists(SavePath)) {
+			GD.Print("Leaderboard: LoadScore failed to find file: ", SavePath);
+			return false;
+		} // not valid save location
 		
 		// open up save data
 		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
