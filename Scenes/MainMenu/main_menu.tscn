@@ -562,4 +562,4 @@ text = "Back"
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="SettingsMenu/OpenPDF" to="." method="_on_open_pdf_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
