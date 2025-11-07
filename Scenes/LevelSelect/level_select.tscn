@@ -137,9 +137,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Save 2"
 
+[node name="New Level" type="Button" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "New Level"
+
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
 [connection signal="pressed" from="Window/SaveContainer/Save 0" to="." method="_on_save_0_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save 1" to="." method="_on_save_1_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save 2" to="." method="_on_save_2_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/New Level" to="." method="_on_new_level_pressed"]
