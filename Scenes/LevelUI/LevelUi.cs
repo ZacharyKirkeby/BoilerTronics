@@ -704,6 +704,15 @@ public partial class LevelUi : Node2D
 		GetNode<Window>("%ManualWindow").Visible = false;
 	}
 
+	private void _on_hints_pressed()
+	{
+		GetNode<Window>("%HintsWindow").Visible = true;
+	}
+	private void _on_hints_window_close_requested()
+	{
+		GetNode<Window>("%HintsWindow").Visible = false;
+	}
+
 	private void UpdateHintDisplay()
 	{
 		GetNode<Label>("%HintLabel").Text = hints[hintIndex];
