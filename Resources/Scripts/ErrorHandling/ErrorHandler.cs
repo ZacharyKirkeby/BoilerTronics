@@ -43,9 +43,9 @@ public partial class ErrorHandler : Node2D
 	}
 	
 	public void setSyntaxError(bool value)
-    {
+	{
 		SyntaxError = value;
-    }
+	}
 
 	public void ClearError()
 	{
@@ -171,14 +171,15 @@ public partial class ErrorHandler : Node2D
 	// Be able to call for error popup from this script
 	public void ShowErrorNotice(Vector2 position)
 	{
-		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		var camera = GetTree().Root.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
 		camera.SpawnErrorSprite(position);
+		GD.Print("meant to b Spawning Sprite");
 	}
 
 	// Be able to call for error popup removal from this script
 	public void ClearErrorNotice()
 	{
-		var camera = GetTree().CurrentScene.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
+		var camera = GetTree().Root.GetNode<BoilerTronicsObjects.GameCamera.Camera2d>("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport/Node2D/Camera2D");
 		camera.RemoveErrorSprite();
 	}
 
