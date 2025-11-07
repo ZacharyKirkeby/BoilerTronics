@@ -36,6 +36,28 @@ public partial class LevelUi : Node2D
 	/* Icons */
 	private Texture2D playIcon;
 	private Texture2D submitIcon;
+	private String[] hints =
+	{
+		"Sometimes you cannot place machinery on certain areas of the map",
+		"Poor Quality machines are subject to memory corruption",
+		"Null values are not your friends",
+		"If your code won't compile, try reading!",
+		"Control flow structures like loops sometimes help with code complexity",
+		"If you can't hear anything, check your volume!",
+		"Have you considered more interchangable code",
+		"Struggling with what to do in the level? Try reading the hints!",
+		"Unsure how to approach a problem? Don't fail CS 307!",
+		"Some machinery cannot do the same things that other machines do",
+		"Some materials are worse than they seem",
+		"More expensive machinery comes with programatic benefits",
+		"Sometimes it may be hard to solve your problems if you are on fent",
+		"Try Caffiene Instead!",
+		"Higher quality machines will lead to more stable memory",
+		"Avoid crashing",
+		"Have you tried using loops?",
+		"Have you tried using arithmetic operations",
+		"Have you tried not using loops?"
+	};
 
 	public override void _Ready()
 	{
@@ -96,6 +118,7 @@ public partial class LevelUi : Node2D
 
 		// Starts on first hint
 		GetNode<Button>("%HintBack").Visible = false;
+		
 
 	}
 
