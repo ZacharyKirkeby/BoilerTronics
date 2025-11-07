@@ -1,0 +1,6 @@
+{"metadata":{"boundaryAtlasX":0,"boundaryAtlasY":0,"boundarySize":2,"boundarySourceId":6,"levelId":-35,"levelName":"Story35Test","mapSize":[20,20],"saveSlot":-1}}
+{"clawLayer":{"objects":[],"uneditableTiles":[]}}
+{"factoryLayer":{"objects":[{"OGX":4,"OGY":8,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"dir":0,"sourceId":3},{"OGX":4,"OGY":13,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"dir":0,"sourceId":3},{"OGX":8,"OGY":7,"altTitle":0,"atlasPosX":0,"atlasPosY":3,"dir":0,"sourceId":3}],"uneditableTiles":[]}}
+{"floorLayer":{"objects":[],"uneditableTiles":[]}}
+{"movementlayer":{"objects":[],"uneditableTiles":[]}}
+{"railLayer":{"objects":[],"uneditableTiles":[]}}
