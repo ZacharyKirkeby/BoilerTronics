@@ -658,8 +658,18 @@ public partial class LevelUi : Node2D
 		_on_step_button_pressed();
 	}
 
-	public void simulateReset() {
+	public void simulateReset()
+	{
 		_on_reset_button_pressed();
+	}
+	private void _on_documentation_pressed()
+	{
+		GetNode<Window>("%ManualWindow").Visible = true;
+	}
+
+	private void _on_manual_window_close_requested()
+	{
+		GetNode<Window>("%ManualWindow").Visible = false;
 	}
 
 }
