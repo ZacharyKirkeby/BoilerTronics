@@ -133,9 +133,9 @@ public partial class Terminals : TabContainer
 			{
 				currentEditor.OnLineNavigation();
 			} else if (trigger == "deletion")
-            {
+			{
 				currentEditor.OnDeletion();
-            }
+			}
 			else
 			{
 				currentEditor.ValidateAndHighlight();
