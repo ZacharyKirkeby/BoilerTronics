@@ -193,7 +193,7 @@ public partial class ErrorHandler : Node2D
 			errorSceneInstance = null;
 		}
 
-		ClearRuntimeErrors();
+		// ClearRuntimeErrors();
 	}
 
 	public void RemoveErrorScene()
@@ -209,7 +209,7 @@ public partial class ErrorHandler : Node2D
 			GD.Print("Error scene failed to remove.");
 		}
 
-		ClearRuntimeErrors();
+		// ClearRuntimeErrors();
 	}
 
 	// Clear all runtime error labels from terminals
