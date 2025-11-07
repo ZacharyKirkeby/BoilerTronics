@@ -63,12 +63,13 @@ public partial class BoilerTronicsLevel : Node2D
 	//when solution reached, update solution statistics
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
-		ppsSolution = (float)targetProduction / (float)StepCount;
+		ppsSolution = (float)targetProduction / (float)(StepCount+1);
+		GD.Print(targetProduction);
 		
 		//update leaderboard (min values for the 3 categories)
 		//update levelui stats labels
 		if(levelUi != null) {
-			levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount);
+			levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount + 1);
 			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
 			float solutionScore = grades[0] + grades[1] + grades[2];
 			solutionScore /= 3;
