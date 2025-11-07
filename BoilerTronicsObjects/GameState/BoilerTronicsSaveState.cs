@@ -580,4 +580,23 @@ public class BoilerTronicsSaveState
 			};
 		}
 	}
+	
+	
+	// LEADERBOARD SAVING STUFF
+	
+	
+	// Save leaderboard according to the level id
+	// TODO: save/merge entire leaderboard, only loads user's scores per-level atm
+	public void SaveLeaderboard(BoilerTronicsGlobalManager manager, int levelId) {
+		string SavePath = "user://Leaderboard/leaderboard" + levelId + ".leaderboard";
+		
+		// TODO
+	}
+	
+	// Load leaderboard according to the level id
+	public void LoadLeaderboard(BoilerTronicsGlobalManager manager, int levelId) {
+		string SavePath = "res://Resources/Levels/leaderboard" + levelId + ".leaderboard";
+		
+		// TODO
+	}
 }
