@@ -42,57 +42,150 @@ namespace BoilerTronicsObjects.Objects
 			
 			if (!gotID) {
 				GD.Print("ERROR: catastrophic failure from ObjectFactory, could not find target object");
+				GD.Print("Failed to find: " + atlasPos + ", sourceID: ", sourceId);
 				return null;
 			}
 			
-			switch (objectId) {
+			
+			return GenerateObject(objectId, x, y);
+		}
+
+		public static List<PlaceableBigData> GetBigObjectTileMap(int objectID, PlaceableBig.Direction dir) {
+			switch (objectID) {
+				case 4:
+					//factory furnace
+					return FactoryFurnace.StaticGetTextureGrid(dir);
+				case 5:
+					//factory press
+					return FactoryPress.StaticGetTextureGrid(dir);
+				case 6:
+					//factory roller
+					return FactoryRoller.StaticGetTextureGrid(dir);
+				case 153:
+					//switch
+					return SwitchObject.StaticGetTextureGrid(dir);
+			}
+
+			return null;
+		}
+
+		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
+			switch (objectID) {
 				case -1:
-					target = null;
-					GD.Print("ERROR: input objectId was invalid!");
-					GD.Print("sequence: %d, (%d, %d)", sourceId, atlasPos.X, atlasPos.Y);
-					break;
+					return null;
 				case 0:
 					//factoryin
-					target = new FactoryInputObject(x, y, 0);
-					break;
+					return new FactoryInputObject(x, y, 0);
 				case 1:
 					//factoryout
-					target = new FactoryOutputObject(x, y, 0);
-					break;
+					return new FactoryOutputObject(x, y, 0);
 				case 2:
 					//floordefault
-					target = new FloorTileObject(x, y, 0);
-					break;
+					return new FloorTileObject(x, y, 0);
+				// case 3:
+					//factory machine - DISABLED
+					// return new FactoryTestMachine(x, y, 0);
+				case 4:
+					//factory furnace
+					return new FactoryFurnace(x, y, 0);
+				case 5:
+					//factory furnace
+					return new FactoryPress(x, y, 0);
+				case 6:
+					//factory furnace
+					return new FactoryRoller(x, y, 0);
+				case 30:
+					//FloorCrackedTileObject
+					return new FloorCrackedTileObject(x, y, 0);
+				case 31:
+					//PipeBrokenFloorObject - Left
+					return new PipeBrokenFloorObject(x, y, 0, 0);
+				case 32:
+					//PipeBrokenFloorObject - Right
+					return new PipeBrokenFloorObject(x, y, 1, 0);
 				case 50:
 					//clawdefault
-					target = new ClawObject(x, y, 0);
-					break;
+					return new ClawObject(x, y, 0);
 				case 100:
 					//railleftdefault
-					target = new TrackObject(x, y, 0, 0);
-					break;
+					return new TrackObject(x, y, 0, 0);
 				case 101:
 					//railrightdefault
-					target = new TrackObject(x, y, 1, 0);
-					break;
+					return new TrackObject(x, y, 1, 0);
+				case 130:
+					//StalagmiteObject
+					return new StalagmiteObject(x, y, 0);
+				case 131:
+					//StalagmitesObject
+					return new StalagmitesObject(x, y, 0);
+				case 132:
+					//PipeBrokenCeilingObject - Left
+					return new PipeBrokenCeilingObject(x, y, 0, 0);
+				case 133:
+					//PipeBrokenCeilingObject - Right
+					return new PipeBrokenCeilingObject(x, y, 1, 0);
 				case 150:
 					//conveyorleftdefault
-					target = new ConveyorObject(x, y, 0, 0);
-					break;
+					return new ConveyorObject(x, y, 0, 0);
 				case 151:
 					//conveyorrightdefault
-					target = new ConveyorObject(x, y, 1, 0);
-					break;
+					return new ConveyorObject(x, y, 1, 0);
 				case 152:
 					//rotatordefault
-					target = new ConveyorRotatorObject(x, y, 0);
-					break;
-				case '_':
+					return new ConveyorRotatorObject(x, y, 0);
+				case 153:
+					//rotatordefault
+					return new SwitchObject(x, y, 0);
+				case 200:
+					//Coal
+					return new CoalObject(x, y, 0);
+				case 201:
+					//IronOre
+					return new IronOreObject(x, y, 0);
+				case 202:
+					//IronBar
+					return new IronBarObject(x, y, 0);
+				case 203:
+					//IronPlate
+					return new IronPlateObject(x, y, 0);
+				case 204:
+					//IronRod
+					return new IronRodObject(x, y, 0);
+				case 250:
+					//factoryin - coal
+					return new FactoryInputObject(x, y, 0, 200);
+				case 251:
+					//factoryin - iron ore
+					return new FactoryInputObject(x, y, 0, 201);
+				case 252:
+					//factoryin - iron bar
+					return new FactoryInputObject(x, y, 0, 202);
+				case 253:
+					//factoryin - iron plate
+					return new FactoryInputObject(x, y, 0, 203);
+				case 254:
+					//factoryin - iron rod
+					return new FactoryInputObject(x, y, 0, 204);
+				case 300:
+					//factoryout - coal
+					return new FactoryOutputObject(x, y, 0, 200);
+				case 301:
+					//factoryout - iron ore
+					return new FactoryOutputObject(x, y, 0, 201);
+				case 302:
+					//factoryout - iron bar
+					return new FactoryOutputObject(x, y, 0, 202);
+				case 303:
+					//factoryout - iron plate
+					return new FactoryOutputObject(x, y, 0, 203);
+				case 304:
+					//factoryout - iron rod
+					return new FactoryOutputObject(x, y, 0, 204);
+				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
-					break;
+					return null;
 			}
-			
-			return target;//new ClawObject(x, y, 0);
 		}
 	}
+
 }

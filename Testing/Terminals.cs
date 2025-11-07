@@ -106,7 +106,6 @@ public partial class Terminals : TabContainer
 
 	// when a new tab is selected, run
 	// TODO on tab selection, run error checker on both tabs
-
 	private void OnTabSelected(long tabIdx)
 	{
 		var manager = BoilerTronicsGlobalManager.GlobalManager;
