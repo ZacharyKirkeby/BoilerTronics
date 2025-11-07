@@ -704,4 +704,25 @@ public partial class LevelUi : Node2D
 		GetNode<Window>("%ManualWindow").Visible = false;
 	}
 
+	private void UpdateHintDisplay()
+	{
+		GetNode<Label>("%HintLabel").Text = hints[hintIndex];
+
+		// Toggle button visibility
+		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
+		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
+	}
+	private void _on_hint_back_pressed()
+	{
+		// my way
+		hintIndex--;
+		UpdateHintDisplay();
+	}
+	private void _on_hint_forward_pressed()
+	{
+		// i like thisway better
+		hintIndex++;
+		UpdateHintDisplay();
+	}
+
 }
