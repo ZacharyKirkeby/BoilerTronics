@@ -26,14 +26,29 @@ public partial class LevelSelect : Node2D
 		var levelnum = GetNode<OptionButton>("%LevelNumber");
 		int level = int.Parse(levelnum.GetItemText(levelnum.GetSelectedId()));
 		manager.SetTargetLevelSave(level, 1);
-		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
+		CallDeferred(nameof(changescenes));
 	}
-	private void _on_save_2_pressed() {
+	private void _on_save_2_pressed()
+	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		var levelnum = GetNode<OptionButton>("%LevelNumber");
+		int level = int.Parse(levelnum.GetItemText(levelnum.GetSelectedId()));
+		GD.Print("Level: " + level);
+		manager.SetTargetLevelSave(level, 2);
+		CallDeferred(nameof(changescenes));
+	}
+	private void _on_new_level_pressed()
+	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		var levelnum = GetNode<OptionButton>("%LevelNumber");
 		int level = int.Parse(levelnum.GetItemText(levelnum.GetSelectedId()));
 		GD.Print("Level: " + level);
 		manager.SetTargetLevelSave(level, -1);
+		CallDeferred(nameof(changescenes));
+
+	}
+	private void changescenes()
+	{
 		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
 	}
 }
