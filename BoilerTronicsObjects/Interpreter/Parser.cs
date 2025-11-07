@@ -534,6 +534,26 @@ public partial class Parser : Node2D
 		});
 
 		// Switch command - FTODO for someone else
+		_commandParser.Register(@"^\s*swt\s*$", m =>
+		{
+			if (scriptObject != null && scriptObject is SwitchObject)
+			{
+				GroupCollection groups = m.Groups;
+				string[] values = new string[groups.Count];
+				for (int i = 0; i < groups.Count; i++)
+				{
+					values[i] = groups[i].Value;
+				}
+				scriptObject.Switch(values);
+				if (_debug) GD.Print("Switch");
+			}
+			else
+			{
+				//EmitSignal(SignalName.ErrorRaised, _programCounter, "Invalid command for this object", editorName);
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				manager.currLevel.E.OnParserErrorRaised(_programCounter, "Invalid command for this object", editorName);
+			}
+		});
 	}
 
 	public void ResetProgramCounter()
@@ -579,9 +599,9 @@ public partial class Parser : Node2D
 	{
 		_stepConsumingInstructionCount++;
 		if (!this._decayFlag)
-        {
+		{
 			return;
-        }
+		}
 
 		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
 		{
@@ -603,9 +623,9 @@ public partial class Parser : Node2D
 	}
 
 	public void setDecayFlag(bool input)
-    {
+	{
 		this._decayFlag = input;
-    }
+	}
 
 
 

@@ -6,6 +6,7 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 	
+	// DEPRECATED
 	public abstract class MovementLayerObjects : PlaceableObject {
 		
 		static int layerSourceId = 2;
