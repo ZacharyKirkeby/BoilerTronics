@@ -1207,43 +1207,6 @@ These instructions execute instantly (no step cost):
 [font_size=18][b]Other:[/b][/font_size]
 - [code]wrt[/code] - Write to output"
 
-[node name="HintsWindow" type="Window" parent="."]
-unique_name_in_owner = true
-oversampling_override = 1.0
-title = "Hints"
-initial_position = 1
-size = Vector2i(600, 300)
-visible = false
-
-[node name="CenterContainer" type="CenterContainer" parent="HintsWindow"]
-custom_minimum_size = Vector2(600, 300)
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HintsWindow/CenterContainer"]
-custom_minimum_size = Vector2(500, 200)
-layout_mode = 2
-
-[node name="HintBack" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_constants/icon_max_width = 40
-icon = ExtResource("23_uqjh5")
-
-[node name="HintLabel" type="Label" parent="HintsWindow/CenterContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("3_xc2rq")
-horizontal_alignment = 1
-
-[node name="HintForward" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_constants/icon_max_width = 40
-icon = ExtResource("24_bsnj2")
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
