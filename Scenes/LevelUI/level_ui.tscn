@@ -1,4 +1,4 @@
-[gd_scene load_steps=61 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=63 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
@@ -1070,6 +1070,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_xc2rq")
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="HintForward" type="Button" parent="HintsWindow/CenterContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -1089,17 +1090,18 @@ visible = false
 [node name="TabContainer" type="TabContainer" parent="ManualWindow"]
 offset_right = 900.0
 offset_bottom = 700.0
+current_tab = 0
 
 [node name="Arithmetic" type="ScrollContainer" parent="ManualWindow/TabContainer"]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Arithmetic"]
-layout_mode = 2
 custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_xc2rq")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-fit_content = true
 text = "[font_size=24][b]Arithmetic Instructions[/b][/font_size]
 
 [code]add <op1> <op2>
@@ -1112,17 +1114,19 @@ cmp <op1> <op2>[/code]
   [code]cmp = 0[/code]  if op1 = op2
   [code]cmp = -1[/code] if op1 < op2
   [code]cmp = 1[/code]  if op1 > op2"
+fit_content = true
 
 [node name="Registers" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Registers"]
-layout_mode = 2
 custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_xc2rq")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-fit_content = true
 text = "[font_size=24][b]Registers[/b][/font_size]
 
 [font_size=18][b]r0[/b][/font_size]
@@ -1137,17 +1141,19 @@ text = "[font_size=24][b]Registers[/b][/font_size]
 [font_size=18][b]cmp[/b][/font_size]
   Comparison result register:
   [code]-1[/code] (less), [code]0[/code] (equal), [code]1[/code] (greater)"
+fit_content = true
 
 [node name="Control Flow" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Control Flow"]
-layout_mode = 2
 custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_xc2rq")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-fit_content = true
 text = "[font_size=24][b]Control Flow Instructions[/b][/font_size]
 
 [code]jmp <label>[/code]
@@ -1170,17 +1176,19 @@ text = "[font_size=24][b]Control Flow Instructions[/b][/font_size]
 
 [code]jle <label>[/code]
   Jump if cmp <= 0"
+fit_content = true
 
 [node name="Instructions" type="ScrollContainer" parent="ManualWindow/TabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 3
 
 [node name="Content" type="RichTextLabel" parent="ManualWindow/TabContainer/Instructions"]
-layout_mode = 2
 custom_minimum_size = Vector2(850, 0)
+layout_mode = 2
 theme_override_fonts/normal_font = ExtResource("3_xc2rq")
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-fit_content = true
 text = "[font_size=24][b]Step-Consuming Instructions[/b][/font_size]
 
 These instructions consume one simulation step:
@@ -1206,7 +1214,7 @@ These instructions execute instantly (no step cost):
 
 [font_size=18][b]Other:[/b][/font_size]
 - [code]wrt[/code] - Write to output"
-
+fit_content = true
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
@@ -1221,6 +1229,7 @@ These instructions execute instantly (no step cost):
 [connection signal="toggled" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/VisibilityButton" to="." method="_on_visibility_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Hints" to="." method="_on_hints_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/ToggleButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_toggle_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/OpenButton" to="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray" method="_on_open_button_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer/HBoxContainer/CounterTimeControlsContainer/TimeControlsContainer/TimeControls/Step Button" to="." method="_on_step_button_pressed"]
@@ -1241,5 +1250,4 @@ These instructions execute instantly (no step cost):
 [connection signal="close_requested" from="HintsWindow" to="." method="_on_hints_window_close_requested"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
-[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
 [connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
