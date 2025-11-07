@@ -47,9 +47,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (objID == _TargetObjectID) _CurrNum--;
 			GD.Print("Objects Left: ", _CurrNum);
 			if (_CurrNum == 0) {
-				GD.Print("You Won!"); // this will be a function call to the level later
 				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 				manager.currLevel.UpdateSolutionStats();
+				manager.currLevel.HaultObjects();
+				manager.currLevel.Pause();
 			}
 			return true;
 		}
