@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BoilerTronicsObjects.Placeable;	// use for TileTex
 
 using Parsing;
 public partial class LevelCreator : LevelUi
@@ -25,9 +26,36 @@ public partial class LevelCreator : LevelUi
 		loadName.Text = dropdown.GetItemText(dropdown.Selected);
 		saveWindow.Visible = true;
 	}
+	
+	// opens level metadata edit button
 	private void _on_edit_button_pressed()
 	{
+		var levelName = GetNode<LineEdit>("%MetaLevelName");
+		var length = GetNode<LineEdit>("%MetaLength");
+		var width = GetNode<LineEdit>("%MetaWidth");
+		var backgroundTilesSelector = GetNode<OptionButton>("%BackgroundTilesSelector");
+		
+		// TODO: fill levelName, length, width, backgroundTilesSelector with default data
+		// TODO: currently, length/width visuals are completely hidden because it'd take too much time to implement dynamically updating those visuals
+		
+		// pull current level name
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		levelName.SetText(manager.saveState.levelName);
+		
+		// pull current level dimensions
+		Vector2I levelDimensions = manager.saveState.GetLevelDimensions();
+		length.SetText(levelDimensions.X.ToString());
+		width.SetText(levelDimensions.Y.ToString());
+		
+		// programatically fill up the background tile info
+		backgroundTilesSelector.Clear();
+		
+		// TODO: current system just manually adds types, not very nice/programatically
+		backgroundTilesSelector.AddItem("Background1", 0);
+		backgroundTilesSelector.AddItem("DebugVisual", 1);
+		
 		GetNode<Window>("%MetadataWindow").Visible = true;
+		// GetNode<Window>("%MetadataWindow").Visible = true;
 	}
 	private void _on_metadata_window_close_requested()
 	{
@@ -35,12 +63,42 @@ public partial class LevelCreator : LevelUi
 	}
 	private void _on_change_metadata_button_pressed()
 	{
-		var metadataButton = GetNode<Button>("ChangeMetadataButton");
+		// var metadataButton = GetNode<Button>("%ChangeMetadataButton");
 		var levelName = GetNode<LineEdit>("%MetaLevelName");
 		var length = GetNode<LineEdit>("%MetaLength");
 		var width = GetNode<LineEdit>("%MetaWidth");
-		var backgroundTilesSelector = GetNode<OptionButton>("BackgroundTilesSelector");
+		var backgroundTilesSelector = GetNode<OptionButton>("%BackgroundTilesSelector");
 		/* TODO: Ethen change stuff when pressed */
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// TODO: when/if dimension metadata is also editable, include checks for those fields too!
+		if (levelName.GetText() != "") {
+			
+			// update save state text
+			manager.saveState.levelName = levelName.GetText();
+			
+			switch (backgroundTilesSelector.GetSelectedId()) {
+				case 0:
+					// default dark floor tiles
+					manager.saveState.boundaryTex = new TileTex(new Vector2I(0, 0), 6);
+					break;
+				case 1:
+					// debug background that exists only to demonstrate that this functionality exists
+					manager.saveState.boundaryTex = new TileTex(new Vector2I(0, 1), 6);
+					break;
+				default:
+					GD.Print("LevelCreator.cs: Change Metadata Button: Could not find selected background object!");
+					break;
+			}
+			
+			// save data
+			manager.SaveAutosave();
+			
+			// set system to load autosave
+			manager.SetTargetLevelSave(-2, 0);
+			CallDeferred(nameof(LoadedReloadScene));
+		}
 	}
 	private void _on_creatorsave_button_pressed()
 	{
