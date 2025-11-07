@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=24 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
+[ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -551,6 +552,9 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("12_rlg4b")
 
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Select" to="." method="_on_level_select_pressed"]
