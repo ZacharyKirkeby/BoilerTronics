@@ -517,17 +517,11 @@ public partial class LevelUi : Node2D
 	private void _on_documentation_pressed()
 	{
 		GetNode<Window>("%ManualWindow").Visible = true;
-		LoadManualContent();
 	}
 
 	private void _on_manual_window_close_requested()
 	{
 		GetNode<Window>("%ManualWindow").Visible = false;
-	}
-
-	private void LoadManualContent()
-	{
-		
 	}
 
 }
