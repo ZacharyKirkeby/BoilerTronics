@@ -30,11 +30,6 @@ public partial class Terminals : TabContainer
 
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.terminalContainer = this;
-		
-		// run terminal selected functionality
-		// didn't work in the first place, causes problems; disabled.
-		// CodeEdit curr = GetCurrentEditor();
-		// if (curr != null) { curr.TerminalSelected();}
 	}
 
 	public CodeEdit AddEditor(string initialText = "Your Solution Here")
@@ -53,7 +48,6 @@ public partial class Terminals : TabContainer
 	{
 		if (editors.Contains(editor))
 		{
-			//TODO - delete should reflect change in count
 			editors.Remove(editor);
 			editor.QueueFree();
 		}
@@ -72,7 +66,7 @@ public partial class Terminals : TabContainer
 		codeEdit.GuiInput += (InputEvent @event) => OnCodeEditInput(@event, codeEdit);
 	}
 
-	// Enforces character length requirements
+	// Enforces character length requirements and triggers validation
 	private void OnCodeEditInput(InputEvent @event, CodeEdit codeEdit)
 	{
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed)
@@ -80,11 +74,33 @@ public partial class Terminals : TabContainer
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			if (manager.currLevel.StepCount != 0)
 			{
-
 				return;
 			}
-			// TODO: inefficient call if this runs every time the terminal at all updates!
+
 			UpdateSelectedTerminal();
+			
+			// Check if Enter/Return was pressed (new line) - trigger validation
+			if (keyEvent.Keycode == Key.Enter || keyEvent.Keycode == Key.KpEnter)
+			{
+				CallDeferred(nameof(ValidateCurrentEditor), "newline");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
+			}
+
+			// Check if up/down arrow (line selection change) - trigger validation
+			if (keyEvent.Keycode == Key.Up || keyEvent.Keycode == Key.Down)
+			{
+				CallDeferred(nameof(ValidateCurrentEditor), "navigation");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
+			}
+
+			else if (keyEvent.Keycode == Key.Backspace || keyEvent.Keycode == Key.Delete)
+			{
+				CallDeferred(nameof(ValidateCurrentEditor), "deletion");
+				manager.currLevel.E.setSyntaxError(HasAnySyntaxErrors());
+				GD.PrintErr(HasAnySyntaxErrors());
+			}
 
 			long unicode = keyEvent.Unicode;
 			// Only printable characters
@@ -104,9 +120,31 @@ public partial class Terminals : TabContainer
 		}
 	}
 
-	// when a new tab is selected, run
-	// TODO on tab selection, run error checker on both tabs
-	private void OnTabSelected(long tabIdx)
+	private void ValidateCurrentEditor(string trigger = "")
+	{
+		CodeEdit currentEditor = GetCurrentEditor();
+		if (currentEditor != null)
+		{
+			if (trigger == "newline")
+			{
+				currentEditor.OnNewLine();
+			}
+			else if (trigger == "navigation")
+			{
+				currentEditor.OnLineNavigation();
+			} else if (trigger == "deletion")
+            {
+				currentEditor.OnDeletion();
+            }
+			else
+			{
+				currentEditor.ValidateAndHighlight();
+			}
+		}
+	}
+
+	// when a new tab is selected, run validation
+	private void OnTabSelected(long tab)
 	{
 		var manager = BoilerTronicsGlobalManager.GlobalManager;
 		if (manager?.terminalContainer == null) return;
@@ -120,7 +158,7 @@ public partial class Terminals : TabContainer
 		var registerLabel = registerPanel.GetNodeOrNull<RegisterLabel>("RegisterLabel");
 		if (registerLabel == null) return;
 
-		var currentEditor = GetTabControl((int)tabIdx) as CodeEdit;
+		var currentEditor = GetTabControl((int)tab) as CodeEdit;
 		if (currentEditor == null) return;
 
 		var obj = currentEditor.getObject();
@@ -136,27 +174,21 @@ public partial class Terminals : TabContainer
 
 
 	// update selected terminal; important for corresponding object highlighting!
-	public void UpdateSelectedTerminal() {
-		// run terminal selected functionality
-		
-		
-		// if last selected terminal exists, tell it to stop highlighting
-		// if (manager.lastSelectedTerminal != null) {
-			// manager.lastSelectedTerminal.StopHighlighting();
-		// }
-		
-		// update last selected terminal
-		// manager.lastSelectedTerminal = GetCurrentEditor();
-		
+	public void UpdateSelectedTerminal()
+	{
 		ClearHighlightedObjects();
 		
 		// call terminal's "just got selected" function
 		// check: is the current editor queued for deletion? check to avoid debug errors
-		if (IsInstanceValid(GetCurrentEditor())) GetCurrentEditor().TerminalSelected();
+		if (IsInstanceValid(GetCurrentEditor()))
+		{
+			GetCurrentEditor().TerminalSelected();
+		}
 	}
 	
 	// tells all layers to stop highlighting objects
-	public void ClearHighlightedObjects() {
+	public void ClearHighlightedObjects()
+	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		Vector2I dummy = new Vector2I(0, 0);
 		
@@ -172,11 +204,14 @@ public partial class Terminals : TabContainer
 
 	public CodeEdit GetCurrentEditor()
 	{
-		// TODO: sometimes when deleting, or some other actions, 'CurrentTab' can go negative!
-		// "Index p_index = (...) is out of bounds ((int)data.children_cache.size() - data.internal_children_front_count_cahce - data.internal_children_back_count_cache = 0)
-		// int index = CurrentTab;
-		// if (index < 0) { index = 0; GD.Print("Terminal: CurrentTab has a negative value: ", index);}
-		return GetChild<CodeEdit>(CurrentTab) as CodeEdit;
+		int index = CurrentTab;
+		if (index < 0 || index >= GetChildCount())
+		{
+			return null;
+		}
+		
+		Node child = GetChild(index);
+		return child as CodeEdit;
 	}
 
 	public List<CodeEdit> GetAllEditors()
@@ -185,10 +220,43 @@ public partial class Terminals : TabContainer
 	}
 	
 	// set all sub editors editable or not
-	public void SetEditorsEditable(bool val) {
-		foreach (CodeEdit panel in editors) {
+	public void SetEditorsEditable(bool val)
+	{
+		foreach (CodeEdit panel in editors)
+		{
 			GD.Print("Terminals: set ", panel, " editable to ", val);
 			panel.SetEditable(val);
 		}
+	}
+	
+	// Validate all editors
+	public void ValidateAllEditors()
+	{
+		foreach (CodeEdit editor in editors)
+		{
+			editor.ValidateAndHighlight();
+		}
+	}
+
+	// Clear all errors from all editors
+	public void ClearAllErrors()
+	{
+		foreach (CodeEdit editor in editors)
+		{
+			editor.ClearAllErrors();
+		}
+	}
+	
+	// Check if any editor has syntax errors
+	public bool HasAnySyntaxErrors()
+	{
+		foreach (CodeEdit editor in editors)
+		{
+			if (editor.HasErrors())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

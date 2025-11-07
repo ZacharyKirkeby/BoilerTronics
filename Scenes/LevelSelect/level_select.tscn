@@ -35,17 +35,36 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_0b8dh")
 
-[node name="OptionButton" type="OptionButton" parent="MainVBox/PanelContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="MainVBox/PanelContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainVBox/PanelContainer/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="MainVBox/PanelContainer/CenterContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_fonts/font = ExtResource("2_2sqnl")
+theme_override_font_sizes/font_size = 150
+text = "Level: "
+
+[node name="LevelNumber" type="OptionButton" parent="MainVBox/PanelContainer/CenterContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_fonts/font = ExtResource("2_2sqnl")
 theme_override_font_sizes/font_size = 150
 alignment = 1
 selected = 0
 item_count = 2
-popup/item_0/text = "Level 0"
+popup/item_0/text = "0"
 popup/item_0/id = 0
-popup/item_1/text = "Level 1"
+popup/item_1/text = "1"
 popup/item_1/id = 1
 
 [node name="HSeparator" type="HSeparator" parent="MainVBox"]
@@ -118,9 +137,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Save 2"
 
+[node name="New Level" type="Button" parent="Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "New Level"
+
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
 [connection signal="pressed" from="Window/SaveContainer/Save 0" to="." method="_on_save_0_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save 1" to="." method="_on_save_1_pressed"]
 [connection signal="pressed" from="Window/SaveContainer/Save 2" to="." method="_on_save_2_pressed"]
+[connection signal="pressed" from="Window/SaveContainer/New Level" to="." method="_on_new_level_pressed"]

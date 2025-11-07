@@ -1,22 +1,28 @@
 using Godot;
 using System;
-using System.Collections;				//	ArrayList
-using BoilerTronicsObjects.Placeable;	//	PlaceableObject
-using BoilerTronicsObjects.Layers;		//	all core layer functionality and etc
-using BoilerTronicsObjects.Interfaces;	//	Scriptable interface
-using BoilerTronicsObjects.Objects.MovementLayerObjects;	// ConveyorGroup (terminal highlighting, specific exception)
+using System.Collections;
+using System.Collections.Generic;
+using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Interfaces;
+using BoilerTronicsObjects.Objects.MovementLayerObjects;
+using Parsing;
 
-// whole file is arguably a test file
+// Extended CodeEdit with real-time error checking
 public partial class CodeEdit : Godot.CodeEdit
 {
 	private int lastHighlightedLine = -1;
 	public int currentLine = 0;
 	private int lastLine = 0;
 
-	// TODO - call proprocessor on line change - cursor or enter
-	// check text change too for safety
+	// Error checking fields
+	private Label errorLabel;
+	private Color errorColor = new Color(1.0f, 0.0f, 0.0f, 0.25f);
+	private Dictionary<int, string> lineErrors = new();
+	public bool error = false;
+	private bool isDirty = false;
 	
-	// important vars for highlighting objects!
+	// Object highlighting fields
 	private PlaceableObject correspondingObject;
 	private Layer highlightedLayer;
 	private bool highlightingObject = false;
@@ -29,19 +35,46 @@ public partial class CodeEdit : Godot.CodeEdit
 		TextChanged += OnTextChanged;
 		currentLine = 0;
 		
+		// Create error label at bottom of terminal
+		CreateErrorLabel();
+		
+		// Initial validation
+		ValidateAndHighlight();
+		
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		// if new terminal is created, then the CurrentEditor() should be this terminal
-		// call and update terminal container accordingly
-		if (manager.terminalContainer.GetCurrentEditor() == this) {
+		if (manager.terminalContainer.GetCurrentEditor() == this)
+		{
 			manager.terminalContainer.UpdateSelectedTerminal();
 		}
 	}
 
-	// this is a debug function
+	private void CreateErrorLabel()
+	{
+		errorLabel = new Label
+		{
+			Name = "SyntaxErrorLabel",
+			HorizontalAlignment = HorizontalAlignment.Left,
+			Modulate = new Color(1, 0.3f, 0.3f),
+			AutowrapMode = TextServer.AutowrapMode.Word,
+			Visible = false
+		};
+		
+		AddChild(errorLabel);
+		errorLabel.AnchorLeft = 0;
+		errorLabel.AnchorRight = 1;
+		errorLabel.AnchorBottom = 1;
+		errorLabel.AnchorTop = 1;
+		errorLabel.OffsetBottom = -4;
+	}
+
 	private void OnTextChanged()
 	{
 		GD.Print($"[{Name}] content changed:\n{Text}");
-	}	
+		isDirty = true;
+		CallDeferred(nameof(ValidateAndHighlight));
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.E.setSyntaxError(this.error);
+	}
 
 	public PlaceableObject getObject()
 	{
@@ -55,123 +88,182 @@ public partial class CodeEdit : Godot.CodeEdit
 	public void TerminalSelected() {
 		GD.Print("terminal selected");
 		
+		// Always validate when selected
+		ValidateAndHighlight();
+		
 		TryHighlightingObject();
 	}
-	
-	public void TryHighlightingObject() {
-		GD.Print("CodeEdit: correspondingObject: ", correspondingObject);
-		if (correspondingObject != null) {
+
+	// Called when user presses Enter (new line)
+	public void OnNewLine()
+	{
+		ValidateAndHighlight();
+	}
+
+	// Called when user navigates lines (Up/Down arrows)
+	public void OnLineNavigation()
+	{
+		ValidateAndHighlight();
+	}
+
+	public void OnDeletion()
+    {
+		ValidateAndHighlight();
+    }
+
+	// Main validation and highlighting logic
+	public void ValidateAndHighlight()
+	{
+		ClearSyntaxErrorHighlights();
+		lineErrors.Clear();
+
+		string code = this.Text;
+		var errors = ProgramValidator.ValidateProgram(code);
+		if (errors != null && errors.Count > 0)
+        {
+            this.error = true;
+        } else
+        {
+			this.error = false;
+        }
+		// Process each error
+		foreach (var (lineNum, errorMsg) in errors)
+		{
+			// Store error for this line
+			if (!lineErrors.ContainsKey(lineNum))
+			{
+				lineErrors[lineNum] = errorMsg;
+			}
+
+			// Highlight the line with error
+			HighlightSyntaxError(lineNum, errorColor);
+		}
+
+		// Update error display
+		UpdateErrorLabel();
+		isDirty = false;
+	}
+
+	private void ClearSyntaxErrorHighlights()
+	{
+		// Only clear syntax error highlights, preserve execution highlights
+		// This is tricky - we need to preserve lastHighlightedLine
+		for (int i = 0; i < GetLineCount(); i++)
+		{
+			// Don't clear the current execution line
+			if (i != lastHighlightedLine)
+			{
+				SetLineBackgroundColor(i, new Color(0, 0, 0, 0));
+			}
+		}
+	}
+
+	private void HighlightSyntaxError(int lineNum, Color color)
+	{
+		if (lineNum >= 0 && lineNum < GetLineCount())
+		{
+			SetLineBackgroundColor(lineNum, color);
+		}
+	}
+
+	private void UpdateErrorLabel()
+	{
+		if (errorLabel == null) return;
+
+		// Clear any old runtime error label
+		var runtimeLabel = GetNodeOrNull<Label>("RuntimeErrorLabel");
+		
+		if (lineErrors.Count == 0)
+		{
+			errorLabel.Text = "";
+			errorLabel.Visible = false;
 			
-			// Scriptable case
-			if (correspondingObject is Scriptable) {
-				// highlight corresponding object
-				/*
-				OLD INEFFICIENT CODE
-				only here as a backup/for reference
-				
-				// determine what layer this object is from
-				// TODO: we really should update the PlaceableObject objects to actually hold this data
-				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-				
-				// try and find and highlight the specified object
-				bool res = HighlightObjectIfValid(correspondingObject, manager.layerClaw);
-				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFactory); }
-				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFloor); }
-				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerMovement); }
-				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerRail); }
-				
-				if (!res) {
-					GD.Print("CodeEdit: could not find object on layer to highlight");
-				}
-				*/
-				
-				// Extremely simplified method to highlight a tile
+			// Position runtime label if it exists
+			if (runtimeLabel != null)
+			{
+				runtimeLabel.Position = new Vector2(0, this.Size.Y - 20);
+			}
+			return;
+		}
+
+		// Build error message
+		var sortedErrors = new List<(int line, string msg)>();
+		foreach (var kvp in lineErrors)
+		{
+			sortedErrors.Add((kvp.Key, kvp.Value));
+		}
+		sortedErrors.Sort((a, b) => a.line.CompareTo(b.line));
+
+		// Show all problematic line numbers
+		string lineNumbers = "Syntax error(s) on line: ";
+		for (int i = 0; i < sortedErrors.Count; i++)
+		{
+			lineNumbers += (sortedErrors[i].line + 1).ToString();
+			if (i < sortedErrors.Count - 1)
+				lineNumbers += ", ";
+		}
+
+		// Show first error message
+		string firstError = sortedErrors[0].msg;
+		errorLabel.Text = $"{lineNumbers} - {firstError}";
+		errorLabel.Visible = true;
+		errorLabel.Position = new Vector2(0, this.Size.Y - 20);
+		
+		// Position runtime label higher if it exists
+		if (runtimeLabel != null)
+		{
+			runtimeLabel.Position = new Vector2(0, this.Size.Y - 40);
+		}
+	}
+
+	public void TryHighlightingObject()
+	{
+		GD.Print("CodeEdit: correspondingObject: ", correspondingObject);
+		if (correspondingObject != null)
+		{
+			if (correspondingObject is Scriptable)
+			{
 				Layer layer = correspondingObject.GetParentLayer();
-				if (layer != null) {
+				if (layer != null)
+				{
 					layer.HighlightTile(true, correspondingObject.GetCurrPos());
 					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 				}
 				
-				if (correspondingObject is ConveyorGroup) {
-					// what if the object is a ConveyorGroup object?
-					// need to write exception given that the ConveyorGroup object is extremely distinct
-					// does not behave like normal PlaceableObject objects
+				if (correspondingObject is ConveyorGroup)
+				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
 					
-					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
-					// Get the first item from the ConveyorGroup's list
-					PlaceableObject obj = (PlaceableObject) ((ConveyorGroup) correspondingObject).convList[0];
+					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).convList[0];
 					
-					// if that doesn't work, just give up.
-					if (obj == null) {
+					if (obj == null)
+					{
 						GD.Print("CodeEdit: ConveyorGroup associated with terminal has no ConveyorObject objects!");
 						return;
 					}
 					
 					layer = obj.GetParentLayer();
-					if (layer != null) {
+					if (layer != null)
+					{
 						layer.HighlightTile(true, obj.GetCurrPos());
 						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 					}
 				}
 			}
-		} else {
-			GD.Print("CodeEdit: correspondingObject is null!");
-		}	
-	}
-	
-	// function to stop highlighting and etc
-	public void StopHighlighting() {
-		// TODO: does not seem to work properly? The below values don't seem to be saved properly
-		// Behavior of when a CodeEdit terminal is de-selected is unknown...
-		
-		// GD.Print("CodeEdit: Trying to stop highlighting");
-		// only stop highlighting if needed!
-		// if (correspondingObject != null && highlightingObject) {
-			// if (highlightedLayer != null) {
-				// GD.Print("CodeEdit: Sent stop highlighting request to layer");
-				// highlightedLayer.HighlightTile(false, new Vector2I(0, 0));
-			// }
-		// }
-	}
-	
-	// terrible little helper function
-	// returns if the specified layer has the specified object
-	// refer to TerminalSelected; this should be deprecated ASAP when good datastructures are adopted and etc
-	/*DEPRECATED*/
-	private bool ObjectInLayer(PlaceableObject target, Layer layer) {
-		ArrayList work = layer.exportObjectList();
-		
-		// so very efficient (/s)
-		// TODO: update PlaceableObject datastruct to hold layer info, edit all instances where a PlaceableObject is constructed accordingly
-		foreach (PlaceableObject obj in work) {
-			if (obj == target) {
-				return true;
-			}
 		}
-		return false;
+		else
+		{
+			GD.Print("CodeEdit: correspondingObject is null!");
+		}
 	}
-	
-	// yet another terrible little helper function
-	// if the object is in the specified layer, then highlight the specified object
-	/*DEPRECATED*/
-	private bool HighlightObjectIfValid(PlaceableObject target, Layer layer) {
-		// if object is not in layer, return
-		if (!ObjectInLayer(target, layer)) {return false;}
-		
-		// else: try and highlight the object!
-		// (TODO)
-		// GD.Print("found target:", target);
-		highlightedLayer = layer;
-		layer.HighlightTile(true, target.GetCurrPos());
-		
-		return true;
+
+	public void StopHighlighting()
+	{
+		// Function to stop highlighting
 	}
-	
-	
-	// sets internal object to point to input
-	// mainly just used for the "highlight terminal's corresponding object" functionality
-	public void SetCorrespondingObject(PlaceableObject input) {
+
+	public void SetCorrespondingObject(PlaceableObject input)
+	{
 		correspondingObject = input;
 	}
 
@@ -180,106 +272,174 @@ public partial class CodeEdit : Godot.CodeEdit
 		return Text;
 	}
 	
-	public int getLastHighlighted() {
+	public int getLastHighlighted()
+	{
 		return lastHighlightedLine;
 	}
-	
-	//stepping shows current line of execution by highlighting the line in the terminal
-	public void HighlightLine(int lineNumber, Color color, bool error=false) {
+
+	// Existing HighlightLine for execution stepping
+	public void HighlightLine(int lineNumber, Color color, bool error = false)
+	{
 		HighlightCurrentLine = false;
-		if (lastHighlightedLine >= 0 && lastHighlightedLine < GetLineCount())
-		{
-			SetLineBackgroundColor(lastHighlightedLine, new Color(0, 0, 0, 0f));
-		}
 		
+		// If this is an error highlight from ErrorHandler (runtime error)
 		if (error == true)
 		{
 			GD.PrintErr(lineNumber);
 			SetLineBackgroundColor(lineNumber, color);
+			lastHighlightedLine = lineNumber;
 			QueueRedraw();
 			return;
 		}
 
+		// Clear previous execution highlight (not syntax errors)
+		if (lastHighlightedLine >= 0 && lastHighlightedLine < GetLineCount())
+		{
+			// Only clear if it's not a syntax error line
+			if (!lineErrors.ContainsKey(lastHighlightedLine))
+			{
+				SetLineBackgroundColor(lastHighlightedLine, new Color(0, 0, 0, 0f));
+			}
+			else
+			{
+				// Re-apply syntax error color
+				SetLineBackgroundColor(lastHighlightedLine, errorColor);
+			}
+		}
+
 		int totalLines = GetLineCount();
-		if (totalLines == 0) {
+		if (totalLines == 0)
+		{
 			return;
 		}
 
 		int lineToHighlight = Math.Max(0, lineNumber);
 
-		//invalid line count
-		if (lineToHighlight >= totalLines) {
+		if (lineToHighlight >= totalLines)
+		{
 			return;
 		}
 
-		while (lineToHighlight < totalLines) {
+		// Skip empty lines and labels
+		while (lineToHighlight < totalLines)
+		{
 			string curr = GetLine(lineToHighlight);
-			if (string.IsNullOrWhiteSpace(curr) || curr.Trim().EndsWith(":")) {
+			if (string.IsNullOrWhiteSpace(curr) || curr.Trim().EndsWith(":"))
+			{
 				lineToHighlight++;
 				continue;
 			}
 			string trimmedLine = curr.Trim();
-			if (trimmedLine.StartsWith("jmp ")) {
-				//get label "name"
+			if (trimmedLine.StartsWith("jmp "))
+			{
 				string label = trimmedLine.Substring(4).Trim();
 				int target = FindNextLineAfterLabel(label);
-				if (target >= 0) {
+				if (target >= 0)
+				{
 					lineToHighlight = target;
 					break;
 				}
-				else {
+				else
+				{
 					break;
 				}
 			}
 			break;
 		}
 
-		// if we've run past the last line while skipping, do nothing
-		if (lineToHighlight >= totalLines) {
+		if (lineToHighlight >= totalLines)
+		{
 			return;
 		}
+
+		// Execution highlight (yellow/green) overlays syntax errors
 		SetLineBackgroundColor(lineToHighlight, color);
 		lastHighlightedLine = lineToHighlight;
 		QueueRedraw();
 	}
 
-	private int FindNextLineAfterLabel(string labelName) {
+	private int FindNextLineAfterLabel(string labelName)
+	{
 		int total = GetLineCount();
-		if (total == 0) {
+		if (total == 0)
+		{
 			return -1;
 		}
 
-		for (int i = 0; i < total; i++) {
+		for (int i = 0; i < total; i++)
+		{
 			var line = GetLine(i)?.Trim();
-			if (line != null && line.Equals(labelName + ":")) {
-				//find first line after label
-				for (int j = i + 1; j < total; j++) {
+			if (line != null && line.Equals(labelName + ":"))
+			{
+				for (int j = i + 1; j < total; j++)
+				{
 					var next = GetLine(j);
-					if (!string.IsNullOrWhiteSpace(next) && !next.Trim().EndsWith(":")) {
+					if (!string.IsNullOrWhiteSpace(next) && !next.Trim().EndsWith(":"))
+					{
 						return j;
 					}
 				}
-				return -1; //if no line to highlight after
+				return -1;
 			}
 		}
 
-		return -1; //no corresponding label found
+		return -1;
 	}
 
-	//clears all highlighting for all terminals (when reset button pressed)
-	public void ClearAllHighlights() {
-		for(int i = 0; i < GetLineCount(); i++) {
+	public void ClearAllHighlights()
+	{
+		for (int i = 0; i < GetLineCount(); i++)
+		{
 			SetLineBackgroundColor(i, new Color(0, 0, 0, 0f));
 		}
 		lastHighlightedLine = -1;
 		HighlightCurrentLine = true;
+		CallDeferred(nameof(ValidateAndHighlight));
 	}
-	
-	public override void _Input(InputEvent @event) {
-		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left) {
-			// TerminalSelected();
+
+	// Error checking API
+	public Label GetErrorLabel()
+	{
+		return errorLabel;
+	}
+
+	public bool HasErrors()
+	{
+		return this.error;
+	}
+
+	public Dictionary<int, string> GetLineErrors()
+	{
+		return new Dictionary<int, string>(lineErrors);
+	}
+
+	public void ClearAllErrors()
+	{
+		ClearSyntaxErrorHighlights();
+		lineErrors.Clear();
+		this.error = false;
+		if (errorLabel != null)
+		{
+			errorLabel.Text = "";
+			errorLabel.Visible = false;
+		}
+	}
+	public void ClearRuntimeErrorLabel()
+	{
+		var runtimeLabel = GetNodeOrNull<Label>("RuntimeErrorLabel");
+		if (runtimeLabel != null)
+		{
+			runtimeLabel.QueueFree();
+			runtimeLabel.Free();
+		}
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseButton buttonEvent && buttonEvent.ButtonIndex == MouseButton.Left)
+		{
+			// Future: add click handling if needed
 		}
 		base._Input(@event);
 	}
-	
 }
