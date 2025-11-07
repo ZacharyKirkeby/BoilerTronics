@@ -1,0 +1,6 @@
+{"metadata":{"boundaryAtlasX":0,"boundaryAtlasY":0,"boundarySize":2,"boundarySourceId":6,"levelId":-36,"levelName":"Story36Test","mapSize":[20,20],"saveSlot":-1}}
+{"clawLayer":{"objects":[],"uneditableTiles":[]}}
+{"factoryLayer":{"objects":[],"uneditableTiles":[]}}
+{"floorLayer":{"objects":[],"uneditableTiles":[]}}
+{"movementlayer":{"objects":[{"OGX":7,"OGY":8,"altTitle":0,"atlasPosX":2,"atlasPosY":0,"dir":0,"sourceId":2},{"OGX":6,"OGY":14,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"sourceId":2,"terminalCode":""},{"OGX":4,"OGY":18,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"conveyorCode":"","sourceId":2},{"OGX":5,"OGY":18,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"sourceId":2},{"OGX":9,"OGY":14,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"conveyorCode":"","sourceId":2},{"OGX":8,"OGY":15,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":2}],"uneditableTiles":[]}}
+{"railLayer":{"objects":[],"uneditableTiles":[]}}
