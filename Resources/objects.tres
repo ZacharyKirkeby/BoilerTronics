@@ -182,6 +182,8 @@ texture = ExtResource("8_63bsg")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/texture_origin = Vector2i(0, -8)
+0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, -8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_conhe"]
 texture = ExtResource("7_f84ow")

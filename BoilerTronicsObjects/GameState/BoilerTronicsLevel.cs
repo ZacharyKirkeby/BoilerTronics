@@ -290,14 +290,16 @@ public partial class BoilerTronicsLevel : Node2D
 			}
 		}
 		
-		
-		
 		if (loadedSave) {
 			// reconstruct level based off the information loaded: load metadata
 			// assume that the save state already knows the current level state and etc!
 			Vector2I dim = manager.GetLevelDimensions();
 			x = dim.X;
 			y = dim.Y;
+		} else {
+			// reset boundary data to defaults if no level is being loaded
+			manager.saveState.boundaryTex = new TileTex(new Vector2I(0, 0), 6);
+			manager.saveState.boundarySize = 2;
 		}
 		
 		// update manager to hold current level's dimensions (to be used w save system)

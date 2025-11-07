@@ -1396,24 +1396,29 @@ popup/item_1/text = "Placeholder"
 popup/item_1/id = 1
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="MetadataWindow/CenterContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+visible = false
 layout_mode = 2
 text = "Dimensions: "
 
 [node name="MetaLength" type="LineEdit" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 alignment = 1
 
 [node name="Label2" type="Label" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
+visible = false
 layout_mode = 2
 text = "x"
 
 [node name="MetaWidth" type="LineEdit" parent="MetadataWindow/CenterContainer/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 alignment = 1
