@@ -36,6 +36,7 @@ public partial class LevelUi : Node2D
 	/* Icons */
 	private Texture2D playIcon;
 	private Texture2D submitIcon;
+	private int hintIndex = 0;
 	private String[] hints =
 	{
 		"Sometimes you cannot place machinery on certain areas of the map",
@@ -118,7 +119,10 @@ public partial class LevelUi : Node2D
 
 		// Starts on first hint
 		GetNode<Button>("%HintBack").Visible = false;
-		GetNode<Label>("%HintLabel").Text = "First Hint";
+		GetNode<Label>("%HintLabel").Text = hints[0];
+		GetNode<Button>("%HintBack").Visible = false;
+		GetNode<Button>("%HintForward").Visible = true;
+		GD.Print(hints.Length);
 
 	}
 
@@ -477,19 +481,26 @@ public partial class LevelUi : Node2D
 	{
 		GetNode<Window>("%HintsWindow").Visible = false;
 	}
+
+	private void UpdateHintDisplay()
+	{
+		GetNode<Label>("%HintLabel").Text = hints[hintIndex];
+
+		// Toggle button visibility
+		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
+		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
+	}
 	private void _on_hint_back_pressed()
 	{
-		/* TODO: Zach if this causes u to be on hint one make button invisible 
-				populate last hint */
-		/* GetNode<Label>("%HintLabel").Text = hintarray[i-1];
-		if i = 1 then GetNode<Button>("%HintBack").Visible = false; */
+		// my way
+		hintIndex--;
+		UpdateHintDisplay();
 	}
 	private void _on_hint_forward_pressed()
 	{
-		/* TODO: Zach if this causes u to be on last hint make button invisible
-			populate next hint */
-		/* GetNode<Label>("%HintLabel").Text = hintarray[i+1]; 
-		if i = hintarray.size() then GetNode<Button>("%HintForward").Visible = false; */
+		// i like thisway better
+		hintIndex++;
+		UpdateHintDisplay();
 	}
 	/* Testing Functions */
 
