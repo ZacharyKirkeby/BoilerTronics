@@ -971,6 +971,28 @@ size_flags_vertical = 4
 theme_override_constants/icon_max_width = 40
 icon = ExtResource("24_bsnj2")
 
+[node name="ManualWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Reference Manual"
+initial_position = 1
+size = Vector2i(800, 600)
+visible = false
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ManualWindow"]
+custom_minimum_size = Vector2(800, 600)
+offset_right = 800.0
+offset_bottom = 600.0
+
+[node name="ManualLabel" type="Label" parent="ManualWindow/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_font_sizes/font_size = 16
+text = "PENAR MAXXING"
+autowrap_mode = 3
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
@@ -1004,3 +1026,5 @@ icon = ExtResource("24_bsnj2")
 [connection signal="close_requested" from="HintsWindow" to="." method="_on_hints_window_close_requested"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/ButtonTray/VerticalButtonTray/Panel/VBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
+[connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
