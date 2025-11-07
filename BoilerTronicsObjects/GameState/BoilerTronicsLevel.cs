@@ -59,6 +59,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public void UpdateCost(int addition) {
 		cost += addition;
 	}
+	
 	//when solution reached, update solution statistics
 	public void UpdateSolutionStats() {
 		//TODO: pps based on production/step
@@ -78,6 +79,8 @@ public partial class BoilerTronicsLevel : Node2D
 				GD.Print("bestscore is " + grades[1]);
 				GD.Print("bestscore is " + grades[2]);
 			}
+			
+			Leaderboard.SaveScore(manager.GetLevelID(), "You", bestScore);
 		}
 	}
 	
