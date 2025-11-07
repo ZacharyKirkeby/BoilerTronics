@@ -5,9 +5,15 @@ using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
+
+// NOTE:
+// Future floor tiles should ideally be a children of this tile!
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class FloorTileObject : PlaceableObject {
+		
+		public override int GetCost() { return 0; }
+		public new static int GetCostStatic() { return 0; }
 		
 		static int layerSourceId = 4;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer

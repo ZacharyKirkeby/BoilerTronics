@@ -33,7 +33,7 @@ public class BoilerTronicsSaveState
 	
 	// LAZY: this is public now
 	// default: a 50% darker version of the base floor tile, 2 tiles wide
-	public TileTex boundaryTex =  new TileTex(new Vector2I(0, 0), 6);
+	public TileTex boundaryTex = new TileTex(new Vector2I(0, 0), 6);
 	public int boundarySize = 2;
 	
 	private Vector2I levelDimensions = new Vector2I(20, 20);

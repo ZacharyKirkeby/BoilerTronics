@@ -13,7 +13,10 @@ using System.Collections;
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
 	public class ClawObject : PlaceableFramed, Scriptable, Runnable {
-
+		
+		public override int GetCost() { return 100; }
+		public new static int GetCostStatic() { return 100; }
+		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
@@ -71,9 +74,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			this.heldObject = null;
 			base.ResetPos();
-
-			_parser.Reset();
-
+			_parser.Reset(); //disposed object error?
+			// heldObject = null;
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 
@@ -273,6 +275,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		public void Grab(string[] args) {
+
+			GD.Print("Grab func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Grab);
+
 			if (heldObject != null) return; // TODO: make this an error
 	
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -300,6 +307,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		public void Drop(string[] args) {
+			GD.Print("Drop func called");
+			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
+			soundManager.PlaySound(SoundType.Drop);
 			if (heldObject == null) return; // Not an error ?
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			
@@ -331,7 +341,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		// Command methods
-		public ClawObject(int OGX, int OGY, int altTitle) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
