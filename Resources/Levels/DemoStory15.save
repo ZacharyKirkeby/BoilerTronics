@@ -1,0 +1,6 @@
+{"metadata":{"boundaryAtlasX":0,"boundaryAtlasY":0,"boundarySize":2,"boundarySourceId":6,"levelId":-15,"levelName":"DemoStory15","mapSize":[30,30],"saveSlot":-1}}
+{"clawLayer":{"objects":[{"OGX":11,"OGY":23,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":1,"terminalCode":"jump:\ngrb\nmov u\ndrp\nmov d\njmp jump"}],"uneditableTiles":[]}}
+{"factoryLayer":{"objects":[{"OGX":11,"OGY":23,"altTitle":0,"atlasPosX":1,"atlasPosY":0,"sourceId":0},{"OGX":12,"OGY":22,"altTitle":0,"atlasPosX":1,"atlasPosY":1,"sourceId":0}],"uneditableTiles":[]}}
+{"floorLayer":{"objects":[],"uneditableTiles":[]}}
+{"movementlayer":{"objects":[],"uneditableTiles":[]}}
+{"railLayer":{"objects":[{"OGX":11,"OGY":23,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"sourceId":1},{"OGX":12,"OGY":22,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"sourceId":1}],"uneditableTiles":[]}}

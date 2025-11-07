@@ -1,0 +1,6 @@
+{"metadata":{"boundaryAtlasX":0,"boundaryAtlasY":0,"boundarySize":2,"boundarySourceId":6,"levelId":-44,"levelName":"Story44Test","mapSize":[20,20],"saveSlot":-1}}
+{"clawLayer":{"objects":[{"OGX":2,"OGY":19,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":1,"terminalCode":"mov u\nmov u"}],"uneditableTiles":[]}}
+{"factoryLayer":{"objects":[],"uneditableTiles":[]}}
+{"floorLayer":{"objects":[],"uneditableTiles":[]}}
+{"movementlayer":{"objects":[],"uneditableTiles":[]}}
+{"railLayer":{"objects":[{"OGX":2,"OGY":19,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"sourceId":1},{"OGX":3,"OGY":18,"altTitle":0,"atlasPosX":0,"atlasPosY":1,"sourceId":1}],"uneditableTiles":[]}}
