@@ -180,9 +180,16 @@ public partial class LevelUi : Node2D
 		
 		// link this to the manager
 		manager.levelUi = this;
-		
+
 		// update level name
 		UpdateTitle(manager.saveState.levelName);
+		
+		// Starts on first hint
+		GetNode<Button>("%HintBack").Visible = false;
+		GetNode<Label>("%HintLabel").Text = hints[0];
+		GetNode<Button>("%HintBack").Visible = false;
+		GetNode<Button>("%HintForward").Visible = true;
+		GD.Print(hints.Length);
 	}
 
 	public override void _Process(double delta) {
