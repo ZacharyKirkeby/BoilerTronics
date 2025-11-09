@@ -340,7 +340,7 @@ namespace BoilerTronicsObjects.Layers
 			numItems--;
 			
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+			/*LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
 
 			int costToAdd = 0;
 			switch (objectToRemove)
@@ -369,6 +369,21 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			GD.Print("deleting object");
+			manager.currLevel.UpdateCost(costToAdd);
+			ui?.UpdateCost(manager.currLevel.cost);*/
+			LevelUi ui = GetTree().Root.GetNodeOrNull<LevelUi>("Node2D");
+
+			int costToAdd = (objectToRemove.GetCost() * -1);
+			if (costToAdd > 0) {
+				GD.Print("Layer.cs: cost to add > 0, obj: ", objectToRemove);
+			}
+			
+			if (objectToRemove is FactoryOutputObject ) {
+				manager.currLevel.targetProduction = ((FactoryOutputObject) objectToRemove).getTargetNum();
+				GD.Print("Layer.cs: found FactoryOutputObject, overriding manager.currLevel.targetProduction " + manager.currLevel.targetProduction);
+			}
+
+			GD.Print(GetPath());
 			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
