@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=25 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -72,6 +72,9 @@ Button/fonts/font = SubResource("FontVariation_28flt")
 Button/styles/focus = ExtResource("4_6c6cs")
 Button/styles/hover = ExtResource("5_fo6ee")
 Button/styles/normal = ExtResource("4_6c6cs")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rlg4b"]
+load_path = "res://.godot/imported/unlocked.png-d035798e52417f4d690640c07ff1a01f.ctex"
 
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_mdp32")
@@ -342,7 +345,20 @@ theme_override_font_sizes/font_size = 25
 text = "Objects Placed: 0"
 horizontal_alignment = 1
 
-[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer"]
+[node name="Achievements" type="HBoxContainer" parent="ProfileMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Achievements" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 25
+text = "Achievements"
+
+[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -350,6 +366,83 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
+
+[node name="Easter Eggs" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 25
+text = "Easter Eggs"
+
+[node name="Achievements Menu" type="Window" parent="ProfileMenu/VBoxContainer/Achievements"]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 800)
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu"]
+custom_minimum_size = Vector2(700, 50)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Achievement1" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement1 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Achievement 1 Title"
+
+[node name="Achievement1 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "To unlock this do ..."
+
+[node name="Achievement2" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement2 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Achievement 2 Title"
+
+[node name="Achievement2 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
+layout_mode = 2
+text = "To unlock this do ..."
+
+[node name="Achievement3" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+layout_mode = 2
 
 [node name="Leaderboard" type="CenterContainer" parent="."]
 visible = false
@@ -574,7 +667,10 @@ script = ExtResource("12_rlg4b")
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="ProfileMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Easter Eggs" to="." method="_on_easter_eggs_pressed"]
+[connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
