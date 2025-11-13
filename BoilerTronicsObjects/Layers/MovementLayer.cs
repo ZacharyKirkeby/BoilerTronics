@@ -110,6 +110,11 @@ namespace BoilerTronicsObjects.Layers
 						g2.ResetContentsTerminal();
 					}
 				}
+				
+				GD.Print("MovementLayer.cs: calling to terminal to highlight");
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				Terminals currTerminal = manager.terminalContainer;
+				currTerminal.GetCurrentEditor().TerminalSelected();
 			}
 
 			GD.Print("Num Groups: ", ConvGroupList.Count);

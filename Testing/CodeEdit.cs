@@ -87,6 +87,7 @@ public partial class CodeEdit : Godot.CodeEdit
 	// TODO: current Terminals.cs implementation doesn't call this properly on initial level creation
 	public void TerminalSelected() {
 		GD.Print("terminal selected");
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
 		// Always validate when selected
 		ValidateAndHighlight();
@@ -216,25 +217,48 @@ public partial class CodeEdit : Godot.CodeEdit
 		}
 	}
 
-	public void TryHighlightingObject()
-	{
+	public void TryHighlightingObject() {
 		GD.Print("CodeEdit: correspondingObject: ", correspondingObject);
-		if (correspondingObject != null)
-		{
-			if (correspondingObject is Scriptable)
-			{
-				Layer layer = correspondingObject.GetParentLayer();
-				if (layer != null)
-				{
-					layer.HighlightTile(true, correspondingObject.GetCurrPos());
-					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+		if (correspondingObject != null) {
+			GD.Print("CodeEdit: checking if object is scriptable");
+			// Scriptable case
+			if (correspondingObject is Scriptable) {
+				GD.Print("CodeEdit: object is scriptable");
+				// highlight corresponding object
+				/*
+				OLD INEFFICIENT CODE
+				only here as a backup/for reference
+				
+				// determine what layer this object is from
+				// TODO: we really should update the PlaceableObject objects to actually hold this data
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				
+				// try and find and highlight the specified object
+				bool res = HighlightObjectIfValid(correspondingObject, manager.layerClaw);
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFactory); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerFloor); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerMovement); }
+				if (!res) { HighlightObjectIfValid(correspondingObject, manager.layerRail); }
+				
+				if (!res) {
+					GD.Print("CodeEdit: could not find object on layer to highlight");
 				}
+				*/
+				Layer layer = correspondingObject.GetParentLayer();
 				
 				if (correspondingObject is ConveyorGroup)
 				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
 					
 					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).convList[0];
+					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
+					// Get the first item from the ConveyorGroup's list
+					ConveyorGroup conv = (ConveyorGroup) correspondingObject;
+					if (conv.convList.Count == 0) {
+						GD.Print("CodeEdit: ConveyorGroup associated with terminal is empty.");
+						return;
+					}
+					// PlaceableObject obj = (PlaceableObject) conv.convList[0];
 					
 					if (obj == null)
 					{
@@ -247,8 +271,17 @@ public partial class CodeEdit : Godot.CodeEdit
 					{
 						layer.HighlightTile(true, obj.GetCurrPos());
 						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+						return;
 					}
 				}
+				
+				// Extremely simplified method to highlight a tile
+				if (layer != null) {
+					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
+					layer.HighlightTile(true, correspondingObject.GetCurrPos());
+					return;
+				}
+				GD.Print("CodeEdit: failed to highlight correspondingObject.");
 			}
 		}
 		else
