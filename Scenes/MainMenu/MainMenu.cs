@@ -100,4 +100,12 @@ public partial class MainMenu : Node2D
 		else
 			GD.PrintErr($"PDF not found: {pdfPath}");
 	}
+
+	private void _on_achievements_pressed() {
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = true;
+	}
+	
+	private void _on_achievements_menu_close_requested() {
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
+	}
 }
