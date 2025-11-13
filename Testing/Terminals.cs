@@ -48,8 +48,19 @@ public partial class Terminals : TabContainer
 	{
 		if (editors.Contains(editor))
 		{
+			ClearHighlightedObjects();
+			// UpdateSelectedTerminal();
+			//TODO - delete should reflect change in count
 			editors.Remove(editor);
 			editor.QueueFree();
+			
+			// UpdateSelectedTerminal();
+			//GetCurrentEditor().TerminalSelected();
+			// int targetTab = GetCurrentTab() - 1;
+			// SetCurrentTab(GetPreviousTab());//GetTabCount() - 2);
+			SetCurrentTab(GetCurrentTab());
+			// update terminal highlighting
+			GetCurrentEditor().TerminalSelected();
 		}
 	}
 
