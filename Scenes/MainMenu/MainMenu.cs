@@ -58,6 +58,8 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("ProfileMenu").Visible = false;
 		GetNode<Control>("Leaderboard").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = false;
 	}
 
 	private void _on_quit_pressed()
@@ -107,5 +109,13 @@ public partial class MainMenu : Node2D
 	
 	private void _on_achievements_menu_close_requested() {
 		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
+	}
+	
+	private void _on_easter_eggs_pressed() {
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = true;
+	}
+	
+	private void _on_easter_egg_menu_close_requested() {
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = false;
 	}
 }

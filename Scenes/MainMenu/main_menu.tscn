@@ -358,24 +358,6 @@ theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 25
 text = "Achievements"
 
-[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
-custom_minimum_size = Vector2(600, 100)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-theme_override_fonts/font = ExtResource("2_rlg4b")
-theme_override_font_sizes/font_size = 76
-text = "Back"
-
-[node name="Easter Eggs" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-size_flags_horizontal = 4
-focus_mode = 0
-theme_override_fonts/font = ExtResource("2_rlg4b")
-theme_override_font_sizes/font_size = 25
-text = "Easter Eggs"
-
 [node name="Achievements Menu" type="Window" parent="ProfileMenu/VBoxContainer/Achievements"]
 oversampling_override = 1.0
 initial_position = 2
@@ -442,6 +424,90 @@ layout_mode = 2
 text = "To unlock this do ..."
 
 [node name="Achievement3" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+layout_mode = 2
+
+[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(600, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 76
+text = "Back"
+
+[node name="Easter Eggs" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 25
+text = "Easter Eggs"
+
+[node name="Easter Egg Menu" type="Window" parent="ProfileMenu/VBoxContainer/Achievements"]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(800, 800)
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu"]
+custom_minimum_size = Vector2(700, 50)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EasterEgg1" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg1 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Easter Egg 1 Title"
+
+[node name="EasterEgg1 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
+layout_mode = 2
+text = "To unlock this do ..."
+
+[node name="EasterEgg2" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg2 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Easter Egg 2 Title"
+
+[node name="EasterEgg2 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
+layout_mode = 2
+text = "To unlock this do ..."
+
+[node name="EasterEgg3" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer"]
 layout_mode = 2
 
 [node name="Leaderboard" type="CenterContainer" parent="."]
@@ -668,9 +734,10 @@ script = ExtResource("12_rlg4b")
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
+[connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Easter Eggs" to="." method="_on_easter_eggs_pressed"]
-[connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
+[connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu" to="." method="_on_easter_egg_menu_close_requested"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
