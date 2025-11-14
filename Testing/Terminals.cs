@@ -45,6 +45,10 @@ public partial class Terminals : TabContainer
 		SetCurrentTab(GetTabCount() - 1);
 		GetCurrentEditor().TerminalSelected();
 		
+		if (GetPreviousTab() != previousDifferentTab) {
+			previousDifferentTab = GetPreviousTab();
+		}
+		
 		return newEditor;
 	}
 
@@ -52,10 +56,12 @@ public partial class Terminals : TabContainer
 	{
 		if (editors.Contains(editor))
 		{
-			ClearHighlightedObjects();
+			GD.Print("Terminals.cs: Deleting Editor");
+			// ClearHighlightedObjects();
 			
 			// UpdateSelectedTerminal();
 			//TODO - delete should reflect change in count
+			int editorIndexOf = editors.IndexOf(editor);
 			editors.Remove(editor);
 			editor.QueueFree();
 			
@@ -67,28 +73,41 @@ public partial class Terminals : TabContainer
 			// update terminal highlighting
 			// GetCurrentEditor().TerminalSelected();
 			
+			// get current, previous tabs
 			int currTab = GetCurrentTab();
 			int prevTab = previousDifferentTab; //GetPreviousTab();
 			
 			if (prevTab == -1) {
 				prevTab = GetPreviousTab();
 			}
-			
-			if (currTab <= prevTab) {
-				prevTab = prevTab - 1;
-			}
-			
 			this.previousTabIndex = prevTab;
-			CallDeferred("SelectPreviousTerminal");
+			
+			GD.Print("Terminals.cs: currTab: ", currTab, ", indexOf(Editor): ", editorIndexOf);
+			
+			// only update terminal highlighting if necessary, i.e. the currently selected
+			// terminal is being deleted.
+			if (currTab == editorIndexOf) {
+				GD.Print("Terminals.cs: Selecting Previous Terminal (needed)");
+				if (currTab <= prevTab) {
+					prevTab = prevTab - 1;
+					this.previousTabIndex = prevTab;
+				}
+
+				CallDeferred("SelectPreviousTerminalIfNeeded");
+			}
 		}
 	}
 	
 	private int previousTabIndex = -1;
 	
 	// should only be called, deferred, when a terminal is deleted.
-	private void SelectPreviousTerminal() {
+	// swaps to the previous terminal if the selected terminal is about to be deleted.
+	private void SelectPreviousTerminalIfNeeded() {
 		
 		if (previousTabIndex != -1 && previousTabIndex < GetTabCount()) {
+			
+			
+			GD.Print("Terminals.cs: SelectPreviousTerminal(): Selecting Previous Tab, previousTabIndex: ", previousTabIndex);
 			SetCurrentTab(previousTabIndex);
 			// update terminal highlighting
 			GetCurrentEditor().TerminalSelected();
