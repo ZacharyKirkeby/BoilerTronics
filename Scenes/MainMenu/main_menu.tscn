@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=26 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
+[ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
@@ -360,6 +361,7 @@ text = "Achievements"
 
 [node name="Achievements Menu" type="Window" parent="ProfileMenu/VBoxContainer/Achievements"]
 oversampling_override = 1.0
+title = "Achievements"
 initial_position = 2
 size = Vector2i(800, 800)
 visible = false
@@ -374,10 +376,11 @@ custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1"]
+[node name="Achievement1 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-texture = SubResource("CompressedTexture2D_rlg4b")
+texture = ExtResource("11_w5buf")
 expand_mode = 2
 stretch_mode = 5
 
@@ -387,22 +390,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Achievement1 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
-unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Achievement 1 Title"
+text = "New Factory Builder"
 
 [node name="Achievement1 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "To unlock this do ..."
+text = "Build your first factory successfully"
 
 [node name="Achievement2" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2"]
+[node name="Achievement2 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = SubResource("CompressedTexture2D_rlg4b")
@@ -417,14 +420,40 @@ size_flags_horizontal = 3
 [node name="Achievement2 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Achievement 2 Title"
+text = "Master of Time"
 
 [node name="Achievement2 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "To unlock this do ..."
+text = "Have a solution with a better step count than the cutoff"
 
 [node name="Achievement3" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement3 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement3"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement3 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement3/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Financially Responsible"
+
+[node name="Achievement3 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Have a solution with a lower cost than the cutoff"
 
 [node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
 custom_minimum_size = Vector2(600, 100)
@@ -446,6 +475,7 @@ text = "Easter Eggs"
 
 [node name="Easter Egg Menu" type="Window" parent="ProfileMenu/VBoxContainer/Achievements"]
 oversampling_override = 1.0
+title = "Easter Eggs"
 initial_position = 2
 size = Vector2i(800, 800)
 visible = false
@@ -460,7 +490,8 @@ custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1"]
+[node name="EasterEgg1 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = SubResource("CompressedTexture2D_rlg4b")
@@ -475,18 +506,20 @@ size_flags_horizontal = 3
 [node name="EasterEgg1 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Easter Egg 1 Title"
+text = "Not a Master of Time"
 
 [node name="EasterEgg1 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "To unlock this do ..."
+text = "Do you have infinite time on your hands? No? Try it out on a solution."
 
 [node name="EasterEgg2" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2"]
+[node name="EasterEgg2 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = SubResource("CompressedTexture2D_rlg4b")
@@ -501,14 +534,40 @@ size_flags_horizontal = 3
 [node name="EasterEgg2 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Easter Egg 2 Title"
+text = "Making it Rain (Debt)"
 
 [node name="EasterEgg2 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "To unlock this do ..."
+text = "Try making it rain on a solution. May not be ideal, but might get you some fake bonus points."
 
 [node name="EasterEgg3" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EasterEgg3 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg3"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg3 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg3/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Secret Factory"
+
+[node name="EasterEgg3 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu/VBoxContainer/EasterEgg3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Look for an undiscovered factory... it could be hard to spot."
 
 [node name="Leaderboard" type="CenterContainer" parent="."]
 visible = false
