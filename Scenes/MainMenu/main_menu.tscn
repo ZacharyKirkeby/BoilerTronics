@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=27 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_xt57n"]
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
+[ext_resource type="Script" uid="uid://ddyw6wtfs473h" path="res://Scenes/MainMenu/Achievement.cs" id="11_6c6cs"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
@@ -365,6 +366,7 @@ title = "Achievements"
 initial_position = 2
 size = Vector2i(800, 800)
 visible = false
+script = ExtResource("11_6c6cs")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu"]
 custom_minimum_size = Vector2(700, 50)
@@ -454,6 +456,34 @@ text = "Financially Responsible"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Have a solution with a lower cost than the cutoff"
+
+[node name="Achievement4" type="HBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement4 Image" type="TextureRect" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement4"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement4"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement4 Title" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement4/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Factory Wizard"
+
+[node name="Achievement4 Description" type="Label" parent="ProfileMenu/VBoxContainer/Achievements/Achievements Menu/VBoxContainer/Achievement4/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Have a solution that is better than the cutoffs for EVERY category!"
 
 [node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
 custom_minimum_size = Vector2(600, 100)
