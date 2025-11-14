@@ -585,6 +585,12 @@ public partial class LevelUi : Node2D
 		ppsCutoffLabel.Text = "Cutoff PPS: " + pps.ToString("F2");
 		costCutoffLabel.Text = "Cutoff Cost: $" + cps.ToString("F2");
 		stepsCutoffLabel.Text = "Cutoff Steps: " + rc.ToString("F2");
+		
+		//check for first level completion achievement
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+		if(!achievementManager.IsUnlocked("Achievement1")) {
+			achievementManager.UnlockAchievement("Achievement1");
+		}
 	}
 
 	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
@@ -613,6 +619,11 @@ public partial class LevelUi : Node2D
 			grades[1] =  CalculateGrade(costCutoff, costSol, false);
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			//if cost is better, achievement 3 unlocked
+			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+			if(!achievementManager.IsUnlocked("Achievement3")) {
+				achievementManager.UnlockAchievement("Achievement3");
+			}
 		}
 		else {
 			//bad
@@ -629,6 +640,12 @@ public partial class LevelUi : Node2D
 			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			
+			//if time is better, achievement 2 unlocked
+			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+			if(!achievementManager.IsUnlocked("Achievement2")) {
+				achievementManager.UnlockAchievement("Achievement2");
+			}
 		}
 		else {
 			//bad
@@ -637,6 +654,13 @@ public partial class LevelUi : Node2D
 			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+		}
+		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
+			//if all better, achievement 4 unlocked
+			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+			if(!achievementManager.IsUnlocked("Achievement4")) {
+				achievementManager.UnlockAchievement("Achievement4");
+			}
 		}
 		return grades;
 	}
