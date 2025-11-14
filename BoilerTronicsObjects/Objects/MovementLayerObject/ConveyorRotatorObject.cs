@@ -45,9 +45,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			E.SetCorrespondingObject(this);
 			
 			// set as active tab
-			currTerminal.SetCurrentTab(currTerminal.GetTabCount() - 1);
+			// currTerminal.SetCurrentTab(currTerminal.GetTabCount() - 1);
 			// update terminal highlighting
-			currTerminal.GetCurrentEditor().TerminalSelected();
+			// currTerminal.GetCurrentEditor().TerminalSelected();
 		}
 
 		public void DestroyTerminal() {
