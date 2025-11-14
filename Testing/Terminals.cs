@@ -41,6 +41,10 @@ public partial class Terminals : TabContainer
 		newEditor.AddToGroup("CodeTerminals");
 		RegisterEditor(newEditor);
 		
+		// update current highlighting to the newly placed terminal
+		SetCurrentTab(GetTabCount() - 1);
+		GetCurrentEditor().TerminalSelected();
+		
 		return newEditor;
 	}
 
@@ -49,6 +53,7 @@ public partial class Terminals : TabContainer
 		if (editors.Contains(editor))
 		{
 			ClearHighlightedObjects();
+			
 			// UpdateSelectedTerminal();
 			//TODO - delete should reflect change in count
 			editors.Remove(editor);
@@ -58,9 +63,43 @@ public partial class Terminals : TabContainer
 			//GetCurrentEditor().TerminalSelected();
 			// int targetTab = GetCurrentTab() - 1;
 			// SetCurrentTab(GetPreviousTab());//GetTabCount() - 2);
-			SetCurrentTab(GetCurrentTab());
+			// SetCurrentTab(GetCurrentTab());
+			// update terminal highlighting
+			// GetCurrentEditor().TerminalSelected();
+			
+			int currTab = GetCurrentTab();
+			int prevTab = previousDifferentTab; //GetPreviousTab();
+			
+			if (prevTab == -1) {
+				prevTab = GetPreviousTab();
+			}
+			
+			if (currTab <= prevTab) {
+				prevTab = prevTab - 1;
+			}
+			
+			this.previousTabIndex = prevTab;
+			CallDeferred("SelectPreviousTerminal");
+		}
+	}
+	
+	private int previousTabIndex = -1;
+	
+	// should only be called, deferred, when a terminal is deleted.
+	private void SelectPreviousTerminal() {
+		
+		if (previousTabIndex != -1 && previousTabIndex < GetTabCount()) {
+			SetCurrentTab(previousTabIndex);
 			// update terminal highlighting
 			GetCurrentEditor().TerminalSelected();
+		} else {
+			// if the "select previously chosen tab" functionality doesn't work, then just unilaterally clear all highlighted objects.
+			
+			if (GetTabCount() > 0 ) {
+				GD.Print("Terminals.cs: SelectPreviousTerminal(): previousTabIndex: ", previousTabIndex, ", GetTabCount(): ", GetTabCount());
+			}
+			
+			ClearHighlightedObjects();
 		}
 	}
 
@@ -154,6 +193,10 @@ public partial class Terminals : TabContainer
 		}
 	}
 
+	// private variable to keep track of the previously selected tab
+	// will ignore identical "previously selected" tabs and etc
+	private int previousDifferentTab = -1;
+	
 	// when a new tab is selected, run validation
 	private void OnTabSelected(long tab)
 	{
@@ -179,6 +222,10 @@ public partial class Terminals : TabContainer
 			parser = scriptabl.GetParser();
 		if (parser != null)
 			registerLabel.SetParser(parser);
+
+		if (GetPreviousTab() != previousDifferentTab) {
+			previousDifferentTab = GetPreviousTab();
+		}
 
 		UpdateSelectedTerminal();
 	}
