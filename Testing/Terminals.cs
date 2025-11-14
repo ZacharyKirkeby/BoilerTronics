@@ -61,63 +61,23 @@ public partial class Terminals : TabContainer
 			
 			// UpdateSelectedTerminal();
 			//TODO - delete should reflect change in count
-			int editorIndexOf = editors.IndexOf(editor);
+			// int editorIndexOf = editors.IndexOf(editor);
 			editors.Remove(editor);
 			editor.QueueFree();
 			
-			// UpdateSelectedTerminal();
-			//GetCurrentEditor().TerminalSelected();
-			// int targetTab = GetCurrentTab() - 1;
-			// SetCurrentTab(GetPreviousTab());//GetTabCount() - 2);
-			// SetCurrentTab(GetCurrentTab());
-			// update terminal highlighting
-			// GetCurrentEditor().TerminalSelected();
-			
-			// get current, previous tabs
-			int currTab = GetCurrentTab();
-			int prevTab = previousDifferentTab; //GetPreviousTab();
-			
-			if (prevTab == -1) {
-				prevTab = GetPreviousTab();
-			}
-			this.previousTabIndex = prevTab;
-			
-			GD.Print("Terminals.cs: currTab: ", currTab, ", indexOf(Editor): ", editorIndexOf);
-			
-			// only update terminal highlighting if necessary, i.e. the currently selected
-			// terminal is being deleted.
-			if (currTab == editorIndexOf) {
-				GD.Print("Terminals.cs: Selecting Previous Terminal (needed)");
-				if (currTab <= prevTab) {
-					prevTab = prevTab - 1;
-					this.previousTabIndex = prevTab;
-				}
-
-				CallDeferred("SelectPreviousTerminalIfNeeded");
-			}
+			// LAZY SOLUTION:
+			// always select the first terminal when a terminal is being deleted
+			// THIS WILL NEVER FAIL
+			CallDeferred("SelectFirstTerminal");
 		}
 	}
 	
-	private int previousTabIndex = -1;
-	
-	// should only be called, deferred, when a terminal is deleted.
-	// swaps to the previous terminal if the selected terminal is about to be deleted.
-	private void SelectPreviousTerminalIfNeeded() {
-		
-		if (previousTabIndex != -1 && previousTabIndex < GetTabCount()) {
-			
-			
-			GD.Print("Terminals.cs: SelectPreviousTerminal(): Selecting Previous Tab, previousTabIndex: ", previousTabIndex);
-			SetCurrentTab(previousTabIndex);
-			// update terminal highlighting
+	// switch to the first terminal, if it still exists
+	private void SelectFirstTerminal() {
+		if (GetTabCount() > 1) {
+			SetCurrentTab(0);
 			GetCurrentEditor().TerminalSelected();
 		} else {
-			// if the "select previously chosen tab" functionality doesn't work, then just unilaterally clear all highlighted objects.
-			
-			if (GetTabCount() > 0 ) {
-				GD.Print("Terminals.cs: SelectPreviousTerminal(): previousTabIndex: ", previousTabIndex, ", GetTabCount(): ", GetTabCount());
-			}
-			
 			ClearHighlightedObjects();
 		}
 	}
