@@ -230,6 +230,7 @@ public partial class CodeEdit : Godot.CodeEdit
 					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 				}
 				
+				/*
 				if (correspondingObject is ConveyorGroup)
 				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
@@ -249,6 +250,7 @@ public partial class CodeEdit : Godot.CodeEdit
 						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 					}
 				}
+				*/
 			}
 		}
 		else

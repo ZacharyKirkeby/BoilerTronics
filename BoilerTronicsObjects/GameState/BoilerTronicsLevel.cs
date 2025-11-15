@@ -610,6 +610,7 @@ public partial class BoilerTronicsLevel : Node2D
 		if (!(obj is Runnable)) return;
 		if (runnableList.Contains(obj)) return;
 		runnableList.Add(obj);
+		GD.Print("Register", obj);
 	}
 
 	public void UnRegisterRunnable(PlaceableObject obj) {
@@ -617,6 +618,7 @@ public partial class BoilerTronicsLevel : Node2D
 		if (!(obj is Runnable)) return;
 		if (!(runnableList.Contains(obj))) return;
 		runnableList.Remove(obj);
+		GD.Print("Unregister", obj);
 	}
 	
 	/* Handle Moving Objects */
