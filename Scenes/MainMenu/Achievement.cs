@@ -6,19 +6,23 @@ public partial class Achievement : Window
 	static private Label Achievement1Desc;
 	static private Label Achievement2Desc;
 	static private Label Achievement3Desc;
+	static private Label Achievement4Desc;
 	
 	static private TextureRect Achievement1Image;
 	static private TextureRect Achievement2Image;
 	static private TextureRect Achievement3Image;
+	static private TextureRect Achievement4Image;
 	
 	public override void _Ready() {
 		Achievement1Desc = GetNode<Label>("%Achievement1 Description");
 		Achievement2Desc = GetNode<Label>("%Achievement2 Description");
 		Achievement3Desc = GetNode<Label>("%Achievement3 Description");
+		Achievement4Desc = GetNode<Label>("%Achievement4 Description");
 		
 		Achievement1Image = GetNode<TextureRect>("%Achievement1 Image");
 		Achievement2Image = GetNode<TextureRect>("%Achievement2 Image");
 		Achievement3Image = GetNode<TextureRect>("%Achievement3 Image");
+		Achievement4Image = GetNode<TextureRect>("%Achievement4 Image");
 		
 		UpdateUI();
 	}

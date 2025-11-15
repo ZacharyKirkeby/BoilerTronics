@@ -579,18 +579,22 @@ public partial class LevelUi : Node2D
 		ppsSolutionLabel.Text = "PPS: " + pps.ToString("F2");
 		costSolutionLabel.Text = "Cost: $" + cps.ToString("F2");
 		stepsSolutionLabel.Text = "Steps: " + rc.ToString("F2");
+		
+		//check for first level completion achievement
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+		if(!achievementManager.AchievementIsUnlocked("Achievement1")) {
+			GD.Print("achievement 1 gained");
+			if(!GetNode<Window>("Achievement Notice").Visible) {
+				GetNode<Window>("Achievement Notice").Visible = true;
+			}
+			achievementManager.UnlockAchievement("Achievement1");
+		}
 	}
 	
 	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
 		ppsCutoffLabel.Text = "Cutoff PPS: " + pps.ToString("F2");
 		costCutoffLabel.Text = "Cutoff Cost: $" + cps.ToString("F2");
 		stepsCutoffLabel.Text = "Cutoff Steps: " + rc.ToString("F2");
-		
-		//check for first level completion achievement
-		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-		if(!achievementManager.IsUnlocked("Achievement1")) {
-			achievementManager.UnlockAchievement("Achievement1");
-		}
 	}
 
 	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
@@ -621,7 +625,10 @@ public partial class LevelUi : Node2D
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			//if cost is better, achievement 3 unlocked
 			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-			if(!achievementManager.IsUnlocked("Achievement3")) {
+			if(!achievementManager.AchievementIsUnlocked("Achievement3")) {
+				if(!GetNode<Window>("Achievement Notice").Visible) {
+					GetNode<Window>("Achievement Notice").Visible = true;
+				}
 				achievementManager.UnlockAchievement("Achievement3");
 			}
 		}
@@ -643,7 +650,10 @@ public partial class LevelUi : Node2D
 			
 			//if time is better, achievement 2 unlocked
 			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-			if(!achievementManager.IsUnlocked("Achievement2")) {
+			if(!achievementManager.AchievementIsUnlocked("Achievement2")) {
+				if(!GetNode<Window>("Achievement Notice").Visible) {
+					GetNode<Window>("Achievement Notice").Visible = true;
+				}
 				achievementManager.UnlockAchievement("Achievement2");
 			}
 		}
@@ -658,7 +668,10 @@ public partial class LevelUi : Node2D
 		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
 			//if all better, achievement 4 unlocked
 			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-			if(!achievementManager.IsUnlocked("Achievement4")) {
+			if(!achievementManager.AchievementIsUnlocked("Achievement4")) {
+				if(!GetNode<Window>("Achievement Notice").Visible) {
+					GetNode<Window>("Achievement Notice").Visible = true;
+				}
 				achievementManager.UnlockAchievement("Achievement4");
 			}
 		}
@@ -752,5 +765,10 @@ public partial class LevelUi : Node2D
 		// Toggle button visibility
 		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
+	}
+	
+	private void _on_achievement_notice_close_requested()
+	{
+		GetNode<Window>("Achievement Notice").Visible = false;
 	}
 }
