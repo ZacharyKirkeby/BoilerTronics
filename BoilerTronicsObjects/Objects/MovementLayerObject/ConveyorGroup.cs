@@ -1,21 +1,23 @@
 using Godot;
 using System;
 using Parsing;
-using System.Collections;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
+using System.Collections.Generic;
 using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
-	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable{
+	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable, GroupedObject{
 		
-		public ArrayList convList = new ArrayList(); // List of conveyor objects
+		// public ArrayList convList = new ArrayList(); // List of conveyor objects
+		private List<ConveyorObject> convList = new List<ConveyorObject>(); // List of conveyorObjects
 		private CodeEdit E;
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 		public int dir;
 		private Parser _parser;
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
+			GD.Print("New group");
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
 			_parser = new Parser();
 			_parser._Ready();
@@ -23,6 +25,80 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			RegisterSteppable();
 		}
 
+		// Grouped object interface
+
+		// Gets the list of objects in this group
+		public List<GroupedSubObject> getObjectList() {
+			List<GroupedSubObject> retList = new List<GroupedSubObject>();
+
+			foreach (ConveyorObject cObj in convList) {
+				GroupedSubObject sgObj = cObj as GroupedSubObject;
+				retList.Add(sgObj);
+			}
+
+			return retList;
+		}
+
+		// Checks the validity of the objects in it's list
+		// It will return a list of any new grouped objects that are made in this verification process
+		// This should be called after removing an object
+		public List<GroupedObject> verifyGroup() {
+			return null;
+		}
+
+		// Checks if adding this object is valid
+		// Returns true if the object is able to be added
+		// Returns false if the object can not be added
+		public bool validObject(GroupedSubObject obj) {
+			return false;
+		}
+
+		// Adds object to the group
+		// True if boject was added | False if object was not added
+		public bool addObject(GroupedSubObject obj) {
+			if (obj is ConveyorObject cObj) {
+				// TODO:
+				// add another check to see if it's adjacent to one of our conveyors and if it's the correct direction
+				convList.Add(cObj);
+				cObj.setGroup(this);
+				return true;
+			}
+			return false;
+		}
+
+		// Removes object from the group
+		public void deleteObject(GroupedSubObject obj) {
+			if (obj is ConveyorObject cObj && containsObject(cObj)) {
+				convList.Remove(cObj);
+				cObj.removeFromGroup();
+			}
+
+			// TODO:
+			// Verify
+			// add any newly created groups to our layer
+		}
+
+		// Checks if a given object is in the group
+		public bool containsObject(GroupedSubObject obj) {
+			if (obj is ConveyorObject cObj) {
+				return convList.Contains(cObj);
+			}
+			return false;
+		}
+
+		// Combines the group passed in with itself
+		public void combineGroup(GroupedObject gObj) {
+			List<GroupedSubObject> gsoList = gObj.getObjectList();
+
+			foreach (GroupedSubObject gsObj in gsoList) {
+				if (gsObj is ConveyorObject cObj) {
+					gObj.deleteObject(cObj);
+					addObject(cObj);
+				}
+			}
+		}
+
+		/*
 		// Add to conveyor group
 		public void AddConveyor(ConveyorObject conv) {
 			if (conv == null) return;
@@ -39,15 +115,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			VerifyGroup();
 		}
 		
-		public void SetParser(Parser parser)
-		{
-			this._parser = parser;
-		}
-		
-		public Parser GetParser()
-		{
-			return this._parser;
-		}
 
 		// Verify Group
 		public void VerifyGroup() {
@@ -139,16 +206,29 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public bool Contains(ConveyorObject c) {
 			return convList.Contains(c);
 		}
+		*/
+
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+		{
+			return this._parser;
+		}
 		
 		// Iterates through all child ConveyorObjects, clears their CodeEdit E fields
 		// then sets the very first terminal item to have this group's CodeEdit E stored.
 		// Should only be used by MovementLayer.cs
 		public void ResetContentsTerminal() {
 			GD.Print("ConveyorObject: ResetContentsTerminal()");
+			/*
 			foreach (ConveyorObject obj in convList) {
 				obj.SetTerminal((CodeEdit) null);
 			}
 			((ConveyorObject) convList[0]).SetTerminal(E);
+			*/
 		}
 		
 		// Iterates through all child ConveyorObjects, clears their toLoad strings
@@ -158,6 +238,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			string terminalText = null;
 			ConveyorObject target = null;
 			
+			/*
 			// iterate through whole list
 			foreach (ConveyorObject obj in convList) {
 				string temp = obj.GetToLoadText();
@@ -169,6 +250,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				}
 				obj.SetToLoadText(null);
 			}
+			*/
 			
 			// if necessary, load the script into the terminal
 			if (terminalText != null) {
@@ -210,7 +292,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			_parser.ResetProgramCounter();
 			_parser.ResetRegisters();
 			_parser.Reset();
-			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
+			// foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 			if (existing != null)
@@ -309,11 +391,13 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 					return; // not a valid arg
 			}
 
+			/*
 			// Loop through the objects in our list and call move with the vector passed in
 			foreach (PlaceableObject obj in convList) {
 				if (!(obj is ConveyorObject cObj)) continue;
 				cObj.Move(MoveVector);
 			}
+			*/
 
 			return;
 		}

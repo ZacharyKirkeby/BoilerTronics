@@ -8,7 +8,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorObject : PlaceableObject {
+	public class ConveyorObject : PlaceableObject, GroupedSubObject {
 
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
@@ -23,6 +23,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// and every layer will have their own sprite sheet. Consequently, layer-specific
 		// objects will have identical sourceIds.
 
+		private ConveyorGroup group;
+
 		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
 		
@@ -32,6 +34,26 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// Otherwise, only saving functionality should interact with this system
 		private CodeEdit E;
 		
+		// Gets the group that this object belongs to
+		public GroupedObject getGroup() {
+			return group;
+		}
+
+		// Sets the group of the object
+		public void setGroup(GroupedObject gObj) {
+			if (gObj is ConveyorGroup cgObj) group = cgObj;
+		}
+
+		// Removes object from group (sets some internal var to NULL)
+		public void removeFromGroup() {
+			group = null;
+		}
+
+		// True if in group | False if not in group
+		public bool inGroup() {
+			return (!(group == null));
+		}
+
 		// For loading purposes, have a specific string that will override its parent's group contents
 		private string toLoadText;
 
