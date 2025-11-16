@@ -249,11 +249,20 @@ theme_override_font_sizes/font_size = 50
 text = "Fullscreen"
 alignment = 1
 
-[node name="OpenPDF" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="OpenPDF" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 28
 text = "Open Manual (PDF)"
+
+[node name="OpenPDF2" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Open User Guide (PDF)"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -822,7 +831,7 @@ script = ExtResource("12_rlg4b")
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
-[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/OpenPDF" to="." method="_on_open_pdf_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
 [connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
