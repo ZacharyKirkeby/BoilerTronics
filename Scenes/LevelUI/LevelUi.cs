@@ -598,6 +598,7 @@ public partial class LevelUi : Node2D
 	}
 
 	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 		//difference and grading labels
 		float[] grades = new float[3];
 		if(ppsCutoff <= ppsSol) {
@@ -624,7 +625,6 @@ public partial class LevelUi : Node2D
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			//if cost is better, achievement 3 unlocked
-			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 			if(!achievementManager.AchievementIsUnlocked("Achievement3")) {
 				if(!GetNode<Window>("Achievement Notice").Visible) {
 					GetNode<Window>("Achievement Notice").Visible = true;
@@ -639,6 +639,17 @@ public partial class LevelUi : Node2D
 			grades[1] =  CalculateGrade(costCutoff, costSol, false);
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			
+			//if cost of solution is 5000 over unlock easter egg
+			if((costSol - costCutoff) >= 5000) {
+				if(!achievementManager.EasterEggIsUnlocked("EasterEgg2")) {
+					GD.Print("easter egg 2 gained");
+					if(!GetNode<Window>("Cost Easter Egg").Visible) {
+						GetNode<Window>("Cost Easter Egg").Visible = true;
+					}
+					achievementManager.UnlockEasterEgg("EasterEgg2");
+				}
+			}
 		}
 		if(stepsCutoff >= stepsSol) {
 			//good
@@ -649,7 +660,6 @@ public partial class LevelUi : Node2D
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			
 			//if time is better, achievement 2 unlocked
-			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 			if(!achievementManager.AchievementIsUnlocked("Achievement2")) {
 				if(!GetNode<Window>("Achievement Notice").Visible) {
 					GetNode<Window>("Achievement Notice").Visible = true;
@@ -664,10 +674,20 @@ public partial class LevelUi : Node2D
 			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			
+			//if steps of solution over by 100 unlock easter egg
+			if((stepsSol - stepsCutoff) >= 100) {
+				if(!achievementManager.EasterEggIsUnlocked("EasterEgg1")) {
+					GD.Print("easter egg 1 gained");
+					if(!GetNode<Window>("Time Easter Egg").Visible) {
+						GetNode<Window>("Time Easter Egg").Visible = true;
+					}
+					achievementManager.UnlockEasterEgg("EasterEgg1");
+				}
+			}
 		}
 		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
 			//if all better, achievement 4 unlocked
-			var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 			if(!achievementManager.AchievementIsUnlocked("Achievement4")) {
 				if(!GetNode<Window>("Achievement Notice").Visible) {
 					GetNode<Window>("Achievement Notice").Visible = true;
@@ -770,5 +790,20 @@ public partial class LevelUi : Node2D
 	private void _on_achievement_notice_close_requested()
 	{
 		GetNode<Window>("Achievement Notice").Visible = false;
+	}
+	
+	private void _on_cost_easter_egg_close_requested()
+	{
+		GetNode<Window>("Cost Easter Egg").Visible = false;
+	}
+	
+	private void _on_time_easter_egg_close_requested()
+	{
+		GetNode<Window>("Time Easter Egg").Visible = false;
+	}
+	
+	private void _on_mystery_level_easter_egg_close_requested()
+	{
+		GetNode<Window>("Mystery Level Easter Egg").Visible = false;
 	}
 }
