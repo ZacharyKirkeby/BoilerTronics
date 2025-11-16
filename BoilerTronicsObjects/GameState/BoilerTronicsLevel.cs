@@ -363,9 +363,10 @@ public partial class BoilerTronicsLevel : Node2D
 			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
+			// TODO: this should work more with the abstracted code instead of just looking for conveyors in the movement layer
 			// handle ConveyorGroup case
 			MovementLayer movement = (MovementLayer) manager.layerMovement;
-			foreach (ConveyorGroup obj in movement.ConvGroupList) {
+			foreach (ConveyorGroup obj in movement.getGroupedList()) {
 				obj.LoadTerminal();
 			}
 		}

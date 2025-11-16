@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
@@ -52,6 +52,10 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		// True if in group | False if not in group
 		public bool inGroup() {
 			return (!(group == null));
+		}
+
+		public GroupedObject createGroup() {
+			return new ConveyorGroup(-1, -1, this.direction) as GroupedObject;
 		}
 
 		// For loading purposes, have a specific string that will override its parent's group contents
@@ -135,7 +139,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			return toLoadText;
 		}
 
-		public ArrayList GetConnections() {
+		public List<ConveyorObject> GetConnections() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			Vector2I v1;
 			Vector2I v2;
@@ -148,15 +152,13 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				v2 = new Vector2I(-1, 0);
 			}
 
-			ArrayList retList = new ArrayList();
+			List<ConveyorObject> retList = new List<ConveyorObject>();
 			
 			PlaceableObject obj1 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v1);
-			GD.Print(obj1);
-			if (obj1 != null && obj1 is ConveyorObject cObj1 && cObj1.GetDir() == this.GetDir()) retList.Add(obj1);
+			if (obj1 != null && obj1 is ConveyorObject cObj1 && cObj1.GetDir() == this.GetDir()) retList.Add(cObj1);
 
 			PlaceableObject obj2 = manager.currLevel.mLayer.FindObject(this.GetCurrPos() + v2);
-			GD.Print(obj2);
-			if (obj2 != null && obj2 is ConveyorObject cObj2 && cObj2.GetDir() == this.GetDir()) retList.Add(obj2);
+			if (obj2 != null && obj2 is ConveyorObject cObj2 && cObj2.GetDir() == this.GetDir()) retList.Add(cObj2);
 
 			return retList;
 		}

@@ -230,12 +230,11 @@ public partial class CodeEdit : Godot.CodeEdit
 					GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 				}
 				
-				/*
 				if (correspondingObject is ConveyorGroup)
 				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
 					
-					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).convList[0];
+					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).getObjectList()[0];
 					
 					if (obj == null)
 					{
@@ -244,13 +243,13 @@ public partial class CodeEdit : Godot.CodeEdit
 					}
 					
 					layer = obj.GetParentLayer();
+
 					if (layer != null)
 					{
 						layer.HighlightTile(true, obj.GetCurrPos());
 						GD.Print("CodeEdit: Successfully highlighted correspondingObject.");
 					}
 				}
-				*/
 			}
 		}
 		else

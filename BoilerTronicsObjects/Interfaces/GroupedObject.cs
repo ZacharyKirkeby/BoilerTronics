@@ -44,6 +44,9 @@ namespace BoilerTronicsObjects.Interfaces {
 	 * and for the grouped object to interact with it's grouped sub objects.
 	 */
 	public interface GroupedSubObject {
+		// Creates group of correct type and returns that, does not put this item in that group
+		GroupedObject createGroup();
+
 		// Gets the group that this object belongs to
 		GroupedObject getGroup();
 
