@@ -171,8 +171,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();
 			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
 			
-			if (E != null) {
-				res["conveyorCode"] = GetScript();
+			if (this.group is Scriptable sObj) {
+				res["groupCode"] = sObj.GetScript();
 			}
 			return res;
 		}
