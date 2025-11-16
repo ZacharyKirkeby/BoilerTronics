@@ -608,8 +608,14 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void RegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
-		if (!(obj is Runnable)) return;
-		if (runnableList.Contains(obj)) return;
+		if (!(obj is Runnable)) {
+			GD.Print("Not runnable");
+			return;
+		}
+		if (runnableList.Contains(obj)) {
+			GD.Print("In list");
+			return;
+		}
 		runnableList.Add(obj);
 		GD.Print("Register", obj);
 	}
