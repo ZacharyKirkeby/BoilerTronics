@@ -350,24 +350,39 @@ public partial class BoilerTronicsLevel : Node2D
 			// attempt to reconstruct level based off the loaded information: update layers
 			GD.Print("BoilerTronicsLevel: loading layer: ", "floor");
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+
+			foreach (GroupedObject gObj in manager.currLevel.flLayer.getGroupedList()) {
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+
+			foreach (GroupedObject gObj in manager.currLevel.fLayer.getGroupedList()) {
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+
+			foreach (GroupedObject gObj in manager.currLevel.cLayer.getGroupedList()) {
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+
+			foreach (GroupedObject gObj in manager.currLevel.rLayer.getGroupedList()) {
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
-			// TODO: this should work more with the abstracted code instead of just looking for conveyors in the movement layer
-			// handle ConveyorGroup case
-			MovementLayer movement = (MovementLayer) manager.layerMovement;
-			foreach (ConveyorGroup obj in movement.getGroupedList()) {
-				obj.LoadTerminal();
+			foreach (GroupedObject gObj in manager.currLevel.mLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 		}
 		

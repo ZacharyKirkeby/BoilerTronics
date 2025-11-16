@@ -374,16 +374,15 @@ public class BoilerTronicsSaveState
 					((Scriptable) target).SetScript(terminalCode);
 					GD.Print("SaveState: successfully loaded terminal code");
 				}
-			} else if (target is GroupedSubObject) {
+			} else if (target is GroupedSubObject gsObj) {
 				string groupCode;
 				
 				if (targetObj.ContainsKey("groupCode")) {
 					// if loaded string exists, then load as appropriate
 					groupCode = (string) targetObj["groupCode"];
 					
-					
-					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
-					((ConveyorObject) target).SetToLoadText(groupCode);
+					gsObj.setText(groupCode);
+
 					GD.Print("SaveState: successfully loaded terminal code -- conveyor variant");
 				}
 			}
