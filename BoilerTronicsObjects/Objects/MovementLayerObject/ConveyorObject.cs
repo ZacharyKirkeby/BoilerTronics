@@ -55,7 +55,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		}
 
 		public GroupedObject createGroup() {
-			return new ConveyorGroup(-1, -1, this.direction) as GroupedObject;
+			return new ConveyorGroup(this.GetCurrPos().X, this.GetCurrPos().Y, this.direction) as GroupedObject;
 		}
 
 		// For loading purposes, have a specific string that will override its parent's group contents

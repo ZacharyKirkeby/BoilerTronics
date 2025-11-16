@@ -345,6 +345,11 @@ public class BoilerTronicsSaveState
 		// TODO: 'CreateObject' does not handle altTitles!
 		// GD.Print("now reading objects from file");
 		ArrayList listObj = new ArrayList();
+
+		// TODO:
+		// We need to create a list of groups and the associated code, then when all of the groups are crated,
+		// we need to set the text after all the groups are correctly made
+
 		for (int i = 0; i < objects.Count; i++) {
 			// cast each object of the array into desired dictionary type
 			Godot.Collections.Dictionary<string, Variant> targetObj = (Godot.Collections.Dictionary<string, Variant>) objects[i];
@@ -369,7 +374,7 @@ public class BoilerTronicsSaveState
 					((Scriptable) target).SetScript(terminalCode);
 					GD.Print("SaveState: successfully loaded terminal code");
 				}
-			} else if (target is ConveyorObject) {
+			} else if (target is GroupedSubObject gsObj && gsObj.getGroup() is Scriptable) {
 				string conveyorCode;
 				
 				if (targetObj.ContainsKey("conveyorCode")) {
