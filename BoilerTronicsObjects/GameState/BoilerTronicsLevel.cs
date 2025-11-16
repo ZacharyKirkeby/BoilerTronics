@@ -352,24 +352,52 @@ public partial class BoilerTronicsLevel : Node2D
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
 
 			foreach (GroupedObject gObj in manager.currLevel.flLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
 
 			foreach (GroupedObject gObj in manager.currLevel.fLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
 
 			foreach (GroupedObject gObj in manager.currLevel.cLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
 
 			foreach (GroupedObject gObj in manager.currLevel.rLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
