@@ -25,14 +25,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		private ConveyorGroup group;
 
+		// For loading purposes, have a specific string that will override its parent's group contents
+		private string internalText = null;
+
+
 		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
 		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
-		
-		// For saving purposes, the "head" of a ConveyorGroup should also point to the ConveyorGroup's terminal
-		// Therefore, we must track it here!
-		// This should be handled on ConveyorGroup creation/merging/editing in MovementLayer.cs
-		// Otherwise, only saving functionality should interact with this system
-		private CodeEdit E;
 		
 		// Gets the group that this object belongs to
 		public GroupedObject getGroup() {
@@ -57,9 +55,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 		public GroupedObject createGroup() {
 			return new ConveyorGroup(this.GetCurrPos().X, this.GetCurrPos().Y, this.direction) as GroupedObject;
 		}
-
-		// For loading purposes, have a specific string that will override its parent's group contents
-		private string toLoadText;
 
 		private void UpdateSprite() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -117,26 +112,12 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			soundManager.PlaySound(SoundType.Move);
 		}
 		
-		// Methods to deal with terminals (inherit from the parent ConveyorGroup)
-		// This should mostly only be used by MovementLayer.cs
-		public void SetTerminal(CodeEdit input) {
-			E = input;
-		}	
-		public CodeEdit GetTerminal() {
-			return E;
+		public void setText(string T) {
+			internalText = T;
 		}
-		public string GetScript() {
-			if (E == null) { return null; }
-			return E.Text;
-		}
-		
-		// For loading purposes
-		public void SetToLoadText(string input) {
-			toLoadText = input;
-		}
-		// For loading purposes
-		public string GetToLoadText() {
-			return toLoadText;
+
+		public string getText() {
+			return internalText;
 		}
 
 		public List<ConveyorObject> GetConnections() {
@@ -171,7 +152,8 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();
 			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
 			
-			if (this.group is Scriptable sObj) {
+			// We only want to save the script in index 0 of the group
+			if (this.group is Scriptable sObj && this == this.group.getObjectList()[0]) {
 				res["groupCode"] = sObj.GetScript();
 			}
 			return res;

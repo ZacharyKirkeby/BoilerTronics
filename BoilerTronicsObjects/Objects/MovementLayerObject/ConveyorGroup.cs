@@ -192,47 +192,6 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			return this._parser;
 		}
 		
-		// Iterates through all child ConveyorObjects, clears their CodeEdit E fields
-		// then sets the very first terminal item to have this group's CodeEdit E stored.
-		// Should only be used by MovementLayer.cs
-		public void ResetContentsTerminal() {
-			GD.Print("ConveyorObject: ResetContentsTerminal()");
-
-			foreach (ConveyorObject obj in convList) {
-				obj.SetTerminal((CodeEdit) null);
-			}
-
-			((ConveyorObject) convList[0]).SetTerminal(E);
-		}
-		
-		// Iterates through all child ConveyorObjects, clears their toLoad strings
-		// if any toLoad string is not 'null', save it + source object
-		// Should only be used by BoilerTronicsLevel
-		public void LoadTerminal() {
-			string terminalText = null;
-			ConveyorObject target = null;
-			
-			// iterate through whole list
-			foreach (ConveyorObject obj in convList) {
-				string temp = obj.GetToLoadText();
-				if (temp != null) {
-					GD.Print("ConveyorGroup: found valid text to load: ", temp);
-					terminalText = temp;
-					target = obj;
-					continue;
-				}
-				obj.SetToLoadText(null);
-			}
-			
-			// if necessary, load the script into the terminal
-			if (terminalText != null) {
-				GD.Print("ConveyorGroup: loading script from save into terminal");
-				SetScript(terminalText);
-				target.SetToLoadText(null);
-			}
-		}
-
-
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser

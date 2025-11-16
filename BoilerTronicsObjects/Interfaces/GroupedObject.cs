@@ -58,5 +58,13 @@ namespace BoilerTronicsObjects.Interfaces {
 
 		// True if in group | False if not in group
 		bool inGroup();
+
+		/* These are used when the group is scriptable, we should try and find a way around this though if possible */
+
+		// This should set some string var internally
+		void setText(string T);
+
+		// This should get some string variable internally
+		string getText();
 	}
 }
