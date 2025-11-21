@@ -183,6 +183,17 @@ public partial class LevelUi : Node2D
 
 		// update level name
 		UpdateTitle(manager.saveState.levelName);
+		
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+		if(manager.GetLevelID() == 37) {
+			if(!achievementManager.EasterEggIsUnlocked("EasterEgg3")) {
+				GD.Print("easter egg 3 gained");
+				if(!GetNode<Window>("Mystery Level Easter Egg").Visible) {
+					GetNode<Window>("Mystery Level Easter Egg").Visible = true;
+				}
+				achievementManager.UnlockEasterEgg("EasterEgg3");
+			}
+		}
 	
 	}
 

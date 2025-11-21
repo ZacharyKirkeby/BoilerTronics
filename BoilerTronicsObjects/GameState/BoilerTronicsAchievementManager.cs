@@ -29,7 +29,6 @@ public partial class BoilerTronicsAchievementManager : Node
 			eastereggs["EasterEgg1"] = false;
 			eastereggs["EasterEgg2"] = false;
 			eastereggs["EasterEgg3"] = false;
-			eastereggs["EasterEgg4"] = false;
 		}
 
 		public void UnlockAchievement(string name) {
