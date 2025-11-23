@@ -729,4 +729,13 @@ public partial class LevelUi : Node2D
 		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
 	}
+	
+	private void _on_enhanced_stats_button_pressed() {
+		if(GetNode<Panel>("%Enhanced Stats Panel").Visible == true) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = false;
+		}
+		else if(GetNode<Panel>("%Enhanced Stats Panel").Visible == false) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = true;
+		}
+	}
 }
