@@ -23,6 +23,9 @@ buses/default_bus_layout="res://Resources/Sounds/default_bus_layout.tres"
 
 BoilerTronicsGlobalManager="*res://BoilerTronicsObjects/GameState/BoilerTronicsGlobalManager.cs"
 BoilerTronicsSoundManager="*res://BoilerTronicsObjects/GameState/BoilerTronicsSoundManager.cs"
+EnvironmentConfig="*res://Scenes/AuthScripts/EnvironmentConfig.cs"
+FirebaseAuthManager="*res://Scenes/AuthScripts/FirebaseAuthManager.cs"
+FirestoreService="*res://Scenes/AuthScripts/FirestoreService.cs"
 
 [display]
 
