@@ -73,6 +73,8 @@ public partial class BoilerTronicsLevel : Node2D
 			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
 			float solutionScore = grades[0] + grades[1] + grades[2];
 			solutionScore /= 3;
+			
+			GD.Print("BoilerTronicsLevel: Leaderboard: Solution Score: ", solutionScore);
 			if(solutionScore > bestScore) {
 				bestScore = solutionScore;
 				GD.Print("BoilerTronicsLevel: bestscore is " + bestScore);
@@ -274,6 +276,7 @@ public partial class BoilerTronicsLevel : Node2D
 		} else {
 			this.bestScore = retrievedScore[0].score;
 		}
+		GD.Print("BoilerTronicsLevel: Leaderboard: Loaded Score: ", this.bestScore);
 		
 		
 

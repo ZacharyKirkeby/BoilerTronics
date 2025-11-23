@@ -679,7 +679,9 @@ namespace BoilerTronicsObjects.Layers
 							if (!objectList.Contains(manager.objectToMove)) {
 								if (manager.objectToMove is Scriptable) {
 									GD.Print("Layer.cs: Destroying Terminal");
+									// destroy terminal, unregister runnable
 									((Scriptable) manager.objectToMove).DestroyTerminal();
+									manager.currLevel.UnRegisterRunnable(manager.objectToMove);
 								}
 							}
 							
