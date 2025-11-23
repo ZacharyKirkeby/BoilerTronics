@@ -217,6 +217,7 @@ public partial class FirebaseAuthManager : Node
             var error = JsonSerializer.Deserialize<JsonElement>(errorJson);
             string errorMessage = error.GetProperty("error").GetProperty("message").GetString();
 
+            GD.PrintErr(errorMessage);
             return errorMessage switch
             {
                 "EMAIL_EXISTS" => "An account with this email already exists.",
