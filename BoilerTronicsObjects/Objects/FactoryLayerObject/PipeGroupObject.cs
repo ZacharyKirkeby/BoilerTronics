@@ -128,8 +128,16 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (obj is PipeObject pObj) {
 				pipeList.Add(pObj);
 				pObj.setGroup(this);
+
+				foreach (PipeObject pConn in pObj.GetConnections()) {
+					pConn.UpdateSprite();
+				}
+
+				pObj.UpdateSprite();
+
 				return true;
 			}
+
 			return false;
 		}
 
@@ -138,6 +146,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (obj is PipeObject pObj && containsObject(pObj)) {
 				pipeList.Remove(pObj);
 				pObj.removeFromGroup();
+
+				foreach (PipeObject pConn in pObj.GetConnections()) {
+					pConn.UpdateSprite();
+				}
 			}
 
 			// Verify
