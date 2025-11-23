@@ -1,21 +1,23 @@
 using Godot;
 using System;
 using Parsing;
-using System.Collections;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
+using System.Collections.Generic;
+using System.Collections;
 using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
-	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable{
+	public class ConveyorGroup : PlaceableObject, Runnable, Scriptable, GroupedObject{
 		
-		public ArrayList convList = new ArrayList(); // List of conveyor objects
-		private CodeEdit E;
+		private List<ConveyorObject> convList = new List<ConveyorObject>(); // List of conveyorObjects
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 		public int dir;
 		private Parser _parser;
+		private CodeEdit E;
 
 		public ConveyorGroup(int OGX, int OGY, int dir, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
+			GD.Print("New group");
 			this.dir = dir; // this is the direction that we want to group (ConveyorObject.Right || ConveyorObject.Left)
 			_parser = new Parser();
 			_parser._Ready();
@@ -23,49 +25,40 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			RegisterSteppable();
 		}
 
-		// Add to conveyor group
-		public void AddConveyor(ConveyorObject conv) {
-			if (conv == null) return;
-			else if (conv.GetDir() != dir) return; // Make sure it's the correct
-			convList.Add(conv);
-			// VerifyGroup(); // Not needed, conveyors will only be added if they are adjacent
+		// Grouped object interface
+
+		// Gets the list of objects in this group
+		public List<GroupedSubObject> getObjectList() {
+			List<GroupedSubObject> retList = new List<GroupedSubObject>();
+
+			foreach (ConveyorObject cObj in convList) {
+				GroupedSubObject sgObj = cObj as GroupedSubObject;
+				retList.Add(sgObj);
+			}
+
+			return retList;
 		}
 
-		// Remove from conveyor group
-		public void RemoveConveyor(ConveyorObject conv)
-		{
-			if (conv == null) return;
-			convList.Remove(conv);
-			VerifyGroup();
-		}
-		
-		public void SetParser(Parser parser)
-		{
-			this._parser = parser;
-		}
-		
-		public Parser GetParser()
-		{
-			return this._parser;
-		}
+		// Checks the validity of the objects in it's list
+		// It will return a list of any new grouped objects that are made in this verification process
+		// This should be called after removing an object
+		public List<GroupedObject> verifyGroup() {
+			List<List<GroupedSubObject>> converyorGroupList = new List<List<GroupedSubObject>>();
+			List<GroupedSubObject> seenConveyors = new List<GroupedSubObject>();
+			List<GroupedObject> retList = new List<GroupedObject>();
 
-		// Verify Group
-		public void VerifyGroup() {
-			ArrayList converyorGroupList = new ArrayList();
 
-			ArrayList seenConveyors = new ArrayList();
-
-			foreach (PlaceableObject obj in convList) {
-				if (!(obj is ConveyorObject cObj)) continue; // make sure we don't look at things that are not conveyors
+			foreach (GroupedSubObject sObj in convList) {
+				if (!(sObj is ConveyorObject cObj)) continue; // make sure we don't look at things that are not conveyors
 				else if (seenConveyors.Contains(cObj)) continue; // make sure we don't look at things we've seen before
 
-				ArrayList convGroup = new ArrayList();
+				List<GroupedSubObject> convGroup = new List<GroupedSubObject>();
 
 				Stack convStack = new Stack();
 
 				convStack.Push(cObj);
 
-				ArrayList Connected;
+				List<ConveyorObject> Connected;
 
 				while (convStack.Count != 0) {
 					cObj = convStack.Pop() as ConveyorObject;
@@ -88,9 +81,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				// We need to split or we need to remove the group
 				// Find the group with the most (this will be the one that we keep_
 				int currMax = -1;
-				ArrayList keepList = new ArrayList();
+				List<GroupedSubObject> keepList = null;
 
-				foreach (ArrayList group in converyorGroupList) {
+				foreach (List<GroupedSubObject> group in converyorGroupList) {
 					GD.Print("Group Count: ", group.Count);
 					if (group.Count > currMax) {
 						currMax = group.Count;
@@ -98,87 +91,107 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 					}
 				}
 
-				if (keepList.Count == 0) return;
+				if (keepList == null || keepList.Count == 0) return null;
 
 				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 				// For all the other groups
-				foreach (ArrayList group in converyorGroupList) {
+				foreach (List<GroupedSubObject> group in converyorGroupList) {
 					if (group != keepList) {
 						// Create new Group
 						ConveyorGroup newGroup = new ConveyorGroup(0, 0, dir);
 
 						// Add all nodes to that group
 						// Remove those nodes from us
-						foreach (ConveyorObject cObj in group) {
-							GD.Print("Adding item: ", cObj);
-							newGroup.AddConveyor(cObj);
-							manager.currLevel.mLayer.ConvGroupList.Add(newGroup);
-							this.convList.Remove(cObj);
+						foreach (GroupedSubObject gsObj in group) {
+							// GD.Print("Adding item: ", cObj);
+							convList.Remove(gsObj as ConveyorObject);
+							newGroup.addObject(gsObj);
+							retList.Add(newGroup);
 						}
 					}
 				}
 			}
+
+			return retList;
 		}
 
-		// Split Group
-		public void SplitGroup() {
-			// TODO
-		}
+		// Checks if adding this object is valid
+		// Returns true if the object is able to be added
+		// Returns false if the object can not be added
+		public bool validObject(GroupedSubObject obj) {
+			if (!(obj is ConveyorObject cObj)) return false; // We only want conveyor objects
+			if (convList.Count == 0 && this.dir == cObj.GetDir()) return true; // If we don't have anything then we want to add
 
-		// Combine Group
-		public void CombineGroup(ConveyorGroup g) {
-			// Add all convs from g to our list
-			if (g.dir != this.dir) return;
-
-			foreach (ConveyorObject obj in g.convList) {
-				this.convList.Add(obj);
+			List<ConveyorObject> conns = cObj.GetConnections(); // Get connections of conveyor
+			foreach (ConveyorObject connCObj in conns) { // Go through each connection
+				if (containsObject(connCObj)) return true; // If it's in our list then we are connected to this conveyor
 			}
+
+			return false; // We were not connected to this conveyor
 		}
 
-		public bool Contains(ConveyorObject c) {
-			return convList.Contains(c);
-		}
-		
-		// Iterates through all child ConveyorObjects, clears their CodeEdit E fields
-		// then sets the very first terminal item to have this group's CodeEdit E stored.
-		// Should only be used by MovementLayer.cs
-		public void ResetContentsTerminal() {
-			GD.Print("ConveyorObject: ResetContentsTerminal()");
-			foreach (ConveyorObject obj in convList) {
-				obj.SetTerminal((CodeEdit) null);
+		// Adds object to the group
+		// True if boject was added | False if object was not added
+		public bool addObject(GroupedSubObject obj) {
+			if (!validObject(obj)) return false;
+
+			if (obj is ConveyorObject cObj) {
+				convList.Add(cObj);
+				cObj.setGroup(this);
+				return true;
 			}
-			((ConveyorObject) convList[0]).SetTerminal(E);
+			return false;
 		}
-		
-		// Iterates through all child ConveyorObjects, clears their toLoad strings
-		// if any toLoad string is not 'null', save it + source object
-		// Should only be used by BoilerTronicsLevel
-		public void LoadTerminal() {
-			string terminalText = null;
-			ConveyorObject target = null;
-			
-			// iterate through whole list
-			foreach (ConveyorObject obj in convList) {
-				string temp = obj.GetToLoadText();
-				if (temp != null) {
-					GD.Print("ConveyorGroup: found valid text to load: ", temp);
-					terminalText = temp;
-					target = obj;
-					continue;
+
+		// Removes object from the group
+		public void deleteObject(GroupedSubObject obj) {
+			if (obj is ConveyorObject cObj && containsObject(cObj)) {
+				convList.Remove(cObj);
+				cObj.removeFromGroup();
+			}
+
+			// Verify
+			List<GroupedObject> newGroups = verifyGroup();
+			if (newGroups == null) return;
+
+			// add any newly created groups to our layer
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+			// TODO: Create this in Layer.cs to allow for all layers to have grouped objects
+			foreach (GroupedObject gObj in newGroups) manager.currLevel.mLayer.addGroupedObject(gObj);
+		}
+
+		// Checks if a given object is in the group
+		public bool containsObject(GroupedSubObject obj) {
+			if (obj is ConveyorObject cObj) {
+				return convList.Contains(cObj);
+			}
+			return false;
+		}
+
+		// Combines the group passed in with itself
+		public void combineGroup(GroupedObject gObj) {
+			List<GroupedSubObject> gsoList = gObj.getObjectList();
+
+			foreach (GroupedSubObject gsObj in gsoList) {
+				if (gsObj is ConveyorObject cObj) {
+					gObj.deleteObject(cObj);
+					addObject(cObj);
 				}
-				obj.SetToLoadText(null);
-			}
-			
-			// if necessary, load the script into the terminal
-			if (terminalText != null) {
-				GD.Print("ConveyorGroup: loading script from save into terminal");
-				SetScript(terminalText);
-				target.SetToLoadText(null);
 			}
 		}
 
-
+		public void SetParser(Parser parser)
+		{
+			this._parser = parser;
+		}
+		
+		public Parser GetParser()
+		{
+			return this._parser;
+		}
+		
 		// Runnable Interface
 		public void Step() {
 			// Make a call to the parser
@@ -210,7 +223,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 			_parser.ResetProgramCounter();
 			_parser.ResetRegisters();
 			_parser.Reset();
-			foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
+			// foreach (PlaceableObject obj in convList) obj.ResetPos(); // Reset each of our objects
 			E.ClearAllHighlights();
 			var existing = E.GetNodeOrNull<Label>("ErrorLabel");
 			if (existing != null)
