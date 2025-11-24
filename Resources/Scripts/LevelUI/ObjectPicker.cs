@@ -42,7 +42,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Vertical Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,0), new Vector2I(85, 85), false),
 		new ItemInfo("Horizontal Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Rotator", ConveyorRotatorObject.GetCostStatic(), 1, 2, new Vector2I(0,2), new Vector2I(85, 85), false),
-		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(1,0), new Vector2I(130, 90), true), // Placeholder sprite ATM
+		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(2,0), new Vector2I(130, 90), true), // Placeholder sprite ATM
 	};
 
 	static ItemInfo[] ClawSection = {
