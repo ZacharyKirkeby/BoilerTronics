@@ -353,23 +353,67 @@ public partial class BoilerTronicsLevel : Node2D
 			// attempt to reconstruct level based off the loaded information: update layers
 			GD.Print("BoilerTronicsLevel: loading layer: ", "floor");
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+
+			foreach (GroupedObject gObj in manager.currLevel.flLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+
+			foreach (GroupedObject gObj in manager.currLevel.fLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+
+			foreach (GroupedObject gObj in manager.currLevel.cLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+
+			foreach (GroupedObject gObj in manager.currLevel.rLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
-			// handle ConveyorGroup case
-			MovementLayer movement = (MovementLayer) manager.layerMovement;
-			foreach (ConveyorGroup obj in movement.ConvGroupList) {
-				obj.LoadTerminal();
+			foreach (GroupedObject gObj in manager.currLevel.mLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 		}
 		
@@ -610,9 +654,16 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void RegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
-		if (!(obj is Runnable)) return;
-		if (runnableList.Contains(obj)) return;
+		if (!(obj is Runnable)) {
+			GD.Print("Not runnable");
+			return;
+		}
+		if (runnableList.Contains(obj)) {
+			GD.Print("In list");
+			return;
+		}
 		runnableList.Add(obj);
+		GD.Print("Register", obj);
 	}
 
 	public void UnRegisterRunnable(PlaceableObject obj) {
@@ -620,6 +671,7 @@ public partial class BoilerTronicsLevel : Node2D
 		if (!(obj is Runnable)) return;
 		if (!(runnableList.Contains(obj))) return;
 		runnableList.Remove(obj);
+		GD.Print("Unregister", obj);
 	}
 	
 	/* Handle Moving Objects */
