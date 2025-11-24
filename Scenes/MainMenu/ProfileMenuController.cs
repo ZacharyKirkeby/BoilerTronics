@@ -1,6 +1,6 @@
 using Godot;
 using System;
-
+using System.Threading.Tasks;
 
 public partial class ProfileMenuController : Control
 {
@@ -12,21 +12,37 @@ public partial class ProfileMenuController : Control
 
 	public override void _Ready()
 	{
-        GD.Print("TEST");
-		// Get services
 		_authManager = FirebaseAuthManager.Instance;
 		_firestoreService = FirestoreService.Instance;
 
-		
-		_contentContainer = GetNode<VBoxContainer>("VBoxContainer/Panel/VBoxContainer");
+		try
+		{
+			_contentContainer = GetNode<VBoxContainer>("VBoxContainer/Panel/VBoxContainer");
+		}
+		catch (Exception ex)
+		{
+			return;
+		}
 
 		// Subscribe to auth changes
 		if (_authManager != null)
 		{
 			_authManager.AuthenticationChanged += OnAuthenticationChanged;
+			
+			// If already authenticated, load user data immediately
+			if (_authManager.IsAuthenticated)
+			{
+			    CallDeferred(nameof(LoadUserDataDeferred));
+			}
 		}
 
 		// Initial update
+		UpdateProfileMenu();
+	}
+
+    private async void LoadUserDataDeferred()
+	{
+		await LoadUserData();
 		UpdateProfileMenu();
 	}
 
@@ -42,15 +58,7 @@ public partial class ProfileMenuController : Control
 	{
 		if (isAuthenticated)
 		{
-			// Load user data from Firestore
-			_currentUserData = await _firestoreService.GetUserAsync(_authManager.UserId);
-			
-			// If user data doesn't exist, create it
-			if (_currentUserData == null)
-			{
-				_currentUserData = UserData.CreateDefault(_authManager.UserId, _authManager.Email);
-				await _firestoreService.CreateUserAsync(_authManager.UserId, _currentUserData);
-			}
+			await LoadUserData();
 		}
 		else
 		{
@@ -63,11 +71,24 @@ public partial class ProfileMenuController : Control
 			UpdateProfileMenu();
 		}
 	}
+	private async System.Threading.Tasks.Task LoadUserData()
+	{
+		// Load user data from Firestore
+		_currentUserData = await _firestoreService.GetUserAsync(_authManager.UserId);
+		
+		// If user data doesn't exist, create it
+		if (_currentUserData == null)
+		{
+			_currentUserData = UserData.CreateDefault(_authManager.UserId, _authManager.Email);
+			await _firestoreService.CreateUserAsync(_authManager.UserId, _currentUserData);
+		}
+	}
 
 	public void UpdateProfileMenu()
-	{
+	{	
 		// Clear existing content except the title
 		var children = _contentContainer.GetChildren();
+		
 		for (int i = children.Count - 1; i >= 1; i--)
 		{
 			children[i].QueueFree();
@@ -152,7 +173,7 @@ public partial class ProfileMenuController : Control
 		errorLabel.Visible = false;
 		errorLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
-		
+		// Button container
 		var buttonContainer = new HBoxContainer();
 		buttonContainer.AddThemeConstantOverride("separation", 20);
 		buttonContainer.Alignment = BoxContainer.AlignmentMode.Center;
