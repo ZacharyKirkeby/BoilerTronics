@@ -14,8 +14,7 @@ public partial class LevelCreator : LevelUi
 		base._Ready();
 		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
-		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
-		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
 		foreach (string saveFile in saveFiles)
 		{
@@ -202,7 +201,24 @@ public partial class LevelCreator : LevelUi
 		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
 		saveWindow.Visible = false;
 	}
-	
+
+	private void _on_load_button_pressed()
+    {
+        var fileLocation = GetNode<Label>("%FileLocation");
+		fileLocation.Text = "Level will be saved at " + levelSavePath;
+		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		dropdown.Clear();
+		foreach (string saveFile in saveFiles)
+		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
+		var loadName = GetNode<Label>("%LoadName");
+		loadName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
+    }
+
 	private void _on_load_level_button_pressed()
 	{
 		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
