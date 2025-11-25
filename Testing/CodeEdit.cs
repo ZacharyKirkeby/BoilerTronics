@@ -250,15 +250,7 @@ public partial class CodeEdit : Godot.CodeEdit
 				{
 					GD.Print("CodeEdit: Detected ConveyorGroup!");
 					
-					// ConveyorGroup must only exist on the movement layer! Still, let's check really quick
-					// Get the first item from the ConveyorGroup's list
-					ConveyorGroup conv = (ConveyorGroup) correspondingObject;
-					
-					if (conv.convList.Count == 0) {
-						GD.Print("CodeEdit: ConveyorGroup associated with terminal is empty.");
-						return;
-					}
-					PlaceableObject obj = (PlaceableObject) conv.convList[0];
+					PlaceableObject obj = (PlaceableObject)((ConveyorGroup)correspondingObject).getObjectList()[0];
 					
 					if (obj == null)
 					{
@@ -267,6 +259,7 @@ public partial class CodeEdit : Godot.CodeEdit
 					}
 					
 					layer = obj.GetParentLayer();
+
 					if (layer != null)
 					{
 						layer.HighlightTile(true, obj.GetCurrPos());
