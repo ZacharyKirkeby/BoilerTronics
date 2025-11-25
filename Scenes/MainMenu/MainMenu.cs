@@ -36,9 +36,9 @@ public partial class MainMenu : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/level_select.tscn");
 	}
 
-	private void _on_level_select_pressed()
+	private void _on_level_creator_pressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/level_creator.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
 	}
 	
 	private void _on_profile_pressed() {

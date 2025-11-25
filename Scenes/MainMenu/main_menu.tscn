@@ -153,7 +153,7 @@ layout_mode = 2
 icon = ExtResource("7_43m2q")
 icon_alignment = 1
 
-[node name="Documentation" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
+[node name="Settings" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 icon = ExtResource("8_rlg4b")
@@ -564,9 +564,10 @@ script = ExtResource("12_rlg4b")
 
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Select" to="." method="_on_level_select_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Creator" to="." method="_on_level_creator_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Profile" to="." method="_on_profile_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Leaderboard" to="." method="_on_leaderboard_pressed"]
-[connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
