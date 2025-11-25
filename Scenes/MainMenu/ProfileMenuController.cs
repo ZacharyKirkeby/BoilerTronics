@@ -2,10 +2,6 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Manages the profile menu UI with friends system
-/// File location: res://Scenes/MainMenu/ProfileMenuController.cs
-/// </summary>
 public partial class ProfileMenuController : Control
 {
 	private FirebaseAuthManager _authManager;
@@ -57,59 +53,88 @@ public partial class ProfileMenuController : Control
 		}
 	}
 
-	private void BuildLayout()
-	{
-		// Clear existing children
-		foreach (Node child in GetChildren())
-		{
-			child.QueueFree();
-		}
+    private void BuildLayout()
+    {
+        foreach (Node child in GetChildren())
+        {
+            child.QueueFree();
+        }
 
-		// Create main horizontal container
-		_mainContainer = new HBoxContainer();
-		_mainContainer.AnchorRight = 1;
-		_mainContainer.AnchorBottom = 1;
-		_mainContainer.AddThemeConstantOverride("separation", 30);
-		AddChild(_mainContainer);
+        var rootContainer = new VBoxContainer();
+        rootContainer.AnchorRight = 1;
+        rootContainer.AnchorBottom = 1;
+        rootContainer.AddThemeConstantOverride("separation", 20);
+        AddChild(rootContainer);
 
-		// Left side - Profile section
-		var profilePanel = CreateStyledPanel(new Vector2(900, 650));
-		_mainContainer.AddChild(profilePanel);
+        _mainContainer = new HBoxContainer();
+        _mainContainer.CustomMinimumSize = new Vector2(0, 550);
+        _mainContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+        _mainContainer.AddThemeConstantOverride("separation", 30);
+        _mainContainer.Alignment = BoxContainer.AlignmentMode.Center;
+        rootContainer.AddChild(_mainContainer);
 
-		_profileContainer = new VBoxContainer();
-		_profileContainer.AnchorRight = 1;
-		_profileContainer.AnchorBottom = 1;
-		_profileContainer.GrowHorizontal = Control.GrowDirection.Both;
-		_profileContainer.GrowVertical = Control.GrowDirection.Both;
-		_profileContainer.AddThemeConstantOverride("separation", 80);
-		profilePanel.AddChild(_profileContainer);
+        var profilePanel = CreateStyledPanel(new Vector2(900, 550));
+        _mainContainer.AddChild(profilePanel);
 
-		// Add profile title
-		var profileTitle = CreateTitleLabel("Profile");
-		_profileContainer.AddChild(profileTitle);
+        _profileContainer = new VBoxContainer();
+        _profileContainer.AnchorRight = 1;
+        _profileContainer.AnchorBottom = 1;
+        _profileContainer.GrowHorizontal = Control.GrowDirection.Both;
+        _profileContainer.GrowVertical = Control.GrowDirection.Both;
+        _profileContainer.AddThemeConstantOverride("separation", 80);
+        profilePanel.AddChild(_profileContainer);
 
-		// Right side - Friends section
-		var friendsPanel = CreateStyledPanel(new Vector2(500, 650));
-		_mainContainer.AddChild(friendsPanel);
+        var profileTitle = CreateTitleLabel("Profile");
+        _profileContainer.AddChild(profileTitle);
 
-		_friendsContainer = new VBoxContainer();
-		_friendsContainer.AnchorRight = 1;
-		_friendsContainer.AnchorBottom = 1;
-		_friendsContainer.GrowHorizontal = Control.GrowDirection.Both;
-		_friendsContainer.GrowVertical = Control.GrowDirection.Both;
-		_friendsContainer.AddThemeConstantOverride("separation", 20);
-		friendsPanel.AddChild(_friendsContainer);
+        var friendsPanel = CreateStyledPanel(new Vector2(500, 550));
+        _mainContainer.AddChild(friendsPanel);
 
-		// Add friends title
-		var friendsTitle = CreateTitleLabel("Friends");
-		_friendsContainer.AddChild(friendsTitle);
+        _friendsContainer = new VBoxContainer();
+        _friendsContainer.AnchorRight = 1;
+        _friendsContainer.AnchorBottom = 1;
+        _friendsContainer.GrowHorizontal = Control.GrowDirection.Both;
+        _friendsContainer.GrowVertical = Control.GrowDirection.Both;
+        _friendsContainer.AddThemeConstantOverride("separation", 20);
+        friendsPanel.AddChild(_friendsContainer);
 
-		// Back button at bottom
-		var backButton = CreateBackButton();
-		AddChild(backButton);
-	}
+        var friendsTitle = CreateTitleLabel("Friends");
+        _friendsContainer.AddChild(friendsTitle);
 
-	private Panel CreateStyledPanel(Vector2 size)
+        var backButton = CreateBackButton();
+        rootContainer.AddChild(backButton);
+    }
+
+    private Button CreateBackButton()
+    {
+        var backButton = new Button();
+        backButton.Text = "Back";
+        backButton.CustomMinimumSize = new Vector2(600, 100);
+        backButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+        var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+        backButton.AddThemeFontOverride("font", font);
+        backButton.AddThemeFontSizeOverride("font_size", 76);
+        backButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+
+        var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
+        var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
+        backButton.AddThemeStyleboxOverride("normal", normalStyle);
+        backButton.AddThemeStyleboxOverride("hover", hoverStyle);
+        backButton.AddThemeStyleboxOverride("focus", normalStyle);
+
+        backButton.Pressed += () =>
+        {
+            GetParent().GetNode<Control>("SettingsMenu").Visible = false;
+            GetParent().GetNode<Control>("ProfileMenu").Visible = false;
+            GetParent().GetNode<Control>("Leaderboard").Visible = false;
+            GetParent().GetNode<Control>("MainMenu").Visible = true;
+        };
+
+        return backButton;
+    }
+
+    private Panel CreateStyledPanel(Vector2 size)
 	{
 		var panel = new Panel();
 		panel.CustomMinimumSize = size;
@@ -149,34 +174,6 @@ public partial class ProfileMenuController : Control
 		label.AddThemeFontSizeOverride("font_size", 70);
 		
 		return label;
-	}
-
-	private Button CreateBackButton()
-	{
-		var backButton = new Button();
-		backButton.Text = "Back";
-		backButton.CustomMinimumSize = new Vector2(600, 100);
-		backButton.Position = new Vector2(660, 200);
-		
-		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
-		backButton.AddThemeFontOverride("font", font);
-		backButton.AddThemeFontSizeOverride("font_size", 76);
-		backButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
-		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
-		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
-		backButton.AddThemeStyleboxOverride("normal", normalStyle);
-		backButton.AddThemeStyleboxOverride("hover", hoverStyle);
-		backButton.AddThemeStyleboxOverride("focus", normalStyle);
-		
-		backButton.Pressed += () => {
-			GetParent().GetNode<Control>("SettingsMenu").Visible = false;
-			GetParent().GetNode<Control>("ProfileMenu").Visible = false;
-			GetParent().GetNode<Control>("Leaderboard").Visible = false;
-			GetParent().GetNode<Control>("MainMenu").Visible = true;
-		};
-		
-		return backButton;
 	}
 
 	private async void LoadUserDataDeferred()
