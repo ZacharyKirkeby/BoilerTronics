@@ -51,7 +51,7 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(2, new Vector2I(0, 0)), 150); //conveyorleftdefault
 			objectMap.Add(hashCoords(2, new Vector2I(0, 1)), 151); //conveyorrightdefault
 			objectMap.Add(hashCoords(2, new Vector2I(0, 2)), 152); //rotatordefault
-			objectMap.Add(hashCoords(2, new Vector2I(1, 0)), 153); //switch
+			objectMap.Add(hashCoords(2, new Vector2I(2, 0)), 153); //switch
 
 			// Materials
 			objectMap.Add(hashCoords(9, new Vector2I(0, 0)), 200); //coal
