@@ -1,0 +1,97 @@
+[gd_scene load_steps=9 format=3 uid="uid://xwk7mdkifoyd"]
+
+[ext_resource type="Script" uid="uid://bjjp7fgr1wmfp" path="res://Scenes/LevelSelect/NewLevelSelect.cs" id="1_gji4h"]
+[ext_resource type="Theme" uid="uid://b6b4ydxbprpk8" path="res://Scenes/LevelSelect/paneltheme.tres" id="2_pn0g7"]
+[ext_resource type="Theme" uid="uid://doo374ukjh36b" path="res://Resources/ButtonThemes/buttontheme.tres" id="3_iburf"]
+[ext_resource type="Texture2D" uid="uid://b3n57xvq1tw8s" path="res://Resources/Icons/arrow-right-2.png" id="5_pgg1l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pn0g7"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Animation" id="Animation_iburf"]
+resource_name = "new_animation"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.9666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(940, 521), Vector2(2860, 520)]
+}
+
+[sub_resource type="Animation" id="Animation_gji4h"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(940, 521)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y0kcv"]
+_data = {
+&"RESET": SubResource("Animation_gji4h"),
+&"new_animation": SubResource("Animation_iburf")
+}
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_gji4h")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(960, 540)
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(1920, 1080)
+offset_left = -2.0
+offset_right = 1918.0
+offset_bottom = 1080.0
+theme = ExtResource("2_pn0g7")
+
+[node name="Panel2" type="PanelContainer" parent="."]
+offset_left = 1923.0
+offset_right = 3843.0
+offset_bottom = 1080.0
+theme = ExtResource("2_pn0g7")
+
+[node name="Panel3" type="Panel" parent="."]
+offset_left = 940.0
+offset_top = 521.0
+offset_right = 979.99976
+offset_bottom = 561.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pn0g7")
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 1762.0
+offset_top = 462.0
+offset_right = 1920.0
+offset_bottom = 620.0
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("3_iburf")
+theme_override_constants/icon_max_width = 150
+icon = ExtResource("5_pgg1l")
+icon_alignment = 1
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+
+[node name="Animation" type="AnimationPlayer" parent="AnimationTree"]
+unique_name_in_owner = true
+root_node = NodePath("../../Panel3")
+libraries = {
+&"": SubResource("AnimationLibrary_y0kcv")
+}
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

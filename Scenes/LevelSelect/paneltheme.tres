@@ -1,0 +1,22 @@
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://b6b4ydxbprpk8"]
+
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="1_qwap2"]
+[ext_resource type="StyleBox" uid="uid://ctnkan4kwj4vj" path="res://Resources/ButtonThemes/menubuttonnorm.tres" id="2_p4whu"]
+[ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="3_tpb7t"]
+
+[sub_resource type="FontVariation" id="FontVariation_28flt"]
+base_font = ExtResource("1_qwap2")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rjixn"]
+bg_color = Color(0, 0.39739183, 0.1708825, 1)
+
+[resource]
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
+Button/fonts/font = SubResource("FontVariation_28flt")
+Button/styles/focus = ExtResource("2_p4whu")
+Button/styles/hover = ExtResource("3_tpb7t")
+Button/styles/normal = ExtResource("2_p4whu")
+Button/styles/pressed = ExtResource("2_p4whu")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_rjixn")
