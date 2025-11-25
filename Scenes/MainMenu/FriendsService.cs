@@ -4,11 +4,12 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
-public partial class FirestoreService : Node
+public partial class FriendsService : Node
 {
-	private static FirestoreService _instance;
-	public static FirestoreService Instance => _instance;
+	private static FriendsService _instance;
+	public static FriendsService Instance => _instance;
 
 	private string _projectId;
 	private string _firestoreUrl;
@@ -38,169 +39,123 @@ public partial class FirestoreService : Node
 
 		if (string.IsNullOrEmpty(_projectId))
 		{
-			GD.PrintErr("FIREBASE_PROJECT_ID not found in .env file!");
-		}
-		else
-		{
-			GD.Print("Firestore configuration loaded");
+			GD.PrintErr("FIREBASE_PROJECT_ID not found in .env file");
 		}
 	}
 
-	public async Task<bool> CreateUserAsync(string userId, UserData userData)
+	public async Task<UserData> SearchUserByUsernameAsync(string username)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
 		if (string.IsNullOrEmpty(idToken))
-		{
-			GD.PrintErr("No authentication token available");
-			return false;
-		}
-
-		string url = $"{_firestoreUrl}/users/{userId}";
-		var firestoreDoc = ConvertToFirestoreDocument(userData);
-		
-		try
-		{
-			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
-			if (response.Success)
-			{
-				GD.Print($"User document created: {userData.Username}");
-			}
-			return response.Success;
-		}
-		catch (Exception ex)
-		{
-			GD.PrintErr($"Failed to create user: {ex.Message}");
-			return false;
-		}
-	}
-
-	public async Task<UserData> GetUserAsync(string userId)
-	{
-		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
-		if (string.IsNullOrEmpty(idToken))
-		{
-			GD.PrintErr("No authentication token available");
 			return null;
-		}
 
-		string url = $"{_firestoreUrl}/users/{userId}";
+		string url = $"{_firestoreUrl}:runQuery";
 		
-		try
+		var query = new
 		{
-			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
-			
-			if (response.Success)
+			structuredQuery = new
 			{
-				var userData = ConvertFromFirestoreDocument(response.Data);
-				GD.Print($"User data loaded: {userData.Username}");
-				return userData;
-			}
-			
-			return null;
-		}
-		catch (Exception ex)
-		{
-			GD.PrintErr($"Failed to get user: {ex.Message}");
-			return null;
-		}
-	}
-	public async Task<bool> UpdateUserFieldAsync(string userId, string fieldName, object value)
-	{
-		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
-		if (string.IsNullOrEmpty(idToken))
-		{
-			GD.PrintErr("No authentication token available");
-			return false;
-		}
-
-		string url = $"{_firestoreUrl}/users/{userId}?updateMask.fieldPaths={fieldName}";
-		
-		var firestoreDoc = new
-		{
-			fields = new Dictionary<string, object>
-			{
-				{ fieldName, ConvertToFirestoreValue(value) }
+				from = new[] { new { collectionId = "users" } },
+				where = new
+				{
+					fieldFilter = new
+					{
+						field = new { fieldPath = "username" },
+						op = "EQUAL",
+						value = new { stringValue = username }
+					}
+				},
+				limit = 1
 			}
 		};
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, query, idToken, "POST");
+			
+			if (response.Success && response.Data.ValueKind == JsonValueKind.Array)
+			{
+				var results = response.Data.EnumerateArray().ToList();
+				if (results.Count > 0 && results[0].TryGetProperty("document", out var doc))
+				{
+					return ConvertFromFirestoreDocument(doc);
+				}
+			}
+			
+			return null;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to search user: {ex.Message}");
+			return null;
+		}
+	}
+
+	public async Task<bool> SendFriendRequestAsync(string toUserId, string toUsername)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		var currentUserId = FirebaseAuthManager.Instance.UserId;
 		
+		if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(currentUserId))
+			return false;
+
+		var currentUserData = await FirestoreService.Instance.GetUserAsync(currentUserId);
+		if (currentUserData == null)
+			return false;
+
+		var friendRequest = FriendRequest.Create(
+			currentUserId,
+			currentUserData.Username,
+			toUserId,
+			toUsername
+		);
+
+		string requestId = $"{currentUserId}_{toUserId}";
+		string url = $"{_firestoreUrl}/friendRequests/{requestId}";
+		
+		var firestoreDoc = ConvertFriendRequestToFirestore(friendRequest);
+
 		try
 		{
 			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
-			if (response.Success)
-			{
-				GD.Print($"Updated field: {fieldName}");
-			}
 			return response.Success;
 		}
 		catch (Exception ex)
 		{
-			GD.PrintErr($"Failed to update field {fieldName}: {ex.Message}");
+			GD.PrintErr($"Failed to send friend request: {ex.Message}");
 			return false;
 		}
 	}
 
-	private object ConvertToFirestoreDocument(UserData userData)
+	public async Task<List<string>> GetFriendUsernamesAsync(List<string> friendIds)
+	{
+		var usernames = new List<string>();
+		
+		foreach (var friendId in friendIds)
+		{
+			var friendData = await FirestoreService.Instance.GetUserAsync(friendId);
+			if (friendData != null)
+			{
+				usernames.Add(friendData.Username);
+			}
+		}
+		
+		return usernames;
+	}
+
+	private object ConvertFriendRequestToFirestore(FriendRequest request)
 	{
 		return new
 		{
 			fields = new
 			{
-				username = new { stringValue = userData.Username },
-				uuid = new { stringValue = userData.Uuid },
-				friends = new
-				{
-					arrayValue = new
-					{
-						values = ConvertListToFirestoreArray(userData.Friends)
-					}
-				},
-				achievementsUnlocked = new
-				{
-					arrayValue = new
-					{
-						values = ConvertListToFirestoreArray(userData.AchievementsUnlocked)
-					}
-				},
-				hoursPlayed = new { doubleValue = userData.HoursPlayed },
-				easterEggsFound = new
-				{
-					arrayValue = new
-					{
-						values = ConvertListToFirestoreArray(userData.EasterEggsFound)
-					}
-				}
+				fromUserId = new { stringValue = request.FromUserId },
+				fromUsername = new { stringValue = request.FromUsername },
+				toUserId = new { stringValue = request.ToUserId },
+				toUsername = new { stringValue = request.ToUsername },
+				status = new { stringValue = request.Status },
+				timestamp = new { integerValue = request.Timestamp.ToString() }
 			}
-		};
-	}
-
-	private object[] ConvertListToFirestoreArray(List<string> list)
-	{
-		var array = new object[list.Count];
-		for (int i = 0; i < list.Count; i++)
-		{
-			array[i] = new { stringValue = list[i] };
-		}
-		return array;
-	}
-
-	private object ConvertToFirestoreValue(object value)
-	{
-		return value switch
-		{
-			string s => new { stringValue = s },
-			int i => new { integerValue = i.ToString() },
-			long l => new { integerValue = l.ToString() },
-			float f => new { doubleValue = f },
-			double d => new { doubleValue = d },
-			bool b => new { booleanValue = b },
-			List<string> list => new
-			{
-				arrayValue = new
-				{
-					values = ConvertListToFirestoreArray(list)
-				}
-			},
-			_ => new { stringValue = value.ToString() }
 		};
 	}
 
@@ -222,7 +177,7 @@ public partial class FirestoreService : Node
 		}
 		catch (Exception ex)
 		{
-			GD.PrintErr($"Failed to convert Firestore document: {ex.Message}");
+			GD.PrintErr($"Failed to convert user document: {ex.Message}");
 			return null;
 		}
 	}
