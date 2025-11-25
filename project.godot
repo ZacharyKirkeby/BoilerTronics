@@ -26,7 +26,7 @@ BoilerTronicsSoundManager="*res://BoilerTronicsObjects/GameState/BoilerTronicsSo
 EnvironmentConfig="*res://Scenes/AuthScripts/EnvironmentConfig.cs"
 FirebaseAuthManager="*res://Scenes/AuthScripts/FirebaseAuthManager.cs"
 FirestoreService="*res://Scenes/AuthScripts/FirestoreService.cs"
-FriendsService="*res://Scripts/FriendsService.cs"
+FriendsService="*res://Scenes/AuthScripts/FriendsService.cs"
 
 [display]
 

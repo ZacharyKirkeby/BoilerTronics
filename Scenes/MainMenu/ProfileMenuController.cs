@@ -2,6 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Manages the profile menu UI with friends system
+/// File location: res://Scenes/MainMenu/ProfileMenuController.cs
+/// </summary>
 public partial class ProfileMenuController : Control
 {
 	private FirebaseAuthManager _authManager;
@@ -25,6 +29,8 @@ public partial class ProfileMenuController : Control
 			_friendsService = new FriendsService();
 			GetTree().Root.AddChild(_friendsService);
 		}
+
+		// Build the new layout
 		BuildLayout();
 
 		// Subscribe to auth changes
@@ -150,7 +156,7 @@ public partial class ProfileMenuController : Control
 		var backButton = new Button();
 		backButton.Text = "Back";
 		backButton.CustomMinimumSize = new Vector2(600, 100);
-		backButton.Position = new Vector2(660, 780);
+		backButton.Position = new Vector2(660, 200);
 		
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		backButton.AddThemeFontOverride("font", font);
