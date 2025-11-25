@@ -285,7 +285,7 @@ public partial class ProfileMenuController : Control
 		// Search bar
 		var searchContainer = new HBoxContainer();
 		searchContainer.AddThemeConstantOverride("separation", 10);
-		searchContainer.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+		searchContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
 		var searchInput = CreateLineEdit("Search username...", 320, 40);
 		searchInput.Name = "SearchInput";
@@ -302,15 +302,17 @@ public partial class ProfileMenuController : Control
 		var searchResultContainer = new VBoxContainer();
 		searchResultContainer.Name = "SearchResult";
 		searchResultContainer.AddThemeConstantOverride("separation", 10);
+        searchResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(searchResultContainer);
 
 		// Friends list
 		var friendsListLabel = CreateLabel("Your Friends:", 22);
+        friendsListLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(friendsListLabel);
 
 		var friendsScrollContainer = new ScrollContainer();
 		friendsScrollContainer.CustomMinimumSize = new Vector2(0, 400);
-		friendsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+		friendsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
 
 		var friendsList = new VBoxContainer();
 		friendsList.AddThemeConstantOverride("separation", 10);
@@ -324,6 +326,7 @@ public partial class ProfileMenuController : Control
 			foreach (var username in friendUsernames)
 			{
 				var friendLabel = CreateLabel($"• {username}", 20);
+                friendsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 				friendsList.AddChild(friendLabel);
 			}
 		}
@@ -331,6 +334,7 @@ public partial class ProfileMenuController : Control
 		{
 			var noFriendsLabel = CreateLabel("No friends yet", 18);
 			noFriendsLabel.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
+            noFriendsLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 			friendsList.AddChild(noFriendsLabel);
 		}
 	}
