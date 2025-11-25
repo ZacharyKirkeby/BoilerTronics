@@ -1,6 +1,7 @@
 // This will be the script for the level scene
 using Godot;
 using System;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
@@ -28,8 +29,28 @@ public partial class BoilerTronicsLevel : Node2D
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
 
-	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
-	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+	public ArrayList scriptRunnableList = new ArrayList(); // List of runnable Objects that wre scriptable
+
+	public SemaphoreSlim runSem = new SemaphoreSlim(255, 255); // Semephore that will allow us to see if we have objects still running
+
+	private static int nonScriptIndex = 0;
+	private static int miscIndex = 1;
+	private static int rotatorIndex = 2;
+	private static int convIndex = 3;
+	private static int clawIndex = 4;
+
+	// List of all object in the order that we want to run them, used for running
+	public List<PlaceableObject>[] runList = {
+		new List<PlaceableObject>(), // Non-scriptable objects
+		new List<PlaceableObject>(), // Misc
+		new List<PlaceableObject>(), // Rotators
+		new List<PlaceableObject>(), // Conveyores
+		new List<PlaceableObject>(), // Claws
+	};
+
+	public ArrayList runnableList = new ArrayList(); // List of runnable Objects (used for checking)
+
+	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving (used for resetting in the middle of moving)
 
 	public Parser P;
 	public ErrorHandler E;
@@ -541,6 +562,10 @@ public partial class BoilerTronicsLevel : Node2D
 		// Empty moving list
 		this.movingList.Clear();
 
+		// ResetSem
+		runSem = null;
+		runSem = new SemaphoreSlim(255, 255);
+
 		// Clear errors
 		E.ClearError();
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -601,18 +626,34 @@ public partial class BoilerTronicsLevel : Node2D
 
 	/* Stepping and Running */
 
+	/* Run Order
+	 * ------------------------------
+	 * 1. Non-sctiptable elemnts (factory elements, materials, etc.), these should not take a time step to actually do their action. May have animations
+	 * 2. Misc runnable elements
+	 * 3. Rotators
+	 * 4. Conveyors
+	 * 5. Claws
+	 */
 	public void Step() {
+
 		if (E.HasError()) {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Error);
 			return; // Can't step if there is an error
 		}
+
 		if (movingList.Count != 0) return; // Can't step while stuff is moving
-		foreach (PlaceableObject obj in runnableList) {
-			if (!(obj is Runnable)) continue; // error here?
-			Runnable rObj = (Runnable)obj;
-			rObj.Step();
+
+		if (runSem.CurrentCount != 255) return; // If there are still things running we don't want to do another step
+
+		foreach (List<PlaceableObject> RL in runList) {
+			foreach (PlaceableObject obj in RL) {
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Step();
+			}
 		}
+
 		StepCount++;
 	}
 
@@ -633,6 +674,7 @@ public partial class BoilerTronicsLevel : Node2D
 				soundManager.PlaySound(SoundType.Error);
 				return; // Can't step if there is an error
 			}
+
 			Step(); // Step while we are running
 
 			// if we are on submit speed
@@ -658,18 +700,47 @@ public partial class BoilerTronicsLevel : Node2D
 			GD.Print("Not runnable");
 			return;
 		}
+
 		if (runnableList.Contains(obj)) {
 			GD.Print("In list");
 			return;
 		}
+
+		if (obj is ClawObject) {
+			runList[clawIndex].Add(obj);
+		} else if (obj is ConveyorGroup) {
+			runList[convIndex].Add(obj);
+		} else if (obj is ConveyorRotatorObject) {
+			runList[rotatorIndex].Add(obj);
+		} else if (!(obj is Scriptable)) {
+			runList[nonScriptIndex].Add(obj);
+		} else {
+			runList[miscIndex].Add(obj);
+		}
+
 		runnableList.Add(obj);
+
 		GD.Print("Register", obj);
 	}
 
 	public void UnRegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
 		if (!(obj is Runnable)) return;
+
 		if (!(runnableList.Contains(obj))) return;
+
+		if (obj is ClawObject) {
+			runList[clawIndex].Remove(obj);
+		} else if (obj is ConveyorGroup) {
+			runList[convIndex].Remove(obj);
+		} else if (obj is ConveyorRotatorObject) {
+			runList[rotatorIndex].Remove(obj);
+		} else if (!(obj is Scriptable)) {
+			runList[nonScriptIndex].Remove(obj);
+		} else {
+			runList[miscIndex].Remove(obj);
+		}
+
 		runnableList.Remove(obj);
 		GD.Print("Unregister", obj);
 	}

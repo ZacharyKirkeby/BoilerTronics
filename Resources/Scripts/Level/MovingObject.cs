@@ -90,6 +90,7 @@ public partial class MovingObject : Area2D {
 		// Register with the GameState (For resets and errors and such)
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		manager.currLevel.RegisterMoving(this);
+		manager.currLevel.runSem.Wait();
 
 		// add event for when we detect a collision
 		AreaEntered += Collison;
@@ -130,6 +131,7 @@ public partial class MovingObject : Area2D {
 			// De-register object from the game state
 			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.currLevel.UnRegisterMoving(this);
+			manager.currLevel.runSem.Release();
 			// Destroy this object
 			this.QueueFree();
 		}
