@@ -1217,22 +1217,24 @@ These instructions execute instantly (no step cost):
 fit_content = true
 
 [node name="Level1Story" type="Window" parent="."]
+unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Level 1"
 initial_position = 2
 size = Vector2i(500, 300)
 max_size = Vector2i(500, 300)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Level1Story"]
+[node name="MarginContainer" type="MarginContainer" parent="Level1Story"]
 custom_minimum_size = Vector2(500, 300)
-offset_right = 3501.0
-offset_bottom = 300.0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="Level1Context" type="Label" parent="Level1Story/HBoxContainer"]
+[node name="Level1Context" type="Label" parent="Level1Story/MarginContainer"]
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_font_sizes/font_size = 18
 text = "It seems like you’ve been struggling in your academic career at Purdue University within your computer science degree and failed CS 307! You couldn’t bear to let down professor Turkstra and so you’ve dropped out. You purchased a factory to operate and you realized you have no idea how to build and operate one, but must now learn based on the limited assembly you learned in CS250 due to the ancient nature of the factory components. Best of luck!"
 horizontal_alignment = 1
 autowrap_mode = 2
@@ -1272,3 +1274,4 @@ autowrap_mode = 2
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
 [connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
+[connection signal="close_requested" from="Level1Story" to="." method="_on_level_1_story_close_requested"]
