@@ -37,6 +37,7 @@ namespace BoilerTronicsObjects.Layers
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
 		protected ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
+		protected ArrayList groupedObjectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
@@ -97,6 +98,15 @@ namespace BoilerTronicsObjects.Layers
 		}
 		public Vector2I exportDimensions() {
 			return new Vector2I(maxX, maxY);
+		}
+
+		public ArrayList getGroupedList() {
+			return groupedObjectList;
+		}
+
+		public void addGroupedObject(GroupedObject gObj) {
+			if (gObj == null) return;
+			groupedObjectList.Add(gObj);
 		}
 		
 		// NOTE: unused?
@@ -251,6 +261,35 @@ namespace BoilerTronicsObjects.Layers
 					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
 				}
 			}
+
+			if (newPlaceable is GroupedSubObject gsObj) {
+				List<GroupedObject> validGroups = new List<GroupedObject>();
+
+				foreach (GroupedObject gObj in groupedObjectList) {
+					if (gObj.validObject(newPlaceable as GroupedSubObject)) validGroups.Add(gObj);
+				}
+
+				if (validGroups.Count == 0) {
+					GroupedObject gObj = gsObj.createGroup();
+					if (gObj != null && gObj.addObject(gsObj)) groupedObjectList.Add(gObj);
+				} else if (validGroups.Count == 1) {
+					validGroups[0].addObject(newPlaceable as GroupedSubObject);
+				} else {
+					// Multipe objects
+					GroupedObject biggestGroup = validGroups[0];
+
+					foreach (GroupedObject gObj in validGroups) {
+						if (gObj.getObjectList().Count > biggestGroup.getObjectList().Count) biggestGroup = gObj;
+					}
+
+					biggestGroup.addObject(newPlaceable as GroupedSubObject);
+
+					foreach (GroupedObject gObj in validGroups) {
+						if (gObj != biggestGroup) biggestGroup.combineGroup(gObj);
+						groupedObjectList.Remove(gObj);
+					}
+				}
+			}
 			
 			// UpdateInternals();
 			GD.Print("Added object");
@@ -312,8 +351,10 @@ namespace BoilerTronicsObjects.Layers
 		// system also should properly handle PlaceableBig objects
 		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
+			GD.Print(objectToRemove);
 			if (!objectList.Contains(objectToRemove)) return;
 			Vector2I pos = objectToRemove.GetPos();
+			GD.Print(pos);
 			if (!editableTiles[pos.X, pos.Y]) return;
 			
 			objectList.Remove(objectToRemove); // remove to object form the list
@@ -337,6 +378,33 @@ namespace BoilerTronicsObjects.Layers
 				}
 			}
 			
+			if (objectToRemove is GroupedSubObject gsObj) {
+				GroupedObject gObj = gsObj.getGroup();
+
+				GD.Print("Group of object being deleted: ", gObj);
+				GD.Print("Number of items in group before deletion: ", gObj.getObjectList().Count);
+
+				if (groupedObjectList.Contains(gObj)) {
+					GD.Print("Calling delete");
+					gObj.deleteObject(objectToRemove as GroupedSubObject);
+				}
+
+				if (gObj.getObjectList().Count == 0) { // We are now empty
+					if (gObj is Scriptable sObj) {
+						sObj.DestroyTerminal();
+					}
+
+					if (gObj is Runnable rObj) {
+						rObj.UnRegisterSteppable();
+					}
+
+					groupedObjectList.Remove(gObj);
+					GD.Print("This group is now empty");
+				} else {
+					GD.Print("Number of items left in group: ", gObj.getObjectList().Count);
+				}
+			}
+
 			numItems--;
 			
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
