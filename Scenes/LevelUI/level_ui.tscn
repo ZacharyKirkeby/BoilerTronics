@@ -1216,6 +1216,27 @@ These instructions execute instantly (no step cost):
 - [code]wrt[/code] - Write to output"
 fit_content = true
 
+[node name="Level1Story" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Level 1"
+initial_position = 2
+size = Vector2i(500, 300)
+max_size = Vector2i(500, 300)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Level1Story"]
+custom_minimum_size = Vector2(500, 300)
+offset_right = 3501.0
+offset_bottom = 300.0
+
+[node name="Level1Context" type="Label" parent="Level1Story/HBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xc2rq")
+text = "It seems like you’ve been struggling in your academic career at Purdue University within your computer science degree and failed CS 307! You couldn’t bear to let down professor Turkstra and so you’ve dropped out. You purchased a factory to operate and you realized you have no idea how to build and operate one, but must now learn based on the limited assembly you learned in CS250 due to the ancient nature of the factory components. Best of luck!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
