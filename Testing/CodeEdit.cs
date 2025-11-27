@@ -92,7 +92,10 @@ public partial class CodeEdit : Godot.CodeEdit
 		// Always validate when selected
 		ValidateAndHighlight();
 		
-		TryHighlightingObject();
+		// don't highlight if solution is in motion
+		if (manager.currLevel.StepCount == 0) {
+			TryHighlightingObject();
+		}
 	}
 
 	// Called when user presses Enter (new line)
