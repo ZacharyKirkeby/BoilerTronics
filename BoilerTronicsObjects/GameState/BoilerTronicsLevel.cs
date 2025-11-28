@@ -747,12 +747,14 @@ public partial class BoilerTronicsLevel : Node2D
 	
 	/* Handle Moving Objects */
 
-	public void RegisterMoving(MovingObject mObj) {
-		movingList.Add(mObj);
+	public void RegisterMoving(Object obj) {
+		if (obj is TimeConsumingObject) 
+		movingList.Add(obj);
 	}
 
-	public void UnRegisterMoving(MovingObject mObj) {
-		movingList.Remove(mObj);
+	public void UnRegisterMoving(Object obj) {
+		if (obj is TimeConsumingObject) 
+		movingList.Remove(obj);
 	}
 
 	/* Error Handling */
@@ -761,8 +763,8 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void HaultObjects() {
 		// Halt all other movement
-		foreach (MovingObject obj in movingList) {
-			obj.Halt();
+		foreach (TimeConsumingObject obj in movingList) {
+			obj.haultObject();
 		}
 
 	}
