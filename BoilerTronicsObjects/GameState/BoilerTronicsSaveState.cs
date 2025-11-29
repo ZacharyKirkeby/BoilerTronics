@@ -19,6 +19,12 @@ using BoilerTronicsObjects.Objects.MovementLayerObjects;	// ConveyorObject; esse
 // So please: just don't. Use the GlobalManager functions and call it a day.
 // If you want to interface more with this object, then good luck.
 
+// EDIT: in reality, updating the GlobalManager to handle specific functionality (and keeping BoilerTronicsSaveState private)
+// is not intuitive, and this takes far more work than is necessary.
+// As the instantiated BoilerTronicsSaveState class is publicly available from the GlobalManager:
+// - use GlobalManager save functions wherever specified
+// - otherwise, feel free to use the public functions here -- just be advised that you'd have to be careful about the inputs and etc
+
 public class BoilerTronicsSaveState
 {
 	// This should define what the save state of the current level is
@@ -345,6 +351,12 @@ public class BoilerTronicsSaveState
 		// TODO: 'CreateObject' does not handle altTitles!
 		// GD.Print("now reading objects from file");
 		ArrayList listObj = new ArrayList();
+
+		// TODO:
+		// We need to create a list of groups and the associated code, then when all of the groups are created,
+		// we need to set the text after all the groups are correctly made
+		// NOTE: this is handled in BoilerTronicsLevel! (2025, 11-17)
+
 		for (int i = 0; i < objects.Count; i++) {
 			// cast each object of the array into desired dictionary type
 			Godot.Collections.Dictionary<string, Variant> targetObj = (Godot.Collections.Dictionary<string, Variant>) objects[i];
@@ -355,7 +367,6 @@ public class BoilerTronicsSaveState
 			PlaceableObject target = ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos);
 			
 			// if object is scriptable, attempt to load terminal code
-			// TODO: implement similar functionality for ConveyorObject!
 			if (target is Scriptable) {
 				string terminalCode;
 				
@@ -369,18 +380,23 @@ public class BoilerTronicsSaveState
 					((Scriptable) target).SetScript(terminalCode);
 					GD.Print("SaveState: successfully loaded terminal code");
 				}
-			} else if (target is ConveyorObject) {
-				string conveyorCode;
+			} else if (target is GroupedSubObject gsObj) {
+				string groupCode;
 				
-				if (targetObj.ContainsKey("conveyorCode")) {
+				if (targetObj.ContainsKey("groupCode")) {
 					// if loaded string exists, then load as appropriate
-					conveyorCode = (string) targetObj["conveyorCode"];
+					groupCode = (string) targetObj["groupCode"];
 					
+					gsObj.setText(groupCode);
+
+					GD.Print("SaveState: successfully loaded terminal code -- groupCode variant");
+				} else if (targetObj.ContainsKey("conveyorCode")) {	// backwards compatibility for old saves
+					// if loaded string exists, then load as appropriate
+					groupCode = (string) targetObj["conveyorCode"];
 					
-					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
-					
-					((ConveyorObject) target).SetToLoadText(conveyorCode);
-					GD.Print("SaveState: successfully loaded terminal code -- conveyor variant");
+					gsObj.setText(groupCode);
+
+					GD.Print("SaveState: successfully loaded terminal code -- legacy conveyorCode variant");
 				}
 			}
 			

@@ -246,7 +246,7 @@ public partial class Leaderboard : CenterContainer
 		saveFile.StoreLine(Json.Stringify(data));
 		((FileAccess) saveFile).Close();
 		
-		GD.Print("Leaderboard: Successfully saved to local.");
+		GD.Print("BoilerTronicsLevel: Leaderboard: Successfully saved to local, name: ", scoreName, ", score: ", scoreValue);
 	}
 	
 	// Load leaderboard according to the level id
