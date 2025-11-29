@@ -81,6 +81,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				GD.PrintErr($"{GetType().Name}: Parser not initialized!");
 				return;
 			}
+			if (E == null) { GD.Print("ConveyorRotatorObject: Catastrophic Err: 'E' does not exist!"); }
 			int highlight = _parser.ParseGetLine(this, E, E.Text, manager.currLevel.StepCount, E.Name);
 			if (highlight >= 0) E.HighlightLine(highlight, new Color(1, 1, 1, 0.3f));
 			UpdateRegisterDisplay();
