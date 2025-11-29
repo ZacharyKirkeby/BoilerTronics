@@ -74,4 +74,20 @@ public partial class BoilerTronicsAchievementManager : Node
 		public Dictionary<string, bool> GetAllEasterEggs() {
 			return eastereggs;
 		}
+		
+		public void TryAchievementUnlock(string name) {
+			if(AchievementIsUnlocked(name)) {
+				return;
+			}
+			UnlockAchievement(name);
+			ShowAchievementPopup(name);
+		}
+		
+		public void ShowAchievementPopup(string name) {
+			var root = GetTree().CurrentScene;
+			var notice = root.GetNodeOrNull<Window>("Achievement Notice");
+			if (notice != null) {
+				notice.Visible = true;
+			}
+		}
 }

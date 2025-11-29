@@ -593,13 +593,14 @@ public partial class LevelUi : Node2D
 		
 		//check for first level completion achievement
 		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-		if(!achievementManager.AchievementIsUnlocked("Achievement1")) {
-			GD.Print("achievement 1 gained");
-			if(!GetNode<Window>("Achievement Notice").Visible) {
-				GetNode<Window>("Achievement Notice").Visible = true;
-			}
-			achievementManager.UnlockAchievement("Achievement1");
-		}
+		//if(!achievementManager.AchievementIsUnlocked("Achievement1")) {
+			//GD.Print("achievement 1 gained");
+			//if(!GetNode<Window>("Achievement Notice").Visible) {
+				//GetNode<Window>("Achievement Notice").Visible = true;
+			//}
+			//achievementManager.UnlockAchievement("Achievement1");
+		//}
+		achievementManager.TryAchievementUnlock("Achievement1");
 	}
 	
 	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
@@ -636,12 +637,7 @@ public partial class LevelUi : Node2D
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			//if cost is better, achievement 3 unlocked
-			if(!achievementManager.AchievementIsUnlocked("Achievement3")) {
-				if(!GetNode<Window>("Achievement Notice").Visible) {
-					GetNode<Window>("Achievement Notice").Visible = true;
-				}
-				achievementManager.UnlockAchievement("Achievement3");
-			}
+			achievementManager.TryAchievementUnlock("Achievement3");
 		}
 		else {
 			//bad
@@ -671,12 +667,7 @@ public partial class LevelUi : Node2D
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			
 			//if time is better, achievement 2 unlocked
-			if(!achievementManager.AchievementIsUnlocked("Achievement2")) {
-				if(!GetNode<Window>("Achievement Notice").Visible) {
-					GetNode<Window>("Achievement Notice").Visible = true;
-				}
-				achievementManager.UnlockAchievement("Achievement2");
-			}
+			achievementManager.TryAchievementUnlock("Achievement2");
 		}
 		else {
 			//bad
@@ -699,12 +690,7 @@ public partial class LevelUi : Node2D
 		}
 		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
 			//if all better, achievement 4 unlocked
-			if(!achievementManager.AchievementIsUnlocked("Achievement4")) {
-				if(!GetNode<Window>("Achievement Notice").Visible) {
-					GetNode<Window>("Achievement Notice").Visible = true;
-				}
-				achievementManager.UnlockAchievement("Achievement4");
-			}
+			achievementManager.TryAchievementUnlock("Achievement4");
 		}
 		return grades;
 	}
