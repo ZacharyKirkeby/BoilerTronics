@@ -186,13 +186,14 @@ public partial class LevelUi : Node2D
 		
 		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 		if(manager.GetLevelID() == 37) {
-			if(!achievementManager.EasterEggIsUnlocked("EasterEgg3")) {
-				GD.Print("easter egg 3 gained");
-				if(!GetNode<Window>("Mystery Level Easter Egg").Visible) {
-					GetNode<Window>("Mystery Level Easter Egg").Visible = true;
-				}
-				achievementManager.UnlockEasterEgg("EasterEgg3");
-			}
+			//if(!achievementManager.EasterEggIsUnlocked("EasterEgg3")) {
+				//GD.Print("easter egg 3 gained");
+				//if(!GetNode<Window>("Mystery Level Easter Egg").Visible) {
+					//GetNode<Window>("Mystery Level Easter Egg").Visible = true;
+				//}
+				//achievementManager.UnlockEasterEgg("EasterEgg3");
+			//}
+			achievementManager.TryEasterEggUnlock("EasterEgg3");
 		}
 	
 	}
@@ -649,13 +650,7 @@ public partial class LevelUi : Node2D
 			
 			//if cost of solution is 5000 over unlock easter egg
 			if((costSol - costCutoff) >= 5000) {
-				if(!achievementManager.EasterEggIsUnlocked("EasterEgg2")) {
-					GD.Print("easter egg 2 gained");
-					if(!GetNode<Window>("Cost Easter Egg").Visible) {
-						GetNode<Window>("Cost Easter Egg").Visible = true;
-					}
-					achievementManager.UnlockEasterEgg("EasterEgg2");
-				}
+				achievementManager.TryEasterEggUnlock("EasterEgg2");
 			}
 		}
 		if(stepsCutoff >= stepsSol) {
@@ -679,13 +674,7 @@ public partial class LevelUi : Node2D
 			
 			//if steps of solution over by 100 unlock easter egg
 			if((stepsSol - stepsCutoff) >= 100) {
-				if(!achievementManager.EasterEggIsUnlocked("EasterEgg1")) {
-					GD.Print("easter egg 1 gained");
-					if(!GetNode<Window>("Time Easter Egg").Visible) {
-						GetNode<Window>("Time Easter Egg").Visible = true;
-					}
-					achievementManager.UnlockEasterEgg("EasterEgg1");
-				}
+				achievementManager.TryEasterEggUnlock("EasterEgg1");
 			}
 		}
 		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
