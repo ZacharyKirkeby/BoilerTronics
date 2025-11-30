@@ -78,10 +78,13 @@ public partial class FriendsService : Node
 				var results = response.Data.EnumerateArray().ToList();
 				if (results.Count > 0 && results[0].TryGetProperty("document", out var doc))
 				{
-					return ConvertFromFirestoreDocument(doc);
+					var user = ConvertFromFirestoreDocument(doc);
+					GD.Print($"Found user: {user.Username} ({user.Uuid})");
+					return user;
 				}
 			}
 			
+			GD.Print($"No user found with username: {username}");
 			return null;
 		}
 		catch (Exception ex)
@@ -97,11 +100,17 @@ public partial class FriendsService : Node
 		var currentUserId = FirebaseAuthManager.Instance.UserId;
 		
 		if (string.IsNullOrEmpty(idToken) || string.IsNullOrEmpty(currentUserId))
+		{
+			GD.PrintErr("Not authenticated");
 			return false;
+		}
 
 		var currentUserData = await FirestoreService.Instance.GetUserAsync(currentUserId);
 		if (currentUserData == null)
+		{
+			GD.PrintErr("Could not load current user data");
 			return false;
+		}
 
 		var friendRequest = FriendRequest.Create(
 			currentUserId,
@@ -115,15 +124,102 @@ public partial class FriendsService : Node
 		
 		var firestoreDoc = ConvertFriendRequestToFirestore(friendRequest);
 
+		GD.Print($"Sending friend request from {currentUserData.Username} to {toUsername}");
+		GD.Print($"Request ID: {requestId}");
+
 		try
 		{
 			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			if (response.Success)
+			{
+				GD.Print($"Friend request sent successfully!");
+			}
+			else
+			{
+				GD.PrintErr($"Failed to send friend request (code: {response.ResponseCode})");
+			}
 			return response.Success;
 		}
 		catch (Exception ex)
 		{
 			GD.PrintErr($"Failed to send friend request: {ex.Message}");
 			return false;
+		}
+	}
+
+	public async Task<List<FriendRequest>> GetIncomingFriendRequestsAsync(string userId)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+			return new List<FriendRequest>();
+
+		string url = $"{_firestoreUrl}:runQuery";
+		
+		var query = new
+		{
+			structuredQuery = new
+			{
+				from = new[] { new { collectionId = "friendRequests" } },
+				where = new
+				{
+					compositeFilter = new
+					{
+						op = "AND",
+						filters = new[]
+						{
+							new
+							{
+								fieldFilter = new
+								{
+									field = new { fieldPath = "toUserId" },
+									op = "EQUAL",
+									value = new { stringValue = userId }
+								}
+							},
+							new
+							{
+								fieldFilter = new
+								{
+									field = new { fieldPath = "status" },
+									op = "EQUAL",
+									value = new { stringValue = "pending" }
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, query, idToken, "POST");
+			
+			var requests = new List<FriendRequest>();
+			
+			if (response.Success && response.Data.ValueKind == JsonValueKind.Array)
+			{
+				var results = response.Data.EnumerateArray().ToList();
+				foreach (var result in results)
+				{
+					if (result.TryGetProperty("document", out var doc))
+					{
+						var friendRequest = ConvertFromFirestoreFriendRequest(doc);
+						if (friendRequest != null)
+						{
+							requests.Add(friendRequest);
+						}
+					}
+				}
+			}
+			
+			GD.Print($"Found {requests.Count} incoming friend requests for user {userId}");
+			return requests;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to get incoming friend requests: {ex.Message}");
+			return new List<FriendRequest>();
 		}
 	}
 
@@ -159,6 +255,29 @@ public partial class FriendsService : Node
 		};
 	}
 
+	private FriendRequest ConvertFromFirestoreFriendRequest(JsonElement doc)
+	{
+		try
+		{
+			var fields = doc.GetProperty("fields");
+			
+			return new FriendRequest
+			{
+				FromUserId = GetStringField(fields, "fromUserId"),
+				FromUsername = GetStringField(fields, "fromUsername"),
+				ToUserId = GetStringField(fields, "toUserId"),
+				ToUsername = GetStringField(fields, "toUsername"),
+				Status = GetStringField(fields, "status"),
+				Timestamp = GetLongField(fields, "timestamp")
+			};
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to convert friend request document: {ex.Message}");
+			return null;
+		}
+	}
+
 	private UserData ConvertFromFirestoreDocument(JsonElement doc)
 	{
 		try
@@ -190,6 +309,16 @@ public partial class FriendsService : Node
 			return value.GetString();
 		}
 		return string.Empty;
+	}
+
+	private long GetLongField(JsonElement fields, string fieldName)
+	{
+		if (fields.TryGetProperty(fieldName, out var field) &&
+		    field.TryGetProperty("integerValue", out var value))
+		{
+			return long.Parse(value.GetString());
+		}
+		return 0;
 	}
 
 	private float GetDoubleField(JsonElement fields, string fieldName)
@@ -245,17 +374,22 @@ public partial class FriendsService : Node
 		{
 			httpRequest.QueueFree();
 
+			string responseText = Encoding.UTF8.GetString(body);
+
 			if (responseCode >= 200 && responseCode < 300)
 			{
-				string responseText = Encoding.UTF8.GetString(body);
 				var data = string.IsNullOrEmpty(responseText) ? new JsonElement() : JsonSerializer.Deserialize<JsonElement>(responseText);
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data });
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
+			}
+			else if (responseCode == 404)
+			{
+				
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = 404 });
 			}
 			else
 			{
-				string errorText = Encoding.UTF8.GetString(body);
-				GD.PrintErr($"Firestore error ({responseCode}): {errorText}");
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false });
+				GD.PrintErr($"Firestore error ({responseCode}): {responseText}");
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
 			}
 		};
 
@@ -284,5 +418,6 @@ public partial class FriendsService : Node
 	{
 		public bool Success { get; set; }
 		public JsonElement Data { get; set; }
+		public int ResponseCode { get; set; }
 	}
 }

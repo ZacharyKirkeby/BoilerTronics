@@ -89,6 +89,13 @@ public partial class FirestoreService : Node
 		{
 			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
 			
+			// 404 is expected when document doesn't exist - not an error
+			if (response.ResponseCode == 404)
+			{
+				GD.Print($"User document not found for {userId} (this is normal for new users)");
+				return null;
+			}
+			
 			if (response.Success)
 			{
 				var userData = ConvertFromFirestoreDocument(response.Data);
@@ -104,6 +111,7 @@ public partial class FirestoreService : Node
 			return null;
 		}
 	}
+	
 	public async Task<bool> UpdateUserFieldAsync(string userId, string fieldName, object value)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
@@ -290,17 +298,22 @@ public partial class FirestoreService : Node
 		{
 			httpRequest.QueueFree();
 
+			string responseText = Encoding.UTF8.GetString(body);
+
 			if (responseCode >= 200 && responseCode < 300)
 			{
-				string responseText = Encoding.UTF8.GetString(body);
 				var data = string.IsNullOrEmpty(responseText) ? new JsonElement() : JsonSerializer.Deserialize<JsonElement>(responseText);
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data });
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
+			}
+			else if (responseCode == 404)
+			{
+				// 404:document doesn't exist - not bad trust 
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = 404 });
 			}
 			else
 			{
-				string errorText = Encoding.UTF8.GetString(body);
-				GD.PrintErr($"Firestore error ({responseCode}): {errorText}");
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false });
+				GD.PrintErr($"Firestore error ({responseCode}): {responseText}");
+				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
 			}
 		};
 
@@ -329,5 +342,6 @@ public partial class FirestoreService : Node
 	{
 		public bool Success { get; set; }
 		public JsonElement Data { get; set; }
+		public int ResponseCode { get; set; }
 	}
 }
