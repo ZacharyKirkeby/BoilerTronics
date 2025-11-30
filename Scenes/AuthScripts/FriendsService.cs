@@ -239,6 +239,38 @@ public partial class FriendsService : Node
 		return usernames;
 	}
 
+	public async Task<bool> UpdateFriendRequestStatusAsync(string requestId, string status)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+			return false;
+
+		string url = $"{_firestoreUrl}/friendRequests/{requestId}?updateMask.fieldPaths=status";
+		
+		var firestoreDoc = new
+		{
+			fields = new
+			{
+				status = new { stringValue = status }
+			}
+		};
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			if (response.Success)
+			{
+				GD.Print($"Friend request {requestId} updated to {status}");
+			}
+			return response.Success;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to update friend request status: {ex.Message}");
+			return false;
+		}
+	}
+
 	private object ConvertFriendRequestToFirestore(FriendRequest request)
 	{
 		return new
@@ -383,7 +415,7 @@ public partial class FriendsService : Node
 			}
 			else if (responseCode == 404)
 			{
-				
+				// 404 is not always an error - just means document doesn't exist
 				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = 404 });
 			}
 			else
