@@ -68,7 +68,16 @@ public partial class FirebaseAuthManager : Node
             returnSecureToken = true
         };
 
-        return await AuthRequestAsync($"{AUTH_URL}:signUp?key={_firebaseApiKey}", payload);
+        var result = await AuthRequestAsync($"{AUTH_URL}:signUp?key={_firebaseApiKey}", payload);
+        
+        // successful, create user document in Firestore
+        if (result.Success)
+        {
+            await EnsureUserDocumentExists();
+            EmitSignal(SignalName.AuthenticationChanged, true);
+        }
+        
+        return result;
     }
 
     public async Task<AuthResult> SignInAsync(string email, string password)
@@ -80,7 +89,37 @@ public partial class FirebaseAuthManager : Node
             returnSecureToken = true
         };
 
-        return await AuthRequestAsync($"{AUTH_URL}:signInWithPassword?key={_firebaseApiKey}", payload);
+        var result = await AuthRequestAsync($"{AUTH_URL}:signInWithPassword?key={_firebaseApiKey}", payload);
+        
+        // ensure user document exists
+        if (result.Success)
+        {
+            await EnsureUserDocumentExists();
+            EmitSignal(SignalName.AuthenticationChanged, true);
+        }
+        
+        return result;
+    }
+
+    private async Task EnsureUserDocumentExists()
+    {
+        if (string.IsNullOrEmpty(_userId) || string.IsNullOrEmpty(_email))
+            return;
+
+        var firestoreService = FirestoreService.Instance;
+        if (firestoreService == null)
+            return;
+
+        // Try to get existing user
+        var existingUser = await firestoreService.GetUserAsync(_userId);
+        
+        // If user doesn't exist, create default user - ngl i have no idea whayt im doing
+        if (existingUser == null)
+        {
+            GD.Print($"Creating new user document for {_email}");
+            var defaultUser = UserData.CreateDefault(_userId, _email);
+            await firestoreService.CreateUserAsync(_userId, defaultUser);
+        }
     }
 
     public void SignOut()
@@ -159,7 +198,6 @@ public partial class FirebaseAuthManager : Node
                 int expiresIn = int.Parse(data.GetProperty("expiresIn").GetString());
                 _tokenExpiry = DateTime.UtcNow.AddSeconds(expiresIn);
 
-                EmitSignal(SignalName.AuthenticationChanged, true);
                 GD.Print($"Authentication successful: {_email}");
 
                 return new AuthResult { Success = true };
