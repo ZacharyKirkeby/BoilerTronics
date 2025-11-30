@@ -112,17 +112,40 @@ public partial class BoilerTronicsAchievementManager : Node
 	
 	public void TryAchievementUnlock(string name) {
 		if(AchievementIsUnlocked(name)) {
-			GD.Print("BoilerTronicsAchievements: TryAchievementUnlock: Achievement '", name, "' is already unlocked.");
 			return;
 		}
 		UnlockAchievement(name);
 		ShowAchievementPopup(name);
-		GD.Print("BoilerTronicsAchievements: TryAchievementUnlock: Achievement '", name, "' is now unlocked.");
 	}
 	
 	public void ShowAchievementPopup(string name) {
 		var root = GetTree().CurrentScene;
 		var notice = root.GetNodeOrNull<Window>("Achievement Notice");
+		if (notice != null) {
+			notice.Visible = true;
+		}
+	}
+
+	public void TryEasterEggUnlock(string name) {
+		if(EasterEggIsUnlocked(name)) {
+			return;
+		}
+		UnlockEasterEgg(name);
+		ShowEasterEggPopup(name);
+	}
+
+	public void ShowEasterEggPopup(string name) {
+		var root = GetTree().CurrentScene;
+		var notice = root.GetNodeOrNull<Window>("Easter Egg");
+		if(name==("EasterEgg1")) {
+			notice = root.GetNodeOrNull<Window>("Time Easter Egg");
+		}
+		else if(name==("EasterEgg2")) {
+			notice = root.GetNodeOrNull<Window>("Cost Easter Egg");
+		}
+		else if(name==("EasterEgg3")) {
+			notice = root.GetNodeOrNull<Window>("Mystery Level Easter Egg");
+		}
 		if (notice != null) {
 			notice.Visible = true;
 		}
