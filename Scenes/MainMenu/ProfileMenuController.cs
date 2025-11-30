@@ -305,13 +305,64 @@ public partial class ProfileMenuController : Control
 		searchResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(searchResultContainer);
 
+		// Friend Requests Section
+		var requestsLabel = CreateLabel("Friend Requests:", 20);
+		requestsLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		_friendsContainer.AddChild(requestsLabel);
+
+		var requestsScrollContainer = new ScrollContainer();
+		requestsScrollContainer.CustomMinimumSize = new Vector2(450, 120);
+		requestsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+		requestsScrollContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+		var requestsList = new VBoxContainer();
+		requestsList.Name = "RequestsList";
+		requestsList.AddThemeConstantOverride("separation", 8);
+		requestsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		requestsScrollContainer.AddChild(requestsList);
+		_friendsContainer.AddChild(requestsScrollContainer);
+
+		// Load incoming friend requests
+		var incomingRequests = await _friendsService.GetIncomingFriendRequestsAsync(_authManager.UserId);
+		if (incomingRequests.Count > 0)
+		{
+			foreach (var request in incomingRequests)
+			{
+				var requestContainer = new HBoxContainer();
+				requestContainer.AddThemeConstantOverride("separation", 8);
+
+				var fromLabel = CreateLabel($"{request.FromUsername}", 16);
+				requestContainer.AddChild(fromLabel);
+
+				var acceptButton = CreateSmallButton("✓");
+				acceptButton.CustomMinimumSize = new Vector2(35, 30);
+				acceptButton.AddThemeColorOverride("font_color", new Color(0, 0.6f, 0, 1));
+				acceptButton.Pressed += async () => await OnAcceptFriendRequest(request);
+				requestContainer.AddChild(acceptButton);
+
+				var declineButton = CreateSmallButton("✗");
+				declineButton.CustomMinimumSize = new Vector2(35, 30);
+				declineButton.AddThemeColorOverride("font_color", new Color(0.8f, 0, 0, 1));
+				declineButton.Pressed += async () => await OnDeclineFriendRequest(request);
+				requestContainer.AddChild(declineButton);
+
+				requestsList.AddChild(requestContainer);
+			}
+		}
+		else
+		{
+			var noRequestsLabel = CreateLabel("No pending requests", 14);
+			noRequestsLabel.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
+			requestsList.AddChild(noRequestsLabel);
+		}
+
 		// Friends list
-		var friendsListLabel = CreateLabel("Your Friends:", 22);
+		var friendsListLabel = CreateLabel("Your Friends:", 20);
 		friendsListLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(friendsListLabel);
 
 		var friendsScrollContainer = new ScrollContainer();
-		friendsScrollContainer.CustomMinimumSize = new Vector2(450, 250);
+		friendsScrollContainer.CustomMinimumSize = new Vector2(450, 120);
 		friendsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
 		friendsScrollContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
@@ -327,16 +378,66 @@ public partial class ProfileMenuController : Control
 			var friendUsernames = await _friendsService.GetFriendUsernamesAsync(_currentUserData.Friends);
 			foreach (var username in friendUsernames)
 			{
-				var friendLabel = CreateLabel($"• {username}", 20);
+				var friendLabel = CreateLabel($"• {username}", 18);
 				friendsList.AddChild(friendLabel);
 			}
 		}
 		else
 		{
-			var noFriendsLabel = CreateLabel("No friends yet", 18);
+			var noFriendsLabel = CreateLabel("No friends yet", 16);
 			noFriendsLabel.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
 			friendsList.AddChild(noFriendsLabel);
 		}
+	}
+
+	private async System.Threading.Tasks.Task OnAcceptFriendRequest(FriendRequest request)
+	{
+		GD.Print($"Accepting friend request from {request.FromUsername}");
+
+		// add to both 
+		var currentFriends = new List<string>(_currentUserData.Friends);
+		if (!currentFriends.Contains(request.FromUserId))
+		{
+			currentFriends.Add(request.FromUserId);
+			await _firestoreService.UpdateUserFieldAsync(_authManager.UserId, "friends", currentFriends);
+			_currentUserData.Friends = currentFriends;
+		}
+
+		// Add current user to their bum ass friends spot
+		var otherUserData = await _firestoreService.GetUserAsync(request.FromUserId);
+		if (otherUserData != null)
+		{
+			var otherFriends = new List<string>(otherUserData.Friends);
+			if (!otherFriends.Contains(_authManager.UserId))
+			{
+				otherFriends.Add(_authManager.UserId);
+				await _firestoreService.UpdateUserFieldAsync(request.FromUserId, "friends", otherFriends);
+			}
+		}
+
+		// Update friend request status
+		string requestId = $"{request.FromUserId}_{request.ToUserId}";
+		await UpdateFriendRequestStatus(requestId, "accepted");
+
+		// Refresh the UI
+		UpdateProfileMenu(); // this is slow as shit and not good but fuck if i know
+	}
+
+	private async System.Threading.Tasks.Task OnDeclineFriendRequest(FriendRequest request)
+	{
+		GD.Print($"Declining friend request from {request.FromUsername}");
+
+		// Update friend request status to declined
+		string requestId = $"{request.FromUserId}_{request.ToUserId}";
+		await UpdateFriendRequestStatus(requestId, "declined");
+
+		// Refresh the UI
+		UpdateProfileMenu();
+	}
+
+	private async System.Threading.Tasks.Task UpdateFriendRequestStatus(string requestId, string status)
+	{
+		await _friendsService.UpdateFriendRequestStatusAsync(requestId, status);
 	}
 
 	private async void OnSearchPressed(LineEdit searchInput)
@@ -385,7 +486,18 @@ public partial class ProfileMenuController : Control
 			var sendRequestButton = CreateSmallButton("Send Request");
 			sendRequestButton.Pressed += async () => {
 				await _friendsService.SendFriendRequestAsync(foundUser.Uuid, foundUser.Username);
-				OnSearchPressed(searchInput); // Refresh
+				
+				// Show feedback
+				foreach (Node child in searchResultContainer.GetChildren())
+				{
+					child.QueueFree();
+				}
+				var sentLabel = CreateLabel("Friend request sent!", 18);
+				sentLabel.AddThemeColorOverride("font_color", new Color(0.2f, 0.8f, 0.2f));
+				searchResultContainer.AddChild(sentLabel);
+				
+				// Clear search input
+				searchInput.Text = "";
 			};
 
 			resultContainer.AddChild(usernameLabel);
