@@ -95,7 +95,7 @@ public partial class ProfileMenuController : Control
         _friendsContainer.AnchorBottom = 1;
         _friendsContainer.GrowHorizontal = Control.GrowDirection.Both;
         _friendsContainer.GrowVertical = Control.GrowDirection.Both;
-        _friendsContainer.AddThemeConstantOverride("separation", 20);
+        _friendsContainer.AddThemeConstantOverride("separation", 15);
         friendsPanel.AddChild(_friendsContainer);
 
         var friendsTitle = CreateTitleLabel("Friends");
@@ -302,20 +302,22 @@ public partial class ProfileMenuController : Control
 		var searchResultContainer = new VBoxContainer();
 		searchResultContainer.Name = "SearchResult";
 		searchResultContainer.AddThemeConstantOverride("separation", 10);
-        searchResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		searchResultContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(searchResultContainer);
 
 		// Friends list
 		var friendsListLabel = CreateLabel("Your Friends:", 22);
-        friendsListLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+		friendsListLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		_friendsContainer.AddChild(friendsListLabel);
 
 		var friendsScrollContainer = new ScrollContainer();
-		friendsScrollContainer.CustomMinimumSize = new Vector2(0, 400);
-		friendsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+		friendsScrollContainer.CustomMinimumSize = new Vector2(450, 250);
+		friendsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+		friendsScrollContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
 		var friendsList = new VBoxContainer();
 		friendsList.AddThemeConstantOverride("separation", 10);
+		friendsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 		friendsScrollContainer.AddChild(friendsList);
 		_friendsContainer.AddChild(friendsScrollContainer);
 
@@ -326,7 +328,6 @@ public partial class ProfileMenuController : Control
 			foreach (var username in friendUsernames)
 			{
 				var friendLabel = CreateLabel($"• {username}", 20);
-                friendsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 				friendsList.AddChild(friendLabel);
 			}
 		}
@@ -334,7 +335,6 @@ public partial class ProfileMenuController : Control
 		{
 			var noFriendsLabel = CreateLabel("No friends yet", 18);
 			noFriendsLabel.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
-            noFriendsLabel.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 			friendsList.AddChild(noFriendsLabel);
 		}
 	}
