@@ -52,11 +52,10 @@ public partial class ObjectPicker : HBoxContainer
 	};
 
 	static ItemInfo[] FactorySection = {
-		// new ItemInfo("Input", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,0), new Vector2I(85, 85), false),
-		// new ItemInfo("Output", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,1), new Vector2I(85, 85), false),
 		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true),
 		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true),
 		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true),
+		new ItemInfo("Pipe", FactoryPress.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false),
 	};
 
 	static ItemInfo[] DeveloperSection =
