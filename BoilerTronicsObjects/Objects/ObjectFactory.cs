@@ -70,6 +70,15 @@ namespace BoilerTronicsObjects.Objects
 			return null;
 		}
 
+		public static Texture GetQualityTexture(int objectID, Quality Q) {
+			switch (objectID) {
+				case 50:
+					return ClawObject.GetQualityTexture(Q);
+			}
+
+			return null;
+		}
+
 		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0, Quality Q = Quality.LOW_QUALITY) {
 			switch (objectID) {
 				case -1:

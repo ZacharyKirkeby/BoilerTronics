@@ -13,5 +13,6 @@ namespace BoilerTronicsObjects.Interfaces {
 
 		void SetQuality(Quality newQuality);
 		Quality GetQuality();
+		static abstract Texture GetQualityTexture(Quality Q);
 	}
 }

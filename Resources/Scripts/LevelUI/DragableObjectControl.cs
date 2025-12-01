@@ -123,8 +123,17 @@ public partial class DragableObjectControl : Control {
 				sprite.Texture = texture;
 			}
 		}
+		else if (@event is InputEventMouseButton buttonEvent3 && buttonEvent3.ButtonIndex == MouseButton.Middle && buttonEvent3.Pressed) {
+			// This case will be how the user changes the quality of the sprite, allowing them to press space and rotate through the quality of the object
+			// We should make sure the ite mwe are tracking has quality
+			// If so then we need to rotate the quality var internally (this will be later passed into the object factory)
+			// And then we need to update the sprite to the new spite for the given quality
+			GD.Print("Try to rotate quality");
+			// Texture T = ObjectFactory.GetQualityTexture();
+		}
 		else
 		{
+			GD.Print(@event);
 			base._Input(@event); // pass downward
 		}
 	}
