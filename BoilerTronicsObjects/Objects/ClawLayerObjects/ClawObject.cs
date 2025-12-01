@@ -397,5 +397,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public Quality GetQuality() {
 			return Q;
 		}
+
+		public static Texture GetQualityTexture(Quality Q) {
+			// Get the texture based off the quality passed in
+			return null;
+		}
 	}
 }
