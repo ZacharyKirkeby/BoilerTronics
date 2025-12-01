@@ -405,7 +405,25 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 		public static Texture GetQualityTexture(Quality Q) {
 			// Get the texture based off the quality passed in
-			return null;
+			Vector2I atPos = objectAtlasPos + new Vector2I((int) Q, 0);
+
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+
+			// int sourceid = tileSet.GetSourceId(ID);
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(layerSourceId) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(atPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			ImageTexture T = new ImageTexture();
+
+			T.SetImage(imageTexture);
+
+			// Insert in list such that it is in the correct order to draw
+			// (Figure this out later)
+
+			return T;
 		}
 	}
 }

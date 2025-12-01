@@ -5,6 +5,7 @@ using System.Linq;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Data;
+using BoilerTronicsObjects.Interfaces;
 
 // this script will be 
 public partial class DragableObjectControl : Control {
@@ -21,7 +22,10 @@ public partial class DragableObjectControl : Control {
 	Button submitButton;
 	Window priceChangeWindow;
 	LineEdit priceBox;
-	PlaceableBig.Direction dir;
+	PlaceableBig.Direction big_dir;
+	Direction dir;
+	Quality Q;
+
 	int sel;
 	// int itemNumber;
 
@@ -38,7 +42,8 @@ public partial class DragableObjectControl : Control {
 		this.priceLabel = priceLabel;
 		this.sourceID = sourceID;
 		this.sel = sel;
-		dir = PlaceableBig.Direction.UP; // Up by default
+		big_dir = PlaceableBig.Direction.UP; // Up by default
+		dir = Direction.UP;
 		// this.itemNumber = itemNumber;
 	}
 
@@ -60,7 +65,7 @@ public partial class DragableObjectControl : Control {
 			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords);
 			GD.Print(obj);
 
-			if (obj is PlaceableBig bObj) bObj.SetDir(dir);
+			if (obj is PlaceableBig bObj) bObj.SetDir(big_dir);
 
 			// We want to spawn a new draggable object and pass in all the correct values
 			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, obj);
@@ -97,30 +102,55 @@ public partial class DragableObjectControl : Control {
 		// else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && GetTree().CurrentScene.SceneFilePath == "res://Scenes/LevelCreator/level_creator.tscn")
 		else if (@event is InputEventMouseButton buttonEvent2 && buttonEvent2.ButtonIndex == MouseButton.Right && buttonEvent2.Pressed)
 		{
-			// Change our direction
-			switch (dir) {
+			// TODO: make the placable big work with the direction enum for the general palcable object as well
+
+			// Change our direction for big objects
+			switch (big_dir) {
 				case PlaceableBig.Direction.UP:
-					dir = PlaceableBig.Direction.DOWN;
+					big_dir = PlaceableBig.Direction.DOWN;
 					break;
 				case PlaceableBig.Direction.DOWN:
-					dir = PlaceableBig.Direction.LEFT;
+					big_dir = PlaceableBig.Direction.LEFT;
 					break;
 				case PlaceableBig.Direction.LEFT:
-					dir = PlaceableBig.Direction.RIGHT;
+					big_dir = PlaceableBig.Direction.RIGHT;
 					break;
 				case PlaceableBig.Direction.RIGHT:
-					dir = PlaceableBig.Direction.UP;
+					big_dir = PlaceableBig.Direction.UP;
 					break;
 			}
 
 			// Try to get data
-			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(this.sourceID, this.atlasCords)], dir);
+			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(this.sourceID, this.atlasCords)], big_dir);
 
 			// If we can get data (it's a big object)
 			if (data != null) {
 				// Then we can update the texture
 				ImageTexture texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
 				sprite.Texture = texture;
+				return;
+			}
+
+			// Deal with normal direction
+			switch(dir) {
+				case Direction.UP:
+					dir = Direction.RIGHT;
+					break;
+				case Direction.RIGHT:
+					dir = Direction.DOWN;
+					break;
+				case Direction.DOWN:
+					dir = Direction.LEFT;
+					break;
+				case Direction.LEFT:
+					dir = Direction.UP;
+					break;
+			}
+
+			Texture2D T = ObjectFactory.GetTexture(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(this.sourceID, this.atlasCords)], Q, dir) as Texture2D;
+
+			if (T != null) {
+				sprite.Texture = T;
 			}
 		}
 		else if (@event is InputEventMouseButton buttonEvent3 && buttonEvent3.ButtonIndex == MouseButton.Middle && buttonEvent3.Pressed) {
@@ -129,7 +159,26 @@ public partial class DragableObjectControl : Control {
 			// If so then we need to rotate the quality var internally (this will be later passed into the object factory)
 			// And then we need to update the sprite to the new spite for the given quality
 			GD.Print("Try to rotate quality");
-			// Texture T = ObjectFactory.GetQualityTexture();
+
+			switch(Q) {
+				case Quality.LOW_QUALITY:
+					Q = Quality.MID_QUALITY;
+					break;
+				case Quality.MID_QUALITY:
+					Q = Quality.HIGH_QUALITY;
+					break;
+				case Quality.HIGH_QUALITY:
+					Q = Quality.LOW_QUALITY;
+					break;
+			}
+
+			Texture2D T = ObjectFactory.GetTexture(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(this.sourceID, this.atlasCords)], Q, dir) as Texture2D;
+
+			GD.Print("Quality: ", Q, " Texture: ", T);
+
+			if (T != null) {
+				sprite.Texture = T;
+			}
 		}
 		else
 		{

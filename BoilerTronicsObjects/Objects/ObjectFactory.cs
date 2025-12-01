@@ -70,7 +70,9 @@ namespace BoilerTronicsObjects.Objects
 			return null;
 		}
 
-		public static Texture GetQualityTexture(int objectID, Quality Q) {
+		public static Texture GetTexture(int objectID, Quality Q, Direction D) {
+
+			GD.Print("Trying to get texture from Object: ", objectID);
 			switch (objectID) {
 				case 50:
 					return ClawObject.GetQualityTexture(Q);
