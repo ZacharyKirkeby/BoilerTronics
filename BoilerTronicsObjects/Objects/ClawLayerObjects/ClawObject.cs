@@ -135,10 +135,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public void CreateTerminal()
 		{
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			E = manager.terminalContainer.AddEditor();
+			Terminals currTerminal = manager.terminalContainer;
+			E = currTerminal.AddEditor();
 			E.Name = "Claw";
-
 			E.SetCorrespondingObject(this);
+			
+			// set as active tab
+			// currTerminal.SetCurrentTab(currTerminal.GetTabCount() - 1);
+			// update terminal highlighting
+			// currTerminal.GetCurrentEditor().TerminalSelected();
 		}
 
 		public void DestroyTerminal()
