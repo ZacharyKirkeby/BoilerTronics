@@ -62,7 +62,7 @@ public partial class DragableObjectControl : Control {
 			manager.placingObject = 1;
 
 			// We now need to make the object so that we place it :D
-			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords);
+			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords, Q);
 			GD.Print(obj);
 
 			if (obj is PlaceableBig bObj) bObj.SetDir(big_dir);
