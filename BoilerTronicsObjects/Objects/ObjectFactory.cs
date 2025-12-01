@@ -94,6 +94,8 @@ namespace BoilerTronicsObjects.Objects
 				case 6:
 					//factory furnace
 					return new FactoryRoller(x, y, 0);
+				case 7:
+					return new PipeObject(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
