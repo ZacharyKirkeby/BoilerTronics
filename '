@@ -35,12 +35,20 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos + new Vector2I((int) Q, 0), altTitle) {
+		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.MID_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 			this.Q = Q;
+
+			GD.Print("Quality:", Q);
+
+			// Set to the ocrresponding sprite for the quality
+			Vector2I newAtlasPos = GetAtlasPos() + new Vector2I((int) Q, 0)
+			SetAtlasPos(newAtlasPos);
+
+			GD.Print("Atlas Pos:", GetAtlasPos());
 			
 			// adds two new frames to be used by the Frame system
 			// (0) is default visuals
