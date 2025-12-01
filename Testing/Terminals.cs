@@ -41,6 +41,14 @@ public partial class Terminals : TabContainer
 		newEditor.AddToGroup("CodeTerminals");
 		RegisterEditor(newEditor);
 		
+		// update current highlighting to the newly placed terminal
+		SetCurrentTab(GetTabCount() - 1);
+		GetCurrentEditor().TerminalSelected();
+		
+		if (GetPreviousTab() != previousDifferentTab) {
+			previousDifferentTab = GetPreviousTab();
+		}
+		
 		return newEditor;
 	}
 
@@ -48,8 +56,29 @@ public partial class Terminals : TabContainer
 	{
 		if (editors.Contains(editor))
 		{
+			GD.Print("Terminals.cs: Deleting Editor");
+			// ClearHighlightedObjects();
+			
+			// UpdateSelectedTerminal();
+			//TODO - delete should reflect change in count
+			// int editorIndexOf = editors.IndexOf(editor);
 			editors.Remove(editor);
 			editor.QueueFree();
+			
+			// LAZY SOLUTION:
+			// always select the first terminal when a terminal is being deleted
+			// THIS WILL NEVER FAIL
+			CallDeferred("SelectFirstTerminal");
+		}
+	}
+	
+	// switch to the first terminal, if it still exists
+	private void SelectFirstTerminal() {
+		if (GetTabCount() > 1) {
+			SetCurrentTab(0);
+			GetCurrentEditor().TerminalSelected();
+		} else {
+			ClearHighlightedObjects();
 		}
 	}
 
@@ -143,6 +172,10 @@ public partial class Terminals : TabContainer
 		}
 	}
 
+	// private variable to keep track of the previously selected tab
+	// will ignore identical "previously selected" tabs and etc
+	private int previousDifferentTab = -1;
+	
 	// when a new tab is selected, run validation
 	private void OnTabSelected(long tab)
 	{
@@ -168,6 +201,10 @@ public partial class Terminals : TabContainer
 			parser = scriptabl.GetParser();
 		if (parser != null)
 			registerLabel.SetParser(parser);
+
+		if (GetPreviousTab() != previousDifferentTab) {
+			previousDifferentTab = GetPreviousTab();
+		}
 
 		UpdateSelectedTerminal();
 	}
