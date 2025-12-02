@@ -35,7 +35,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
-		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos + new Vector2I((int) Q, 0), altTitle) {
+		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			this.Q = Q;
 			_parser = new Parser(this.Q);
 			_parser._Ready();
@@ -388,9 +388,45 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			
 			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
 			res["terminalCode"] = GetScript();
+			res["quality"] = (int) GetQuality();
 			return res;
+		}
+		
+		/*
+			README:
+			
+			If you ever want to modify an object's atlas and source IDs without creating a new object,
+			then please DO NOT actually modify the object's atlas/source IDs!
+			
+			As the save system recognizes/spawns objects based off their source IDs, this really messes
+			with the save system if you do so.
+			
+			Instead, modify the below two functions, as Layers and etc utilize these functions --
+			while the PlaceableObjects  still correctly serialize their private internal values.
+		*/
+		public override Vector2I GetAtlasPos() {
+			TileTex T = GetFrame();
+			
+			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
+			// in its idle state. Note that with the animation update, the below will also need to be updated!
+			if (GetFrameIndex() == 0) {
+				return T.GetAtlasPos() + new Vector2I((int) Q, 0);
+			}
+			return T.GetAtlasPos();
+		}
+		
+		public override int GetSourceID() {
+			
+			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
+			// in its animated states. Note that with the animation update, the below will also need to be updated!
+			// NOTE: this doesn't work, but at the same time this doesn't matter to much because
+			// said animation update is basically ready to go.
+			int mod = 0;
+			if (GetFrameIndex() != 0) { mod = (int) Q; }
+			return base.GetSourceID() + mod;
 		}
 
 		// Quality Interface
