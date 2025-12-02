@@ -146,6 +146,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			Terminals currTerminal = manager.terminalContainer;
 			E = manager.terminalContainer.AddEditor();
 			E.Name = "Switch";
 			
