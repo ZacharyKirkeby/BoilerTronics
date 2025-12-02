@@ -35,6 +35,11 @@ public partial class Parser : Node2D
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
 
+	// Store which regex to use based on quality
+	private Regex _wrtRegex;
+	private Regex _wrtRegisterRegex;
+	private Regex _arithRegex;
+
 	// None of these consume time steps, hence registered here
 
 	// Jump commands
@@ -59,29 +64,63 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*jle\s+(\w+)\s*$")]
 	private static partial Regex JleRegex();
 
+	 //r0–r2 and r0–r3 versions
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
-	private static partial Regex WrtRegex();
+	private static partial Regex WrtRegex0_2();
+	
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(-?\d+)\s*$")]
+	private static partial Regex WrtRegex0_3();
 
-	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]  // ← NEW LINE
-	private static partial Regex WrtRegisterRegex();
+	// WRT register: r0–r2 and r0–r3 versions
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]
+	private static partial Regex WrtRegisterRegex0_2();
+	
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(r[0-3]|cmp)\s*$")]
+	private static partial Regex WrtRegisterRegex0_3();
 
 	// Arithmetic commands
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
-	private static partial Regex ArithRegex();
+	private static partial Regex ArithRegex0_2();
+
+	// Arithmetic commands - higher quality means more register
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-3]|cmp|-?\d+)\s+(r[0-3]|cmp|-?\d+)\s*$")]
+	private static partial Regex ArithRegex0_3();
 
 	// Control commands
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
 
 	public Parser(Quality Q)
-    {
-        qualityFlag = Q;
-    }
+{
+	qualityFlag = Q;
+	ProgramValidator.SetQualityLevel((int)Q);
+	InitializeRegexes();
+}
 
-	public Parser()
-    {
-        return;
-    }
+public Parser()
+{
+	ProgramValidator.SetQualityLevel(0);
+	InitializeRegexes();
+	return;
+}
+
+	private void InitializeRegexes()
+	{
+		// Select which regexes to use based on quality flag
+		if ((int)qualityFlag >= 1)
+		{
+			_wrtRegex = WrtRegex0_3();
+			_wrtRegisterRegex = WrtRegisterRegex0_3();
+			_arithRegex = ArithRegex0_3();
+		}
+		else
+		{
+			_wrtRegex = WrtRegex0_2();
+			_wrtRegisterRegex = WrtRegisterRegex0_2();
+			_arithRegex = ArithRegex0_2();
+		}
+	}
+
 	public int getQuality()
     {
         return (int)qualityFlag;
@@ -317,7 +356,7 @@ public partial class Parser : Node2D
 		}
 
 		// Handle write (doesn't consume a step) - FREE
-		var wrtMatch = WrtRegex().Match(line);
+		var wrtMatch = _wrtRegex.Match(line);
 		if (wrtMatch.Success)
 		{
 			string reg = wrtMatch.Groups[1].Value;
@@ -327,7 +366,7 @@ public partial class Parser : Node2D
 			return true;
 		}
 
-		var wrtRegMatch = WrtRegisterRegex().Match(line);
+		var wrtRegMatch = _wrtRegisterRegex.Match(line);
 		if (wrtRegMatch.Success)
 		{
 			string destReg = wrtRegMatch.Groups[1].Value;
@@ -337,7 +376,7 @@ public partial class Parser : Node2D
 			return true;
 		}
 
-		var arithMatch = ArithRegex().Match(line);
+		var arithMatch = _arithRegex.Match(line);
 		if (arithMatch.Success)
 		{
 			string cmd = arithMatch.Groups[1].Value;
@@ -659,8 +698,4 @@ public partial class Parser : Node2D
 	{
 		this._decayFlag = input;
 	}
-
-
-
-
 }
