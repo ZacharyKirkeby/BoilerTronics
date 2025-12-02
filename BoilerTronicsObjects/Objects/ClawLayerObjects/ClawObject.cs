@@ -36,11 +36,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
 		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos + new Vector2I((int) Q, 0), altTitle) {
-			_parser = new Parser();
+			this.Q = Q;
+			_parser = new Parser(this.Q);
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
-			this.Q = Q;
+			
 			
 			// adds two new frames to be used by the Frame system
 			// (0) is default visuals

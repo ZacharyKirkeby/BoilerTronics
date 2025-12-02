@@ -15,7 +15,7 @@ public partial class Parser : Node2D
 	private readonly Dictionary<string, int> _registers = new();
 	private readonly Dictionary<string, int> _labelMap = new();
 	private readonly Dictionary<string, int> _registerTTL = new();
-	private const int REGISTER_DECAY_STEPS = 5;
+	private int REGISTER_DECAY_STEPS = 5;
 	private int _stepConsumingInstructionCount = 0;
 	private List<int> _sourceLineNumbers = new();
 	private List<string> _validLines = new();
@@ -29,7 +29,7 @@ public partial class Parser : Node2D
 	private string editorName;
 	private bool _debug = true;
 	private bool _decayFlag = true;
-	private enum qualityFlag;
+	private Quality qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
@@ -72,6 +72,10 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
 
+	public Parser(Quality Q)
+    {
+        qualityFlag = Q;
+    }
 	public override void _Ready()
 	{
 		InitializeRegisters();
@@ -91,6 +95,24 @@ public partial class Parser : Node2D
 		_registerTTL["r1"] = -1;
 		_registerTTL["r2"] = -1;
 		_registerTTL["cmp"] = -1;
+
+		switch ((int)qualityFlag)
+        {
+            case 0:
+				REGISTER_DECAY_STEPS = 5;
+				break;
+			case 1:
+				REGISTER_DECAY_STEPS = 7;
+				_registers["r3"] = 0;
+				_registerTTL["r3"] = -1;
+				break;
+			case 2:
+				REGISTER_DECAY_STEPS = 10;
+				_registers["r3"] = 0;
+				break;
+			default:
+				break;
+        }
 	}
 
 	public void ResetRegisters()
