@@ -6,8 +6,6 @@ using BoilerTronicsObjects.Placeable;
 using System.Text.RegularExpressions;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
-using System.Diagnostics;
-using Microsoft.Win32;
 
 namespace Parsing;
 
@@ -90,6 +88,7 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
 
+	// constructor with a higher quality level
 	public Parser(Quality Q)
 {
 	qualityFlag = Q;
@@ -97,6 +96,7 @@ public partial class Parser : Node2D
 	InitializeRegexes();
 }
 
+// default contstructor, quality by default is 0
 public Parser()
 {
 	ProgramValidator.SetQualityLevel(0);
@@ -137,6 +137,7 @@ public Parser()
 	// instead of in ready, dedicated function
 	private void InitializeRegisters()
 	{
+		// By default the user has r0, r1, r2, and cmp
 		_registers["r0"] = 0;
 		_registers["r1"] = 0;
 		_registers["r2"] = 0;
@@ -148,19 +149,20 @@ public Parser()
 		_registerTTL["r2"] = -1;
 		_registerTTL["cmp"] = -1;
 
+		// Quality dictates additional behaviors
 		switch ((int)qualityFlag)
         {
-            case 0:
+            case 0: // default
 				REGISTER_DECAY_STEPS = 5;
 				this.registers = ["r0", "r1", "r2","cmp"];
 				break;
-			case 1:
+			case 1: // med quality - unlocks r3, register decay takes 7 steps
 				REGISTER_DECAY_STEPS = 7;
 				_registers["r3"] = 0;
 				_registerTTL["r3"] = -1;
 				this.registers = ["r0", "r1", "r2", "r3", "cmp"];
 				break;
-			case 2:
+			case 2: // high quality - r3 is a stable register and does not decay
 				REGISTER_DECAY_STEPS = 10;
 				_registers["r3"] = 0;
 				this.registers = ["r0", "r1", "r2", "cmp"];  // stable register being excluded
