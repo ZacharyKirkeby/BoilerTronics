@@ -56,8 +56,8 @@ public partial class Achievement : Window
 				icon = Achievement3Image;
 				break;
 			case "Achievement4":
-				desc = Achievement3Desc;
-				icon = Achievement3Image;
+				desc = Achievement4Desc;
+				icon = Achievement4Image;
 				break;
 			default:
 				GD.PrintErr($"Unknown achievement: {name}");

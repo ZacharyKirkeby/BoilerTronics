@@ -186,13 +186,6 @@ public partial class LevelUi : Node2D
 		
 		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 		if(manager.GetLevelID() == 37) {
-			//if(!achievementManager.EasterEggIsUnlocked("EasterEgg3")) {
-				//GD.Print("easter egg 3 gained");
-				//if(!GetNode<Window>("Mystery Level Easter Egg").Visible) {
-					//GetNode<Window>("Mystery Level Easter Egg").Visible = true;
-				//}
-				//achievementManager.UnlockEasterEgg("EasterEgg3");
-			//}
 			achievementManager.TryEasterEggUnlock("EasterEgg3");
 		}
 	
@@ -594,13 +587,6 @@ public partial class LevelUi : Node2D
 		
 		//check for first level completion achievement
 		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
-		//if(!achievementManager.AchievementIsUnlocked("Achievement1")) {
-			//GD.Print("achievement 1 gained");
-			//if(!GetNode<Window>("Achievement Notice").Visible) {
-				//GetNode<Window>("Achievement Notice").Visible = true;
-			//}
-			//achievementManager.UnlockAchievement("Achievement1");
-		//}
 		achievementManager.TryAchievementUnlock("Achievement1");
 	}
 	
