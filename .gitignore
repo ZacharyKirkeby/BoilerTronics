@@ -4,3 +4,4 @@
 /android/
 # MacOS File System ignores
 .DS_Store
+.env
