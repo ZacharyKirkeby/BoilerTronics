@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace Parsing;
 
@@ -82,6 +83,8 @@ public partial class Parser : Node2D
 		RegisterCommands();
 	}
 
+	private string [] registers;
+
 	// instead of in ready, dedicated function
 	private void InitializeRegisters()
 	{
@@ -100,15 +103,18 @@ public partial class Parser : Node2D
         {
             case 0:
 				REGISTER_DECAY_STEPS = 5;
+				this.registers = ["r0", "r1", "r2","r3","cmp"];
 				break;
 			case 1:
 				REGISTER_DECAY_STEPS = 7;
 				_registers["r3"] = 0;
 				_registerTTL["r3"] = -1;
+				this.registers = ["r0", "r1", "r2", "r3", "cmp"];
 				break;
 			case 2:
 				REGISTER_DECAY_STEPS = 10;
 				_registers["r3"] = 0;
+				this.registers = ["r0", "r1", "r2", "cmp"];  // stable register being excluded
 				break;
 			default:
 				break;
@@ -608,7 +614,7 @@ public partial class Parser : Node2D
 	private void SetRegister(string reg, int value)
 	{
 		_registers[reg] = value;
-		_registerTTL[reg] = REGISTER_DECAY_STEPS;
+		if ((int)qualityFlag != 2 && reg != "r3") _registerTTL[reg] = REGISTER_DECAY_STEPS;
 
 		if (_debug) GD.Print($"Set {reg} = {value}, TTL = {REGISTER_DECAY_STEPS}");
 	}
@@ -621,7 +627,7 @@ public partial class Parser : Node2D
 			return;
 		}
 
-		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
+		foreach (string reg in registers)
 		{
 			if (_registerTTL[reg] > 0)
 			{
