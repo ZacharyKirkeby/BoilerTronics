@@ -9,6 +9,12 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	public class PipeGroup : PlaceableObject, Runnable, GroupedObject{
+
+		public enum LiquidType {
+			None = 0,
+			Water = 1,
+			Lube = 2,
+		}
 		
 		private List<PipeObject> pipeList = new List<PipeObject>(); // List of conveyorObjects
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
