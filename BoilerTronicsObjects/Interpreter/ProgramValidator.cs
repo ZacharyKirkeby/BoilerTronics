@@ -263,6 +263,11 @@ public static partial class ProgramValidator
 	{
 		// BEHOLD MY EVIL FUNCTION FULL OF EVIL
 
+		if (_qualityLevel < 1 && line.Contains("r3"))
+		{
+			return "R3 isn't availible on this model";
+		}
+
 		// Movement commands
 		if (MovValidRegex().IsMatch(line)) return null;
 		if (MovEmptyRegex().IsMatch(line)) return "Move missing argument";
