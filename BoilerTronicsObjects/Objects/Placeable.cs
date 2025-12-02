@@ -50,6 +50,7 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		
 		// set parent layer info; mainly useful for the terminal highlighting mechanism
+		// NOTE: the setting of the "parent layer" is handled in Layer.cs, "AddObject()"
 		public Layer GetParentLayer() {
 			return parentLayer;
 		}
