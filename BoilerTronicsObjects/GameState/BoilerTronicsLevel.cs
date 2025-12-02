@@ -527,6 +527,7 @@ public partial class BoilerTronicsLevel : Node2D
 	/* Reset Layer */
 
 	public void Reset() {
+		GD.Print("BoilerTronicsLevel: Starting Reset");
 		// Stops moving objects to prevent errors
 		HaultObjects();
 		// Reset all layers
@@ -553,7 +554,6 @@ public partial class BoilerTronicsLevel : Node2D
 		// reset all animating objects
 		foreach (AnimatingObject aObj in animatingList) {
 			aObj.Reset();
-			
 			aObj.QueueFree();
 		}
 		
@@ -603,6 +603,8 @@ public partial class BoilerTronicsLevel : Node2D
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
 		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
 		SubmitStartStep = -1;
+		
+		GD.Print("BoilerTronicsLevel: Ended Reset");
 	}
 
 	/* RunState Management */
@@ -786,6 +788,7 @@ public partial class BoilerTronicsLevel : Node2D
 	// Resume Objects ?? (This could be used in the middle of a step if we pause)
 
 	public void HaultObjects() {
+		
 		// Halt all other movement/animations
 		foreach (TimeConsumingObject obj in movingList) {
 			obj.haultObject();
