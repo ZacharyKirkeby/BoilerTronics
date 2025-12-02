@@ -14,6 +14,7 @@ public partial class RegisterLabel : Label
 		_lastValues["r0"] = 0;
 		_lastValues["r1"] = 0;
 		_lastValues["r2"] = 0;
+		_lastValues["r3"] = 0;
 		_lastValues["cmp"] = 0;
 	}
 
@@ -41,6 +42,11 @@ public partial class RegisterLabel : Label
 		displayText += " | ";
 		displayText += FormatRegister("R2", registers["r2"]);
 		displayText += " | ";
+		if (_parser.getQuality() >= 1)
+        {
+            displayText += FormatRegister("R3", registers["r3"]);
+			displayText += " | ";
+        }
 		displayText += FormatRegister("CMP", registers["cmp"]);
 
 		Text = displayText;
