@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class ProfileMenuController : Control
 {
@@ -8,10 +9,19 @@ public partial class ProfileMenuController : Control
 	private FirestoreService _firestoreService;
 	private FriendsService _friendsService;
 	private UserData _currentUserData;
-	
+
 	private HBoxContainer _mainContainer;
 	private VBoxContainer _profileContainer;
 	private VBoxContainer _friendsContainer;
+
+	private float _pollTimer = 0f;
+
+	// Cached values for diff detection
+	private int _cachedFriendsCount = -1;
+	private int _cachedRequestsCount = -1;
+	private int _cachedAchievements = -1;
+	private float _cachedHoursPlayed = -1;
+
 
 	public override void _Ready()
 	{
@@ -19,7 +29,7 @@ public partial class ProfileMenuController : Control
 		_authManager = FirebaseAuthManager.Instance;
 		_firestoreService = FirestoreService.Instance;
 		_friendsService = FriendsService.Instance;
-		
+
 		if (_friendsService == null)
 		{
 			_friendsService = new FriendsService();
@@ -33,7 +43,7 @@ public partial class ProfileMenuController : Control
 		if (_authManager != null)
 		{
 			_authManager.AuthenticationChanged += OnAuthenticationChanged;
-			
+
 			// If already authenticated, load user data immediately
 			if (_authManager.IsAuthenticated)
 			{
@@ -45,6 +55,199 @@ public partial class ProfileMenuController : Control
 		UpdateProfileMenu();
 	}
 
+	private void UpdateProfileStatsOnly()
+	{
+		if (_profileContainer == null)
+			return;
+
+		// Ensure the grid exists, create if missing
+		GridContainer grid;
+		if (_profileContainer.GetChildCount() < 2 || !(_profileContainer.GetChild(1) is GridContainer existingGrid))
+		{
+			grid = new GridContainer();
+			grid.Columns = 2;
+			_profileContainer.AddChild(grid);
+		}
+		else
+		{
+			grid = existingGrid;
+		}
+
+		foreach (Node child in grid.GetChildren())
+			child.QueueFree();
+
+		AddStatLabel(grid, $"Hours Played: {_currentUserData.HoursPlayed:F1}");
+		AddStatLabel(grid, $"Friends: {_currentUserData.Friends.Count}");
+		AddStatLabel(grid, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
+		AddStatLabel(grid, $"Easter Eggs: {_currentUserData.EasterEggsFound.Count}");
+	}
+
+	private void UpdateFriendRequestsOnly(List<FriendRequest> requests)
+	{
+		if (_friendsContainer == null)
+			return;
+
+		// Ensure RequestsList exists
+		var requestsList = _friendsContainer.GetNodeOrNull<VBoxContainer>("RequestsList");
+		if (requestsList == null)
+		{
+			requestsList = new VBoxContainer();
+			requestsList.Name = "RequestsList";
+			requestsList.AddThemeConstantOverride("separation", 8);
+			_friendsContainer.AddChild(requestsList);
+		}
+
+		foreach (Node c in requestsList.GetChildren())
+			c.QueueFree();
+
+		if (requests.Count == 0)
+		{
+			var l = CreateLabel("No pending requests", 14);
+			l.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
+			requestsList.AddChild(l);
+			return;
+		}
+
+		foreach (var request in requests)
+		{
+			var row = new HBoxContainer();
+			row.AddThemeConstantOverride("separation", 8);
+
+			var from = CreateLabel($"{request.FromUsername}", 16);
+			row.AddChild(from);
+
+			var accept = CreateSmallButton("✓");
+			accept.CustomMinimumSize = new Vector2(35, 30);
+			accept.AddThemeColorOverride("font_color", new Color(0, 0.6f, 0, 1));
+			accept.Pressed += async () => await OnAcceptFriendRequest(request);
+			row.AddChild(accept);
+
+			var decline = CreateSmallButton("✗");
+			decline.CustomMinimumSize = new Vector2(35, 30);
+			decline.AddThemeColorOverride("font_color", new Color(0.8f, 0, 0, 1));
+			decline.Pressed += async () => await OnDeclineFriendRequest(request);
+			row.AddChild(decline);
+
+			requestsList.AddChild(row);
+		}
+	}
+
+	private async void UpdateFriendsListOnly()
+	{
+		if (_friendsContainer == null)
+			return;
+
+		// Ensure a ScrollContainer exists for friends list
+		var friendsScroll = _friendsContainer.GetNodeOrNull<ScrollContainer>("FriendsScroll");
+		VBoxContainer friendsList;
+
+		if (friendsScroll == null)
+		{
+			friendsScroll = new ScrollContainer();
+			friendsScroll.Name = "FriendsScroll";
+			_friendsContainer.AddChild(friendsScroll);
+
+			friendsList = new VBoxContainer();
+			friendsList.Name = "FriendsList";
+			friendsScroll.AddChild(friendsList);
+		}
+		else
+		{
+			friendsList = friendsScroll.GetChildOrNull<VBoxContainer>(0);
+			if (friendsList == null)
+			{
+				friendsList = new VBoxContainer();
+				friendsList.Name = "FriendsList";
+				friendsScroll.AddChild(friendsList);
+			}
+		}
+
+		foreach (Node c in friendsList.GetChildren())
+			c.QueueFree();
+
+		if (_currentUserData.Friends.Count == 0)
+		{
+			var noFriends = CreateLabel("No friends yet", 16);
+			noFriends.AddThemeColorOverride("font_color", new Color(0.5f, 0.5f, 0.5f));
+			friendsList.AddChild(noFriends);
+			return;
+		}
+
+		var friendNames = await _friendsService.GetFriendUsernamesAsync(_currentUserData.Friends);
+		foreach (var name in friendNames)
+		{
+			friendsList.AddChild(CreateLabel($"• {name}", 18));
+		}
+	}
+
+
+	private async System.Threading.Tasks.Task PollForUpdatesAsync()
+	{
+		// get fresh user data
+		var newUserData = await _firestoreService.GetUserAsync(_authManager.UserId);
+		if (newUserData == null)
+			return;
+
+		// FRIEND REQUEST COUNT
+		var incomingRequests = await _friendsService.GetIncomingFriendRequestsAsync(_authManager.UserId);
+		int newReqCount = incomingRequests.Count;
+
+		// FRIEND COUNT
+		int newFriendCount = newUserData.Friends.Count;
+
+		// HOURS PLAYED + ACHIEVEMENTS
+		float newHours = newUserData.HoursPlayed;
+		int newAchievements = newUserData.AchievementsUnlocked.Count;
+
+		bool updateStats = false;
+		bool updateRequests = false;
+		bool updateFriends = false;
+
+		GD.Print("Polling");
+
+		if (_cachedFriendsCount != newFriendCount)
+			updateStats = updateFriends = true;
+		if (_cachedRequestsCount != newReqCount)
+			updateRequests = true;
+		if (_cachedHoursPlayed != newHours || _cachedAchievements != newAchievements)
+			updateStats = true;
+
+		// apply new cache
+		_cachedFriendsCount = newFriendCount;
+		_cachedRequestsCount = newReqCount;
+		_cachedHoursPlayed = newHours;
+		_cachedAchievements = newAchievements;
+
+		// update local current user data
+		_currentUserData = newUserData;
+
+		// perform partial updates
+		if (updateStats)
+			UpdateProfileStatsOnly();
+
+		if (updateRequests)
+			UpdateFriendRequestsOnly(incomingRequests);
+
+		if (updateFriends)
+			UpdateFriendsListOnly();
+	}
+
+
+	public override void _Process(double delta)
+	{
+		if (!IsVisibleInTree() || !(_authManager?.IsAuthenticated ?? false))
+			return;
+
+		_pollTimer += (float)delta;
+		if (_pollTimer >= 15f)
+		{
+			_pollTimer = 0f;
+			_ = PollForUpdatesAsync();
+		}
+	}
+
+
+
 	public override void _ExitTree()
 	{
 		if (_authManager != null)
@@ -53,93 +256,93 @@ public partial class ProfileMenuController : Control
 		}
 	}
 
-    private void BuildLayout()
-    {
-        foreach (Node child in GetChildren())
-        {
-            child.QueueFree();
-        }
+	private void BuildLayout()
+	{
+		foreach (Node child in GetChildren())
+		{
+			child.QueueFree();
+		}
 
-        var rootContainer = new VBoxContainer();
-        rootContainer.AnchorRight = 1;
-        rootContainer.AnchorBottom = 1;
-        rootContainer.AddThemeConstantOverride("separation", 20);
-        AddChild(rootContainer);
+		var rootContainer = new VBoxContainer();
+		rootContainer.AnchorRight = 1;
+		rootContainer.AnchorBottom = 1;
+		rootContainer.AddThemeConstantOverride("separation", 20);
+		AddChild(rootContainer);
 
-        _mainContainer = new HBoxContainer();
-        _mainContainer.CustomMinimumSize = new Vector2(0, 550);
-        _mainContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-        _mainContainer.AddThemeConstantOverride("separation", 30);
-        _mainContainer.Alignment = BoxContainer.AlignmentMode.Center;
-        rootContainer.AddChild(_mainContainer);
+		_mainContainer = new HBoxContainer();
+		_mainContainer.CustomMinimumSize = new Vector2(0, 550);
+		_mainContainer.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+		_mainContainer.AddThemeConstantOverride("separation", 30);
+		_mainContainer.Alignment = BoxContainer.AlignmentMode.Center;
+		rootContainer.AddChild(_mainContainer);
 
-        var profilePanel = CreateStyledPanel(new Vector2(900, 550));
-        _mainContainer.AddChild(profilePanel);
+		var profilePanel = CreateStyledPanel(new Vector2(900, 550));
+		_mainContainer.AddChild(profilePanel);
 
-        _profileContainer = new VBoxContainer();
-        _profileContainer.AnchorRight = 1;
-        _profileContainer.AnchorBottom = 1;
-        _profileContainer.GrowHorizontal = Control.GrowDirection.Both;
-        _profileContainer.GrowVertical = Control.GrowDirection.Both;
-        _profileContainer.AddThemeConstantOverride("separation", 80);
-        profilePanel.AddChild(_profileContainer);
+		_profileContainer = new VBoxContainer();
+		_profileContainer.AnchorRight = 1;
+		_profileContainer.AnchorBottom = 1;
+		_profileContainer.GrowHorizontal = Control.GrowDirection.Both;
+		_profileContainer.GrowVertical = Control.GrowDirection.Both;
+		_profileContainer.AddThemeConstantOverride("separation", 80);
+		profilePanel.AddChild(_profileContainer);
 
-        var profileTitle = CreateTitleLabel("Profile");
-        _profileContainer.AddChild(profileTitle);
+		var profileTitle = CreateTitleLabel("Profile");
+		_profileContainer.AddChild(profileTitle);
 
-        var friendsPanel = CreateStyledPanel(new Vector2(500, 550));
-        _mainContainer.AddChild(friendsPanel);
+		var friendsPanel = CreateStyledPanel(new Vector2(500, 550));
+		_mainContainer.AddChild(friendsPanel);
 
-        _friendsContainer = new VBoxContainer();
-        _friendsContainer.AnchorRight = 1;
-        _friendsContainer.AnchorBottom = 1;
-        _friendsContainer.GrowHorizontal = Control.GrowDirection.Both;
-        _friendsContainer.GrowVertical = Control.GrowDirection.Both;
-        _friendsContainer.AddThemeConstantOverride("separation", 15);
-        friendsPanel.AddChild(_friendsContainer);
+		_friendsContainer = new VBoxContainer();
+		_friendsContainer.AnchorRight = 1;
+		_friendsContainer.AnchorBottom = 1;
+		_friendsContainer.GrowHorizontal = Control.GrowDirection.Both;
+		_friendsContainer.GrowVertical = Control.GrowDirection.Both;
+		_friendsContainer.AddThemeConstantOverride("separation", 15);
+		friendsPanel.AddChild(_friendsContainer);
 
-        var friendsTitle = CreateTitleLabel("Friends");
-        _friendsContainer.AddChild(friendsTitle);
+		var friendsTitle = CreateTitleLabel("Friends");
+		_friendsContainer.AddChild(friendsTitle);
 
-        var backButton = CreateBackButton();
-        rootContainer.AddChild(backButton);
-    }
+		var backButton = CreateBackButton();
+		rootContainer.AddChild(backButton);
+	}
 
-    private Button CreateBackButton()
-    {
-        var backButton = new Button();
-        backButton.Text = "Back";
-        backButton.CustomMinimumSize = new Vector2(600, 100);
-        backButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+	private Button CreateBackButton()
+	{
+		var backButton = new Button();
+		backButton.Text = "Back";
+		backButton.CustomMinimumSize = new Vector2(600, 100);
+		backButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
-        var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
-        backButton.AddThemeFontOverride("font", font);
-        backButton.AddThemeFontSizeOverride("font_size", 76);
-        backButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+		backButton.AddThemeFontOverride("font", font);
+		backButton.AddThemeFontSizeOverride("font_size", 76);
+		backButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 
-        var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
-        var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
-        backButton.AddThemeStyleboxOverride("normal", normalStyle);
-        backButton.AddThemeStyleboxOverride("hover", hoverStyle);
-        backButton.AddThemeStyleboxOverride("focus", normalStyle);
+		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
+		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
+		backButton.AddThemeStyleboxOverride("normal", normalStyle);
+		backButton.AddThemeStyleboxOverride("hover", hoverStyle);
+		backButton.AddThemeStyleboxOverride("focus", normalStyle);
 
-        backButton.Pressed += () =>
-        {
-            GetParent().GetNode<Control>("SettingsMenu").Visible = false;
-            GetParent().GetNode<Control>("ProfileMenu").Visible = false;
-            GetParent().GetNode<Control>("Leaderboard").Visible = false;
-            GetParent().GetNode<Control>("MainMenu").Visible = true;
-        };
+		backButton.Pressed += () =>
+		{
+			GetParent().GetNode<Control>("SettingsMenu").Visible = false;
+			GetParent().GetNode<Control>("ProfileMenu").Visible = false;
+			GetParent().GetNode<Control>("Leaderboard").Visible = false;
+			GetParent().GetNode<Control>("MainMenu").Visible = true;
+		};
 
-        return backButton;
-    }
+		return backButton;
+	}
 
-    private Panel CreateStyledPanel(Vector2 size)
+	private Panel CreateStyledPanel(Vector2 size)
 	{
 		var panel = new Panel();
 		panel.CustomMinimumSize = size;
 		panel.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
-		
+
 		var styleBox = new StyleBoxFlat();
 		styleBox.BgColor = new Color(0.8117647f, 0.7254902f, 0.5686275f, 1);
 		styleBox.BorderWidthLeft = 4;
@@ -151,9 +354,9 @@ public partial class ProfileMenuController : Control
 		styleBox.CornerRadiusTopRight = 20;
 		styleBox.CornerRadiusBottomRight = 20;
 		styleBox.CornerRadiusBottomLeft = 20;
-		
+
 		panel.AddThemeStyleboxOverride("panel", styleBox);
-		
+
 		return panel;
 	}
 
@@ -168,11 +371,11 @@ public partial class ProfileMenuController : Control
 		label.AddThemeConstantOverride("shadow_offset_x", 5);
 		label.AddThemeConstantOverride("shadow_offset_y", 14);
 		label.AddThemeConstantOverride("outline_size", 6);
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		label.AddThemeFontOverride("font", font);
 		label.AddThemeFontSizeOverride("font_size", 70);
-		
+
 		return label;
 	}
 
@@ -203,9 +406,9 @@ public partial class ProfileMenuController : Control
 	{
 		if (_authManager == null || !_authManager.IsAuthenticated)
 			return;
-		
+
 		_currentUserData = await _firestoreService.GetUserAsync(_authManager.UserId);
-		
+
 		if (_currentUserData == null)
 		{
 			_currentUserData = UserData.CreateDefault(_authManager.UserId, _authManager.Email);
@@ -251,7 +454,7 @@ public partial class ProfileMenuController : Control
 		gridContainer.AddThemeConstantOverride("h_separation", 150);
 		gridContainer.AddThemeConstantOverride("v_separation", 30);
 		gridContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-		
+
 		AddStatLabel(gridContainer, $"Hours Played: {_currentUserData.HoursPlayed:F1}");
 		AddStatLabel(gridContainer, $"Friends: {_currentUserData.Friends.Count}");
 		AddStatLabel(gridContainer, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
@@ -264,18 +467,18 @@ public partial class ProfileMenuController : Control
 		logoutButton.CustomMinimumSize = new Vector2(400, 80);
 		logoutButton.Text = "Logout";
 		logoutButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		logoutButton.AddThemeFontOverride("font", font);
 		logoutButton.AddThemeFontSizeOverride("font_size", 50);
 		logoutButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
+
 		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
 		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
 		logoutButton.AddThemeStyleboxOverride("normal", normalStyle);
 		logoutButton.AddThemeStyleboxOverride("hover", hoverStyle);
 		logoutButton.AddThemeStyleboxOverride("focus", normalStyle);
-		
+
 		logoutButton.Pressed += () => _authManager.SignOut();
 		_profileContainer.AddChild(logoutButton);
 	}
@@ -289,7 +492,7 @@ public partial class ProfileMenuController : Control
 
 		var searchInput = CreateLineEdit("Search username...", 320, 40);
 		searchInput.Name = "SearchInput";
-		
+
 		var searchButton = CreateSmallButton("+");
 		searchButton.CustomMinimumSize = new Vector2(50, 40);
 		searchButton.Pressed += () => OnSearchPressed(searchInput);
@@ -447,7 +650,7 @@ public partial class ProfileMenuController : Control
 			return;
 
 		var searchResultContainer = _friendsContainer.GetNode<VBoxContainer>("SearchResult");
-		
+
 		// Clear previous results
 		foreach (Node child in searchResultContainer.GetChildren())
 		{
@@ -456,7 +659,7 @@ public partial class ProfileMenuController : Control
 
 		// Search for user
 		var foundUser = await _friendsService.SearchUserByUsernameAsync(username);
-		
+
 		if (foundUser == null)
 		{
 			var notFoundLabel = CreateLabel("User not found", 18);
@@ -482,11 +685,12 @@ public partial class ProfileMenuController : Control
 
 			var usernameLabel = CreateLabel($"Found: {foundUser.Username}", 18);
 			usernameLabel.AddThemeColorOverride("font_color", new Color(0.2f, 0.6f, 0.2f));
-			
+
 			var sendRequestButton = CreateSmallButton("Send Request");
-			sendRequestButton.Pressed += async () => {
+			sendRequestButton.Pressed += async () =>
+			{
 				await _friendsService.SendFriendRequestAsync(foundUser.Uuid, foundUser.Username);
-				
+
 				// Show feedback
 				foreach (Node child in searchResultContainer.GetChildren())
 				{
@@ -495,7 +699,7 @@ public partial class ProfileMenuController : Control
 				var sentLabel = CreateLabel("Friend request sent!", 18);
 				sentLabel.AddThemeColorOverride("font_color", new Color(0.2f, 0.8f, 0.2f));
 				searchResultContainer.AddChild(sentLabel);
-				
+
 				// Clear search input
 				searchInput.Text = "";
 			};
@@ -639,11 +843,11 @@ public partial class ProfileMenuController : Control
 		var label = new Label();
 		label.Text = text;
 		label.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		label.AddThemeFontOverride("font", font);
 		label.AddThemeFontSizeOverride("font_size", fontSize);
-		
+
 		return label;
 	}
 
@@ -653,11 +857,11 @@ public partial class ProfileMenuController : Control
 		lineEdit.PlaceholderText = placeholder;
 		lineEdit.CustomMinimumSize = new Vector2(width, height);
 		lineEdit.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		lineEdit.AddThemeFontOverride("font", font);
 		lineEdit.AddThemeFontSizeOverride("font_size", 18);
-		
+
 		return lineEdit;
 	}
 
@@ -666,18 +870,18 @@ public partial class ProfileMenuController : Control
 		var button = new Button();
 		button.Text = text;
 		button.CustomMinimumSize = new Vector2(180, 60);
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		button.AddThemeFontOverride("font", font);
 		button.AddThemeFontSizeOverride("font_size", 35);
 		button.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
+
 		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
 		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
 		button.AddThemeStyleboxOverride("normal", normalStyle);
 		button.AddThemeStyleboxOverride("hover", hoverStyle);
 		button.AddThemeStyleboxOverride("focus", normalStyle);
-		
+
 		return button;
 	}
 
@@ -686,18 +890,18 @@ public partial class ProfileMenuController : Control
 		var button = new Button();
 		button.Text = text;
 		button.CustomMinimumSize = new Vector2(120, 35);
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		button.AddThemeFontOverride("font", font);
 		button.AddThemeFontSizeOverride("font_size", 20);
 		button.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
-		
+
 		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
 		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
 		button.AddThemeStyleboxOverride("normal", normalStyle);
 		button.AddThemeStyleboxOverride("hover", hoverStyle);
 		button.AddThemeStyleboxOverride("focus", normalStyle);
-		
+
 		return button;
 	}
 
@@ -707,11 +911,11 @@ public partial class ProfileMenuController : Control
 		label.Text = text;
 		label.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 		label.HorizontalAlignment = HorizontalAlignment.Center;
-		
+
 		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		label.AddThemeFontOverride("font", font);
 		label.AddThemeFontSizeOverride("font_size", 25);
-		
+
 		container.AddChild(label);
 	}
 }
