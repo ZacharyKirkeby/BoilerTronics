@@ -593,10 +593,6 @@ public partial class Parser : Node2D
 		_validLines.Clear();
 		_labelMap.Clear();
 		ResetRegisters();
-		_registerTTL["r0"] = -1;
-		_registerTTL["r1"] = -1;
-		_registerTTL["r2"] = -1;
-		_registerTTL["cmp"] = -1;
 	
 		if (_debug) GD.Print("Parser reset complete");
 	}
