@@ -46,15 +46,25 @@ public static partial class ProgramValidator
 	[GeneratedRegex(@"^\s*swt\s+\S+")]
 	private static partial Regex SwtWithArgRegex();
 
-	// Write command
+	// Write command - r0-r2 versions
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
-	private static partial Regex WrtValidRegex();
+	private static partial Regex WrtValidRegex0_2();
 
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]
-	private static partial Regex WrtRegisterValidRegex();
+	private static partial Regex WrtRegisterValidRegex0_2();
 
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s*$")]
-	private static partial Regex WrtMissingValueRegex();
+	private static partial Regex WrtMissingValueRegex0_2();
+
+	// Write command - r0-r3 versions
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(-?\d+)\s*$")]
+	private static partial Regex WrtValidRegex0_3();
+
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(r[0-3]|cmp)\s*$")]
+	private static partial Regex WrtRegisterValidRegex0_3();
+
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s*$")]
+	private static partial Regex WrtMissingValueRegex0_3();
 
 	[GeneratedRegex(@"^\s*wrt\s*$")]
 	private static partial Regex WrtEmptyRegex();
@@ -62,12 +72,19 @@ public static partial class ProgramValidator
 	[GeneratedRegex(@"^\s*wrt\s+\S+")]
 	private static partial Regex WrtInvalidRegex();
 
-	// Arithmetic commands
+	// Arithmetic commands - r0-r2 versions
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
-	private static partial Regex ArithValidRegex();
+	private static partial Regex ArithValidRegex0_2();
 
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+r[0-2]\s*$")]
-	private static partial Regex ArithMissingSecondRegex();
+	private static partial Regex ArithMissingSecondRegex0_2();
+
+	// Arithmetic commands - r0-r3 versions
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-3]|cmp|-?\d+)\s+(r[0-3]|cmp|-?\d+)\s*$")]
+	private static partial Regex ArithValidRegex0_3();
+
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+r[0-3]\s*$")]
+	private static partial Regex ArithMissingSecondRegex0_3();
 
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s*$")]
 	private static partial Regex ArithEmptyRegex();
@@ -99,6 +116,14 @@ public static partial class ProgramValidator
 	// Any non-empty line
 	[GeneratedRegex(@"^\s*\S+")]
 	private static partial Regex NonEmptyRegex();
+
+	// Store quality level for validation
+	private static int _qualityLevel = 0;
+
+	public static void SetQualityLevel(int quality)
+	{
+		_qualityLevel = quality;
+	}
 
 	// Validates syntax of entire program
 	// Returns list of errors with line numbers
@@ -258,16 +283,47 @@ public static partial class ProgramValidator
 		if (SwtValidRegex().IsMatch(line)) return null;
 		if (SwtWithArgRegex().IsMatch(line)) return "Switch takes no arguments";
 
-		// Write command
-		if (WrtValidRegex().IsMatch(line)) return null;
-		if (WrtRegisterValidRegex().IsMatch(line)) return null;
-		if (WrtMissingValueRegex().IsMatch(line)) return "Write missing value";
-		if (WrtEmptyRegex().IsMatch(line)) return "Write missing register and value";
-		if (WrtInvalidRegex().IsMatch(line)) return "Invalid register or value (use r0/r1/r2/cmp)";
+		// Write command - use quality-appropriate regex
+		if (_qualityLevel >= 1)
+		{
+			if (WrtValidRegex0_3().IsMatch(line)) return null;
+			if (WrtRegisterValidRegex0_3().IsMatch(line)) return null;
+			if (WrtMissingValueRegex0_3().IsMatch(line)) return "Write missing value";
+		}
+		else
+		{
+			// Check if trying to use r3 when quality < 1
+			if (WrtValidRegex0_3().IsMatch(line) || WrtRegisterValidRegex0_3().IsMatch(line))
+			{
+				if (line.Contains("r3"))
+					return "Register r3 is not available at this quality level";
+			}
 
-		// Arithmetic commands
-		if (ArithValidRegex().IsMatch(line)) return null;
-		if (ArithMissingSecondRegex().IsMatch(line)) return "Missing second operand";
+			if (WrtValidRegex0_2().IsMatch(line)) return null;
+			if (WrtRegisterValidRegex0_2().IsMatch(line)) return null;
+			if (WrtMissingValueRegex0_2().IsMatch(line)) return "Write missing value";
+		}
+		if (WrtEmptyRegex().IsMatch(line)) return "Write missing register and value";
+		if (WrtInvalidRegex().IsMatch(line)) return _qualityLevel >= 1 ? "Invalid register or value (use r0/r1/r2/r3/cmp)" : "Invalid register or value (use r0/r1/r2/cmp)";
+
+		// Arithmetic commands - use quality-appropriate regex
+		if (_qualityLevel >= 1)
+		{
+			if (ArithValidRegex0_3().IsMatch(line)) return null;
+			if (ArithMissingSecondRegex0_3().IsMatch(line)) return "Missing second operand";
+		}
+		else
+		{
+			// Check if trying to use r3 when quality < 1
+			if (ArithValidRegex0_3().IsMatch(line))
+			{
+				if (line.Contains("r3"))
+					return "Register r3 is not available at this quality level";
+			}
+
+			if (ArithValidRegex0_2().IsMatch(line)) return null;
+			if (ArithMissingSecondRegex0_2().IsMatch(line)) return "Missing second operand";
+		}
 		if (ArithEmptyRegex().IsMatch(line)) return "Missing operands";
 
 		// Jump commands
