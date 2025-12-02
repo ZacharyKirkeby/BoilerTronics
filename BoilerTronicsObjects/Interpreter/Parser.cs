@@ -100,6 +100,7 @@ public partial class Parser : Node2D
 public Parser()
 {
 	ProgramValidator.SetQualityLevel(0);
+	qualityFlag = 0;//perchance this fixes it?
 	InitializeRegexes();
 	return;
 }
@@ -151,7 +152,7 @@ public Parser()
         {
             case 0:
 				REGISTER_DECAY_STEPS = 5;
-				this.registers = ["r0", "r1", "r2","r3","cmp"];
+				this.registers = ["r0", "r1", "r2","cmp"];
 				break;
 			case 1:
 				REGISTER_DECAY_STEPS = 7;
@@ -165,6 +166,8 @@ public Parser()
 				this.registers = ["r0", "r1", "r2", "cmp"];  // stable register being excluded
 				break;
 			default:
+				REGISTER_DECAY_STEPS = 5;
+				this.registers = ["r0", "r1", "r2","cmp"];
 				break;
         }
 	}
