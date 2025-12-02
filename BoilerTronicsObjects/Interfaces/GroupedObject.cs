@@ -67,4 +67,12 @@ namespace BoilerTronicsObjects.Interfaces {
 		// This should get some string variable internally
 		string getText();
 	}
+
+	/* 
+	 * The purpose of this interface is to allow for big placable objects to have sub objects that are also sub objects of groups
+	 * This interface will allow for sub groups to detect adjacet sub objects that are internal in the big object
+	 */
+	public interface BigGroupedSubObject {
+		GroupedSubObject getGroupedObject(Vector2I pos); // Get the sub object that is also a grouped object, should return null if one does not exist at pos
+	}
 }
