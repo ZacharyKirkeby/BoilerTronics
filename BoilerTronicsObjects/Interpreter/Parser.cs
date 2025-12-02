@@ -77,6 +77,11 @@ public partial class Parser : Node2D
     {
         qualityFlag = Q;
     }
+
+	public Parser()
+    {
+        return;
+    }
 	public override void _Ready()
 	{
 		InitializeRegisters();
