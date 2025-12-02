@@ -84,10 +84,7 @@ public partial class ProfileMenuController : Control
 
 	private void UpdateFriendRequestsOnly(List<FriendRequest> requests)
 	{
-		if (_friendsContainer == null)
-			return;
-
-		// Ensure RequestsList exists
+		// Get or create the RequestsList container
 		var requestsList = _friendsContainer.GetNodeOrNull<VBoxContainer>("RequestsList");
 		if (requestsList == null)
 		{
@@ -95,8 +92,10 @@ public partial class ProfileMenuController : Control
 			requestsList.Name = "RequestsList";
 			requestsList.AddThemeConstantOverride("separation", 8);
 			_friendsContainer.AddChild(requestsList);
+			_friendsContainer.MoveChild(requestsList, 1); // ensure it’s at index 1
 		}
 
+		// Clear previous children
 		foreach (Node c in requestsList.GetChildren())
 			c.QueueFree();
 
@@ -131,6 +130,7 @@ public partial class ProfileMenuController : Control
 			requestsList.AddChild(row);
 		}
 	}
+
 
 	private async void UpdateFriendsListOnly()
 	{
