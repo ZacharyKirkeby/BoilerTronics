@@ -9,7 +9,6 @@ using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using Parsing;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
@@ -87,8 +86,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
-			// ResetFrame();
-			ResetState();
+			ResetFrame();
 
 			UpdateRegisterDisplay();
 		}
@@ -259,30 +257,26 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			return;
 		}
-		
-		// Select the correct grab animation
-		private void GrabAnim() {
+
+		// TODO: Create some helper function so that we can update our current from based on our held object
+		private void UpdateFrame() {
 			if (heldObject is CoalObject) {
-				TriggerAnimation("grabCoal", AnimatingObject.AnimateType.AnimateFull);
+				SetFrameIndex(2);
 			} else if (heldObject is IronOreObject) {
-				TriggerAnimation("grabIronOre", AnimatingObject.AnimateType.AnimateFull);
+				SetFrameIndex(3);
 			} else if (heldObject is IronBarObject) {
-				TriggerAnimation("grabIronBar", AnimatingObject.AnimateType.AnimateFull);
+				SetFrameIndex(4);
 			} else if (heldObject is IronPlateObject) {
-				TriggerAnimation("grabIronPlate", AnimatingObject.AnimateType.AnimateFull);
+				SetFrameIndex(5);
 			} else if (heldObject is IronRodObject) {
-				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull);
+				SetFrameIndex(6);
 			} else {
-				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull);
-				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim.");
+				SetFrameIndex(0);
 			}
-		}
-		
-		// Select the correct drop animation
-		private void DropAnim() {
-			// well i'm silly. in reality, we only need one "drop" animation
-			// because the object "drops" the instant the "Drop" call is triggered
-			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull);
+
+			// Update on the layer
+			BoilerTronicsLevel level = BoilerTronicsGlobalManager.GlobalManager.currLevel;
+			level.cLayer.SetCell(this.GetCurrPos(), GetFrame().GetSourceID(), GetFrame().GetAtlasPos());
 		}
 
 		public void Grab(string[] args) {
@@ -314,8 +308,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			}
 
 			// Call to some update frame function that will update based on the held item
-			// UpdateFrame();
-			GrabAnim();
+			UpdateFrame();
 		}
 
 		public void Drop(string[] args) {
@@ -340,8 +333,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				if (bmObj.Place(heldObject, this.GetCurrPos())) heldObject = null;
 			}
 
-			// UpdateFrame();
-			DropAnim();
+			UpdateFrame();
 		}
 
 		public void Rotate(string[] args)
@@ -360,97 +352,25 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
 			
-			// ANIMATIONS //
+			// adds two new frames to be used by the Frame system
+			// (0) is default visuals
+			// (1) is "grab empty"
+			AddFrame(new TileTex(new Vector2I(0, 0), 10));
+
+			// (2) is "grab coal"
+			AddFrame(new TileTex(new Vector2I(0, 1), 10));
 			
-			// anim base for "grab" animations
-			List<TileTex> grabAnimBase = new List<TileTex>{
-				new TileTex(new Vector2I(3, 0), 10),
-				new TileTex(new Vector2I(2, 0), 10),
-				new TileTex(new Vector2I(1, 0), 10),
-			};
+			// (3) is "grab iron ore"
+			AddFrame(new TileTex(new Vector2I(0, 2), 10));
 			
-			// grab empty
-			PlaceableAnimationData grabEmpty = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabEmpty.AddFrame(new TileTex(new Vector2I(0, 0), 10));
-			animationData.Add(
-				"grabEmpty",
-				grabEmpty
-			);
-			
-			// grab coal
-			PlaceableAnimationData grabCoal = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabCoal.AddFrame(new TileTex(new Vector2I(0, 1), 10));
-			animationData.Add(
-				"grabCoal",
-				grabCoal
-			);
-			
-			// grab iron ore
-			PlaceableAnimationData grabIronOre = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabIronOre.AddFrame(new TileTex(new Vector2I(0, 2), 10));
-			animationData.Add(
-				"grabIronOre",
-				grabIronOre
-			);
-			
-			// grab iron bar
-			PlaceableAnimationData grabIronBar = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabIronBar.AddFrame(new TileTex(new Vector2I(0, 3), 10));
-			animationData.Add(
-				"grabIronBar",
-				grabIronBar
-			);
-			
-			// grab iron plate
-			PlaceableAnimationData grabIronPlate = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabIronPlate.AddFrame(new TileTex(new Vector2I(0, 4), 10));
-			animationData.Add(
-				"grabIronPlate",
-				grabIronPlate
-			);
-			
-			// grab iron rod
-			PlaceableAnimationData grabIronRod = new PlaceableAnimationData(
-				grabAnimBase, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			grabIronRod.AddFrame(new TileTex(new Vector2I(0, 5), 10));
-			animationData.Add(
-				"grabIronRod",
-				grabIronRod
-			);
-			
-			
-			// drop empty
-			List<TileTex> dropEmptyAnim = new List<TileTex>{
-				new TileTex(new Vector2I(0, 0), 10),
-				new TileTex(new Vector2I(1, 0), 10),
-				new TileTex(new Vector2I(2, 0), 10),
-				new TileTex(new Vector2I(3, 0), 10),
-			};
-			PlaceableAnimationData dropEmpty = new PlaceableAnimationData(
-				dropEmptyAnim, this, 
-				new Vector2I(0, 0), // (0, 0) offset
-				0.2);				// each frame is 0.2s long
-			animationData.Add(
-				"dropEmpty",
-				dropEmpty
-			);
+			// (4) is "grab iron bar"
+			AddFrame(new TileTex(new Vector2I(0, 3), 10));
+
+			// (5) is "grab iron plate"
+			AddFrame(new TileTex(new Vector2I(0, 4), 10));
+
+			// (6) is "grab iron rod"
+			AddFrame(new TileTex(new Vector2I(0, 5), 10));
 
 		} // create object
 

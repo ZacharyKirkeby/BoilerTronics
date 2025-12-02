@@ -21,7 +21,8 @@ namespace BoilerTronicsObjects.Placeable
 	/* 
 		Contains the following information:
 		- object's parent address
-		- current active "texture"
+		- current active "texture"	-- AVOID USING THIS FOR THE MOST PART
+			- make sure to use "GetFrame()", and not "GettTileTex()"!!!
 		- the (Vector2I) offset of this texture (from the object's current position)
 		- a List<TileTex> of the animation's frames
 		- a frame index
@@ -64,9 +65,22 @@ namespace BoilerTronicsObjects.Placeable
 			);
 		}
 		
+		// alternative constructor that accepts a list of textures to be used
+		// note: these textures will be DEEP COPIED into this new object!
+		public PlaceableAnimationData(List<TileTex> textures, PlaceableObject parentObject, Vector2I inCoords, double iterTime) {
+			this.parentObj = parentObject;
+			
+			this.frames = TileTex.DeepCopyTileTexList(textures);
+			this.texture = frames[0];	// base texture should always be the 0th frame
+			
+			this.frameTime = iterTime;
+			SetCoordsOffset(inCoords);
+		}
+		
+		
 		// getters/setters
-		public TileTex GetTileTex() {
-			return this.texture;
+		public TileTex GetTileTex() {	// note: TRY TO AVOID USING THIS!!! Use 'GetFrame()' instead!!!
+			return TileTex.Copy(this.texture);
 		}
 		public void SetTileTex(TileTex input) {
 			this.texture = TileTex.Copy(input);
@@ -111,7 +125,7 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// adds a frame to the internal list of frames
 		// should only ever be called by child objects
-		protected void AddFrame(TileTex input) {
+		public void AddFrame(TileTex input) {
 			if (input == null) { return; }
 			frames.Add(input);
 		}
@@ -177,6 +191,7 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// deltaTime should be 'GlobalManager.currLevel.DeltaTime"
 		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime) {
+			// GD.Print("AnimatingObject: ", this, ": Creating Object");
 			this.data = input;
 			
 			coordsOffset = input.GetCoordsOffset();
@@ -195,7 +210,11 @@ namespace BoilerTronicsObjects.Placeable
 				// this means all actions (claw movement, etc) occur in 0.005s, rather than 1.0s
 				// therefore, let's just be lazy and consider that the per-frame speed is actually (frame speed * deltaTime)
 				perFrameTime = data.GetFrameTime() * deltaTime;
+				
+				GD.Print("AnimatingObject: ", this, ": Per-Frame-Time: ", perFrameTime);
 			}
+			
+			// GD.Print("AnimatingObject: ", this, ": Created Object");
 		}
 		
 		public override void _Ready() {
@@ -203,6 +222,9 @@ namespace BoilerTronicsObjects.Placeable
 			if (manager == null) {
 				GD.PrintErr("PlaceableAnimated: _Ready(): Catastrophic Error: Global Manager Not Initialized!");
 			}
+			
+			// register with the level; critical such that this object can be terminated at any point!
+			registerConsumingObject();
 			
 			// grab semaphore, no steps are allowed to occur until this object is finished animating!
 			manager.currLevel.runSem.Wait();
@@ -222,19 +244,21 @@ namespace BoilerTronicsObjects.Placeable
 			
 			// if halted, then don't do anything important!
 			if (halted) {
+				// GD.Print("AnimatingObject: ", this, ": Process halted, stalling.");
 				base._Process(delta);
 				return;
 			}
 			
 			// check time elapsed
 			timeElapsed += delta;
+			// GD.Print("AnimatingObject: ", this, ": timeElapsed: ", timeElapsed);
 			
 			// TODO: multiple cases
 			// FIRST CASE: iterate through animation until finished
 			if (animationType == AnimateType.Step) {
 				// "Step" Animation Type:
 				// Simply step one frame and that's that for this in-game "step"
-				
+				GD.Print("AnimatingObject: ", this, ": Step Animation Finished");
 				data.StepFrame();
 				
 				// tell layer to update its visuals
@@ -248,12 +272,14 @@ namespace BoilerTronicsObjects.Placeable
 				
 				// only increment "frameCount" if we've passed enough time
 				if (timeElapsed > perFrameTime) {
+					GD.Print("AnimatingObject: ", this, ": Stepped Full Animation");
 					frameCount++;
 					timeElapsed -= perFrameTime;
 					
-					if (frameCount == data.GetFrameCount()) {
+					if (frameCount >= data.GetFrameCount()) {
 						// end the animation if we've successfully gone through all the frames
 						
+						GD.Print("AnimatingObject: ", this, ": Finished Full Animation");
 						End();
 					} else {
 						// otherwise, update the original object's sprites accordingly
@@ -274,26 +300,29 @@ namespace BoilerTronicsObjects.Placeable
 		public void UpdateVisuals() {
 			PlaceableObject obj = data.GetParentObj();
 			Layer parentLayer = obj.GetParentLayer();
-			TileTex currFrame = data.GetTileTex();
+			TileTex currFrame = data.GetFrame();
 			
 			// premature optimization for PlaceableBig objects
-			parentLayer.SetCell(obj.GetCurrPos() + coordsOffset, currFrame.GetSourceID(), currFrame.GetAtlasPos());
+			Vector2I modPos = obj.GetCurrPos() + coordsOffset;
+			parentLayer.SetCell(modPos, currFrame.GetSourceID(), currFrame.GetAtlasPos());
+			GD.Print("AnimatingObject: ", this, ": Updated cell ", modPos, ", sourceID: ", currFrame.GetSourceID(), ", atlasPos: ", currFrame.GetAtlasPos().ToString());
 		}
 		
-		// reset the original object accordingly!
+		
+		// reset the original object accordingly
 		public void Reset() {
 			PlaceableObject obj = data.GetParentObj();
 			Layer parentLayer = obj.GetParentLayer();
 			
-			// reset visuals
+			// reset object's state
 			if (obj is PlaceableAnimated) {
 				((PlaceableAnimated) obj).ResetState();
 			} else {
 				// TODO: big placeable version
 			}
 			
-			// tell layer to update its visuals
-			UpdateVisuals();
+			// note: the layer's "Reset()" functionality already perfectly handles visuals and etc
+			// does not need to be handled here!
 		}
 		
 		// de-register object from game state, release semaphore, then queue object deletion
@@ -303,6 +332,9 @@ namespace BoilerTronicsObjects.Placeable
 
 			// Release sem
 			manager.currLevel.runSem.Release();
+			
+			// Stop all actions; failsafe!
+			halted = true;
 
 			// Destroy this object
 			this.QueueFree();
@@ -318,12 +350,18 @@ namespace BoilerTronicsObjects.Placeable
 		}
 
 		public void haultObject() {
+			GD.Print("AnimatingObject: ", this, ": Halting Object");
 			// TODO: hault object
 			halted = true;
 		}
 	}
 
-	// main class that objects should extend
+	/* 
+		TODO: better documentation
+		
+		this is the class that "animated" objects should extend!!!
+		(baring PlaceableBig type objects -- special version to come soon (tm)
+	*/
 	public abstract class PlaceableAnimated : PlaceableObject
 	{	
 		protected string activeState = "default";
@@ -334,13 +372,31 @@ namespace BoilerTronicsObjects.Placeable
 		public PlaceableAnimated(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0) 
 		: base(OGX, OGY, sourceId, atlasPos, altTitle)
 		{
+			animationData = new Godot.Collections.Dictionary<string, PlaceableAnimationData>();
+			
 			// always add the "default" state
+			List<TileTex> defaultAnim = new List<TileTex>{
+				new TileTex(atlasPos, sourceId)
+			};
+			PlaceableAnimationData newData = new PlaceableAnimationData(
+				defaultAnim, this,
+				new Vector2I(0, 0), // (0, 0) offset
+				0.0);				// each frame is 0.0s long
+			animationData.Add(
+				"default",
+				newData
+			);
+			
+			/*
+			// alt init:
 			PlaceableAnimationData newData = new PlaceableAnimationData(new TileTex(atlasPos, sourceId), this, new Vector2I(0, 0), 0.0);
 			// newData.AddFrame(new TileTex(atlasPos, sourceId));	// ex: adding more frames to animation data
 			animationData.Add(
 				"default",
 				newData
 			);
+			*/
+			
 			ResetState();
 		}
 		
@@ -350,6 +406,7 @@ namespace BoilerTronicsObjects.Placeable
 			bool res = SetState(key);
 			if (!res) { return res; } // if we failed to set this object to the target state, return "false"
 			
+			GD.Print("PlaceableAnimated: ", this, ", Triggering Animation: ", key);
 			// update 'currData'
 			
 			// tell parent layer to update its visuals
@@ -359,6 +416,9 @@ namespace BoilerTronicsObjects.Placeable
 			// create new AnimatingObject processor object
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			AnimatingObject aObj = new AnimatingObject(currData, animationType, manager.currLevel.DeltaTime);
+			
+			// "add to the scene" such that _Process works as intended
+			manager.currLevel.cLayer.GetParent().AddChild(aObj);
 			
 			return true;
 		}
@@ -402,20 +462,20 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// overrides visuals in accordance to what the expected visuals!
 		public override int GetSourceID() {
-			TileTex T = currData.GetTileTex();
+			TileTex T = currData.GetFrame();
 			return T.GetSourceID();
 		}
 		
 		public override Vector2I GetAtlasPos() {
-			TileTex T = currData.GetTileTex();
+			TileTex T = currData.GetFrame();
 			return T.GetAtlasPos();
 		}
 		
-		// TODO: Keenan work this out!
+		// TODO: Keenan please double check this!
 		public override Texture GetTexture()
 		{
 			// This will get the texture of the current frame
-			TileTex T = currData.GetTileTex();
+			TileTex T = currData.GetFrame();
 			if (T == null) return base.GetTexture(); // null
 
 			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
