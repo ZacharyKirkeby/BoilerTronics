@@ -4,9 +4,13 @@ using System;
 public partial class MainMenu : Node2D
 {
 	private int level = 1;
+	private FirebaseAuthManager _authManager;
+	private FirestoreService _firestoreService;
 	
 	public override void _Ready()
 	{
+		InitializeServices();
+
 		// Set fullscreen toggle
 		var fullscreenButton = GetNode<Button>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen");
 		fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
@@ -17,6 +21,25 @@ public partial class MainMenu : Node2D
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		volSlider.Value = soundManager.GetCurrentVolume();
 		
+	}
+
+	private void InitializeServices()
+	{
+		// Get or create auth manager
+		_authManager = FirebaseAuthManager.Instance;
+		if (_authManager == null)
+		{
+			_authManager = new FirebaseAuthManager();
+			AddChild(_authManager);
+		}
+
+		// Get or create firestore service
+		_firestoreService = FirestoreService.Instance;
+		if (_firestoreService == null)
+		{
+			_firestoreService = new FirestoreService();
+			AddChild(_firestoreService);
+		}
 	}
 
 	private void _on_new_game_pressed()
@@ -113,19 +136,19 @@ public partial class MainMenu : Node2D
 			GD.PrintErr($"PDF not found: {pdfPath}");
 	}
 
-	private void _on_achievements_pressed() {
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = true;
+	public void _on_achievements_pressed() {
+		GetNode<Window>("Achievements Menu").Visible = true;
 	}
 	
 	private void _on_achievements_menu_close_requested() {
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
+		GetNode<Window>("Achievements Menu").Visible = false;
 	}
 	
-	private void _on_easter_eggs_pressed() {
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = true;
+	public void _on_easter_eggs_pressed() {
+		GetNode<Window>("Easter Egg Menu").Visible = true;
 	}
 	
 	private void _on_easter_egg_menu_close_requested() {
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = false;
+		GetNode<Window>("Easter Egg Menu").Visible = false;
 	}
 }
