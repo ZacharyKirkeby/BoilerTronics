@@ -20,6 +20,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		static int layerSourceId = 14;
 		static Vector2I atlasPos = new Vector2I(0,0);
 
+		private PlaceableObject obj;
+
 		private PipeGroup group;
 
 		// For loading purposes, have a specific string that will override its parent's group contents
@@ -47,15 +49,26 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Runnable interface
 		
 		public void Step() {
+			PipeGroup parent = this.getGroup() as PipeGroup;
+
+			// Cool object if we have one, it's heated, and we have water to cool it
+			if (obj is HeatedMaterial hm && hm.hasHeat() && parent.consumeLiquid(PipeGroup.LiquidType.Water, 10)) hm.setHeat(0);
 		}
 
 		public void Reset() {
+			obj = null;
 		}
 
 		public void RegisterSteppable() {
+			BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+
+			man.currLevel.RegisterRunnable(this);
 		}
 
 		public void UnRegisterSteppable() {
+			BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+
+			man.currLevel.UnRegisterRunnable(this);
 		}
 	}
 }
