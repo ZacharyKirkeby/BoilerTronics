@@ -62,6 +62,8 @@ namespace BoilerTronicsObjects.Objects
 				case 6:
 					//factory roller
 					return FactoryRoller.StaticGetTextureGrid(dir);
+				case 12:
+					return SteelMill.StaticGetTextureGrid(dir);
 				case 153:
 					//switch
 					return SwitchObject.StaticGetTextureGrid(dir);
@@ -125,6 +127,8 @@ namespace BoilerTronicsObjects.Objects
 				case 11:
 					// Heater
 					return new HeaterObject(x, y, 0);
+				case 12:
+					return new SteelMill(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
