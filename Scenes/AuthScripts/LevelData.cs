@@ -11,6 +11,5 @@ public class LevelData
 	public string Description { get; set; }
 	public string LevelDataJson { get; set; }
 	public string Difficulty { get; set; }
-	public DateTime CreatedAt { get; set; }
 	public List<string> Tags { get; set; }
 }
