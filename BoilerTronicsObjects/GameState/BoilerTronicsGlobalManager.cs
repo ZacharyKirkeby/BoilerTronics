@@ -148,7 +148,6 @@ public partial class BoilerTronicsGlobalManager : Node
 		}
 		
 		// update internal variables
-		GD.Print("level here: " + inId);
 		levelID = inId;
 		levelLoadSlot = inSlot;
 		return true;

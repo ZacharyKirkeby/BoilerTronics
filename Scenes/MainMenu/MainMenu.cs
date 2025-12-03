@@ -3,7 +3,7 @@ using System;
 
 public partial class MainMenu : Node2D
 {
-	private int level = 1;
+	private int level = 11;
 	
 	public override void _Ready()
 	{
