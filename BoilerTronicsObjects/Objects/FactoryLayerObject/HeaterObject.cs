@@ -12,13 +12,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	 * The purpose of this class is to provide a base for the pump objects for the seperate liquids.
 	 * The default pump object should not bu used, but instead it should be inherited by the specific object
 	 */
-	public class CoolerObject : PipeObject, Movable, Runnable {
+	public class HeaterObject : PlaceableObject, Movable, Runnable {
 
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
 
 		static int layerSourceId = 3;
-		static Vector2I atlasPos = new Vector2I(0,5);
+		static Vector2I atlasPos = new Vector2I(1,5);
 
 		private PlaceableObject obj;
 
@@ -28,12 +28,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private string internalText = null;
 
 		// This constructor shouldn't be used as we will never use the base pump
-		public CoolerObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, atlasPos, altTitle) {
+		public HeaterObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, atlasPos, altTitle) {
 			RegisterSteppable();
-		}
-
-		public override void UpdateSprite() {
-			// We never want to update the sprite
 		}
 
 		// Movable Interface
@@ -57,10 +53,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Runnable interface
 		
 		public void Step() {
-			PipeGroup parent = this.getGroup() as PipeGroup;
-
-			// Cool object if we have one, it's heated, and we have water to cool it
-			if (obj is HeatedMaterial hm && hm.hasHeat() && parent.consumeLiquid(PipeGroup.LiquidType.Water, 10)) hm.setHeat(0);
+			// Heat object if we have one, it's not fully heated
+			if (obj is HeatedMaterial hm && hm.getHeatValue() < 5) hm.setHeat(5);
 		}
 
 		public void Reset() {
@@ -80,3 +74,4 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 	}
 }
+
