@@ -10,14 +10,37 @@ using BoilerTronicsObjects.Interfaces;
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	public class PipeGroup : PlaceableObject, Runnable, GroupedObject{
 
+		/*
+		 * This will be used to track the liquid type in the system
+		 * We should throw an error if these liquids do not exist in the system
+		 */
 		public enum LiquidType {
 			None = 0,
 			Water = 1,
 			Lube = 2,
 		}
+
+		LiquidType currentType; // Current type of liquid
+		int liquidAmount; // Current amout of liquid in the system
 		
 		private List<PipeObject> pipeList = new List<PipeObject>(); // List of conveyorObjects
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
+
+		void addLiquid(LiquidType T, int amt) {
+			if (T == currentType) liquidAmount += amt;
+			else {
+				// Error: mixing liquid types
+			}
+		}
+
+		bool consumeLiquid(LiquidType T, int amt) {
+			if (T == currentType && liquidAmount <= amt) liquidAmount += amt;
+			else {
+				return false; // Not correct type or not enough in system
+			}
+
+			return true; // Consumed liquid
+		}
 
 		public PipeGroup(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			RegisterSteppable();
@@ -153,7 +176,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				pipeList.Remove(pObj);
 				pObj.removeFromGroup();
 
-				foreach (PipeObject pConn in pObj.GetConnections()) {
+				foreach (PipeObject pConn in pipeList) {
 					pConn.UpdateSprite();
 				}
 			}

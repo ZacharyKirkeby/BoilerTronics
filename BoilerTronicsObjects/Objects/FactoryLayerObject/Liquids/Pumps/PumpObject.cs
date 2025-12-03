@@ -12,24 +12,28 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	 * The purpose of this class is to provide a base for the pump objects for the seperate liquids.
 	 * The default pump object should not bu used, but instead it should be inherited by the specific object
 	 */
-	public class PumpObject : PlaceableObject, GroupedSubObject, QualityObject {
+	public class PumpObject : PipeObject, QualityObject {
 
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
 
 		static int layerSourceId = 14;
 
-		Direction direction; // This will determine the direction the the pump will be facing
+		Placeable.Direction direction; // This will determine the direction the the pump will be facing
 
 		// Vectors for the object we are connected to given our connection
 		Vector2I up_v = new Vector2I(1, -1);
 		Vector2I down_v = new Vector2I(-1, 1);
-		Vector2I left_v = new Vector2I(-1, 0);
-		Vector2I right_v = new Vector2I(1, 0);
+		Vector2I right_v = new Vector2I(-1, 0);
+		Vector2I left_v = new Vector2I(1, 0);
 
 		// We'll need to store these in a list, we can more than likely have these at the index of the corresponding enum
-		static Vector2I LeftObjectAtlasPos = new Vector2I(0, 0);
-		static Vector2I RightObjectAtlasPos = new Vector2I(0, 1);
+		public static Vector2I []atPosArr = {
+			new Vector2I(0,0),
+			new Vector2I(0,0),
+			new Vector2I(0,0),
+			new Vector2I(0,0)
+		};
 
 		private PipeGroup group;
 
@@ -38,51 +42,32 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// For loading purposes, have a specific string that will override its parent's group contents
 		private string internalText = null;
 
-		
-		// Gets the group that this object belongs to
-		public GroupedObject getGroup() {
-			return group;
+		// This constructor shouldn't be used as we will never use the base pump
+		public PumpObject(int OGX, int OGY, Quality Q, Placeable.Direction D, int altTitle = 0) : base(OGX, OGY, layerSourceId + (int) Q, atPosArr[(int) D], altTitle) {
+			this.direction = D;
 		}
 
-		// Sets the group of the object
-		public void setGroup(GroupedObject gObj) {
-			if (gObj is PipeGroup cgObj) group = cgObj;
+		public PumpObject(int OGX, int OGY, int layerSourceId, Vector2I atPos, Quality Q, Placeable.Direction D, int altTitle = 0) : base(OGX, OGY, layerSourceId, atPos, altTitle) {
+			this.direction = D;
 		}
 
-		// Removes object from group (sets some internal var to NULL)
-		public void removeFromGroup() {
-			group = null;
-		}
-
-		// True if in group | False if not in group
-		public bool inGroup() {
-			return (!(group == null));
-		}
-
-		public GroupedObject createGroup() {
-			return new PipeGroup(this.GetCurrPos().X, this.GetCurrPos().Y) as GroupedObject;
-		}
-
-		public PumpObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, new Vector2I(0,0), altTitle) {
-		}
-
-		public List<GroupedSubObject> GetConnections() {
+		public override List<PipeObject> GetConnections() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
-			List<GroupedSubObject> retList = new List<GroupedSubObject>();
+			List<PipeObject> retList = new List<PipeObject>();
 			PlaceableObject obj = null;
 
 			switch (direction) {
-				case Direction.UP:
+				case Placeable.Direction.UP:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + up_v);
 					break;
-				case Direction.RIGHT:
+				case Placeable.Direction.RIGHT:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + right_v);
 					break;
-				case Direction.DOWN:
+				case Placeable.Direction.DOWN:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + down_v);
 					break;
-				case Direction.LEFT:
+				case Placeable.Direction.LEFT:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + left_v);
 					break;
 			}
@@ -97,35 +82,31 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		 * The purpose of this function is to allow for pipes to see if they are able to connect to the pipe
 		 * The only way for the pipe to be able to be connected is if it is on the correct direction of the pipe
 		 */
-		public bool ValidConnect(PipeObject p) {
+		public override bool CanConnect(PipeObject p) {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			PlaceableObject obj = null;
 
 			switch (direction) {
-				case Direction.UP:
+				case Placeable.Direction.UP:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + up_v);
 					break;
-				case Direction.RIGHT:
+				case Placeable.Direction.RIGHT:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + right_v);
 					break;
-				case Direction.DOWN:
+				case Placeable.Direction.DOWN:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + down_v);
 					break;
-				case Direction.LEFT:
+				case Placeable.Direction.LEFT:
 					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + left_v);
 					break;
 			}
 
 			return (obj != null && obj is PipeObject pObj && pObj == p);
 		}
-
-		// These are just needed for the conv groups, pipes are not scriptable, so they don't need to actually do anything with these
-		public void setText(string T) {
-		}
-
-		public string getText() {
-			return null;
+		
+		public override void UpdateSprite() {
+			// We never want to update the sprite
 		}
 
 		// Quality interface

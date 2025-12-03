@@ -279,9 +279,13 @@ texture_region_size = Vector2i(32, 32)
 3:0/0 = 0
 3:0/0/texture_origin = Vector2i(0, -8)
 0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, -8)
 1:1/0 = 0
+1:1/0/texture_origin = Vector2i(0, -8)
 2:1/0 = 0
+2:1/0/texture_origin = Vector2i(0, -8)
 3:1/0 = 0
+3:1/0/texture_origin = Vector2i(0, -8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_nvjgu"]
 texture = ExtResource("6_vdagq")
@@ -295,9 +299,13 @@ texture_region_size = Vector2i(32, 32)
 3:0/0 = 0
 3:0/0/texture_origin = Vector2i(0, -8)
 0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, -8)
 1:1/0 = 0
+1:1/0/texture_origin = Vector2i(0, -8)
 2:1/0 = 0
+2:1/0/texture_origin = Vector2i(0, -8)
 3:1/0 = 0
+3:1/0/texture_origin = Vector2i(0, -8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pq1xv"]
 texture = ExtResource("7_tveio")
@@ -311,9 +319,13 @@ texture_region_size = Vector2i(32, 32)
 3:0/0 = 0
 3:0/0/texture_origin = Vector2i(0, -8)
 0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, -8)
 1:1/0 = 0
+1:1/0/texture_origin = Vector2i(0, -8)
 2:1/0 = 0
+2:1/0/texture_origin = Vector2i(0, -8)
 3:1/0 = 0
+3:1/0/texture_origin = Vector2i(0, -8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_spek4"]
 texture = ExtResource("3_spek4")
