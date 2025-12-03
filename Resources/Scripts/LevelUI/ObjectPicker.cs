@@ -57,7 +57,9 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true, false),
 		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false),
 		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false),
-		new ItemInfo("Pipe", FactoryPress.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false),
+		new ItemInfo("Pipe", PipeObject.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false),
+		new ItemInfo("WaterPump", WaterPump.GetCostStatic(), 2, 14, new Vector2I(0,0), new Vector2I(85, 85), false, true),
+		new ItemInfo("LubePump", LubePump.GetCostStatic(), 2, 14, new Vector2I(0,1), new Vector2I(85, 85), false, true),
 	};
 
 	static ItemInfo[] DeveloperSection =
