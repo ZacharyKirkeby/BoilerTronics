@@ -156,24 +156,29 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// UP
 
-			objectData[0][0].SetInternalObj(null);
-			objectData[0][1].SetInternalObj(Input);
-			objectData[0][2].SetInternalObj(Output);
+			objectData[0][0].SetInternalObj(Input);
+			objectData[0][1].SetInternalObj(null);
+			objectData[0][2].SetInternalObj(null);
+			objectData[0][3].SetInternalObj(Output);
 
 			// DOWN
-			objectData[1][0].SetInternalObj(Input);
-			objectData[1][1].SetInternalObj(null);
-			objectData[1][2].SetInternalObj(Output);
+			objectData[1][0].SetInternalObj(null);
+			objectData[1][1].SetInternalObj(Output);
+			objectData[1][2].SetInternalObj(Input);
+			objectData[1][3].SetInternalObj(null);
 
 			// LEFT
-			objectData[2][0].SetInternalObj(Input);
+			objectData[2][0].SetInternalObj(Output);
 			objectData[2][1].SetInternalObj(null);
-			objectData[2][2].SetInternalObj(Output);
+			objectData[2][2].SetInternalObj(null);
+			objectData[2][3].SetInternalObj(Input);
 
 			// RIGHT
 			objectData[3][0].SetInternalObj(null);
 			objectData[3][1].SetInternalObj(Output);
 			objectData[3][2].SetInternalObj(Input);
+			objectData[3][3].SetInternalObj(null);
+
 			
 			SetDir(Direction.UP);
 		}
@@ -215,9 +220,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
 			if (childObj == Input) {
-				if ((!_Working) && (obj is IronPlateObject) && (_Inv == null)) {
+				if ((!_Working) && (obj is SteelPlateObject spO) && (spO.hasHeat()) && (_Inv == null)) {
 					_StepsTillCompletion = 1;
-					_Inv = new IronRodObject(0, 0, 0) as PlaceableObject;
+					SteelGearObject sgO = new SteelGearObject(0, 0, 0);
+					sgO.setHeat(spO.getHeatValue()); // Transfer heat
+					_Inv = sgO as PlaceableObject;
 					_Inv.SetGarbage(true);
 					_Working = true;
 					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
