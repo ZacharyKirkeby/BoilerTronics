@@ -32,7 +32,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private FactoryBigObjectInput coalIn;
 		private FactoryBigObjectOutput materialOut;
 		private List<PlaceableBigData>[] objectData;
-
+		
 		/*
 		 * This is a static data structure that stores just the structure and texture data of the big object
 		 * This will be deep copied on instantiating an object
@@ -54,7 +54,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						),
 				new PlaceableBigData(
 						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						//new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						// note: this frame will be animated!
+						new List<TileTex> {
+							new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(5, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(7, 1, 3),	// atlasX, atlasY, sourceId
+						},
 						null
 						),
 				new PlaceableBigData(
@@ -82,7 +88,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						),
 				new PlaceableBigData(
 						new Vector2I(0, -1),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						//new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						// note: this frame will be animated!
+						new List<TileTex> {
+							new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(5, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(7, 1, 3),	// atlasX, atlasY, sourceId
+						},
 						null
 						)
 			},
@@ -95,7 +107,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						//new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						// note: this frame will be animated!
+						new List<TileTex> {
+							new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(5, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(7, 1, 3),	// atlasX, atlasY, sourceId
+						},
 						null
 						),
 				new PlaceableBigData(
@@ -113,7 +131,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			new List<PlaceableBigData> {
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						//new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+						// note: this frame will be animated!
+						new List<TileTex> {
+							new TileTex(0, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(5, 1, 3),	// atlasX, atlasY, sourceId
+							new TileTex(7, 1, 3),	// atlasX, atlasY, sourceId
+						},
 						null
 						),
 				new PlaceableBigData(
@@ -132,6 +156,16 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						null
 						),
 			},
+		};
+		
+		// keep track of animated tiles, namely their indices
+		// this will be important later as whenever this object is "cooking", we will use this
+		// list to determine which tile we will update the frames of!
+		private int[] animationPositions = new int[4] {
+			2,	// up
+			3,	// down
+			1,	// left
+			0	// right
 		};
 
 		public FactoryFurnace(int OGX, int OGY, int altTitle = 0, int objectID = 200)
@@ -213,7 +247,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// We don't really care what the object is, the actual checking for materials will be done in the call back functions that the child object will make to the parent
 			// These call will also provide a refrence to the child objct. Throught this refrence we can checl what specific IN/OUT it is and act accordlingly
 			if (obj != null && obj is Movable mObj) ret = mObj.PickUp();
+			
 			// Return the obj
+			// if successfully return an object, reset "in progress" anims
+			if (ret != null) { ResetAnims(); }
 			return ret;
 		}
 		
@@ -224,12 +261,15 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			PlaceableBigData BD = findDataAtPos(D, pos);
 			PlaceableObject iObj = BD.GetInternalObj();
 			// Place in the obj if we can
-			if (obj != null && iObj is Movable mObj) return mObj.Place(obj);
+			if (obj != null && iObj is Movable mObj) {
+				return mObj.Place(obj);
+			};
 			// Otherwise we don't want that shit
 			return false;
 		}
 
 		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
+			GD.Print("FactoryFurnace: Received childObj: ", childObj);
 			if (childObj == coalIn) {
 				// We need to check and see if the object coming in is coal
 				// If so we wnat to do somthing and return true to accept it
@@ -318,16 +358,19 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			}
 			return null;
 		}
-
+		
 		// Runnable Interface
 		public void Step()
 		{
 			// If we are working and have fule
 			if (_Working && _Fule > 0) {
-				// Then we tak a step to completion
+				// Then we take a step to completion
 				_StepsTillCompletion--;
 				// And use some fule
 				_Fule--;
+				
+				// play step anims
+				StepAnims();
 
 				// Once we are done
 				if (_StepsTillCompletion == 0) {
@@ -354,9 +397,29 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			_Working = false;
 			_Fule = 0;
 			_StepsTillCompletion = 0;
-
+			
+			// reset visuals
+			ResetAnims();
+			
 			if (_Inv != null) _Inv.ResetPos();
 			_Inv = null;
+		}
+		
+		
+		/* Animation Functions (helpers) */
+		private void StepAnims() {
+			// update visuals
+			int facingDir = (int) GetDir();
+			int animatingIndex = animationPositions[facingDir];
+			PlaceableBigData data = objectData[facingDir][animatingIndex];
+			data.StepFrame();
+			this.GetParentLayer().UpdateObject(this);
+		}
+		
+		private void ResetAnims() {
+			int facingDir = (int) GetDir();
+			for (int i = 0; i < 4; i++) {objectData[facingDir][i].ResetFrame();}
+			this.GetParentLayer().UpdateObject(this);
 		}
 
 	}

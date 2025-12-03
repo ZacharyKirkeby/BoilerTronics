@@ -253,7 +253,7 @@ namespace BoilerTronicsObjects.Layers
 				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 					// check each individual data point
 					Vector2I dataCoords = data.GetPosition(obj.GetPos());
-					TileTex tex = data.GetTileTex();
+					TileTex tex = data.GetFrame();
 					
 					// update tiles to point to the origin (reference)
 					tiles[dataCoords.X, dataCoords.Y] = newPlaceable;
@@ -502,7 +502,7 @@ namespace BoilerTronicsObjects.Layers
 				foreach (PlaceableBigData data in objB.GetTextureGrid()) {
 					// check each individual data point
 					Vector2I dataCoords = data.GetPosition(objB.GetCurrPos());
-					TileTex tex = data.GetTileTex();
+					TileTex tex = data.GetFrame();
 					
 					// update tile grid 
 					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
@@ -555,7 +555,7 @@ namespace BoilerTronicsObjects.Layers
 					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
 						// check each individual data point
 						Vector2I dataCoords = data.GetPosition(objB.GetPos());
-						TileTex tex = data.GetTileTex();
+						TileTex tex = data.GetFrame();
 						
 						// update tiles to point to the origin (reference)
 						tiles[dataCoords.X, dataCoords.Y] = obj;

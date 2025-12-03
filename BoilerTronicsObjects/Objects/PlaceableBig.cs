@@ -61,6 +61,14 @@ namespace BoilerTronicsObjects.Placeable
 			SetInternalObj(obj);
 		}
 		
+		// constructor that automatically inserts an internal PlaceableObject and inserts a list of textures
+		public PlaceableBigData(Vector2I offset, List<TileTex> textures, PlaceableObject obj) : this(offset, textures[0], obj) {
+			// deep copy from input; first of input already copied in from base constructors.
+			for (int i = 1; i < textures.Count; i++) {
+				frames.Add(TileTex.Copy(textures[i]));
+			}
+		}
+		
 		// getters/setters
 		public TileTex GetTileTex() {
 			return this.texture;
@@ -122,6 +130,14 @@ namespace BoilerTronicsObjects.Placeable
 			if (index < 0) { return; }
 			if (index >= frames.Count) { return; }
 			frameIndex = index;
+		}
+		public int GetFrameIndex() {
+			return frameIndex;
+		}
+		
+		// steps by one frame, and loops around
+		public void StepFrame() {
+			frameIndex = (frameIndex + 1) % frames.Count;
 		}
 		
 		// returns the # of frames
