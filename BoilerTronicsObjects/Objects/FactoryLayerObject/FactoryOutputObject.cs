@@ -106,6 +106,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					SetAtlasPos(new Vector2I(1, 3));
 					break;
 				default:
+					SetAtlasPos(new Vector2I(2, 3)); // Place holder
 					GD.Print("FactoryInputObject: Warning: InputObject does not have visual variant for object id: ", _TargetObjectID);
 					break;;
 			}

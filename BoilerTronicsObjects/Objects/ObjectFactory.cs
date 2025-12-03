@@ -173,6 +173,12 @@ namespace BoilerTronicsObjects.Objects
 				case 204:
 					//IronRod
 					return new IronRodObject(x, y, 0);
+				case 205:
+					return new SteelBarObject(x, y, 0);
+				case 206:
+					return new SteelPlateObject(x, y, 0);
+				case 207:
+					return new SteelGearObject(x, y, 0);
 				case 250:
 					//factoryin - coal
 					return new FactoryInputObject(x, y, 0, 200);
@@ -188,6 +194,15 @@ namespace BoilerTronicsObjects.Objects
 				case 254:
 					//factoryin - iron rod
 					return new FactoryInputObject(x, y, 0, 204);
+				case 255:
+					//factoryin - steel bar
+					return new FactoryInputObject(x, y, 0, 205);
+				case 256:
+					//factoryin - steel plate
+					return new FactoryInputObject(x, y, 0, 206);
+				case 257:
+					//factoryin - steel gear
+					return new FactoryInputObject(x, y, 0, 207);
 				case 300:
 					//factoryout - coal
 					return new FactoryOutputObject(x, y, 0, 200);
@@ -203,6 +218,15 @@ namespace BoilerTronicsObjects.Objects
 				case 304:
 					//factoryout - iron rod
 					return new FactoryOutputObject(x, y, 0, 204);
+				case 305:
+					//factoryout - steel bar
+					return new FactoryOutputObject(x, y, 0, 205);
+				case 306:
+					//factoryout - steel plate
+					return new FactoryOutputObject(x, y, 0, 206);
+				case 307:
+					//factoryout - steel gear
+					return new FactoryOutputObject(x, y, 0, 207);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;
