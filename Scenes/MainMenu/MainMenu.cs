@@ -94,9 +94,19 @@ public partial class MainMenu : Node2D
 		//actually make volume 0
 		_on_main_vol_slider_value_changed(0);
 	}
+	
 	private void _on_open_pdf_pressed()
 	{
 		string pdfPath = "res://docs/AssemblyManual.pdf";
+		if (FileAccess.FileExists(pdfPath))
+			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
+		else
+			GD.PrintErr($"PDF not found: {pdfPath}");
+	}
+	
+	private void _on_open_pdf_2_pressed()
+	{
+		string pdfPath = "res://docs/tempUserGuide.pdf";
 		if (FileAccess.FileExists(pdfPath))
 			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
 		else

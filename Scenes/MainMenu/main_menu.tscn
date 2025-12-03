@@ -10,11 +10,11 @@
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_xt57n"]
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
-[ext_resource type="Script" uid="uid://ddyw6wtfs473h" path="res://Scenes/MainMenu/Achievement.cs" id="11_6c6cs"]
+[ext_resource type="Script" path="res://Scenes/MainMenu/Achievement.cs" id="11_6c6cs"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
-[ext_resource type="Script" uid="uid://y1rt7blgu1cs" path="res://Scenes/MainMenu/EasterEgg.cs" id="13_fo6ee"]
+[ext_resource type="Script" path="res://Scenes/MainMenu/EasterEgg.cs" id="13_fo6ee"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -832,6 +832,7 @@ script = ExtResource("12_rlg4b")
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/OpenPDF" to="." method="_on_open_pdf_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/OpenPDF2" to="." method="_on_open_pdf_2_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
 [connection signal="close_requested" from="ProfileMenu/VBoxContainer/Achievements/Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
