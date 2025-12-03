@@ -1,4 +1,5 @@
 
+using System;
 using Godot;
 
 
@@ -38,6 +39,35 @@ public partial class NewLevelSelect : Node2D
 
 	}
 	
+	private void _on_play_pressed()
+{
+	// The button that called this
+	var button = GetNode<Button>("%Play" +  (_gridPos.Y+1).ToString() + (_gridPos.X+1).ToString());
+
+
+
+	int section = _gridPos.Y+1; 
+	int level = _gridPos.X+1;  
+
+	GD.Print($"Pressed section {section} level {level}");
+
+	LoadLevel(section, level);
+	}
+
+	private void LoadLevel(int sectionnum, int levelnum)
+{
+	BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+	String level = sectionnum.ToString() + levelnum.ToString();
+	GD.Print("level: " + (level.ToInt()));
+	manager.SetTargetLevelSave(level.ToInt(), 0);
+	CallDeferred(nameof(changescenes));
+}
+private void changescenes()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
+	}
+
+
 	private void OnUpPressed() {
 		if (!_isMoving)
 		{
