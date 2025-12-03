@@ -90,16 +90,16 @@ public partial class ProfileMenuController : Control
 		if (requestsList == null)
 		{
 			// Remove old children inside the scroll container (if any)
-		foreach (var child in scroll.GetChildren())
-			child.QueueFree();
+			foreach (var child in scroll.GetChildren())
+				child.QueueFree();
 
-		// Recreate the list while preserving formatting
-		requestsList = new VBoxContainer();
-		requestsList.Name = "RequestsList";
-		requestsList.AddThemeConstantOverride("separation", 8);
-		requestsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+			// Recreate the list while preserving formatting
+			requestsList = new VBoxContainer();
+			requestsList.Name = "RequestsList";
+			requestsList.AddThemeConstantOverride("separation", 8);
+			requestsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
-		scroll.AddChild(requestsList);
+			scroll.AddChild(requestsList);
 		}
 
 		// Clear previous children
