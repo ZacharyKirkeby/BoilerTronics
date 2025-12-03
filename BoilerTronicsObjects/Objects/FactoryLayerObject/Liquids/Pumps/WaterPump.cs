@@ -12,7 +12,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	 * The purpose of this class is to provide a base for the pump objects for the seperate liquids.
 	 * The default pump object should not bu used, but instead it should be inherited by the specific object
 	 */
-	public class WaterPump : PumpObject { // Runnable
+	public class WaterPump : PumpObject, Runnable {
 
 		public static int layerSourceId = 14;
 
@@ -24,6 +24,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		};
 
 		public WaterPump(int OGX, int OGY, Quality Q, Placeable.Direction D, int altTitle = 0) : base(OGX, OGY, layerSourceId + (int) Q, atPosArr[(int) D], Q, D,altTitle) {
+			RegisterSteppable();
 		}
 
 		public static Texture GetTexture(Quality Q, Placeable.Direction D) {
@@ -47,6 +48,30 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// (Figure this out later)
 
 			return T;
+		}
+
+		// Runnable Interface
+
+		public void Step()
+		{
+			PipeGroup PG = this.getGroup() as PipeGroup;
+
+			PG.addLiquid(PipeGroup.LiquidType.Water, 10 * (int) this.GetQuality());
+		}
+
+		public void RegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.RegisterRunnable(this);
+		}
+
+		public void UnRegisterSteppable()
+		{
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			manager.currLevel.UnRegisterRunnable(this);
+		}
+
+		public void Reset() {
 		}
 	}
 }

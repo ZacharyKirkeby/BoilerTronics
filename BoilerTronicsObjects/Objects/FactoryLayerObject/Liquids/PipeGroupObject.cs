@@ -26,14 +26,14 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private List<PipeObject> pipeList = new List<PipeObject>(); // List of conveyorObjects
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 
-		void addLiquid(LiquidType T, int amt) {
+		public void addLiquid(LiquidType T, int amt) {
 			if (T == currentType) liquidAmount += amt;
 			else {
 				// Error: mixing liquid types
 			}
 		}
 
-		bool consumeLiquid(LiquidType T, int amt) {
+		public bool consumeLiquid(LiquidType T, int amt) {
 			if (T == currentType && liquidAmount <= amt) liquidAmount += amt;
 			else {
 				return false; // Not correct type or not enough in system
