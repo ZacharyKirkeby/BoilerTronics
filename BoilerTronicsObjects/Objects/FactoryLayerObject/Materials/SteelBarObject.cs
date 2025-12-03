@@ -10,8 +10,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class SteelBarObject : PlaceableObject, Movable, Runnable, HeatedMaterial{
 		
-		private static Vector2I headtedAtlasPos = new Vector2I(2, 1);
-		private static Vector2I cooledAtlasPos = new Vector2I(2, 0); // Temp sprite
+		private static Vector2I headtedAtlasPos = new Vector2I(2, 2);
+		private static Vector2I cooledAtlasPos = new Vector2I(2, 1);
 
 		private static int layerSourceId = 9;
 
@@ -46,6 +46,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			if (heatValue > 0) {
 				// Set the sprite to the heated atlasp pos
+				this.SetAtlasPos(headtedAtlasPos);
 				// Unsure if the following is needed as we will only be heated if we are in a heater or a furnace
 				// Tell the hook that is holding us that we got heated (if we are being held)
 			}
@@ -78,8 +79,19 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			if (heatValue == 0) {
 				// Change the sprite of the object
+				this.SetAtlasPos(cooledAtlasPos);
+
 				// If we have a holder we need to notify them we have a diffrent sprite
+				if (holder != null) {
+				}
+
 				// Tell the hook that is holding us that we got heated (if we are being held)
+				BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+
+				if (man.currLevel.fLayer.FindObject(this.GetCurrPos()) == this) {
+					// set tile sprite at curr position
+					man.currLevel.fLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
+				}
 			}
 		}
 
