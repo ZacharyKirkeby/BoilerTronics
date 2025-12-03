@@ -25,6 +25,8 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(13, new Vector2I(0, 0)), 7);	//pipe
 			objectMap.Add(hashCoords(14, new Vector2I(0, 0)), 8);	//waterpump
 			objectMap.Add(hashCoords(14, new Vector2I(0, 1)), 9);	//lubepump
+			objectMap.Add(hashCoords(3, new Vector2I(0, 5)), 10);	//cooler
+			objectMap.Add(hashCoords(3, new Vector2I(1, 5)), 11);	//heater
 			
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
