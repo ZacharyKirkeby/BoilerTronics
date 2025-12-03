@@ -111,11 +111,20 @@ namespace BoilerTronicsObjects.Objects
 					//factory furnace
 					return new FactoryRoller(x, y, 0);
 				case 7:
+					// Pipe
 					return new PipeObject(x, y, 0);
 				case 8:
+					// Water Pump
 					return new WaterPump(x, y, Q, D);
 				case 9:
+					// Lube Pump
 					return new LubePump(x, y, Q, D);
+				case 10:
+					// Cooler
+					return new CoolerObject(x, y, 0);
+				case 11:
+					// Heater
+					return new HeaterObject(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);

@@ -38,7 +38,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			PlaceableObject ret = obj;
 			obj = null;
 
-			return obj;
+			return ret;
 		}
 
 		public bool Place(PlaceableObject obj) {
