@@ -72,6 +72,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 
 		public void Reset() {
+			PipeGroup PG = this.getGroup() as PipeGroup;
+
+			PG.clearLiquid();
 		}
 	}
 }

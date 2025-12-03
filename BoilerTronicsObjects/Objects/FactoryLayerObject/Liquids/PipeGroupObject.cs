@@ -27,19 +27,29 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 
 		public void addLiquid(LiquidType T, int amt) {
-			if (T == currentType) liquidAmount += amt;
+			if (T == currentType || T == LiquidType.None) liquidAmount += amt;
 			else {
 				// Error: mixing liquid types
+				return;
 			}
+
+			currentType = T;
 		}
 
 		public bool consumeLiquid(LiquidType T, int amt) {
-			if (T == currentType && liquidAmount <= amt) liquidAmount += amt;
+			if (T == currentType && liquidAmount <= amt) liquidAmount -= amt;
 			else {
 				return false; // Not correct type or not enough in system
 			}
 
+			if (liquidAmount == 0) currentType = LiquidType.None;
+
 			return true; // Consumed liquid
+		}
+
+		public void clearLiquid() {
+			currentType = LiquidType.None;
+			liquidAmount = 0;
 		}
 
 		public PipeGroup(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
