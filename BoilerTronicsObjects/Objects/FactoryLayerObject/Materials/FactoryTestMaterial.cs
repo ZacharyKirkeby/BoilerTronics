@@ -2,6 +2,7 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -39,6 +40,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Sets heat value to the value passed in
 		public void setHeat(int HV) {
 			heatValue = HV;
+		}
+
+		// Let's a hook tell us that they are holding us so that we can update them when we change states
+		public void setHook(ClawObject cObj) {
 		}
 
 		// Moveable interfact
