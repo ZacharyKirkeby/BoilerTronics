@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
 
-	public class ClawObject : PlaceableAnimated, Scriptable, Runnable {
+	public class ClawObject : PlaceableAnimated, Scriptable, Runnable, QualityObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
@@ -303,27 +303,35 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		
 		// Select the correct grab animation
 		private void GrabAnim() {
+			Vector2I modAtlas = new Vector2I(0, 0);
+			int modSourceId = (int) GetQuality();
+			
 			if (heldObject is CoalObject) {
-				TriggerAnimation("grabCoal", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabCoal", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronOreObject) {
-				TriggerAnimation("grabIronOre", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabIronOre", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronBarObject) {
-				TriggerAnimation("grabIronBar", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabIronBar", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronPlateObject) {
-				TriggerAnimation("grabIronPlate", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabIronPlate", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronRodObject) {
-				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else {
-				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull);
+				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim.");
 			}
 		}
 		
 		// Select the correct drop animation
 		private void DropAnim() {
+			Vector2I modAtlas = new Vector2I(0, 0);
+			int modSourceId = (int) GetQuality();
+			
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
+			
 			// well i'm silly. in reality, we only need one "drop" animation
 			// because the object "drops" the instant the "Drop" call is triggered
-			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull);
+			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 		}
 
 		public void Grab(string[] args) {
@@ -401,6 +409,10 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
 			RegisterSteppable(); // Registers this as a runnable with the level state
+			
+			// for qualitites
+			SetQuality(Q);
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
 			
 			// ANIMATIONS //
 			
@@ -493,23 +505,11 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				"dropEmpty",
 				dropEmpty
 			);
-
 		} // create object
 
 		~ClawObject()
 		{
 			DestroyTerminal(); // Destroys the terminal for this scriptable
-		}
-
-		// Override 'save' function to also return a script's information
-		public override Godot.Collections.Dictionary<string, Variant> Save()
-		{
-			Godot.Collections.Dictionary<string, Variant> res = base.Save();
-			
-			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
-			res["terminalCode"] = GetScript();
-			res["quality"] = (int) GetQuality();
-			return res;
 		}
 		
 		/*
@@ -524,41 +524,74 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			Instead, modify the below two functions, as Layers and etc utilize these functions --
 			while the PlaceableObjects  still correctly serialize their private internal values.
 		*/
-		/*
-		public override Vector2I GetAtlasPos() {
-			TileTex T = GetFrame();
+		// overrides visuals in accordance to the expected visuals (for quality system)
+		// (hacky solution)
+		public override int GetSourceID() {
+			if (GetStateName() == "default") {
+				SetSourceIdMod(0);
+			} else {
+				SetSourceIdMod((int) GetQuality());
+			}
 			
-			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
-			// in its idle state. Note that with the animation update, the below will also need to be updated!
-			// if (GetFrameIndex() == 0) {
-				// return T.GetAtlasPos() + new Vector2I((int) Q, 0);
-			// }
-			return T.GetAtlasPos();
+			return currData.GetFrame().GetSourceID() + GetSourceIdMod();
 		}
 		
-		public override int GetSourceID() {
-			
-			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
-			// in its animated states. Note that with the animation update, the below will also need to be updated!
-			// NOTE: this doesn't work, but at the same time this doesn't matter to much because
-			// said animation update is basically ready to go.
-			int mod = 0;
-			// if (GetFrameIndex() != 0) { mod = (int) Q; }
-			return base.GetSourceID() + mod;
+		public override Vector2I GetAtlasPos() {
+			if (GetStateName() == "default") {
+				SetAtlasMod(new Vector2I((int) GetQuality(), 0));
+			} else {
+				SetAtlasMod(new Vector2I(0, 0));
+			}
+			return currData.GetFrame().GetAtlasPos() + GetAtlasMod();
 		}
-		*/
+
+		// Override 'save' function to also return a script's information
+		public override Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			
+			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
+			res["terminalCode"] = GetScript();
+			res["quality"] = (int) GetQuality();
+			return res;
+		}
 
 		// Quality Interface
 		public void SetQuality(Quality newQuality) {
 			Q = newQuality;
 			
 			// Update sprite?
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
 		}
 
 		public Quality GetQuality() {
 			return Q;
 		}
+		
+		// note: we can't use the base "GetTexture()" functionality as this
+		// would use the "GetSource()" and "GetAtlasPos()" functions from PlaceableAnimated!
+		public override Texture GetTexture()
+		{
+			// this.GetSourceID();
+			// this.GetAtlasPos();
+			// GD.Print("ClawObject: GetTexture: sourceId: ", this.GetSourceID(), ", atlasPos: ", this.GetAtlasPos().ToString());
+			//return base.GetTexture();
+			
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
 
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.GetAtlasPos());
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
+		}
+		
 		public static Texture GetQualityTexture(Quality Q) {
 			// Get the texture based off the quality passed in
 			Vector2I atPos = objectAtlasPos + new Vector2I((int) Q, 0);

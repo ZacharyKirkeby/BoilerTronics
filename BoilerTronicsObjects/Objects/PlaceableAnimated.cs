@@ -137,6 +137,9 @@ namespace BoilerTronicsObjects.Placeable
 			if (index >= frames.Count) { return; }
 			frameIndex = index;
 		}
+		public int GetFrameIndex() {
+			return frameIndex;
+		}
 		
 		// steps by one frame, and loops around
 		public void StepFrame() {
@@ -178,6 +181,14 @@ namespace BoilerTronicsObjects.Placeable
 		
 		private bool halted = false;
 		
+		// mod the animation if needed
+		protected Vector2I atlasMod = new Vector2I(0, 0);
+		protected int sourceIdMod = 0;
+		public void SetAtlasMod(Vector2I input) { atlasMod.X = input.X; atlasMod.Y = input.Y; }
+		public Vector2I GetAtlasMod() { return new Vector2I(atlasMod.X, atlasMod.Y); }
+		public void SetSourceIdMod(int i) {sourceIdMod = i;}
+		public int GetSourceIdMod() { return sourceIdMod; }
+		
 		public enum AnimateType
 		{
 			Step = 1,			// when this object is generated, only "step" the animation once before releasing semaphore
@@ -191,6 +202,17 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// deltaTime should be 'GlobalManager.currLevel.DeltaTime"
 		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime) {
+			initialize(input, animType, deltaTime);
+		}
+		
+		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime, Vector2I atlasModIn, int sourceIdModIn){
+			initialize(input, animType, deltaTime);
+			SetAtlasMod(atlasModIn);
+			SetSourceIdMod(sourceIdModIn);
+		}
+		
+		// what does the actual "constructing" work
+		private void initialize(PlaceableAnimationData input, AnimateType animType, double deltaTime) {
 			// GD.Print("AnimatingObject: ", this, ": Creating Object");
 			this.data = input;
 			
@@ -262,7 +284,7 @@ namespace BoilerTronicsObjects.Placeable
 				data.StepFrame();
 				
 				// tell layer to update its visuals
-				UpdateVisuals();
+				this.UpdateVisuals();
 				
 				// end this object
 				End();
@@ -285,7 +307,7 @@ namespace BoilerTronicsObjects.Placeable
 						// otherwise, update the original object's sprites accordingly
 						data.StepFrame();
 						// tell layer to update its visuals
-						UpdateVisuals();
+						this.UpdateVisuals();
 					}
 				}
 				
@@ -304,8 +326,10 @@ namespace BoilerTronicsObjects.Placeable
 			
 			// premature optimization for PlaceableBig objects
 			Vector2I modPos = obj.GetCurrPos() + coordsOffset;
-			parentLayer.SetCell(modPos, currFrame.GetSourceID(), currFrame.GetAtlasPos());
-			GD.Print("AnimatingObject: ", this, ": Updated cell ", modPos, ", sourceID: ", currFrame.GetSourceID(), ", atlasPos: ", currFrame.GetAtlasPos().ToString());
+			int sourceId = currFrame.GetSourceId() + this.GetSourceIdMod();
+			Vector2I atlasPos = currFrame.GetAtlasPos() + this.GetAtlasMod();
+			parentLayer.SetCell(modPos, sourceId, atlasPos);
+			GD.Print("AnimatingObject: ", this, ": Updated cell ", modPos, ", sourceID: ", sourceId, ", atlasPos: ", atlasPos.ToString());
 		}
 		
 		
@@ -369,6 +393,16 @@ namespace BoilerTronicsObjects.Placeable
 		protected PlaceableAnimationData currData;
 		//protected TileTex currTex;
 		
+		// add to the played animations and etc
+		protected Vector2I atlasMod = new Vector2I(0, 0);
+		protected int sourceIdMod = 0;
+		
+		public void SetAtlasMod(Vector2I input) { atlasMod.X = input.X; atlasMod.Y = input.Y; }
+		public Vector2I GetAtlasMod() { return new Vector2I(atlasMod.X, atlasMod.Y); }
+		
+		public void SetSourceIdMod(int i) {sourceIdMod = i;}
+		public int GetSourceIdMod() { return sourceIdMod; }
+		
 		public PlaceableAnimated(int OGX, int OGY, int sourceId, Vector2I atlasPos, int altTitle = 0) 
 		: base(OGX, OGY, sourceId, atlasPos, altTitle)
 		{
@@ -403,6 +437,12 @@ namespace BoilerTronicsObjects.Placeable
 		// easy function to trigger animations
 		// returns if animation was successfully triggered or not
 		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType) {
+			return TriggerAnimation(key, animationType, new Vector2I(0, 0), 0);
+		}
+		
+		// note: the mod inputs ONLY AFFECT ANIMATIONS
+		// not the object's raw sprites (change behavior or?)
+		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType, Vector2I modAtlas, int modSourceId) {
 			bool res = SetState(key);
 			if (!res) { return res; } // if we failed to set this object to the target state, return "false"
 			
@@ -410,12 +450,15 @@ namespace BoilerTronicsObjects.Placeable
 			// update 'currData'
 			
 			// tell parent layer to update its visuals
-			GetParentLayer().SetCell(this.GetCurrPos() + currData.GetCoordsOffset(), this.GetSourceID(), this.GetAtlasPos());
+			GetParentLayer().SetCell(this.GetCurrPos() + currData.GetCoordsOffset(), 
+				currData.GetFrame(0).GetSourceID() + modSourceId, 
+				currData.GetFrame(0).GetAtlasPos() + modAtlas
+			);
 			// GetParentLayer().UpdateObject(this);
 			
 			// create new AnimatingObject processor object
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			AnimatingObject aObj = new AnimatingObject(currData, animationType, manager.currLevel.DeltaTime);
+			AnimatingObject aObj = new AnimatingObject(currData, animationType, manager.currLevel.DeltaTime, modAtlas, modSourceId);
 			
 			// "add to the scene" such that _Process works as intended
 			manager.currLevel.cLayer.GetParent().AddChild(aObj);
@@ -449,6 +492,11 @@ namespace BoilerTronicsObjects.Placeable
 			return currData;
 		}
 		
+		// gets current state name
+		public string GetStateName() {
+			return new string(activeState);
+		}
+		
 		// gets the currently visible frame
 		public TileTex GetFrame() {
 			return currData.GetTileTex();
@@ -462,13 +510,11 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// overrides visuals in accordance to what the expected visuals!
 		public override int GetSourceID() {
-			TileTex T = currData.GetFrame();
-			return T.GetSourceID();
+			return currData.GetFrame().GetSourceID() + GetSourceIdMod();
 		}
 		
 		public override Vector2I GetAtlasPos() {
-			TileTex T = currData.GetFrame();
-			return T.GetAtlasPos();
+			return currData.GetFrame().GetAtlasPos() + GetAtlasMod();
 		}
 		
 		// TODO: Keenan please double check this!

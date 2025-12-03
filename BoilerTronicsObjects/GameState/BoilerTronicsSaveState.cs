@@ -411,6 +411,7 @@ public class BoilerTronicsSaveState
 			if (target is QualityObject && targetObj.ContainsKey("quality")) {
 				int qualityVal = (int) targetObj["quality"];
 				((QualityObject) target).SetQuality((Quality) qualityVal);
+				GD.Print("SaveState: updated object (", target, ") to have quality ", qualityVal);
 			}
 			
 			listObj.Add(target);
