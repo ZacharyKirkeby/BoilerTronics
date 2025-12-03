@@ -57,6 +57,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true, false),
 		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false),
 		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false),
+		new ItemInfo("Steel Mill", SteelMill.GetCostStatic(), 2, 3, new Vector2I(1,7), new Vector2I(130, 90), true, false),
 		new ItemInfo("Pipe", PipeObject.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false),
 		new ItemInfo("Cooler", CoolerObject.GetCostStatic(), 2, 3, new Vector2I(0,5), new Vector2I(85, 85), false, false),
 		new ItemInfo("Heater", HeaterObject.GetCostStatic(), 2, 3, new Vector2I(1,5), new Vector2I(85, 85), false, false),
