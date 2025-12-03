@@ -527,10 +527,6 @@ public partial class BoilerTronicsLevel : Node2D
 			mObj.QueueFree();
 		}
 
-		foreach (Runnable rObj in runnableList) {
-			rObj.Reset();
-		}
-		
 		foreach (Runnable rObj in runnableList)
 		{
 			rObj.Reset();

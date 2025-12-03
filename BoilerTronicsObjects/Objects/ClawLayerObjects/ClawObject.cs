@@ -372,6 +372,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				// If it is, then we want to try to pick it up (or it's contents)
 				heldObject = mObj.PickUp();
 
+				if (heldObject is HeatedMaterial hm) hm.setHook(this);
+
 				GD.Print("Pickedup: ", heldObject);
 
 				manager.currLevel.cLayer.UpdateObject(this);
@@ -379,10 +381,25 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				// If it is, then we want to try to pick it up (or it's contents)
 				heldObject = bmObj.PickUp(this.GetCurrPos());
 
+				if (heldObject is HeatedMaterial hm) hm.setHook(this);
+
 				manager.currLevel.cLayer.UpdateObject(this);
 			}
 
 			// Call to some update frame function that will update based on the held item
+			UpdateFrame();
+		}
+
+		public void deleteHeld() {
+			heldObject = null;
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// manager.currLevel.cLayer.UpdateObject(this);
+			UpdateFrame();
+		}
+
+		public void updateHeld() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// manager.currLevel.cLayer.UpdateObject(this);
 			UpdateFrame();
 		}
 

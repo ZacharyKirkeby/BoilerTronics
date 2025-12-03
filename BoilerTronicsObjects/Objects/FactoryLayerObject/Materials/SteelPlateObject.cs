@@ -82,6 +82,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 				// If we have a holder we need to notify them we have a diffrent sprite
 				if (holder != null) {
+					holder.updateHeld();
 				}
 
 				// Tell the hook that is holding us that we got heated (if we are being held)
@@ -97,6 +98,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public void Reset() {
 			heatValue = 0;
 			ResetPos();
+			holder.deleteHeld();
 		}
 
 		public void RegisterSteppable() {
@@ -111,7 +113,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			manager.currLevel.UnRegisterRunnable(this);
 		}
 
+
 		public SteelPlateObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, cooledAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, cooledAtlasPos, altTitle) {
+			RegisterSteppable();
+			this.SetGarbage(true); // This will be deleted on reset
+		}
 	}
 }
