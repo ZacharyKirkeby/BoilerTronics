@@ -27,7 +27,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
 
 		public void addLiquid(LiquidType T, int amt) {
-			if (T == currentType || T == LiquidType.None) liquidAmount += amt;
+			if (T == currentType || currentType == LiquidType.None) liquidAmount += amt;
 			else {
 				// Error: mixing liquid types
 				BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
