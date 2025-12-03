@@ -30,6 +30,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (T == currentType || T == LiquidType.None) liquidAmount += amt;
 			else {
 				// Error: mixing liquid types
+				BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+				man.currLevel.E.handleError(ErrorHandler.ErrorType.FluidMixing, null, this.GetCurrPos()); // Throw an error
 				return;
 			}
 
