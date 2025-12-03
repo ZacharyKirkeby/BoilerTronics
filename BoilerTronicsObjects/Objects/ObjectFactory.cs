@@ -8,6 +8,7 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects
 {
@@ -17,7 +18,7 @@ namespace BoilerTronicsObjects.Objects
 		
 		// note: as of the current implementation, this isn't really a good factory in the strictest sense
 		// TODO: implement version that accepts alt titles
-		public static PlaceableObject CreateObject(Vector2I originPos, int sourceId, Vector2I atlasPos) {			
+		public static PlaceableObject CreateObject(Vector2I originPos, int sourceId, Vector2I atlasPos, Quality Q = Quality.LOW_QUALITY) {			
 			// TODO: creator/main factory function
 			// given which "sourceId" (i.e. which atlas map to pull from) -- this will determine the object's layer
 			// and given the "atlasPos" (i.e. where on the atlas the object is) -- this will determine the identify of the object (i.e. how Terraria does it)
@@ -47,7 +48,7 @@ namespace BoilerTronicsObjects.Objects
 			}
 			
 			
-			return GenerateObject(objectId, x, y);
+			return GenerateObject(objectId, x, y, Q);
 		}
 
 		public static List<PlaceableBigData> GetBigObjectTileMap(int objectID, PlaceableBig.Direction dir) {
@@ -69,7 +70,18 @@ namespace BoilerTronicsObjects.Objects
 			return null;
 		}
 
-		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
+		public static Texture GetTexture(int objectID, Quality Q, Direction D) {
+
+			GD.Print("Trying to get texture from Object: ", objectID);
+			switch (objectID) {
+				case 50:
+					return ClawObject.GetQualityTexture(Q);
+			}
+
+			return null;
+		}
+
+		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0, Quality Q = Quality.LOW_QUALITY) {
 			switch (objectID) {
 				case -1:
 					return null;
@@ -94,6 +106,8 @@ namespace BoilerTronicsObjects.Objects
 				case 6:
 					//factory furnace
 					return new FactoryRoller(x, y, 0);
+				case 7:
+					return new PipeObject(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
@@ -105,7 +119,7 @@ namespace BoilerTronicsObjects.Objects
 					return new PipeBrokenFloorObject(x, y, 1, 0);
 				case 50:
 					//clawdefault
-					return new ClawObject(x, y, 0);
+					return new ClawObject(x, y, 0, Q);
 				case 100:
 					//railleftdefault
 					return new TrackObject(x, y, 0, 0);

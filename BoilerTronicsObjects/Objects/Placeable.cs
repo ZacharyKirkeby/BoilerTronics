@@ -3,8 +3,28 @@ using System;
 using System.Collections;
 using BoilerTronicsObjects.Layers;
 
+/*
+	README:
+	
+	If you ever want to modify an object's atlas and source IDs without creating a new object,
+	then please DO NOT actually modify the object's atlas/source IDs!
+	
+	As the save system recognizes/spawns objects based off their source IDs, this really messes
+	with the save system if you do so.
+	
+	Instead, modify the "GetAtlasPos()" and "GetSourceId()" functions, as Layers and etc 
+	do correctly utilize these functions, while the PlaceableObjects still correctly 
+	serialize their private internal values, and thus cooperate with the save system without issue.
+*/
 namespace BoilerTronicsObjects.Placeable
 {
+	public enum Direction {
+		UP = 0,
+		RIGHT = 1,
+		DOWN = 2,
+		LEFT = 3,
+	};
+
 	public abstract class PlaceableObject
 	{
 		// keep track of prices
@@ -17,8 +37,11 @@ namespace BoilerTronicsObjects.Placeable
 		private int CurrX;
 		private int CurrY;
 		private bool Garbage;
+		
+		// note: a PlaceableObject's "sourceId" and "atlasPos" will "define" an object.
+		// Be sure not to change these internal values unless you are explicitly making a new object!
 		int sourceId { get; set; }             // This is the id of the tile map that the sprite belongs to
-		Vector2I atlasPos;			// Posistion on the atlas that the sprite is at
+		Vector2I atlasPos;						// Posistion on the atlas that the sprite is at
 		int altTitle;				// This will allow us to set the sprite to alternative sprites (unsure is this is needed, but we'll leave it here)
 
 		// store the parent layer
@@ -92,11 +115,16 @@ namespace BoilerTronicsObjects.Placeable
 		{
 			this.sourceId = input;
 		}
+		
+		// "virtual" such that children can change an object's externally facing sourceID
+		// without modding the internal value! (this would break the save system otherwise)
 		public virtual int GetSourceID()
 		{
 			return sourceId;
 		}
 
+		// "virtual" such that children can change an object's externally facing atlasPos
+		// without modding the internal value! (this would break the save system otherwise)
 		public virtual Vector2I GetAtlasPos()
 		{
 			return atlasPos;

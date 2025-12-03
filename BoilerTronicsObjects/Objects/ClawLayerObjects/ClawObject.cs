@@ -13,6 +13,7 @@ using System.Collections.Generic;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
+
 	public class ClawObject : PlaceableAnimated, Scriptable, Runnable {
 		
 		public override int GetCost() { return 100; }
@@ -22,6 +23,9 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		private PlaceableObject heldObject = null;
 		private CodeEdit E;
 		private Parser _parser;
+
+		// Used to track the quality of the hook
+		private Quality Q;
 
 		public bool moving = false; // used for error checking since the claw can move via multiple methods
 
@@ -33,7 +37,44 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
+		/*
+		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+			this.Q = Q;
+			_parser = new Parser(this.Q);
+			_parser._Ready();
+			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
+			RegisterSteppable(); // Registers this as a runnable with the level state
+			
+			
+			// adds two new frames to be used by the Frame system
+			// (0) is default visuals
+			// (1) is "grab empty"
+			AddFrame(new TileTex(new Vector2I(3, 0), 10 + (int) Q));
+
+			// (2) is "grab coal"
+			AddFrame(new TileTex(new Vector2I(3, 1), 10 + (int) Q));
+			
+			// (3) is "grab iron ore"
+			AddFrame(new TileTex(new Vector2I(3, 2), 10 + (int) Q));
+			
+			// (4) is "grab iron bar"
+			AddFrame(new TileTex(new Vector2I(3, 3), 10 + (int) Q));
+
+			// (5) is "grab iron plate"
+			AddFrame(new TileTex(new Vector2I(3, 4), 10 + (int) Q));
+
+			// (6) is "grab iron rod"
+			AddFrame(new TileTex(new Vector2I(3, 5), 10 + (int) Q));
+		} // create object
+
+		~ClawObject()
+		{
+			DestroyTerminal(); // Destroys the terminal for this scriptable
+		}
+		*/
+
 		// Runnable Interface
+
 		public void Step()
 		{
 			// Make a call to the parser
@@ -354,7 +395,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		// Command methods
-		public ClawObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+
+		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_parser = new Parser();
 			_parser._Ready();
 			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
@@ -463,9 +505,81 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		public override Godot.Collections.Dictionary<string, Variant> Save()
 		{
 			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+			
 			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
 			res["terminalCode"] = GetScript();
+			res["quality"] = (int) GetQuality();
 			return res;
+		}
+		
+		/*
+			README:
+			
+			If you ever want to modify an object's atlas and source IDs without creating a new object,
+			then please DO NOT actually modify the object's atlas/source IDs!
+			
+			As the save system recognizes/spawns objects based off their source IDs, this really messes
+			with the save system if you do so.
+			
+			Instead, modify the below two functions, as Layers and etc utilize these functions --
+			while the PlaceableObjects  still correctly serialize their private internal values.
+		*/
+		/*
+		public override Vector2I GetAtlasPos() {
+			TileTex T = GetFrame();
+			
+			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
+			// in its idle state. Note that with the animation update, the below will also need to be updated!
+			// if (GetFrameIndex() == 0) {
+				// return T.GetAtlasPos() + new Vector2I((int) Q, 0);
+			// }
+			return T.GetAtlasPos();
+		}
+		
+		public override int GetSourceID() {
+			
+			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
+			// in its animated states. Note that with the animation update, the below will also need to be updated!
+			// NOTE: this doesn't work, but at the same time this doesn't matter to much because
+			// said animation update is basically ready to go.
+			int mod = 0;
+			// if (GetFrameIndex() != 0) { mod = (int) Q; }
+			return base.GetSourceID() + mod;
+		}
+		*/
+
+		// Quality Interface
+		public void SetQuality(Quality newQuality) {
+			Q = newQuality;
+			
+			// Update sprite?
+		}
+
+		public Quality GetQuality() {
+			return Q;
+		}
+
+		public static Texture GetQualityTexture(Quality Q) {
+			// Get the texture based off the quality passed in
+			Vector2I atPos = objectAtlasPos + new Vector2I((int) Q, 0);
+
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+
+			// int sourceid = tileSet.GetSourceId(ID);
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(layerSourceId) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(atPos);
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			ImageTexture T = new ImageTexture();
+
+			T.SetImage(imageTexture);
+
+			// Insert in list such that it is in the correct order to draw
+			// (Figure this out later)
+
+			return T;
 		}
 	}
 }
