@@ -2,6 +2,7 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -9,10 +10,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class SteelGearObject : PlaceableObject, Movable, Runnable, HeatedMaterial{
 		
-		private static Vector2I objectAtlasPos = new Vector2I(0, 4); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
-		private static int layerSourceId = 0;
+		private static Vector2I headtedAtlasPos = new Vector2I(1, 2);
+		private static Vector2I cooledAtlasPos = new Vector2I(1, 1); // Temp sprite
+
+		private static int layerSourceId = 9;
 
 		// Used to keep track of how 'hot' the item is
+		private ClawObject holder = null;
 		private int heatValue = 0;
 		
 		public override void ResetPos()
@@ -41,6 +45,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			heatValue = HV;
 		}
 
+		// Let's a hook tell us that they are holding us so that we can update them when we change states
+		public void setHook(ClawObject cObj) {
+			holder = cObj;
+		}
+
 		// Moveable interfact
 
 		// Moveable, this will allow us to pickup and drop off items
@@ -60,6 +69,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void Step() {
 			if (heatValue > 0) heatValue--;
+
+			if (heatValue == 0) {
+				// Change the sprite of the object
+				// If we have a holder we need to notify them we have a diffrent sprite
+			}
 		}
 
 		public void Reset() {
@@ -80,6 +94,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 
 		public SteelGearObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, cooledAtlasPos, altTitle) {}
 	}
 }

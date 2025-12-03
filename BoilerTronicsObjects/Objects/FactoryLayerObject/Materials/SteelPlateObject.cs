@@ -2,6 +2,7 @@ using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Interfaces;
 
@@ -9,10 +10,13 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 	public class SteelPlateObject : PlaceableObject, Movable, Runnable, HeatedMaterial{
 		
-		private static Vector2I objectAtlasPos = new Vector2I(0, 4); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
-		private static int layerSourceId = 0;
+		private static Vector2I headtedAtlasPos = new Vector2I(3, 1);
+		private static Vector2I cooledAtlasPos = new Vector2I(3, 0); // Temp sprite
+
+		private static int layerSourceId = 9;
 
 		// Used to keep track of how 'hot' the item is
+		private ClawObject holder = null;
 		private int heatValue = 0;
 		
 		public override void ResetPos()
@@ -39,6 +43,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Sets heat value to the value passed in
 		public void setHeat(int HV) {
 			heatValue = HV;
+
+			if (heatValue > 0) {
+				// Set the sprite to the heated atlasp pos
+				// Unsure if the following is needed as we will only be heated if we are in a heater or a furnace
+				// Tell the hook that is holding us that we got heated (if we are being held)
+			}
+		}
+
+		// Let's a hook tell us that they are holding us so that we can update them when we change states
+		public void setHook(ClawObject cObj) {
+			holder = cObj;
 		}
 
 		// Moveable interfact
@@ -62,8 +77,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			if (heatValue > 0) heatValue--;
 
 			if (heatValue == 0) {
-				// Change the sprite value of this object
-				// We also need to comunicat to the hook that our sprite has changed
+				// Change the sprite of the object
+				// If we have a holder we need to notify them we have a diffrent sprite
+				// We also need a check if we are on the ground, if so we need to update our sprite
 			}
 		}
 
@@ -85,6 +101,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 
 		public SteelPlateObject(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
+		: base(OGX, OGY, layerSourceId, cooledAtlasPos, altTitle) {}
 	}
 }
