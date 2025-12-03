@@ -182,6 +182,16 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
 					return true;
 				}
+				if ((!_Working) && (obj is SteelBarObject sbO) && (sbO.hasHeat()) && (_Inv == null)) {
+					_StepsTillCompletion = 1;
+					SteelPlateObject spO = new SteelPlateObject(0, 0, 0);
+					spO.setHeat(sbO.getHeatValue());
+					_Inv = spO as PlaceableObject;
+					_Inv.SetGarbage(true);
+					_Working = true;
+					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
+					return true;
+				}
 				// We need to check and see if the object coming in is valid
 				// If so we wnat to do somthing and return true to accept it
 			}
