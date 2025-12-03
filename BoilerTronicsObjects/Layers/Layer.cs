@@ -356,7 +356,8 @@ namespace BoilerTronicsObjects.Layers
 			}
 			*/
 
-			GD.Print("Layer.cs: added object path: ", GetPath());
+			// GD.Print("Layer.cs: added object path: ", GetPath());
+			GD.Print("Layer.cs: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
 			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}

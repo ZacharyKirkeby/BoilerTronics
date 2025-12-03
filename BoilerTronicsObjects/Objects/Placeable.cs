@@ -149,7 +149,7 @@ namespace BoilerTronicsObjects.Placeable
 			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
 
 			// get the tile
-			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var tile = tileSetSource.GetTileTextureRegion(this.GetAtlasPos());
 			var fullTexture = tileSetSource.Texture.GetImage();
 			var imageTexture = fullTexture.GetRegion(tile);
 			var texture = new ImageTexture();
