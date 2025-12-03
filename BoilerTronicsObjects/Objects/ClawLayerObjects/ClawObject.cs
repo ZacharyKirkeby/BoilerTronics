@@ -318,7 +318,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else {
 				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
-				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim.");
+				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim. internal obj: ", heldObject);
 			}
 		}
 		
@@ -336,7 +336,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 		public void Grab(string[] args) {
 
-			GD.Print("Grab func called");
+			GD.Print("ClawObject: Grab func called");
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Grab);
 
@@ -364,11 +364,15 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			// Call to some update frame function that will update based on the held item
 			// UpdateFrame();
-			GrabAnim();
+			
+			// only update if object successfully picked up
+			if (heldObject != null) {
+				GrabAnim();
+			}
 		}
 
 		public void Drop(string[] args) {
-			GD.Print("Drop func called");
+			GD.Print("ClawObject: Drop func called");
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Drop);
 			if (heldObject == null) return; // Not an error ?
@@ -381,16 +385,23 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			heldObject.MoveCurrPos(pos.X, pos.Y);
 
 			if (factoryObj == null) {
+				GD.Print("ClawObject: Dropping On Ground\n");
 				manager.currLevel.fLayer.AddObject(heldObject);
 				heldObject = null;
 			} else if (factoryObj is Movable mObj) {
+				GD.Print("ClawObject: Dropping Into Factory\n");
 				if (mObj.Place(heldObject)) heldObject = null;
 			} else if (factoryObj is BigMovable bmObj) {
+				GD.Print("ClawObject: Dropping Into Factory\n");
 				if (bmObj.Place(heldObject, this.GetCurrPos())) heldObject = null;
 			}
 
 			// UpdateFrame();
-			DropAnim();
+			
+			// only play anim if object is successfully dropped
+			if (heldObject == null) {
+				DropAnim();
+			}
 		}
 
 		public void Rotate(string[] args)
