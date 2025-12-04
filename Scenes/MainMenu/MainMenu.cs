@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public partial class MainMenu : Node2D
 {
@@ -59,6 +61,22 @@ public partial class MainMenu : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/level_select.tscn");
 	}
 
+	private async Task _get_levels()
+	{
+		ProfileMenuController profMan = ProfileMenuController.GlobalManager;
+		UserData userDat = null;
+		if (profMan.IsAuthenticated()) {
+			FirestoreService _instance = FirestoreService.Instance;
+			userDat = profMan.GetUserData();
+			List<LevelData> levels = await _instance.GetUserLevelsAsync(userDat.Uuid);
+			foreach (LevelData level in levels)
+			{
+				GD.Print(level);
+			}
+
+		}
+	}
+
 	private void _on_level_creator_pressed()
 	{
 		GetNode<Control>("MainMenu").Visible = false;
@@ -68,8 +86,10 @@ public partial class MainMenu : Node2D
 		{
 			child.QueueFree();
 		}
-		FirestoreService _instance = FirestoreService.Instance;
-		//_instance.GetUserLevelsAsync();
+		_get_levels();
+		
+		
+		
 		
 	}
 	public PanelContainer CreateRow()
