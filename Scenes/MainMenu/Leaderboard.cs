@@ -25,11 +25,8 @@ public partial class Leaderboard : CenterContainer
 	private List<(string Name, float Score)> friendsLeaderboard = new();
 	private bool showingFriends = false;
 
-	// Firebase services
 	private FirebaseAuthManager _authManager;
 	private FirestoreService _firestoreService;
-
-	// UI elements
 	private Button friendsToggleButton;
 	private int currentLevelId = 0;
 
@@ -37,7 +34,6 @@ public partial class Leaderboard : CenterContainer
 	{
 		InitializeServices();
 
-		//get labels
 		firstName = GetNode<Label>("%firstName");
 		firstScore = GetNode<Label>("%firstScore");
 		secondName = GetNode<Label>("%secondName");
@@ -51,91 +47,35 @@ public partial class Leaderboard : CenterContainer
 		sixthName = GetNode<Label>("%sixthName");
 		sixthScore = GetNode<Label>("%sixthScore");
 
-		//leaderboard default values
-
-		// TEST: saves "You" with score 10.0f for level 0
-		// SaveScore(0, "You", 10.0f);
-
-
-
-		/*
-		leaderboard = new List<(string, float)>
-		{
-			("You", 5),
-			("Ethan", 99),
-			("Abhi", 80),
-			("Keenan", 85),
-			("Zach", 60),
-			("Ethen", 50),
-			("Bob", 200)
-		};
-		*/
-
-		// TODO: instead, load leaderboard data from a local save!
-		// i.e. construct the leaderboard (only top 6 scores?) after loading a local save
-		/*
-			First: if no local leaderboard save exists, "request from server"
-			- for now, load from game files
-
-			If the user ("You") has a locally saved statistic, load and attempt to "insert" into the list, and update the leaderboard accordingly
-			
-			TODO: what about if the user is way below the leaderboard?
-			- discussed with Abhi, will be implemented soon
-		
-		*/
-
 		_authManager = FirebaseAuthManager.Instance;
 		_authManager.AuthenticationChanged += OnLoginStateChanged;
-
-
 
 		friendsToggleButton = GetNode<Button>("%FriendsToggleButton");
 		friendsToggleButton.Pressed += OnFriendsTogglePressed;
 
 		UpdateFriendsButtonVisibility();
-
-		HandleLeaderboard(0);
 		UpdateLeaderboard();
-		// UpdateDisplay();
 	}
 
 	private void InitializeServices()
 	{
-		_authManager = FirebaseAuthManager.Instance;
-		if (_authManager == null)
-		{
-			_authManager = new FirebaseAuthManager();
-			AddChild(_authManager);
-		}
+		_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
+		AddChild(_authManager);
 
-		// # copy pasting maxxing
-		_firestoreService = FirestoreService.Instance;
-		if (_firestoreService == null)
-		{
-			_firestoreService = new FirestoreService();
-			AddChild(_firestoreService);
-		}
+		_firestoreService = FirestoreService.Instance ?? new FirestoreService();
+		AddChild(_firestoreService);
 	}
+
 	private async void UpdateFriendsButtonVisibility()
 	{
-		_authManager = FirebaseAuthManager.Instance;
 		if (_authManager == null || !_authManager.IsAuthenticated)
 		{
 			friendsToggleButton.Visible = false;
 			return;
 		}
-		// do you have friends?
+
 		var userData = await _firestoreService.GetUserAsync(_authManager.UserId);
-		if (userData == null || userData.Friends.Count == 0)
-		{
-			GD.Print("let there be buttons");
-			friendsToggleButton.Visible = false;
-		}
-		else
-		{
-			GD.Print("let there be buttons");
-			friendsToggleButton.Visible = true;
-		}
+		friendsToggleButton.Visible = userData != null && userData.Friends.Count > 0;
 	}
 
 	private async void OnFriendsTogglePressed()
@@ -150,19 +90,16 @@ public partial class Leaderboard : CenterContainer
 		else
 		{
 			friendsToggleButton.Text = "Friends";
-			UpdateLeaderboard(); // Show global leaderboard
+			await UpdateLeaderboardAsync();
 		}
 	}
-
 
 	private void OnLoginStateChanged(bool loggedIn)
 	{
 		UpdateFriendsButtonVisibility();
 
 		if (showingFriends && loggedIn)
-		{
 			_ = LoadFriendsLeaderboard(currentLevelId);
-		}
 
 		if (!loggedIn)
 		{
@@ -172,7 +109,6 @@ public partial class Leaderboard : CenterContainer
 		}
 	}
 
-
 	private async Task LoadFriendsLeaderboard(int levelId)
 	{
 		if (_firestoreService == null || _authManager == null || !_authManager.IsAuthenticated)
@@ -181,159 +117,104 @@ public partial class Leaderboard : CenterContainer
 			return;
 		}
 
-		// Convert level ID to string format
 		string levelIdStr = $"level_{levelId}";
-
 		GD.Print("Loading friends leaderboard for level: ", levelIdStr);
 
-		// Get friend scores from Firebase
 		var friendScores = await _firestoreService.GetFriendScoresAsync(levelIdStr, 10);
-
 		friendsLeaderboard.Clear();
+
 		foreach (var score in friendScores)
-		{
-			friendsLeaderboard.Add((score.Username, score.Score / 100));
-		}
+			friendsLeaderboard.Add((score.Username, score.Score / 100f));
 
 		var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
-		if (userScore != null)
-		{
-			bool userInList = friendsLeaderboard.Any(entry => entry.Name == userScore.Username);
-			if (!userInList)
-			{
-				friendsLeaderboard.Add((userScore.Username, userScore.Score / 100 ));
-			}
-		}
+		if (userScore != null && !friendsLeaderboard.Any(e => e.Name == userScore.Username))
+			friendsLeaderboard.Add((userScore.Username, userScore.Score / 100f));
 
-		// Sort and display
-		friendsLeaderboard = friendsLeaderboard.OrderByDescending(entry => entry.Score).ToList();
+		friendsLeaderboard = friendsLeaderboard.OrderByDescending(e => e.Score).ToList();
 		DisplayLeaderboard(friendsLeaderboard);
 	}
 
-	private void _on_option_button_item_selected(int index)
+	private async Task _on_option_button_item_selectedAsync(int index)
 	{
 		currentLevelId = index;
-
-		// TODO: implement loading system for these cases, i.e. these are the actually relevant cases that spawn/register
-		// on level leaderboard select
-		switch (index)
-		{
-			case 0:
-				/*
-				leaderboard = new List<(string, float)>
-				{
-					("You", 5),
-					("Ethan", 99),
-					("Abhi", 80),
-					("Keenan", 85),
-					("Zach", 60),
-					("Ethen", 50),
-					("Bob", 200)
-				};
-				*/
-				HandleLeaderboard(0);
-				break;
-			case 1:
-				/*
-				leaderboard = new List<(string, float)>
-				{
-					("Keenan", 100),
-					("Ethen", 99),
-					("Zach", 90),
-					("You", 87),
-					("Abhi", 85),
-					("Ethan", 82)
-				};
-				*/
-				HandleLeaderboard(1);
-				break;
-		}
-
-		// Reset to global view when changing levels
 		showingFriends = false;
-		UpdateLeaderboard();
-		UpdateFriendsButtonVisibility();
+		friendsToggleButton.Text = "Friends";
+		await UpdateLeaderboardAsync();
+		UpdateFriendsButtonVisibility();	
 	}
 
-	/*
-	public void UpdateLeaderboard()
+	private async void UpdateLeaderboard()
 	{
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		// if (manager == null || manager.currLevel == null) {
-		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-		DisplayLeaderboard(leaderboard);
-		// return;
-		// }
-		/*
-		float score = manager.currLevel.bestScore;
-		for (int i = 0; i < leaderboard.Count; i++) {
-			if (leaderboard[i].Name == "You") {
-				leaderboard[i] = ("You", score);
-				break;
-			}
+		if (_authManager != null && _authManager.IsAuthenticated && !showingFriends)
+		{
+			await LoadGlobalLeaderboard(currentLevelId);
 		}
-		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-		DisplayLeaderboard(leaderboard);
-		
+		else
+		{
+			LoadLocalLeaderboard(currentLevelId);
+			DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
+		}
 	}
-	*/
-	
-    private async void UpdateLeaderboard()
-    {
-        if (_authManager != null && _authManager.IsAuthenticated && !showingFriends)
-        {
-            // User is signed in and viewing global leaderboard
-            await LoadGlobalLeaderboard(currentLevelId);
-        }
-        else
-        {
-            // fallback to local leaderboard
-            leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-            DisplayLeaderboard(leaderboard);
-        }
-    }
 
-    private async Task LoadGlobalLeaderboard(int levelId)
-    {
-        if (_firestoreService == null)
-        {
-            GD.PrintErr("Cannot load global leaderboard: FirestoreService is null");
-            return;
-        }
+	private async Task UpdateLeaderboardAsync()
+	{
+		if (_authManager != null && _authManager.IsAuthenticated && !showingFriends)
+		{
+			await LoadGlobalLeaderboard(currentLevelId);
+		}
+		else
+		{
+			LoadLocalLeaderboard(currentLevelId);
+			DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
+		}
+	}
 
-        string levelIdStr = $"level_{levelId}";
-        GD.Print("Loading global leaderboard for level: ", levelIdStr);
 
-        try
-        {
-            // Replace with your actual global leaderboard call
-            var globalScores = await _firestoreService.GetGlobalLeaderboardAsync(levelIdStr, 6);
+	private async Task LoadGlobalLeaderboard(int levelId)
+	{
+		if (_firestoreService == null)
+		{
+			GD.PrintErr("Cannot load global leaderboard: FirestoreService is null");
+			return;
+		}
 
-            leaderboard.Clear();
-            foreach (var scoreEntry in globalScores)
-            {
-                leaderboard.Add((scoreEntry.Username, scoreEntry.Score / 100f)); // adjust divisor as needed
-            }
+		string levelIdStr = $"level_{levelId}";
+		GD.Print("Loading global leaderboard for level: ", levelIdStr);
 
-            // Ensure current user is in the list
-            var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
-            if (userScore != null && !leaderboard.Any(entry => entry.Name == userScore.Username))
-            {
-                leaderboard.Add((userScore.Username, userScore.Score / 100f));
-            }
+		try
+		{
+			var globalScores = await _firestoreService.GetGlobalLeaderboardAsync(levelIdStr, 6);
+			leaderboard.Clear();
 
-            leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-            DisplayLeaderboard(leaderboard);
-        }
-        catch (Exception ex)
-        {
-            GD.PrintErr("Failed to load global leaderboard: ", ex.Message);
-        }
-    }
+			foreach (var scoreEntry in globalScores)
+				leaderboard.Add((scoreEntry.Username, scoreEntry.Score / 100f));
+
+			var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
+			if (userScore != null && !leaderboard.Any(e => e.Name == userScore.Username))
+				leaderboard.Add((userScore.Username, userScore.Score / 100f));
+
+			leaderboard = leaderboard.OrderByDescending(e => e.Score).ToList();
+			DisplayLeaderboard(leaderboard);
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr("Failed to load global leaderboard: ", ex.Message);
+			LoadLocalLeaderboard(levelId);
+			DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
+		}
+	}
+
+	private void LoadLocalLeaderboard(int levelId)
+	{
+		leaderboard.Clear();
+		LoadLeaderboard(levelId, leaderboard);
+		bool retrievedLocalScore = LoadScore(levelId, leaderboard);
+		if (!retrievedLocalScore)
+			leaderboard.Add(("You", 0.0f));
+	}
 
 	private void DisplayLeaderboard(List<(string Name, float Score)> scoreList)
 	{
-		GD.Print("updating leadboard display");
 		var labels = new (Label name, Label score)[]
 		{
 			(firstName, firstScore),
@@ -359,56 +240,47 @@ public partial class Leaderboard : CenterContainer
 		}
 
 		var topEntries = scoreList.Take(6).ToList();
-		var playerEntry = scoreList.FirstOrDefault(entry => entry.Name == "You");
-		bool playerInTop = topEntries.Any(entry => entry.Name == "You");
+		var playerEntry = scoreList.FirstOrDefault(e => e.Name == "You");
+		bool playerInTop = topEntries.Any(e => e.Name == "You");
 
-		Label extraNameLabel = GetNodeOrNull<Label>("%extraName");
-		Label extraScoreLabel = GetNodeOrNull<Label>("%extraScore");
+		extraName = GetNodeOrNull<Label>("%extraName");
+		extraScore = GetNodeOrNull<Label>("%extraScore");
 
-		if (extraNameLabel != null && extraScoreLabel != null)
+		if (extraName != null && extraScore != null)
 		{
 			if (!playerInTop && playerEntry.Name != null)
 			{
-				extraNameLabel.Text = playerEntry.Name;
-				extraScoreLabel.Text = playerEntry.Score.ToString("F2");
-
-				extraNameLabel.Visible = true;
-				extraScoreLabel.Visible = true;
-
-				extraNameLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
-				extraScoreLabel.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
+				extraName.Text = playerEntry.Name;
+				extraScore.Text = playerEntry.Score.ToString("F2");
+				extraName.Visible = extraScore.Visible = true;
+				extraName.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
+				extraScore.AddThemeColorOverride("font_color", new Color(0.3f, 0.3f, 0.3f));
 			}
 			else
 			{
-				extraNameLabel.Visible = false;
-				extraScoreLabel.Visible = false;
+				extraName.Visible = extraScore.Visible = false;
 			}
 		}
 	}
-
-
-	// LEADERBOARD SAVING STUFF
-	// TODO: create system that properly merges local scores and "server" leaderboard saves
-	// or "submits" the local scores to the server to handle and etc
-
-	// given a level ID, handle all the loading/saving and etc
-	private void HandleLeaderboard(int levelId)
+	public void LoadLeaderboard(int levelId, List<(string, float)> scoreList)
 	{
-		// "load from server"
-		leaderboard = new List<(string, float)>();
-		LoadLeaderboard(levelId, leaderboard);
+		string path = $"res://Resources/Levels/leaderboard{levelId}.leaderboard";
+		if (!FileAccess.FileExists(path)) return;
 
-		// "retrieve local high score"
-		bool retrievedLocalScore = LoadScore(levelId, leaderboard);
-		if (!retrievedLocalScore)
+		using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+		while (file.GetPosition() < file.GetLength())
 		{
-			// if local high score doesn't exist, give user a score of 0.00
-			leaderboard.Add(("You", 0.0f));
+			var jsonString = file.GetLine();
+			var json = new Json();
+			if (json.Parse(jsonString) != Error.Ok) continue;
+
+			var nodeData = new Godot.Collections.Dictionary<string, Variant>((Godot.Collections.Dictionary)json.Data);
+			string name = (string)nodeData["username"];
+			float score = (float)nodeData["score"];
+			scoreList.Add((name, score));
 		}
 	}
 
-	// Save leaderboard according to the level id
-	// TODO: save/merge entire leaderboard, only loads user's scores per-level atm
 	public static void SaveScore(int levelId, string scoreName, float scoreValue)
 	{
 		string SavePath = "user://Leaderboard/leaderboard" + levelId + ".leaderboard";
@@ -464,99 +336,20 @@ public partial class Leaderboard : CenterContainer
 		GD.Print("BoilerTronicsLevel: Leaderboard: Successfully saved to local, name: ", scoreName, ", score: ", scoreValue);
 	}
 
-	// Load leaderboard according to the level id
-	public void LoadLeaderboard(int levelId, List<(string, float)> scoreList)
-	{
-		string SavePath = "res://Resources/Levels/leaderboard" + levelId + ".leaderboard";
-		// GD.Print("Leaderboard: Trying to load file from ", SavePath);
-
-		if (!FileAccess.FileExists(SavePath))
-		{
-			GD.Print("Leaderboard: Loading: File does not exist!");
-			return;
-		} // not valid save location
-
-		// open up save data
-		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
-
-		// much copied from Godot's documentation
-		while (saveFile.GetPosition() < saveFile.GetLength())
-		{
-			var jsonString = saveFile.GetLine();
-
-			// Creates the helper class to interact with JSON.
-			var json = new Json();
-			var parseResult = json.Parse(jsonString);
-			if (parseResult != Error.Ok)
-			{
-				GD.Print("Leaderboard: JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at line {json.GetErrorLine()}");
-				continue;
-			}
-
-
-			// Get the data from the JSON object.
-			// TODO: advanced error checking
-			var nodeData = new Godot.Collections.Dictionary<string, Variant>((Godot.Collections.Dictionary)json.Data);
-
-			// GD.Print("Leaderboard: Loaded dictionary:", nodeData);
-
-			string name = (string)nodeData["username"];
-			float score = (float)nodeData["score"];
-
-			// GD.Print("Leaderboard: username: ", name, ", score: ", score);
-			// GD.Print("SaveState: metadata: level name: ", levelName);
-			scoreList.Add((name, score));
-
-			continue;
-		}
-
-	}
-
-	// Load the user's score (just one!)
-	// Returns if successfully retreived or not
 	public static bool LoadScore(int levelId, List<(string, float)> scoreList)
 	{
-		string SavePath = "user://Leaderboard/leaderboard" + levelId + ".leaderboard";
+		string path = $"user://Leaderboard/leaderboard{levelId}.leaderboard";
+		if (!FileAccess.FileExists(path)) return false;
 
-		if (!FileAccess.FileExists(SavePath))
-		{
-			GD.Print("Leaderboard: LoadScore failed to find file: ", SavePath);
-			return false;
-		} // not valid save location
-
-		// open up save data
-		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
-
-		// much copied from Godot's documentation
-		// while (saveFile.GetPosition() < saveFile.GetLength()) {
-		var jsonString = saveFile.GetLine();
-
-		// Creates the helper class to interact with JSON.
+		using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+		var jsonString = file.GetLine();
 		var json = new Json();
-		var parseResult = json.Parse(jsonString);
-		if (parseResult != Error.Ok)
-		{
-			GD.Print("Leaderboard: JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at line {json.GetErrorLine()}");
-			// continue;
-			return false;
-		}
+		if (json.Parse(jsonString) != Error.Ok) return false;
 
-
-		// Get the data from the JSON object.
-		// TODO: advanced error checking
 		var nodeData = new Godot.Collections.Dictionary<string, Variant>((Godot.Collections.Dictionary)json.Data);
-
-		// GD.Print("Leaderboard: Loaded dictionary:", nodeData);
-
 		string name = (string)nodeData["username"];
 		float score = (float)nodeData["score"];
-
-		// GD.Print("Leaderboard: username: ", name, ", score: ", score);
-		// GD.Print("SaveState: metadata: level name: ", levelName);
 		scoreList.Add((name, score));
-
-		// continue;
-		// }
 
 		return true;
 	}
