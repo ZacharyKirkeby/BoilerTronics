@@ -320,7 +320,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// We need to check and see if the object coming in is coal
 				// If so we wnat to do somthing and return true to accept it
 				if (obj is CoalObject) {
-					GD.Print("FactoryFurnace: We go fule");
 					_Fule += 5;
 					
 					// light up the furnace if both objects are ready to go
@@ -332,7 +331,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// We need to check and see if the object coming in is a smealtable material
 				// If so we wnat to do somthing and return true to accept it
 				if ((!_Working) && (obj is IronOreObject) && (_Inv == null)) {
-					GD.Print("FactoryFurnace: We go ore");
 					_StepsTillCompletion = 2;
 					_Inv = new IronBarObject(0, 0, 0) as PlaceableObject;
 					_Inv.SetGarbage(true);
@@ -341,6 +339,14 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					
 					// light up the furnace if both objects are ready to go
 					if (_Fule >= 0 && _Inv != null) { LightFurnaceAnim(); }
+					return true;
+				}
+				else if ((!_Working) && (obj is IronBarObject) && (_Inv == null)) {
+					_StepsTillCompletion = 2;
+					_Inv = new SteelBarObject(0, 0, 0) as PlaceableObject;
+					_Inv.SetGarbage(true);
+					_Working = true;
+					materialOut.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
 					return true;
 				} else {
 					GD.Print("FactoryFurnace: _Working: ", _Working);
@@ -368,6 +374,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				if ((_Inv != null) && (BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())] == requestId) && !_Working) {
 					PlaceableObject tmp = _Inv;
 					_Inv = null;
+					if (tmp is HeatedMaterial hm) hm.setHeat(2); // Add heat to element if it needs to be hot (Not much heat)
 					return tmp;
 				}
 			}
