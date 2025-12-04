@@ -123,9 +123,9 @@ public Parser()
 	}
 
 	public int getQuality()
-    {
-        return (int)qualityFlag;
-    }
+	{
+		return (int)qualityFlag;
+	}
 	public override void _Ready()
 	{
 		InitializeRegisters();
@@ -151,8 +151,8 @@ public Parser()
 
 		// Quality dictates additional behaviors
 		switch ((int)qualityFlag)
-        {
-            case 0: // default
+		{
+			case 0: // default
 				REGISTER_DECAY_STEPS = 5;
 				this.registers = ["r0", "r1", "r2","cmp"];
 				break;
@@ -171,7 +171,7 @@ public Parser()
 				REGISTER_DECAY_STEPS = 5;
 				this.registers = ["r0", "r1", "r2","cmp"];
 				break;
-        }
+		}
 	}
 
 	public void ResetRegisters()
