@@ -8,6 +8,7 @@ using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects
 {
@@ -17,7 +18,7 @@ namespace BoilerTronicsObjects.Objects
 		
 		// note: as of the current implementation, this isn't really a good factory in the strictest sense
 		// TODO: implement version that accepts alt titles
-		public static PlaceableObject CreateObject(Vector2I originPos, int sourceId, Vector2I atlasPos) {			
+		public static PlaceableObject CreateObject(Vector2I originPos, int sourceId, Vector2I atlasPos, Quality Q = Quality.LOW_QUALITY, Direction D = Direction.UP) {			
 			// TODO: creator/main factory function
 			// given which "sourceId" (i.e. which atlas map to pull from) -- this will determine the object's layer
 			// and given the "atlasPos" (i.e. where on the atlas the object is) -- this will determine the identify of the object (i.e. how Terraria does it)
@@ -47,7 +48,7 @@ namespace BoilerTronicsObjects.Objects
 			}
 			
 			
-			return GenerateObject(objectId, x, y);
+			return GenerateObject(objectId, x, y, Q, D);
 		}
 
 		public static List<PlaceableBigData> GetBigObjectTileMap(int objectID, PlaceableBig.Direction dir) {
@@ -61,6 +62,8 @@ namespace BoilerTronicsObjects.Objects
 				case 6:
 					//factory roller
 					return FactoryRoller.StaticGetTextureGrid(dir);
+				case 12:
+					return SteelMill.StaticGetTextureGrid(dir);
 				case 153:
 					//switch
 					return SwitchObject.StaticGetTextureGrid(dir);
@@ -69,7 +72,22 @@ namespace BoilerTronicsObjects.Objects
 			return null;
 		}
 
-		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0) {
+		public static Texture GetTexture(int objectID, Quality Q, Direction D) {
+
+			GD.Print("Trying to get texture from Object: ", objectID);
+			switch (objectID) {
+				case 8:
+					return WaterPump.GetTexture(Q, D);
+				case 9:
+					return LubePump.GetTexture(Q, D);
+				case 50:
+					return ClawObject.GetQualityTexture(Q);
+			}
+
+			return null;
+		}
+
+		public static PlaceableObject GenerateObject(int objectID, int x = 0, int y = 0, Quality Q = Quality.LOW_QUALITY, Direction D = Direction.UP) {
 			switch (objectID) {
 				case -1:
 					return null;
@@ -94,6 +112,23 @@ namespace BoilerTronicsObjects.Objects
 				case 6:
 					//factory furnace
 					return new FactoryRoller(x, y, 0);
+				case 7:
+					// Pipe
+					return new PipeObject(x, y, 0);
+				case 8:
+					// Water Pump
+					return new WaterPump(x, y, Q, D);
+				case 9:
+					// Lube Pump
+					return new LubePump(x, y, Q, D);
+				case 10:
+					// Cooler
+					return new CoolerObject(x, y, 0);
+				case 11:
+					// Heater
+					return new HeaterObject(x, y, 0);
+				case 12:
+					return new SteelMill(x, y, 0);
 				case 30:
 					//FloorCrackedTileObject
 					return new FloorCrackedTileObject(x, y, 0);
@@ -105,7 +140,7 @@ namespace BoilerTronicsObjects.Objects
 					return new PipeBrokenFloorObject(x, y, 1, 0);
 				case 50:
 					//clawdefault
-					return new ClawObject(x, y, 0);
+					return new ClawObject(x, y, 0, Q);
 				case 100:
 					//railleftdefault
 					return new TrackObject(x, y, 0, 0);
@@ -151,6 +186,12 @@ namespace BoilerTronicsObjects.Objects
 				case 204:
 					//IronRod
 					return new IronRodObject(x, y, 0);
+				case 205:
+					return new SteelBarObject(x, y, 0);
+				case 206:
+					return new SteelPlateObject(x, y, 0);
+				case 207:
+					return new SteelGearObject(x, y, 0);
 				case 250:
 					//factoryin - coal
 					return new FactoryInputObject(x, y, 0, 200);
@@ -166,6 +207,15 @@ namespace BoilerTronicsObjects.Objects
 				case 254:
 					//factoryin - iron rod
 					return new FactoryInputObject(x, y, 0, 204);
+				case 255:
+					//factoryin - steel bar
+					return new FactoryInputObject(x, y, 0, 205);
+				case 256:
+					//factoryin - steel plate
+					return new FactoryInputObject(x, y, 0, 206);
+				case 257:
+					//factoryin - steel gear
+					return new FactoryInputObject(x, y, 0, 207);
 				case 300:
 					//factoryout - coal
 					return new FactoryOutputObject(x, y, 0, 200);
@@ -181,6 +231,15 @@ namespace BoilerTronicsObjects.Objects
 				case 304:
 					//factoryout - iron rod
 					return new FactoryOutputObject(x, y, 0, 204);
+				case 305:
+					//factoryout - steel bar
+					return new FactoryOutputObject(x, y, 0, 205);
+				case 306:
+					//factoryout - steel plate
+					return new FactoryOutputObject(x, y, 0, 206);
+				case 307:
+					//factoryout - steel gear
+					return new FactoryOutputObject(x, y, 0, 207);
 				default:
 					GD.Print("ERROR: catastrophic failure from ObjectFactory");
 					return null;
