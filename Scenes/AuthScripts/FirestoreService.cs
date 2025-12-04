@@ -56,15 +56,23 @@ public partial class FirestoreService : Node
 			return false;
 		}
 
-		string url = $"{_firestoreUrl}/users/{userId}";
+		string url = $"{_firestoreUrl}/users?documentId={userId}";
 		var firestoreDoc = ConvertToFirestoreDocument(userData);
 
 		try
 		{
-			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			// Use POST for creating new documents with a specific ID
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
 			if (response.Success)
 			{
 				GD.Print($"User document created: {userData.Username}");
+			}
+			else if (response.ResponseCode == 409)
+			{
+				// Document already exists
+				GD.Print("User already exists, updating instead");
+				string updateUrl = $"{_firestoreUrl}/users/{userId}";
+				response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
 			}
 			return response.Success;
 		}
@@ -73,6 +81,27 @@ public partial class FirestoreService : Node
 			GD.PrintErr($"Failed to create user: {ex.Message}");
 			return false;
 		}
+	}
+
+	private async Task<bool> CreateOrUpdateDocumentAsync(string collectionPath, string documentId, object firestoreDoc, string idToken)
+	{
+		// Try creating first
+		string createUrl = $"{_firestoreUrl}/{collectionPath}?documentId={documentId}";
+		var response = await MakeFirestoreRequestAsync(createUrl, firestoreDoc, idToken, "POST");
+
+		if (response.Success)
+		{
+			return true;
+		}
+		else if (response.ResponseCode == 409)
+		{
+			// Document exists, update instead
+			string updateUrl = $"{_firestoreUrl}/{collectionPath}/{documentId}";
+			response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
+			return response.Success;
+		}
+
+		return false;
 	}
 
 	public async Task<UserData> GetUserAsync(string userId)
@@ -287,7 +316,6 @@ public partial class FirestoreService : Node
 		var httpRequest = new HttpRequest();
 		AddChild(httpRequest);
 
-		GD.Print(url);
 		var headers = new List<string>
 	{
 		"Content-Type: application/json",
@@ -311,7 +339,14 @@ public partial class FirestoreService : Node
 			}
 			else
 			{
-				GD.PrintErr($"Firestore error ({responseCode}): {text}");
+				if (responseCode == 404)
+				{
+					GD.Print($"Document not found (404): {url}");
+				}
+				else
+				{
+					GD.PrintErr($"Firestore error ({responseCode}): {text}");
+				}
 				tcs.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
 			}
 		};
@@ -320,18 +355,14 @@ public partial class FirestoreService : Node
 		{
 			"GET" => HttpClient.Method.Get,
 			"PUT" => HttpClient.Method.Put,
+			"PATCH" => HttpClient.Method.Patch,
 			"DELETE" => HttpClient.Method.Delete,
 			_ => HttpClient.Method.Post
 		};
 
 		if (payload != null)
 		{
-			GD.Print(url);
 			string json = JsonSerializer.Serialize(payload);
-			byte[] bytes = Encoding.UTF8.GetBytes(json);
-
-			headers.Add($"Content-Length: {bytes.Length}");
-
 			httpRequest.Request(url, headers.ToArray(), httpMethod, json);
 		}
 		else
@@ -520,12 +551,35 @@ public partial class FirestoreService : Node
 		var firestoreDoc = ConvertLevelToFirestoreDocument(levelData);
 
 		string safeId = CleanForDocId(levelId);
-		string url = $"{_firestoreUrl}/levels/{safeId}{BuildUpdateMaskQuery()}";
 
+		// Use POST
+		string url = $"{_firestoreUrl}/levels?documentId={safeId}";
 
-		var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
 
-		return response.Success ? levelId : null;
+			if (response.Success)
+			{
+				GD.Print($"Level saved successfully: {levelId}");
+				return levelId;
+			}
+			else if (response.ResponseCode == 409)
+			{
+				// Document already exists
+				GD.Print("Level exists, updating...");
+				string updateUrl = $"{_firestoreUrl}/levels/{safeId}{BuildUpdateMaskQuery()}";
+				response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
+				return response.Success ? levelId : null;
+			}
+
+			return null;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to save level: {ex.Message}");
+			return null;
+		}
 	}
 
 
@@ -797,38 +851,31 @@ public partial class FirestoreService : Node
 		}
 	}
 
-	private Dictionary<string, object> ConvertLevelToFirestoreDocument(LevelData levelData)
+	private object ConvertLevelToFirestoreDocument(LevelData levelData)
 	{
 		var fields = new Dictionary<string, object>
 	{
-		{ "levelId", FirestoreString(levelData.LevelId) },
-		{ "creatorId", FirestoreString(levelData.CreatorId) },
-		{ "creatorName", FirestoreString(levelData.CreatorName) },
-		{ "levelName", FirestoreString(levelData.LevelName) },
-		{ "description", FirestoreString(levelData.Description ?? "") },
-		{ "levelDataJson", FirestoreString(levelData.LevelDataJson) },
-		{ "difficulty", FirestoreString(levelData.Difficulty ?? "medium") }
+		{ "levelId", new { stringValue = levelData.LevelId } },
+		{ "creatorId", new { stringValue = levelData.CreatorId } },
+		{ "creatorName", new { stringValue = levelData.CreatorName } },
+		{ "levelName", new { stringValue = levelData.LevelName } },
+		{ "description", new { stringValue = levelData.Description ?? "" } },
+		{ "levelDataJson", new { stringValue = levelData.LevelDataJson } },
+		{ "difficulty", new { stringValue = levelData.Difficulty ?? "medium" } }
 	};
 
 		if (levelData.Tags != null && levelData.Tags.Count > 0)
 		{
-			fields["tags"] = new Dictionary<string, object>
-		{
-			{ "arrayValue", new Dictionary<string, object>
+			fields["tags"] = new
+			{
+				arrayValue = new
 				{
-					{ "values", levelData.Tags
-						.Select(t => FirestoreString(t))
-						.ToList()
-					}
+					values = levelData.Tags.Select(t => new { stringValue = t }).ToArray()
 				}
-			}
-		};
+			};
 		}
 
-		return new Dictionary<string, object>
-	{
-		{ "fields", fields }
-	};
+		return new { fields };
 	}
 
 	private Dictionary<string, object> FirestoreString(string v)

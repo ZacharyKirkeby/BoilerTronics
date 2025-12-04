@@ -125,7 +125,7 @@ public partial class Leaderboard : CenterContainer
 		string levelIdStr = $"level_{levelId}";
 		var friendScores = await _firestoreService.GetFriendScoresAsync(levelIdStr, 10);
 		friendsLeaderboard.Clear();
-
+		GD.Print(friendScores);
 		foreach (var score in friendScores)
 			friendsLeaderboard.Add((score.Username, score.Score / 100f));
 
