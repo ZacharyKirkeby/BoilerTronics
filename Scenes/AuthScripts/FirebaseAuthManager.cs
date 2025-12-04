@@ -69,14 +69,14 @@ public partial class FirebaseAuthManager : Node
         };
 
         var result = await AuthRequestAsync($"{AUTH_URL}:signUp?key={_firebaseApiKey}", payload);
-        
+
         // successful, create user document in Firestore
         if (result.Success)
         {
             await EnsureUserDocumentExists();
             EmitSignal(SignalName.AuthenticationChanged, true);
         }
-        
+
         return result;
     }
 
@@ -90,14 +90,14 @@ public partial class FirebaseAuthManager : Node
         };
 
         var result = await AuthRequestAsync($"{AUTH_URL}:signInWithPassword?key={_firebaseApiKey}", payload);
-        
+
         // ensure user document exists
         if (result.Success)
         {
             await EnsureUserDocumentExists();
             EmitSignal(SignalName.AuthenticationChanged, true);
         }
-        
+
         return result;
     }
 
@@ -112,7 +112,7 @@ public partial class FirebaseAuthManager : Node
 
         // Try to get existing user
         var existingUser = await firestoreService.GetUserAsync(_userId);
-        
+
         // If user doesn't exist, create default user - ngl i have no idea whayt im doing
         if (existingUser == null)
         {
@@ -272,6 +272,11 @@ public partial class FirebaseAuthManager : Node
         {
             return "An error occurred. Please try again.";
         }
+    }
+
+    public string GetCurrentUserId()
+    {
+        return _userId;
     }
 
     private class HttpResponse
