@@ -188,7 +188,26 @@ public partial class LevelUi : Node2D
 		if(manager.GetLevelID() == 37) {
 			achievementManager.TryEasterEggUnlock("EasterEgg3");
 		}
-	
+		
+		int levelId = manager.GetLevelID();
+		
+		if (BoilerTronicsStoryManager.StoryManager == null) {
+			BoilerTronicsStoryManager.StoryManager = new BoilerTronicsStoryManager();
+		}
+		BoilerTronicsStoryManager storyMan = BoilerTronicsStoryManager.StoryManager;
+		
+		// note: may error into output if first time booting, but this should be a non-issue.
+		storyMan.LoadData();
+		bool storyPlayed = storyMan.HasStoryPlayed(levelId);
+		if (storyPlayed) {
+			// don't show story if we've seen it already
+			GetNode<Window>("%StoryWindow").Visible = false;
+		} else {
+			// first time seeing story
+			// mark as "played", save to data
+			storyMan.MarkStoryPlayed(levelId);
+			storyMan.SaveData();
+		}
 	}
 
 	public override void _Process(double delta) {

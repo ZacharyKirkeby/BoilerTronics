@@ -165,14 +165,14 @@ public partial class BoilerTronicsAchievementManager : Node
 		// if we can't open the file, then try and make the directory
 		// and then try to open the file again
 		if (saveFile == null) {
-			GD.Print("Leaderboard: Could not save, err: ", FileAccess.GetOpenError());
-			GD.Print("Leaderboard: Trying to create (recursive) directory(s) instead:");
+			GD.Print("BoilerTronicsAchievement: Could not save, err: ", FileAccess.GetOpenError());
+			GD.Print("BoilerTronicsAchievement: Trying to create (recursive) directory(s) instead:");
 			
 			var dirSuccess = DirAccess.MakeDirRecursiveAbsolute("user://Leaderboard/leaderboard");
 			
 			// if 'ERROR' == 0, then good. else, not so good.
 			if (dirSuccess != 0) {
-				GD.Print("Leaderboard: Failed to make recursive directory(s): " + "user://Leaderboard/leaderboard");
+				GD.Print("BoilerTronicsAchievement: Failed to make recursive directory(s): " + "user://Leaderboard/leaderboard");
 				return;
 			}
 			
@@ -180,11 +180,11 @@ public partial class BoilerTronicsAchievementManager : Node
 			saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
 			
 			if (saveFile == null) {
-				GD.Print("Leaderboard: Could not save, err: ", FileAccess.GetOpenError());
-				GD.Print("Leaderboard: Aborting save process.");
+				GD.Print("BoilerTronicsAchievement: Could not save, err: ", FileAccess.GetOpenError());
+				GD.Print("BoilerTronicsAchievement: Aborting save process.");
 				return;
 			} else {
-				GD.Print("Leaderboard: Successfully created recursive directories and save file. Continue saving process now.");
+				GD.Print("BoilerTronicsAchievement: Successfully created recursive directories and save file. Continue saving process now.");
 			}
 		}
 		
