@@ -1216,6 +1216,86 @@ These instructions execute instantly (no step cost):
 - [code]wrt[/code] - Write to output"
 fit_content = true
 
+[node name="Time Easter Egg" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Time Easter Egg"
+initial_position = 2
+size = Vector2i(300, 200)
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="Time Easter Egg"]
+custom_minimum_size = Vector2(300, 200)
+offset_right = 300.0
+offset_bottom = 200.0
+
+[node name="Easter Egg Text" type="Label" parent="Time Easter Egg/MarginContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+text = "Congrats! You have found the time easter egg. Why would you every use such a time wasting solution? Honestly, I don't know."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Cost Easter Egg" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Cost Easter Egg"
+initial_position = 2
+size = Vector2i(300, 200)
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="Cost Easter Egg"]
+custom_minimum_size = Vector2(300, 200)
+offset_right = 300.0
+offset_bottom = 200.0
+
+[node name="Easter Egg Text" type="Label" parent="Cost Easter Egg/MarginContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+text = "Congrats! You have found the time easter egg. Why would you every use such a money wasting solution? Honestly, I don't know."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Mystery Level Easter Egg" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Mystery Level Easter Egg"
+initial_position = 2
+size = Vector2i(300, 200)
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="Mystery Level Easter Egg"]
+custom_minimum_size = Vector2(300, 200)
+offset_right = 300.0
+offset_bottom = 200.0
+
+[node name="Easter Egg Text" type="Label" parent="Mystery Level Easter Egg/MarginContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+text = "Congrats! You have found the mystery level easter egg!"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Achievement Notice" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Achievement Obtained"
+initial_position = 2
+size = Vector2i(300, 200)
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="Achievement Notice"]
+custom_minimum_size = Vector2(300, 200)
+offset_right = 300.0
+offset_bottom = 200.0
+
+[node name="Achievement Text" type="Label" parent="Achievement Notice/MarginContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+text = "Congrats! You have unlocked a new achievement! You can see all achievements within the achievements menu found in the profile section."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
@@ -1251,3 +1331,7 @@ fit_content = true
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
 [connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
+[connection signal="close_requested" from="Time Easter Egg" to="." method="_on_time_easter_egg_close_requested"]
+[connection signal="close_requested" from="Cost Easter Egg" to="." method="_on_cost_easter_egg_close_requested"]
+[connection signal="close_requested" from="Mystery Level Easter Egg" to="." method="_on_mystery_level_easter_egg_close_requested"]
+[connection signal="close_requested" from="Achievement Notice" to="." method="_on_achievement_notice_close_requested"]
