@@ -70,7 +70,7 @@ public partial class MainMenu : Node2D
 		if (profMan.IsAuthenticated()) {
 			FirestoreService _instance = FirestoreService.Instance;
 			userDat = profMan.GetUserData();
-			List<LevelData> levels = await _instance.GetUserLevelsAsync(userDat.Uuid);
+			List<LevelData> levels = await _instance.GetUserLevelsAsync(50);
 			foreach (LevelData level in levels)
 			{
 				GD.Print(level);
