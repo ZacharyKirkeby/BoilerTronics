@@ -63,6 +63,102 @@ public partial class MainMenu : Node2D
 	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("LevelCreatorMenu").Visible = true;
+		var vbox = GetNode<VBoxContainer>("%LevelVBox");
+		foreach (Node child in vbox.GetChildren())
+		{
+			child.QueueFree();
+		}
+		FirestoreService _instance = FirestoreService.Instance;
+		//_instance.GetUserLevelsAsync();
+		
+	}
+	public PanelContainer CreateRow()
+	{
+		// ---- PanelContainer ----
+		var panel = new PanelContainer
+		{
+			CustomMinimumSize = new Vector2(0, 150)
+		};
+
+		var style = new StyleBoxFlat
+		{
+			BgColor = new Color("937e56"),   // background color
+			BorderColor = Colors.Black
+		};
+
+		style.CornerRadiusTopLeft = 10;
+		style.CornerRadiusTopRight = 10;
+		style.CornerRadiusBottomLeft = 10;
+		style.CornerRadiusBottomRight = 10;
+
+		style.BorderWidthLeft = 4;
+		style.BorderWidthTop = 4;
+		style.BorderWidthRight = 4;
+		style.BorderWidthBottom = 4;
+
+		panel.AddThemeStyleboxOverride("panel", style);
+
+		// ---- HBoxContainer ----
+		var hbox = new HBoxContainer();
+		panel.AddChild(hbox);
+
+		// Common font for labels
+		// (replace with your actual font path)
+		var font = ResourceLoader.Load<Font>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+
+		// ---- Left Control (100 x 0) ----
+		var controlLeft = new Control
+		{
+			CustomMinimumSize = new Vector2(100, 0)
+		};
+		hbox.AddChild(controlLeft);
+
+		// ---- Label ----
+		var label1 = new Label
+		{
+			Text = "Label"
+		};
+		label1.AddThemeFontOverride("font", font);
+		label1.AddThemeColorOverride("font_color", Colors.Black);
+		hbox.AddChild(label1);
+
+		// ---- Label2 ----
+		var label2 = new Label
+		{
+			Text = "Label2"
+		};
+		label2.AddThemeFontOverride("font", font);
+		label2.AddThemeColorOverride("font_color", Colors.Black);
+		hbox.AddChild(label2);
+
+		// ---- Button ----
+		var button = new Button
+		{
+			Text = "",
+			// Horizontal: Shrink End + Expand
+			SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd | Control.SizeFlags.Expand,
+			// Vertical: Shrink Center
+			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+		};
+
+		// Theme (replace with your theme path)
+		button.Theme = ResourceLoader.Load<Theme>("res://Resources/ButtonThemes/buttontheme.tres");
+
+		// Icon
+		var icon = ResourceLoader.Load<Texture2D>("res://Resources/Icons/play.png");
+		button.Icon = icon;
+		button.AddThemeConstantOverride("icon_max_width", 100);
+
+		hbox.AddChild(button);
+
+		// ---- Right Control (100 x 0) ----
+		var controlRight = new Control
+		{
+			CustomMinimumSize = new Vector2(100, 0)
+		};
+		hbox.AddChild(controlRight);
+
+		return panel;
 	}
 	
 	private void _on_level_creator_button_pressed()
