@@ -24,6 +24,10 @@ public partial class LevelCreator : LevelUi
 		var loadName = GetNode<Label>("%LoadName");
 		loadName.Text = dropdown.GetItemText(dropdown.Selected);
 		saveWindow.Visible = true;
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// If we're in a level creator, we should save the creator's name!
+		manager.saveState.shouldSaveCreatorName = true;
 	}
 	
 	// opens level metadata edit button
@@ -203,21 +207,21 @@ public partial class LevelCreator : LevelUi
 	}
 
 	private void _on_export_and_upload_pressed()
-    {
+	{
 		string fileName = GetNode<LineEdit>("%NewFileName").GetText(); 
 		/* TODO ADD UPLOAD TO SERVER */
-        BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
 		GD.Print("LevelCreator: overwriting level: ", fileName);
 		man.saveState.SaveDataTo(man, "LevelCreator", "/" + fileName);
 		
 		// close windows when done
 		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
 		saveWindow.Visible = false;
-    }
+	}
 
 	private void _on_load_button_pressed()
-    {
-        var fileLocation = GetNode<Label>("%FileLocation");
+	{
+		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
 		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
@@ -230,7 +234,7 @@ public partial class LevelCreator : LevelUi
 		var loadName = GetNode<Label>("%LoadName");
 		loadName.Text = dropdown.GetItemText(dropdown.Selected);
 		saveWindow.Visible = true;
-    }
+	}
 
 	private void _on_load_level_button_pressed()
 	{
