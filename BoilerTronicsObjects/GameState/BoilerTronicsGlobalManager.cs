@@ -51,6 +51,14 @@ public partial class BoilerTronicsGlobalManager : Node
 	// idea is to keep track of what object is currently "selected"
 	public PlaceableObject selectedObject;
 	public SelectingObject selectingObject;	// keep track of the "selected" visuals; delete on reset/play/step
+	// clear both params above
+	public void ClearSelectingObject() {
+		selectedObject = null;
+		if (IsInstanceValid(selectingObject)) {
+			selectingObject.QueueFree();
+		}
+		selectingObject = null;
+	}
 
 	// TODO:
 	// keeps track of the last selected terminal
