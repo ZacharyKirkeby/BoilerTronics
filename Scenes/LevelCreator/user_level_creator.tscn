@@ -1098,6 +1098,7 @@ oversampling_override = 1.0
 title = "Export Level"
 initial_position = 1
 size = Vector2i(600, 500)
+visible = false
 
 [node name="Existing Level" type="ScrollContainer" parent="CreatorSaveWindow"]
 anchors_preset = 15
