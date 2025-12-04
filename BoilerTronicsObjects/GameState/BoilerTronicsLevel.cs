@@ -10,6 +10,7 @@ using BoilerTronicsObjects.Objects.MovementLayerObjects;	// MovementLayer
 using Parsing;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
+using System.Threading.Tasks;
 
 public partial class BoilerTronicsLevel : Node2D
 {
@@ -61,31 +62,74 @@ public partial class BoilerTronicsLevel : Node2D
 	}
 	
 	//when solution reached, update solution statistics
-	public void UpdateSolutionStats() {
-		//TODO: pps based on production/step
-		ppsSolution = (float)targetProduction / (float)(StepCount+1);
-		GD.Print("BoilerTronicsLevel: targetProduction: ", targetProduction);
+	public async void UpdateSolutionStats() {
+	//TODO: pps based on production/step
+	ppsSolution = (float)targetProduction / (float)(StepCount+1);
+	GD.Print("BoilerTronicsLevel: targetProduction: ", targetProduction);
+	
+	//update leaderboard (min values for the 3 categories)
+	//update levelui stats labels
+	if(levelUi != null) {
+		levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount + 1);
+		float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
+		float solutionScore = grades[0] + grades[1] + grades[2];
+		solutionScore /= 3;
 		
-		//update leaderboard (min values for the 3 categories)
-		//update levelui stats labels
-		if(levelUi != null) {
-			levelUi.UpdateSolutionStatistics(ppsSolution, cost, StepCount + 1);
-			float[] grades = levelUi.UpdateSolutionGrading(ppsCutoff, ppsSolution, costCutoff, cost, stepsCutoff, StepCount);
-			float solutionScore = grades[0] + grades[1] + grades[2];
-			solutionScore /= 3;
-			
-			GD.Print("BoilerTronicsLevel: Leaderboard: Solution Score: ", solutionScore);
-			if(solutionScore > bestScore) {
-				bestScore = solutionScore;
-				GD.Print("BoilerTronicsLevel: bestscore is " + bestScore);
-				GD.Print("BoilerTronicsLevel: bestscore is " + grades[0]);
-				GD.Print("BoilerTronicsLevel: bestscore is " + grades[1]);
-				GD.Print("BoilerTronicsLevel: bestscore is " + grades[2]);
-			}
-			
-			Leaderboard.SaveScore(manager.GetLevelID(), "You", bestScore);
+		GD.Print("BoilerTronicsLevel: Leaderboard: Solution Score: ", solutionScore);
+		if(solutionScore > bestScore) {
+			bestScore = solutionScore;
+			GD.Print("BoilerTronicsLevel: bestscore is " + bestScore);
+			GD.Print("BoilerTronicsLevel: bestscore is " + grades[0]);
+			GD.Print("BoilerTronicsLevel: bestscore is " + grades[1]);
+			GD.Print("BoilerTronicsLevel: bestscore is " + grades[2]);
 		}
+		
+		// Save to local storage
+		Leaderboard.SaveScore(manager.GetLevelID(), "You", bestScore);
+		
+		// Save to Firebase if authenticated
+		await SaveScoreToFirebase(manager.GetLevelID(), bestScore, grades);
 	}
+}
+
+private async Task SaveScoreToFirebase(int levelId, float score, float[] grades) {
+	var authManager = FirebaseAuthManager.Instance;
+	var firestoreService = FirestoreService.Instance;
+	
+	// Only save if user is authenticated
+	if (authManager == null || !authManager.IsAuthenticated || firestoreService == null) {
+		GD.Print("BoilerTronicsLevel: Not authenticated, skipping Firebase save");
+		return;
+	}
+	
+	// Get user data for username
+	var userData = await firestoreService.GetUserAsync(authManager.UserId);
+	string username = userData != null ? userData.Username : authManager.Email;
+	
+	// Create score data
+	var scoreData = new ScoreData {
+		Username = username,
+		LevelId = $"level_{levelId}",
+		Score = (int)(score * 100), // Convert to integer 
+		Metadata = new Dictionary<string, object> {
+			{ "ppsGrade", grades[0] },
+			{ "costGrade", grades[1] },
+			{ "stepsGrade", grades[2] },
+			{ "ppsSolution", ppsSolution },
+			{ "cost", cost },
+			{ "steps", StepCount + 1 }
+		}
+	};
+	
+	// Save to Firebase
+	bool success = await firestoreService.SaveScoreAsync($"level_{levelId}", scoreData);
+	
+	if (success) {
+		GD.Print($"BoilerTronicsLevel: Score saved to Firebase: {score}");
+	} else {
+		GD.PrintErr("BoilerTronicsLevel: Failed to save score to Firebase");
+	}
+}
 	
 	public void ResetSolutionStats() {
 		ppsSolution = 0;
