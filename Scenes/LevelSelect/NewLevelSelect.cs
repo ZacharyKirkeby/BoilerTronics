@@ -72,6 +72,7 @@ public partial class NewLevelSelect : Node2D
 		_btnRight.Pressed += OnRightPressed;
 		SnapToGrid(_gridPos);
 		UpdateDirectionButtons();
+		getScores();
 
 
 	}
@@ -362,6 +363,11 @@ private void changescenes()
 		);
 	}
 
+	private void _on_back_button_pressed()
+    {
+        GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
+    }
+
 	private void SetSpriteDirection(Vector2I dir)
 {
 
@@ -378,6 +384,55 @@ private void changescenes()
 		_train.Texture = ResourceLoader.Load<Texture2D>("res://Resources/Sprites/32x32_traind.png");
 }
 
+	private void getScores()
+    {
+		for (int i = 1; i <= GridSize.Y; i++) {
+			for (int j = 1; j <= GridSize.X; j++) {
+				string levelnum = i.ToString() + j.ToString();
+				string SavePath = "user://Leaderboard/leaderboard" + levelnum  + ".leaderboard";
+				var label = GetNode<Label>("%Label" + levelnum);
+				//label.AddThemeFontSizeOverride("label", 130);
+
+				if (!FileAccess.FileExists(SavePath)) {
+					GD.Print("Leaderboard: LoadScore failed to find file: ", SavePath);
+					label.Text = "Level "+levelnum[0]+ "." + levelnum[1]+"    Grade: N/A";
+					continue;
+				} // not valid save location
+				
+				// open up save data
+				using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
+				
+				// much copied from Godot's documentation
+				// while (saveFile.GetPosition() < saveFile.GetLength()) {
+					var jsonString = saveFile.GetLine();
+
+					// Creates the helper class to interact with JSON.
+					var json = new Json();
+					var parseResult = json.Parse(jsonString);
+					if (parseResult != Error.Ok)
+					{
+						GD.Print("Leaderboard: JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at line {json.GetErrorLine()}");
+						// continue;
+						return;
+					}
+					
+
+					// Get the data from the JSON object.
+					// TODO: advanced error checking
+					var nodeData = new Godot.Collections.Dictionary<string, Variant>((Godot.Collections.Dictionary)json.Data);
+					
+					// GD.Print("Leaderboard: Loaded dictionary:", nodeData);
+
+					string name = (string) nodeData["username"];
+					float score = (float) nodeData["score"];
+					label.Text = "Level "+levelnum[0]+ "." +levelnum[1]+"    Grade:" +  Math.Round(score, 1);
+					// GD.Print("Leaderboard: username: ", name, ", score: ", score);
+					// GD.Print("SaveState: metadata: level name: ", levelName);
+			}
+		}
+			
+    }
+
 	private void UpdateDirectionButtons()
 	{
 		_btnLeft.Visible = _gridPos.X > 0;
@@ -385,5 +440,7 @@ private void changescenes()
 		_btnUp.Visible = _gridPos.Y < GridSize.Y - 1 && _gridPos.X == 0;
 		_btnDown.Visible = _gridPos.Y > 0 && _gridPos.X == 0;
 	}
+
+
 
 }
