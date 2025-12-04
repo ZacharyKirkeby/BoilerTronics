@@ -5,6 +5,7 @@ using System.IO;
 using BoilerTronicsObjects.Placeable;	// use for TileTex
 
 using Parsing;
+using System.Linq;
 public partial class LevelCreator : LevelUi
 {
 	string levelSavePath = ProjectSettings.GlobalizePath("user://LevelCreator/");
@@ -14,10 +15,16 @@ public partial class LevelCreator : LevelUi
 		base._Ready();
 		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
+
 		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+
 		foreach (string saveFile in saveFiles)
 		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		foreach (string saveFile in userSaveFiles) {
 			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
 		}
 		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
