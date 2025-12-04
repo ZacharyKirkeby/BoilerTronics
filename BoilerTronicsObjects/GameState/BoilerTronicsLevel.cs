@@ -528,6 +528,11 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void Reset() {
 		GD.Print("BoilerTronicsLevel: Starting Reset");
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
+		
 		// Stops moving objects to prevent errors
 		HaultObjects();
 		// Reset all layers
@@ -625,12 +630,20 @@ public partial class BoilerTronicsLevel : Node2D
 		// This will set our state to pause
 		RunState = GameRunState.Paused; // Pause, this will stop running
 		DeltaTime = StepDeltaTime;
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
 	}
 
 	public void SetStep() {
 		// This will set our state to step, this will make sure we can't run after stepping
 		RunState = GameRunState.Stepping;
 		DeltaTime = StepDeltaTime;
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
 	}
 
 	public void IncRun() {
@@ -662,7 +675,11 @@ public partial class BoilerTronicsLevel : Node2D
 	 * 5. Claws
 	 */
 	public void Step() {
-
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
+		
 		if (E.HasError()) {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Error);
