@@ -51,4 +51,14 @@ public partial class LevelSelect : Node2D
 	{
 		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
 	}
+	
+	private void _on_mystery_level_pressed() {
+		GD.Print("entering mystery level");
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		var levelnum = 37;
+		int level = 37;
+		GD.Print("Level: " + level);
+		manager.SetTargetLevelSave(level, -1);
+		CallDeferred(nameof(changescenes));
+	}
 }
