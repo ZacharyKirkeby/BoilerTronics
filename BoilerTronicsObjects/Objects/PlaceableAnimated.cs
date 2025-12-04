@@ -197,22 +197,24 @@ namespace BoilerTronicsObjects.Placeable
 		
 		private AnimateType animationType = AnimateType.Step; 
 		
+		// set up overrides
+		private AnimatingObjectOverrides ownOverrides = null;
 		
 		// vector offset off the object's current position, and this tile should be the "animated" tile
 		
 		// deltaTime should be 'GlobalManager.currLevel.DeltaTime"
-		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime) {
-			initialize(input, animType, deltaTime);
+		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime, AnimatingObjectOverrides overrides = null) {
+			initialize(input, animType, deltaTime, overrides);
 		}
 		
-		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime, Vector2I atlasModIn, int sourceIdModIn){
-			initialize(input, animType, deltaTime);
+		public AnimatingObject(PlaceableAnimationData input, AnimateType animType, double deltaTime, Vector2I atlasModIn, int sourceIdModIn, AnimatingObjectOverrides overrides = null){
+			initialize(input, animType, deltaTime, overrides);
 			SetAtlasMod(atlasModIn);
 			SetSourceIdMod(sourceIdModIn);
 		}
 		
 		// what does the actual "constructing" work
-		private void initialize(PlaceableAnimationData input, AnimateType animType, double deltaTime) {
+		private void initialize(PlaceableAnimationData input, AnimateType animType, double deltaTime, AnimatingObjectOverrides overrides = null) {
 			// GD.Print("AnimatingObject: ", this, ": Creating Object");
 			this.data = input;
 			
@@ -236,6 +238,7 @@ namespace BoilerTronicsObjects.Placeable
 				GD.Print("AnimatingObject: ", this, ": Per-Frame-Time: ", perFrameTime);
 			}
 			
+			this.ownOverrides = overrides;
 			// GD.Print("AnimatingObject: ", this, ": Created Object");
 		}
 		
@@ -269,6 +272,20 @@ namespace BoilerTronicsObjects.Placeable
 				// GD.Print("AnimatingObject: ", this, ": Process halted, stalling.");
 				base._Process(delta);
 				return;
+			}
+			
+			// OVERRIDES
+			if (ownOverrides != null) {
+				switch (ownOverrides.GetType()) {
+					
+					// skip to end case:
+					case AnimatingObjectOverrides.OverrideType.SkipToEnd:
+						data.SetFrameIndex(data.GetFrameCount() - 1);
+						this.UpdateVisuals();
+						End();
+						return;
+						break;
+				}
 			}
 			
 			// check time elapsed
@@ -379,6 +396,28 @@ namespace BoilerTronicsObjects.Placeable
 			halted = true;
 		}
 	}
+	
+	// extra little data tidbit -- to be expanded in the future -- that allows for specific configs
+	// of a standard AnimatingObject trigger.
+	// for now, this is to force a normal animation to "skip" to its last frame instantly.
+	// this is very scuffed but this should set the groundwork for future (tm) stuff.
+	public class AnimatingObjectOverrides {
+		
+		public enum OverrideType
+		{
+			SkipToEnd = 1,			// Overrides the animation to immediately skip to the end of the animation rather than playing it thorugh.
+		}
+		private OverrideType type;
+		
+		public AnimatingObjectOverrides(OverrideType input) {
+			this.type = input;
+		}
+		
+		public OverrideType GetType() {
+			return type;
+		}
+		
+	}
 
 	/* 
 		TODO: better documentation
@@ -436,13 +475,13 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// easy function to trigger animations
 		// returns if animation was successfully triggered or not
-		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType) {
-			return TriggerAnimation(key, animationType, new Vector2I(0, 0), 0);
+		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType, AnimatingObjectOverrides overrides = null) {
+			return TriggerAnimation(key, animationType, new Vector2I(0, 0), 0, overrides);
 		}
 		
 		// note: the mod inputs ONLY AFFECT ANIMATIONS
 		// not the object's raw sprites (change behavior or?)
-		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType, Vector2I modAtlas, int modSourceId) {
+		public bool TriggerAnimation(string key, AnimatingObject.AnimateType animationType, Vector2I modAtlas, int modSourceId, AnimatingObjectOverrides overrides = null) {
 			bool res = SetState(key);
 			if (!res) { return res; } // if we failed to set this object to the target state, return "false"
 			
@@ -458,7 +497,7 @@ namespace BoilerTronicsObjects.Placeable
 			
 			// create new AnimatingObject processor object
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			AnimatingObject aObj = new AnimatingObject(currData, animationType, manager.currLevel.DeltaTime, modAtlas, modSourceId);
+			AnimatingObject aObj = new AnimatingObject(currData, animationType, manager.currLevel.DeltaTime, modAtlas, modSourceId, overrides);
 			
 			// "add to the scene" such that _Process works as intended
 			manager.currLevel.cLayer.GetParent().AddChild(aObj);
