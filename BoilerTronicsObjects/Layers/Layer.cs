@@ -723,6 +723,17 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+
+		// Helper function to simply "deselecting an object" process
+		private void DeselectObject() {
+			manager.selectedObject = null;
+			
+			// clear highlighting object
+			if (manager.selectingObject != null && IsInstanceValid(manager.selectingObject)) {
+				manager.selectingObject.QueueFree();
+			}
+		}
+
 		public void MouseInput(InputEvent @event, int targetSel)
 		{
 			// make sure that this is a mouse event
@@ -741,14 +752,68 @@ namespace BoilerTronicsObjects.Layers
 			Vector2I tileCoords = LocalToMap(localMousePos);
 			PlaceableObject objAtPos = FindObject(tileCoords);
 
+			// check: are we working on this layer?
 			if (manager.currSlection != targetSel) return;
+			
+			
+			// TODO: "object selection" mechanism
+			if (true) {
+				
+				/*
+				Concept:
+				
+				click to "select" an object
+				- dynamically generate an object texture at this point and "highlight" or?
+				
+				when selected:
+				- click on "selected" object again to move/etc
+				- hotkeys to "re-place" the object with different states and etc
+					- dynamically generated tool tip here?
+				- click anywhere else to "de-select" the "selected" object
+					- functionality to immediately "select" the selected object or?
+				
+				*/
+			}
+			
+			// TODO: check if the mouse input is over a target input
+			// TODO: how should we handle claw/track layer? both will trigger this function at the same time, causes issues
+			// ex: claw selects one, track clears obj selection
+			if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed() && allowDrag) {
+				
+				// clear object selection
+				if (objAtPos == null) {
+					GD.Print("Layer: Selection: Clicked on empty space, deselecting.");
+					DeselectObject();
+					return;
+				} else {
+					
+					// no "selected" object, so update "selectedObject" accordingly
+					if (manager.selectedObject == null) {
+						manager.selectedObject = objAtPos;
+						GD.Print("Layer: Selection: Successfully selecting object: ", objAtPos);
+						
+						SelectingObject sObj = new SelectingObject(manager.selectedObject, this);
+						//manager.currLevel.cLayer.GetParent().AddChild(sObj);
+						this.AddChild(sObj);
+						return;
+						
+					// if selected object, and we clicked on something other than the selected object, then deselect
+					// TODO: dynamically switch selected objects or?
+					} else if (objAtPos != manager.selectedObject) {
+						GD.Print("Layer: Selection: Clicked on space other than selection, deselecting.");
+						DeselectObject();
+						return;
+					}
+				}
+			}
 
+			/* "Place Down" a PlaceableObject */
 			if (manager.placingObject == 1) {
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
 				{
 					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
 					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
-						GD.Print("Placement: Checking PlaceableBig object");
+						GD.Print("Layer.cs: Placement: Checking PlaceableBig object");
 						validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
 					}
 					// make sure nothing is there already
@@ -793,6 +858,8 @@ namespace BoilerTronicsObjects.Layers
 					// 'null' check to prevent errors
 					if (manager.terminalContainer != null) manager.terminalContainer.UpdateSelectedTerminal();
 				}
+			
+			/* "Pick Up" a PlaceableObject */
 			} else {
 				// Left mouse click on a spot where an object exitsts
 				// Handles creating a new draggable object when clicking on a tile
@@ -827,7 +894,7 @@ namespace BoilerTronicsObjects.Layers
 
 					manager.placingObject = 1;
 
-					// when picking up an object, be sure to modulate the 
+					// when picking up an object, be sure to modulate layers as appropriate 
 					// LAZY: modulate all layers
 					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
 					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
