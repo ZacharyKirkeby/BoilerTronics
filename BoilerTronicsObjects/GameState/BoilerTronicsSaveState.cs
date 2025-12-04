@@ -241,6 +241,18 @@ public class BoilerTronicsSaveState
 		return LoadData(manager, SavePath);
 	}
 	
+	// given the save location, try and return the raw contents of the save file as a string
+	public string LoadDataIntoString(BoilerTronicsGlobalManager manager, string SaveLocationName) {
+		string SavePath = "user://" + SaveLocationName + ".save";
+		
+		if (!FileAccess.FileExists(SavePath)) {return null;}
+		
+		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
+		string output = saveFile.GetAsText();
+		
+		return output;
+	}
+	
 	// given a save location, load the data from that save and save that into our private data objects
 	// returns success of loading the file
 	private bool LoadData(BoilerTronicsGlobalManager manager, string SavePath) {
