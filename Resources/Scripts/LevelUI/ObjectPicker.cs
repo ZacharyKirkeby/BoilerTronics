@@ -154,11 +154,11 @@ public partial class ObjectPicker : HBoxContainer
 
 		if (item.big) {
 			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(item.table, item.atPos)], PlaceableBig.Direction.UP);
-			GD.Print(data);
+			// GD.Print(data);
 			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
 			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
-			double hScale = 32 / texture.GetHeight();
-			double wScale = 32 / texture.GetWidth();
+			// double hScale = 32 / texture.GetHeight();
+			// double wScale = 32 / texture.GetWidth();
 		} else {
 			// get the tile
 			var tile = tileSetSource.GetTileTextureRegion(item.atPos);
