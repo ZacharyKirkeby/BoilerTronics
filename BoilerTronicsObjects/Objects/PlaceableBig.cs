@@ -204,7 +204,7 @@ namespace BoilerTronicsObjects.Placeable
 		
 		// set this PlaceableBig's direction (0-3)
 		// if input is OOB, returns and does not affect 'dir'.
-		public void SetDir(Direction inputDir) {
+		public virtual void SetDir(Direction inputDir) {
 			if (inputDir < Direction.UP || inputDir > Direction.RIGHT) { return; }
 			this.dir = inputDir;
 		}

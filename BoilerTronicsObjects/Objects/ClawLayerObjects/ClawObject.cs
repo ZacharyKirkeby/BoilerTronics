@@ -62,6 +62,24 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			// (6) is "grab iron rod"
 			AddFrame(new TileTex(new Vector2I(3, 5), 10 + (int) Q));
+
+			// (7) is "grab steel bar cool"
+			AddFrame(new TileTex(new Vector2I(0, 7), 10 + (int) Q));
+
+			// (8) is "grab steel bar hot"
+			AddFrame(new TileTex(new Vector2I(4, 7), 10 + (int) Q));
+
+			// (9) is "grab steel plate cool"
+			AddFrame(new TileTex(new Vector2I(0, 8), 10 + (int) Q));
+
+			// (10) is "grab steel plate hot"
+			AddFrame(new TileTex(new Vector2I(4, 8), 10 + (int) Q));
+
+			// (11) is "grab steel gear cool"
+			AddFrame(new TileTex(new Vector2I(8, 6), 10 + (int) Q));
+
+			// (12) is "grab steel gear hot"
+			AddFrame(new TileTex(new Vector2I(4, 6), 10 + (int) Q));
 		} // create object
 
 		~ClawObject()
@@ -308,6 +326,24 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				SetFrameIndex(5);
 			} else if (heldObject is IronRodObject) {
 				SetFrameIndex(6);
+			} else if (heldObject is SteelBarObject sbObj) {
+				if (sbObj.hasHeat()) {
+					SetFrameIndex(8);
+				} else {
+					SetFrameIndex(7);
+				}
+			} else if (heldObject is SteelPlateObject spObj) {
+				if (spObj.hasHeat()) {
+					SetFrameIndex(10);
+				} else {
+					SetFrameIndex(9);
+				}
+			} else if (heldObject is SteelGearObject sgObj) {
+				if (sgObj.hasHeat()) {
+					SetFrameIndex(12);
+				} else {
+					SetFrameIndex(11);
+				}
 			} else {
 				SetFrameIndex(0);
 			}
@@ -337,15 +373,34 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				// If it is, then we want to try to pick it up (or it's contents)
 				heldObject = mObj.PickUp();
 
+				if (heldObject is HeatedMaterial hm) hm.setHook(this);
+
+				GD.Print("Pickedup: ", heldObject);
+
 				manager.currLevel.cLayer.UpdateObject(this);
 			} else if (factoryObj is BigMovable bmObj) {
 				// If it is, then we want to try to pick it up (or it's contents)
 				heldObject = bmObj.PickUp(this.GetCurrPos());
 
+				if (heldObject is HeatedMaterial hm) hm.setHook(this);
+
 				manager.currLevel.cLayer.UpdateObject(this);
 			}
 
 			// Call to some update frame function that will update based on the held item
+			UpdateFrame();
+		}
+
+		public void deleteHeld() {
+			heldObject = null;
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// manager.currLevel.cLayer.UpdateObject(this);
+			UpdateFrame();
+		}
+
+		public void updateHeld() {
+			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			// manager.currLevel.cLayer.UpdateObject(this);
 			UpdateFrame();
 		}
 
