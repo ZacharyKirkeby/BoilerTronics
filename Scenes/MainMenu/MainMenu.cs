@@ -61,9 +61,15 @@ public partial class MainMenu : Node2D
 
 	private void _on_level_creator_pressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("LevelCreatorMenu").Visible = true;
 	}
 	
+	private void _on_level_creator_button_pressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
+	}
+
 	private void _on_profile_pressed() {
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("ProfileMenu").Visible = true;
@@ -79,6 +85,7 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("SettingsMenu").Visible = false;
 		GetNode<Control>("ProfileMenu").Visible = false;
 		GetNode<Control>("Leaderboard").Visible = false;
+		GetNode<Control>("LevelCreatorMenu").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
 	}
 

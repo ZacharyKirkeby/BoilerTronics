@@ -634,7 +634,8 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="LevelCreatorMenu/VBoxContainer"]
 layout_mode = 2
 
-[node name="Back2" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+[node name="LevelCreatorButton" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -668,3 +669,5 @@ text = "Back"
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/LevelCreatorButton" to="." method="_on_level_creator_button_pressed"]
+[connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
