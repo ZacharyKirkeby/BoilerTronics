@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class FirestoreService : Node
 {
@@ -57,7 +58,7 @@ public partial class FirestoreService : Node
 
 		string url = $"{_firestoreUrl}/users/{userId}";
 		var firestoreDoc = ConvertToFirestoreDocument(userData);
-		
+
 		try
 		{
 			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
@@ -84,25 +85,25 @@ public partial class FirestoreService : Node
 		}
 
 		string url = $"{_firestoreUrl}/users/{userId}";
-		
+
 		try
 		{
 			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
-			
+
 			// 404 is expected when document doesn't exist - not an error
 			if (response.ResponseCode == 404)
 			{
 				GD.Print($"User document not found for {userId} (this is normal for new users)");
 				return null;
 			}
-			
+
 			if (response.Success)
 			{
 				var userData = ConvertFromFirestoreDocument(response.Data);
 				GD.Print($"User data loaded: {userData.Username}");
 				return userData;
 			}
-			
+
 			return null;
 		}
 		catch (Exception ex)
@@ -111,7 +112,7 @@ public partial class FirestoreService : Node
 			return null;
 		}
 	}
-	
+
 	public async Task<bool> UpdateUserFieldAsync(string userId, string fieldName, object value)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
@@ -122,7 +123,7 @@ public partial class FirestoreService : Node
 		}
 
 		string url = $"{_firestoreUrl}/users/{userId}?updateMask.fieldPaths={fieldName}";
-		
+
 		var firestoreDoc = new
 		{
 			fields = new Dictionary<string, object>
@@ -130,7 +131,7 @@ public partial class FirestoreService : Node
 				{ fieldName, ConvertToFirestoreValue(value) }
 			}
 		};
-		
+
 		try
 		{
 			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
@@ -217,7 +218,7 @@ public partial class FirestoreService : Node
 		try
 		{
 			var fields = doc.GetProperty("fields");
-			
+
 			return new UserData
 			{
 				Username = GetStringField(fields, "username"),
@@ -238,7 +239,7 @@ public partial class FirestoreService : Node
 	private string GetStringField(JsonElement fields, string fieldName)
 	{
 		if (fields.TryGetProperty(fieldName, out var field) &&
-		    field.TryGetProperty("stringValue", out var value))
+			field.TryGetProperty("stringValue", out var value))
 		{
 			return value.GetString();
 		}
@@ -264,10 +265,10 @@ public partial class FirestoreService : Node
 	private List<string> GetArrayField(JsonElement fields, string fieldName)
 	{
 		var list = new List<string>();
-		
+
 		if (fields.TryGetProperty(fieldName, out var field) &&
-		    field.TryGetProperty("arrayValue", out var arrayValue) &&
-		    arrayValue.TryGetProperty("values", out var values))
+			field.TryGetProperty("arrayValue", out var arrayValue) &&
+			arrayValue.TryGetProperty("values", out var values))
 		{
 			foreach (var item in values.EnumerateArray())
 			{
@@ -277,7 +278,7 @@ public partial class FirestoreService : Node
 				}
 			}
 		}
-		
+
 		return list;
 	}
 
@@ -337,6 +338,305 @@ public partial class FirestoreService : Node
 
 		return await taskCompletionSource.Task;
 	}
+
+	// call this to get a set of friends data
+	public async Task<List<ScoreData>> GetFriendScoresAsync(string levelId, int limit = 10)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return new List<ScoreData>();
+		}
+
+		// get current user's friends list
+		string userId = FirebaseAuthManager.Instance.GetCurrentUserId();
+		var userData = await GetUserAsync(userId);
+		if (userData == null || userData.Friends.Count == 0)
+		{
+			GD.Print("No friends found");
+			return new List<ScoreData>();
+		}
+
+		var friendScores = new List<ScoreData>();
+		int fetched = 0;
+
+		// get scores
+		foreach (string friendId in userData.Friends)
+		{
+			if (fetched >= limit) break;
+
+			var score = await GetUserBestScoreAsync(friendId, levelId);
+			if (score != null)
+			{
+				friendScores.Add(score);
+				fetched++;
+			}
+		}
+
+		// Sort by score descending - idk how this will work
+		friendScores.Sort((a, b) => b.Score.CompareTo(a.Score));
+
+		GD.Print($"Retrieved {friendScores.Count} friend scores for level {levelId}");
+		return friendScores;
+	}
+
+	// For leaving a sevel or maybe only on completion? idk 
+	public async Task<bool> SaveScoreAsync(string levelId, ScoreData scoreData)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return false;
+		}
+
+		string userId = FirebaseAuthManager.Instance.UserId;
+		scoreData.UserId = userId;
+		scoreData.LevelId = levelId;
+
+		// Generate unique score ID- may be overkill 
+		string scoreId = $"{userId}_{Guid.NewGuid()}";
+		string url = $"{_firestoreUrl}/scores/{levelId}/entries/{scoreId}";
+
+		var firestoreDoc = ConvertScoreToFirestoreDocument(scoreData);
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			if (response.Success)
+			{
+				GD.Print($"Score saved: {scoreData.Score} for level {levelId}");
+
+				// Also update user's best score if this is better
+				await UpdateBestScoreIfNeeded(levelId, scoreData, idToken);
+			}
+			return response.Success;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to save score: {ex.Message}");
+			return false;
+		}
+	}
+
+	// helper function
+	private async Task UpdateBestScoreIfNeeded(string levelId, ScoreData newScore, string idToken)
+	{
+		string userId = newScore.UserId;
+		var currentBest = await GetUserBestScoreAsync(userId, levelId);
+
+		if (currentBest == null || newScore.Score > currentBest.Score)
+		{
+			string url = $"{_firestoreUrl}/leaderboards/{levelId}/rankings/{userId}";
+			var firestoreDoc = ConvertScoreToFirestoreDocument(newScore);
+
+			await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			GD.Print($"Updated best score for user {userId} on level {levelId}");
+		}
+	}
+
+	// im so goated at naming shit
+	public async Task<ScoreData> GetUserBestScoreAsync(string userId, string levelId)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return null;
+		}
+
+		string url = $"{_firestoreUrl}/leaderboards/{levelId}/rankings/{userId}";
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
+
+			if (response.ResponseCode == 404)
+			{
+				return null; // User hasn't played this level yet
+			}
+
+			if (response.Success)
+			{
+				return ConvertFromFirestoreScoreDocument(response.Data);
+			}
+
+			return null;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to get user best score: {ex.Message}");
+			return null;
+		}
+	}
+
+	public async Task<List<ScoreData>> GetGlobalLeaderboardAsync(string levelId, int limit = 10)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return new List<ScoreData>();
+		}
+
+		// Query the leaderboard collection for this level
+		string url = $"{_firestoreUrl}/leaderboards/{levelId}/rankings?pageSize={limit}";
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
+
+			if (response.Success)
+			{
+				var scores = new List<ScoreData>();
+
+				if (response.Data.TryGetProperty("documents", out var documents))
+				{
+					foreach (var doc in documents.EnumerateArray())
+					{
+						var score = ConvertFromFirestoreScoreDocument(doc);
+						if (score != null)
+						{
+							scores.Add(score);
+						}
+					}
+				}
+
+				// Sort by score descending - we shall see
+				scores.Sort((a, b) => b.Score.CompareTo(a.Score));
+
+				GD.Print($"Retrieved {scores.Count} scores for global leaderboard");
+				return scores.Take(limit).ToList();
+			}
+
+			return new List<ScoreData>();
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to get global leaderboard: {ex.Message}");
+			return new List<ScoreData>();
+		}
+	}
+
+	private object ConvertScoreToFirestoreDocument(ScoreData scoreData)
+	{
+		var fields = new Dictionary<string, object>
+	{
+		{ "userId", new { stringValue = scoreData.UserId } },
+		{ "username", new { stringValue = scoreData.Username } },
+		{ "levelId", new { stringValue = scoreData.LevelId } },
+		{ "score", new { integerValue = scoreData.Score.ToString() } }
+	};
+
+		if (scoreData.Metadata != null && scoreData.Metadata.Count > 0)
+		{
+			fields["metadata"] = new { stringValue = JsonSerializer.Serialize(scoreData.Metadata) };
+		}
+
+		return new { fields };
+	}
+
+	private ScoreData ConvertFromFirestoreScoreDocument(JsonElement doc)
+	{
+		try
+		{
+			var fields = doc.GetProperty("fields");
+
+			var scoreData = new ScoreData
+			{
+				UserId = GetStringField(fields, "userId"),
+				Username = GetStringField(fields, "username"),
+				LevelId = GetStringField(fields, "levelId"),
+				Score = GetIntField(fields, "score")
+			};
+
+			// Parse metadata if exists
+			if (fields.TryGetProperty("metadata", out var metadataField) &&
+				metadataField.TryGetProperty("stringValue", out var metadataJson))
+			{
+				scoreData.Metadata = JsonSerializer.Deserialize<Dictionary<string, object>>(metadataJson.GetString());
+			}
+
+			return scoreData;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to convert score document: {ex.Message}");
+			return null;
+		}
+	}
+
+	private object ConvertLevelToFirestoreDocument(LevelData levelData)
+	{
+		var fields = new Dictionary<string, object>
+	{
+		{ "levelId", new { stringValue = levelData.LevelId } },
+		{ "creatorId", new { stringValue = levelData.CreatorId } },
+		{ "creatorName", new { stringValue = levelData.CreatorName } },
+		{ "levelName", new { stringValue = levelData.LevelName } },
+		{ "description", new { stringValue = levelData.Description ?? "" } },
+		{ "levelDataJson", new { stringValue = levelData.LevelDataJson } },
+		{ "difficulty", new { stringValue = levelData.Difficulty ?? "medium" } }
+	};
+
+		if (levelData.Tags != null && levelData.Tags.Count > 0)
+		{
+			fields["tags"] = new
+			{
+				arrayValue = new
+				{
+					values = ConvertListToFirestoreArray(levelData.Tags)
+				}
+			};
+		}
+
+		return new { fields };
+	}
+
+	private LevelData ConvertFromFirestoreLevelDocument(JsonElement doc)
+	{
+		try
+		{
+			var fields = doc.GetProperty("fields");
+
+			var levelData = new LevelData
+			{
+				LevelId = GetStringField(fields, "levelId"),
+				CreatorId = GetStringField(fields, "creatorId"),
+				CreatorName = GetStringField(fields, "creatorName"),
+				LevelName = GetStringField(fields, "levelName"),
+				Description = GetStringField(fields, "description"),
+				LevelDataJson = GetStringField(fields, "levelDataJson"),
+				Difficulty = GetStringField(fields, "difficulty"),
+				Tags = GetArrayField(fields, "tags")
+			};
+
+			return levelData;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to convert level document: {ex.Message}");
+			return null;
+		}
+	}
+
+	private int GetIntField(JsonElement fields, string fieldName)
+	{
+		if (fields.TryGetProperty(fieldName, out var field))
+		{
+			if (field.TryGetProperty("integerValue", out var value))
+			{
+				return int.Parse(value.GetString());
+			}
+			else if (field.TryGetProperty("doubleValue", out var doubleValue))
+			{
+				return (int)doubleValue.GetDouble();
+			}
+		}
+		return 0;
+	}
+
 
 	private class FirestoreResponse
 	{
