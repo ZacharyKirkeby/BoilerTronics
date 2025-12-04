@@ -419,13 +419,13 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			heldObject = null;
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			// manager.currLevel.cLayer.UpdateObject(this);
-			UpdateFrame();
+			// UpdateFrame();
 		}
 
 		public void updateHeld() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			// manager.currLevel.cLayer.UpdateObject(this);
-			UpdateFrame();
+			// UpdateFrame();
 		}
 
 		public void Drop(string[] args) {
