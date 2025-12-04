@@ -239,6 +239,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			level.E.handleError(errorCode, E, offsetPos);
 		}
 
+		private MovingObject movingObj;
+
 		// Methods that we can use via commands
 		public void Move(string[] args)
 		{
@@ -315,52 +317,59 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			MovingObject mObj = new MovingObject(this, MoveVector, manager.currLevel.cLayer, manager.currLevel.DeltaTime);
 			manager.currLevel.cLayer.GetParent().AddChild(mObj);
+			
+			// keep track of the moving object!
+			movingObj = mObj;
 
 			return;
 		}
 		
-		// Select the correct grab animation
-		private void GrabAnim() {
-			Vector2I modAtlas = new Vector2I(0, 0);
-			int modSourceId = (int) GetQuality();
-			
+		// get grab anim name
+		private string GetGrabAnimName() {
 			if (heldObject is CoalObject) {
-				TriggerAnimation("grabCoal", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				return "grabCoal";
 			} else if (heldObject is IronOreObject) {
-				TriggerAnimation("grabIronOre", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				return "grabIronOre";
 			} else if (heldObject is IronBarObject) {
-				TriggerAnimation("grabIronBar", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				return "grabIronBar";
 			} else if (heldObject is IronPlateObject) {
-				TriggerAnimation("grabIronPlate", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				return "grabIronPlate";
 			} else if (heldObject is IronRodObject) {
-				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				return "grabIronRod";
 			} else if (heldObject is SteelBarObject sbObj) {
-				// TODO: make the animations for these materials
 				if (sbObj.hasHeat()) {
-					// SetFrameIndex(8);
+					return "grabSteelBarHeated";
 				} else {
-					// SetFrameIndex(7);
+					return "grabSteelBar";
 				}
 			} else if (heldObject is SteelPlateObject spObj) {
 				if (spObj.hasHeat()) {
-					// SetFrameIndex(10);
+					return "grabSteelPlateHeated";
 				} else {
-					// SetFrameIndex(9);
+					return "grabSteelPlate";
 				}
 			} else if (heldObject is SteelGearObject sgObj) {
 				if (sgObj.hasHeat()) {
-					// SetFrameIndex(12);
+					return "grabGearHeated";
 				} else {
-					// SetFrameIndex(11);
+					return "grabGear";
 				}
 			} else {
-				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim. internal obj: ", heldObject);
+				return "grabEmpty";
 			}
 		}
 		
+		// Select the correct grab animation
+		private void GrabAnim(AnimatingObjectOverrides overrides = null) {
+			Vector2I modAtlas = new Vector2I(0, 0);
+			int modSourceId = (int) GetQuality();
+			
+			TriggerAnimation(GetGrabAnimName(), AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId, overrides);
+		}
+		
 		// Select the correct drop animation
-		private void DropAnim() {
+		private void DropAnim(AnimatingObjectOverrides overrides = null) {
 			Vector2I modAtlas = new Vector2I(0, 0);
 			int modSourceId = (int) GetQuality();
 			
@@ -368,7 +377,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			
 			// well i'm silly. in reality, we only need one "drop" animation
 			// because the object "drops" the instant the "Drop" call is triggered
-			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas,  modSourceId, overrides);
 		}
 
 		public void Grab(string[] args) {
@@ -413,20 +422,34 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				GrabAnim();
 			}
 		}
-
+		
 		// TODO: make these work again
 		// The goal of these is to allow for the heated material to change the sprite of the claw when they are done moving
 		public void deleteHeld() {
 			heldObject = null;
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			// manager.currLevel.cLayer.UpdateObject(this);
-			// UpdateFrame();
+			
+			this.SetState("default");
+			// PlaceableAnimationData data = this.GetState();
+			// data.SetFrameIndex(data.GetFrameCount() - 1);
+			
+			GetParentLayer().UpdateObject(this);
 		}
 
 		public void updateHeld() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			// manager.currLevel.cLayer.UpdateObject(this);
 			// UpdateFrame();
+			
+			if (this.heldObject == null) {
+				this.SetState("default");
+			} else {
+				this.SetState(GetGrabAnimName());
+			}
+			PlaceableAnimationData data = this.GetState();
+			data.SetFrameIndex(data.GetFrameCount() - 1);
+			
+			GetParentLayer().UpdateObject(this);
 		}
 
 		public void Drop(string[] args) {
@@ -556,6 +579,66 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			animationData.Add(
 				"grabIronRod",
 				grabIronRod
+			);
+			
+			PlaceableAnimationData grabGear = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabGear.AddFrame(new TileTex(new Vector2I(8, 6), 10));
+			animationData.Add(
+				"grabGear",
+				grabGear
+			);
+			
+			PlaceableAnimationData grabGearHeated = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabGearHeated.AddFrame(new TileTex(new Vector2I(4, 6), 10));
+			animationData.Add(
+				"grabGearHeated",
+				grabGearHeated
+			);
+			
+			PlaceableAnimationData grabSteelBar = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabSteelBar.AddFrame(new TileTex(new Vector2I(0, 7), 10));
+			animationData.Add(
+				"grabSteelBar",
+				grabSteelBar
+			);
+			
+			PlaceableAnimationData grabSteelBarHeated = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabSteelBarHeated.AddFrame(new TileTex(new Vector2I(4, 7), 10));
+			animationData.Add(
+				"grabSteelBarHeated",
+				grabSteelBarHeated
+			);
+			
+			PlaceableAnimationData grabSteelPlate = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabSteelPlate.AddFrame(new TileTex(new Vector2I(0, 8), 10));
+			animationData.Add(
+				"grabSteelPlate",
+				grabSteelPlate
+			);
+			
+			PlaceableAnimationData grabSteelPlateHeated = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabSteelPlateHeated.AddFrame(new TileTex(new Vector2I(4, 8), 10));
+			animationData.Add(
+				"grabSteelPlateHeated",
+				grabSteelPlateHeated
 			);
 			
 			
