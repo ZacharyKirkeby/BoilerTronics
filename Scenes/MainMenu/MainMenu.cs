@@ -98,12 +98,13 @@ public partial class MainMenu : Node2D
 		List<LevelData> levels = await _get_levels();
 		foreach (LevelData level in levels)
 		{
-			CreateRow(level.LevelName, level.CreatorName, level);
+			vbox.AddChild(CreateRow(level.LevelName, level.CreatorName, level));
 		}
 	}
 	
 	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
 	{
+		GD.Print("test");
 		// ---- PanelContainer ----
 		var panel = new PanelContainer
 		{
