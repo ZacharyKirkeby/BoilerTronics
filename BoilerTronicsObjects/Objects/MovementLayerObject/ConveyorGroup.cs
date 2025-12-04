@@ -99,7 +99,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				foreach (List<GroupedSubObject> group in converyorGroupList) {
 					if (group != keepList) {
 						// Create new Group
-						ConveyorGroup newGroup = new ConveyorGroup(0, 0, dir);
+						GroupedObject newGroup = group[0].createGroup();
 
 						// Add all nodes to that group
 						// Remove those nodes from us
