@@ -548,7 +548,9 @@ public partial class BoilerTronicsLevel : Node2D
 			// Add back to its layer
 			layer.AddObject(obj);
 			// Free object
-			mObj.QueueFree();
+			if (IsInstanceValid(mObj)) {
+				mObj.QueueFree();
+			}
 		}
 
 		foreach (List<PlaceableObject> RL in runList) {
