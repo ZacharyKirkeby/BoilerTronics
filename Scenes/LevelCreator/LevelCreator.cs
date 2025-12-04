@@ -229,8 +229,13 @@ public partial class LevelCreator : LevelUi
 		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
 		dropdown.Clear();
+		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
+
 		foreach (string saveFile in saveFiles)
 		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		foreach (string saveFile in userSaveFiles) {
 			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
 		}
 		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
