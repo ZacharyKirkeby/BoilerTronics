@@ -6,7 +6,6 @@ using BoilerTronicsObjects.Placeable;
 using System.Text.RegularExpressions;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Objects.MovementLayerObjects;
-using System.Diagnostics;
 
 namespace Parsing;
 
@@ -15,7 +14,7 @@ public partial class Parser : Node2D
 	private readonly Dictionary<string, int> _registers = new();
 	private readonly Dictionary<string, int> _labelMap = new();
 	private readonly Dictionary<string, int> _registerTTL = new();
-	private const int REGISTER_DECAY_STEPS = 5;
+	private int REGISTER_DECAY_STEPS = 5;
 	private int _stepConsumingInstructionCount = 0;
 	private List<int> _sourceLineNumbers = new();
 	private List<string> _validLines = new();
@@ -29,10 +28,15 @@ public partial class Parser : Node2D
 	private string editorName;
 	private bool _debug = true;
 	private bool _decayFlag = true;
-	private enum qualityFlag;
+	private Quality qualityFlag;
 
 	// Command parser for step-consuming instructions (mov, rot, grb, drp)
 	private CommandParser.CommandParser _commandParser = new CommandParser.CommandParser();
+
+	// Store which regex to use based on quality
+	private Regex _wrtRegex;
+	private Regex _wrtRegisterRegex;
+	private Regex _arithRegex;
 
 	// None of these consume time steps, hence registered here
 
@@ -58,29 +62,82 @@ public partial class Parser : Node2D
 	[GeneratedRegex(@"^\s*jle\s+(\w+)\s*$")]
 	private static partial Regex JleRegex();
 
+	 //r0–r2 and r0–r3 versions
 	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(-?\d+)\s*$")]
-	private static partial Regex WrtRegex();
+	private static partial Regex WrtRegex0_2();
+	
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(-?\d+)\s*$")]
+	private static partial Regex WrtRegex0_3();
 
-	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]  // ← NEW LINE
-	private static partial Regex WrtRegisterRegex();
+	// WRT register: r0–r2 and r0–r3 versions
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-2]|cmp)\s+(r[0-2]|cmp)\s*$")]
+	private static partial Regex WrtRegisterRegex0_2();
+	
+	[GeneratedRegex(@"^\s*wrt\s+(r[0-3]|cmp)\s+(r[0-3]|cmp)\s*$")]
+	private static partial Regex WrtRegisterRegex0_3();
 
 	// Arithmetic commands
 	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-2]|cmp|-?\d+)\s+(r[0-2]|cmp|-?\d+)\s*$")]
-	private static partial Regex ArithRegex();
+	private static partial Regex ArithRegex0_2();
+
+	// Arithmetic commands - higher quality means more register
+	[GeneratedRegex(@"^\s*(add|sub|mul|div|cmp)\s+(r[0-3]|cmp|-?\d+)\s+(r[0-3]|cmp|-?\d+)\s*$")]
+	private static partial Regex ArithRegex0_3();
 
 	// Control commands
 	[GeneratedRegex(@"^\s*wait\s*$")]
 	private static partial Regex WaitRegex();
 
+	// constructor with a higher quality level
+	public Parser(Quality Q)
+{
+	qualityFlag = Q;
+	ProgramValidator.SetQualityLevel((int)Q);
+	InitializeRegexes();
+}
+
+// default contstructor, quality by default is 0
+public Parser()
+{
+	ProgramValidator.SetQualityLevel(0);
+	qualityFlag = 0;//perchance this fixes it?
+	InitializeRegexes();
+	return;
+}
+
+	private void InitializeRegexes()
+	{
+		// Select which regexes to use based on quality flag
+		if ((int)qualityFlag >= 1)
+		{
+			_wrtRegex = WrtRegex0_3();
+			_wrtRegisterRegex = WrtRegisterRegex0_3();
+			_arithRegex = ArithRegex0_3();
+		}
+		else
+		{
+			_wrtRegex = WrtRegex0_2();
+			_wrtRegisterRegex = WrtRegisterRegex0_2();
+			_arithRegex = ArithRegex0_2();
+		}
+	}
+
+	public int getQuality()
+    {
+        return (int)qualityFlag;
+    }
 	public override void _Ready()
 	{
 		InitializeRegisters();
 		RegisterCommands();
 	}
 
+	private string [] registers;
+
 	// instead of in ready, dedicated function
 	private void InitializeRegisters()
 	{
+		// By default the user has r0, r1, r2, and cmp
 		_registers["r0"] = 0;
 		_registers["r1"] = 0;
 		_registers["r2"] = 0;
@@ -91,6 +148,30 @@ public partial class Parser : Node2D
 		_registerTTL["r1"] = -1;
 		_registerTTL["r2"] = -1;
 		_registerTTL["cmp"] = -1;
+
+		// Quality dictates additional behaviors
+		switch ((int)qualityFlag)
+        {
+            case 0: // default
+				REGISTER_DECAY_STEPS = 5;
+				this.registers = ["r0", "r1", "r2","cmp"];
+				break;
+			case 1: // med quality - unlocks r3, register decay takes 7 steps
+				REGISTER_DECAY_STEPS = 7;
+				_registers["r3"] = 0;
+				_registerTTL["r3"] = -1;
+				this.registers = ["r0", "r1", "r2", "r3", "cmp"];
+				break;
+			case 2: // high quality - r3 is a stable register and does not decay
+				REGISTER_DECAY_STEPS = 10;
+				_registers["r3"] = 0;
+				this.registers = ["r0", "r1", "r2", "cmp"];  // stable register being excluded
+				break;
+			default:
+				REGISTER_DECAY_STEPS = 5;
+				this.registers = ["r0", "r1", "r2","cmp"];
+				break;
+        }
 	}
 
 	public void ResetRegisters()
@@ -280,7 +361,7 @@ public partial class Parser : Node2D
 		}
 
 		// Handle write (doesn't consume a step) - FREE
-		var wrtMatch = WrtRegex().Match(line);
+		var wrtMatch = _wrtRegex.Match(line);
 		if (wrtMatch.Success)
 		{
 			string reg = wrtMatch.Groups[1].Value;
@@ -290,7 +371,7 @@ public partial class Parser : Node2D
 			return true;
 		}
 
-		var wrtRegMatch = WrtRegisterRegex().Match(line);
+		var wrtRegMatch = _wrtRegisterRegex.Match(line);
 		if (wrtRegMatch.Success)
 		{
 			string destReg = wrtRegMatch.Groups[1].Value;
@@ -300,7 +381,7 @@ public partial class Parser : Node2D
 			return true;
 		}
 
-		var arithMatch = ArithRegex().Match(line);
+		var arithMatch = _arithRegex.Match(line);
 		if (arithMatch.Success)
 		{
 			string cmd = arithMatch.Groups[1].Value;
@@ -571,10 +652,6 @@ public partial class Parser : Node2D
 		_validLines.Clear();
 		_labelMap.Clear();
 		ResetRegisters();
-		_registerTTL["r0"] = -1;
-		_registerTTL["r1"] = -1;
-		_registerTTL["r2"] = -1;
-		_registerTTL["cmp"] = -1;
 	
 		if (_debug) GD.Print("Parser reset complete");
 	}
@@ -590,7 +667,7 @@ public partial class Parser : Node2D
 	private void SetRegister(string reg, int value)
 	{
 		_registers[reg] = value;
-		_registerTTL[reg] = REGISTER_DECAY_STEPS;
+		if ((int)qualityFlag != 2 && reg != "r3") _registerTTL[reg] = REGISTER_DECAY_STEPS;
 
 		if (_debug) GD.Print($"Set {reg} = {value}, TTL = {REGISTER_DECAY_STEPS}");
 	}
@@ -603,7 +680,7 @@ public partial class Parser : Node2D
 			return;
 		}
 
-		foreach (var reg in new[] { "r0", "r1", "r2", "cmp" })
+		foreach (string reg in registers)
 		{
 			if (_registerTTL[reg] > 0)
 			{
@@ -626,8 +703,4 @@ public partial class Parser : Node2D
 	{
 		this._decayFlag = input;
 	}
-
-
-
-
 }
