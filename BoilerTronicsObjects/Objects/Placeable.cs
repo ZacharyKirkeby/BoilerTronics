@@ -73,6 +73,7 @@ namespace BoilerTronicsObjects.Placeable
 		}
 		
 		// set parent layer info; mainly useful for the terminal highlighting mechanism
+		// NOTE: the setting of the "parent layer" is handled in Layer.cs, "AddObject()"
 		public Layer GetParentLayer() {
 			return parentLayer;
 		}
@@ -148,7 +149,7 @@ namespace BoilerTronicsObjects.Placeable
 			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
 
 			// get the tile
-			var tile = tileSetSource.GetTileTextureRegion(this.atlasPos);
+			var tile = tileSetSource.GetTileTextureRegion(this.GetAtlasPos());
 			var fullTexture = tileSetSource.Texture.GetImage();
 			var imageTexture = fullTexture.GetRegion(tile);
 			var texture = new ImageTexture();

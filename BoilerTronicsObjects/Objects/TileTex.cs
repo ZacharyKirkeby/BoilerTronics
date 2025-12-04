@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 // TODO: a basic "texture" object that will hold a tile texture's most important information
 // TODO: integrate throughout all proper scripts and etc
@@ -70,6 +71,17 @@ namespace BoilerTronicsObjects.Placeable {
 		// i.e. produces a deep copy of the input
 		public static TileTex Copy(TileTex input) {
 			return new TileTex(input.GetAtlasPos(), input.GetSourceId());
+		}
+		
+		// utility function for deep copying TileTex lists
+		public static List<TileTex> DeepCopyTileTexList(List<TileTex> input) {
+			List<TileTex> newList = new List<TileTex>();
+			
+			foreach (TileTex texture in input) {
+				newList.Add(TileTex.Copy(texture));
+			}
+
+			return newList;
 		}
 	}
 }
