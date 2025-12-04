@@ -16,8 +16,8 @@ namespace BoilerTronicsObjects.Data {
 			if (hasInitializedObjectMap) {return;}
 			
 			// Floor layer
-			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
-			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
 			// objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
 			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
 			objectMap.Add(hashCoords(3, new Vector2I(0, 3)), 5);	//factorypress
