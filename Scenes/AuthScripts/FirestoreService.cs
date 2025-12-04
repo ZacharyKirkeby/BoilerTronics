@@ -56,15 +56,23 @@ public partial class FirestoreService : Node
 			return false;
 		}
 
-		string url = $"{_firestoreUrl}/users/{userId}";
+		string url = $"{_firestoreUrl}/users?documentId={userId}";
 		var firestoreDoc = ConvertToFirestoreDocument(userData);
 
 		try
 		{
-			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			// Use POST for creating new documents with a specific ID
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
 			if (response.Success)
 			{
 				GD.Print($"User document created: {userData.Username}");
+			}
+			else if (response.ResponseCode == 409)
+			{
+				// Document already exists
+				GD.Print("User already exists, updating instead");
+				string updateUrl = $"{_firestoreUrl}/users/{userId}";
+				response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
 			}
 			return response.Success;
 		}
@@ -73,6 +81,27 @@ public partial class FirestoreService : Node
 			GD.PrintErr($"Failed to create user: {ex.Message}");
 			return false;
 		}
+	}
+
+	private async Task<bool> CreateOrUpdateDocumentAsync(string collectionPath, string documentId, object firestoreDoc, string idToken)
+	{
+		// Try creating first
+		string createUrl = $"{_firestoreUrl}/{collectionPath}?documentId={documentId}";
+		var response = await MakeFirestoreRequestAsync(createUrl, firestoreDoc, idToken, "POST");
+
+		if (response.Success)
+		{
+			return true;
+		}
+		else if (response.ResponseCode == 409)
+		{
+			// Document exists, update instead
+			string updateUrl = $"{_firestoreUrl}/{collectionPath}/{documentId}";
+			response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
+			return response.Success;
+		}
+
+		return false;
 	}
 
 	public async Task<UserData> GetUserAsync(string userId)
@@ -288,39 +317,44 @@ public partial class FirestoreService : Node
 		AddChild(httpRequest);
 
 		var headers = new List<string>
-		{
-			"Content-Type: application/json",
-			$"Authorization: Bearer {idToken}"
-		};
+	{
+		"Content-Type: application/json",
+		$"Authorization: Bearer {idToken}"
+	};
 
-		var taskCompletionSource = new TaskCompletionSource<FirestoreResponse>();
+		var tcs = new TaskCompletionSource<FirestoreResponse>();
 
 		httpRequest.RequestCompleted += (long result, long responseCode, string[] responseHeaders, byte[] body) =>
 		{
 			httpRequest.QueueFree();
-
-			string responseText = Encoding.UTF8.GetString(body);
+			string text = Encoding.UTF8.GetString(body);
 
 			if (responseCode >= 200 && responseCode < 300)
 			{
-				var data = string.IsNullOrEmpty(responseText) ? new JsonElement() : JsonSerializer.Deserialize<JsonElement>(responseText);
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
-			}
-			else if (responseCode == 404)
-			{
-				// 404:document doesn't exist - not bad trust 
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = 404 });
+				var data = string.IsNullOrEmpty(text)
+					? new JsonElement()
+					: JsonSerializer.Deserialize<JsonElement>(text);
+
+				tcs.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
 			}
 			else
 			{
-				GD.PrintErr($"Firestore error ({responseCode}): {responseText}");
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
+				if (responseCode == 404)
+				{
+					GD.Print($"Document not found (404): {url}");
+				}
+				else
+				{
+					GD.PrintErr($"Firestore error ({responseCode}): {text}");
+				}
+				tcs.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
 			}
 		};
 
 		HttpClient.Method httpMethod = method switch
 		{
 			"GET" => HttpClient.Method.Get,
+			"PUT" => HttpClient.Method.Put,
 			"PATCH" => HttpClient.Method.Patch,
 			"DELETE" => HttpClient.Method.Delete,
 			_ => HttpClient.Method.Post
@@ -328,16 +362,17 @@ public partial class FirestoreService : Node
 
 		if (payload != null)
 		{
-			string jsonPayload = JsonSerializer.Serialize(payload);
-			httpRequest.Request(url, headers.ToArray(), httpMethod, jsonPayload);
+			string json = JsonSerializer.Serialize(payload);
+			httpRequest.Request(url, headers.ToArray(), httpMethod, json);
 		}
 		else
 		{
 			httpRequest.Request(url, headers.ToArray(), httpMethod);
 		}
 
-		return await taskCompletionSource.Task;
+		return await tcs.Task;
 	}
+
 
 	// call this to get a set of friends data
 	public async Task<List<ScoreData>> GetFriendScoresAsync(string levelId, int limit = 10)
@@ -471,34 +506,73 @@ public partial class FirestoreService : Node
 		}
 	}
 
+
+	string CleanForDocId(string input)
+	{
+		// Firestore must not contain /, ?, #, or spaces
+		var invalid = new[] { '/', '?', '#', ' ', ',' };
+		foreach (var c in invalid)
+			input = input.Replace(c.ToString(), "");
+		return input;
+	}
+
+	private string BuildUpdateMaskQuery()
+	{
+		string[] fields =
+		{
+		"levelId",
+		"creatorId",
+		"creatorName",
+		"levelName",
+		"description",
+		"levelDataJson",
+		"difficulty",
+		"tags"
+	};
+
+		return "?" + string.Join("&", fields.Select(f => $"updateMask.fieldPaths={f}"));
+	}
+
+
+
 	// once again my naming is a banger
 	public async Task<string> SaveLevelAsync(LevelData levelData)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
 		if (string.IsNullOrEmpty(idToken))
-		{
-			GD.PrintErr("No authentication token available");
 			return null;
-		}
 
 		string userId = FirebaseAuthManager.Instance.UserId;
 		levelData.CreatorId = userId;
 
-		// Generate unique level ID if not provided
-		string levelId = levelData.LevelId ?? $"{userId}_{Guid.NewGuid()}";
+		string levelId = $"{userId}_{Guid.NewGuid()}";
 		levelData.LevelId = levelId;
 
-		string url = $"{_firestoreUrl}/levels/{levelId}";
 		var firestoreDoc = ConvertLevelToFirestoreDocument(levelData);
+
+		string safeId = CleanForDocId(levelId);
+
+		// Use POST
+		string url = $"{_firestoreUrl}/levels?documentId={safeId}";
 
 		try
 		{
-			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
+
 			if (response.Success)
 			{
-				GD.Print($"Level saved: {levelData.LevelName} (ID: {levelId})");
+				GD.Print($"Level saved successfully: {levelId}");
 				return levelId;
 			}
+			else if (response.ResponseCode == 409)
+			{
+				// Document already exists
+				GD.Print("Level exists, updating...");
+				string updateUrl = $"{_firestoreUrl}/levels/{safeId}{BuildUpdateMaskQuery()}";
+				response = await MakeFirestoreRequestAsync(updateUrl, firestoreDoc, idToken, "PATCH");
+				return response.Success ? levelId : null;
+			}
+
 			return null;
 		}
 		catch (Exception ex)
@@ -507,6 +581,7 @@ public partial class FirestoreService : Node
 			return null;
 		}
 	}
+
 
 	// retrive server stored level
 	public async Task<LevelData> GetLevelAsync(string levelId)
@@ -518,7 +593,7 @@ public partial class FirestoreService : Node
 			return null;
 		}
 
-		string url = $"{_firestoreUrl}/levels/{levelId}";
+		string url = $"{_firestoreUrl}/levels/{levelId}?currentDocument.exists=true";
 
 		try
 		{
@@ -795,12 +870,17 @@ public partial class FirestoreService : Node
 			{
 				arrayValue = new
 				{
-					values = ConvertListToFirestoreArray(levelData.Tags)
+					values = levelData.Tags.Select(t => new { stringValue = t }).ToArray()
 				}
 			};
 		}
 
 		return new { fields };
+	}
+
+	private Dictionary<string, object> FirestoreString(string v)
+	{
+		return new Dictionary<string, object> { { "stringValue", v } };
 	}
 
 	private LevelData ConvertFromFirestoreLevelDocument(JsonElement doc)
