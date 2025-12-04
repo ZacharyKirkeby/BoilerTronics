@@ -6,6 +6,7 @@ using BoilerTronicsObjects.Placeable;	// use for TileTex
 
 using Parsing;
 using System.Linq;
+using System.Threading.Tasks;
 public partial class LevelCreator : LevelUi
 {
 	string levelSavePath = ProjectSettings.GlobalizePath("user://LevelCreator/");
@@ -214,7 +215,7 @@ public partial class LevelCreator : LevelUi
 	}
 	
 	// send data to server
-	private void ExportLevelData(BoilerTronicsGlobalManager man, string filePath) {
+	private async Task ExportLevelData(BoilerTronicsGlobalManager man, string filePath) {
 		// Generate LevelData to send to server
 		LevelData newDat = new LevelData();
 		
@@ -244,8 +245,16 @@ public partial class LevelCreator : LevelUi
 		newDat.LevelDataJson = manager.saveState.LoadDataIntoString(manager, filePath);
 		GD.Print("LevelCreator: Uploading LevelDataJson:", newDat.LevelDataJson);
 		
+		await sendData(newDat);
+
 		// TODO: execute server functions, send to server
 	}
+
+	private async Task sendData(LevelData dat)
+    {
+        var _instance = FirestoreService.Instance;
+		await _instance.SaveLevelAsync(dat);
+    }
 
 	private void _on_export_and_upload_pressed()
 	{
