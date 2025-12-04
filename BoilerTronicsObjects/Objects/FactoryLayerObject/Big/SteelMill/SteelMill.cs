@@ -9,12 +9,12 @@ using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryPress : PlaceableBig, BigMovable, Runnable {
+	public class SteelMill : PlaceableBig, BigMovable, Runnable, BigGroupedSubObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
 		
-		static Vector2I objectAtlasPos = new Vector2I(0, 3);
+		static Vector2I objectAtlasPos = new Vector2I(1, 7);
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
@@ -23,6 +23,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		private FactoryBigObjectInput Input;
 		private FactoryBigObjectOutput Output;
+		private SteelLubeIntake LubeIntake;
 		private List<PlaceableBigData>[] objectData;
 
 		private PlaceableObject _Inv;
@@ -40,71 +41,109 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 3, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 6, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(1, -1),	// offset from object's origin
-						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(0, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Down direction
 			new List<PlaceableBigData> {
-				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(2, 3, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
+				new PlaceableBigData(
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 6, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
+						null
+						)
 			},
 			// Left direction
 			new List<PlaceableBigData> {
-				// update the list
 				new PlaceableBigData(
-						new Vector2I(-1, 1),	// offset from object's origin
-						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(0, 0),	// offset from object's origin
+						new TileTex(0, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
-						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(3, 3, 3),	// atlasX, atlasY, sourceId
+						new Vector2I(-1, 0),	// offset from object's origin
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(0, 6, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 			// Right direction
 			new List<PlaceableBigData> {
-				// update the list
 				new PlaceableBigData(
 						new Vector2I(0, 0),	// offset from object's origin
-						new TileTex(1, 3, 3),	// atlasX, atlasY, sourceId
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(1, -1),	// offset from object's origin
+						new TileTex(0, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 				new PlaceableBigData(
 						new Vector2I(-1, 0),	// offset from object's origin
-						new TileTex(0, 4, 3),	// atlasX, atlasY, sourceId
+						new TileTex(0, 6, 3),	// atlasX, atlasY, sourceId
+						null
+						),
+				new PlaceableBigData(
+						new Vector2I(0, -1),	// offset from object's origin
+						new TileTex(1, 7, 3),	// atlasX, atlasY, sourceId
 						null
 						),
 			},
 		};
 
-		public FactoryPress(int OGX, int OGY, int altTitle = 0, int objectID = 200)
+		public SteelMill(int OGX, int OGY, int altTitle = 0, int objectID = 200)
 		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			_objectID = objectID;
-
+			
 			// Deep copy static data to object data
 			objectData = PlaceableBigData.Copy2DList(textureGrid);
 			
 			// internal insert, output objects
 			Input = new FactoryBigObjectInput(0, 0, 0);
 			Output = new FactoryBigObjectOutput(0, 0, 0);
+			LubeIntake = new SteelLubeIntake(0, 0, 0); // Lube intake
 
-			// Set the parent of the In and Out to this object, this will allow for callbacks
+			// Set the parent object of our in and out, this will allow for cbs
 			Input.SetParent(this);
 			Output.SetParent(this);
 
@@ -120,21 +159,51 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// UP
 
 			objectData[0][0].SetInternalObj(Input);
-			objectData[0][1].SetInternalObj(Output);
+			objectData[0][1].SetInternalObj(null);
+			objectData[0][2].SetInternalObj(null);
+			objectData[0][3].SetInternalObj(Output);
 
 			// DOWN
-			objectData[1][0].SetInternalObj(Output);
-			objectData[1][1].SetInternalObj(Input);
+			objectData[1][0].SetInternalObj(null);
+			objectData[1][1].SetInternalObj(Output);
+			objectData[1][2].SetInternalObj(Input);
+			objectData[1][3].SetInternalObj(null);
 
 			// LEFT
 			objectData[2][0].SetInternalObj(Output);
-			objectData[2][1].SetInternalObj(Input);
+			objectData[2][1].SetInternalObj(null);
+			objectData[2][2].SetInternalObj(null);
+			objectData[2][3].SetInternalObj(Input);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(Input);
+			objectData[3][0].SetInternalObj(null);
 			objectData[3][1].SetInternalObj(Output);
+			objectData[3][2].SetInternalObj(Input);
+			objectData[3][3].SetInternalObj(null);
+
 			
 			SetDir(Direction.UP);
+		}
+
+		public override void SetDir(Direction inputDir) {
+			Vector2I pos = this.GetOGPos();
+
+			switch (inputDir) {
+				case PlaceableBig.Direction.UP:
+					LubeIntake.MoveObject(pos.X + 0, pos.Y + 0);
+					break;
+				case PlaceableBig.Direction.DOWN:
+					LubeIntake.MoveObject(pos.X + 1, pos.Y - 1);
+					break;
+				case PlaceableBig.Direction.LEFT:
+					LubeIntake.MoveObject(pos.X + 0, pos.Y - 1);
+					break;
+				case PlaceableBig.Direction.RIGHT:
+					LubeIntake.MoveObject(pos.X - 1, pos.Y + 0);
+					break;
+			}
+
+			base.SetDir(inputDir);
 		}
 
 		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
@@ -174,19 +243,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public bool GiveObject(PlaceableObject obj, PlaceableObject childObj) {
 			if (childObj == Input) {
-				if ((!_Working) && (obj is IronBarObject) && (_Inv == null)) {
+				if ((!_Working) && (obj is SteelPlateObject spO) && (spO.hasHeat()) && (_Inv == null)) {
 					_StepsTillCompletion = 1;
-					_Inv = new IronPlateObject(0, 0, 0) as PlaceableObject;
-					_Inv.SetGarbage(true);
-					_Working = true;
-					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
-					return true;
-				}
-				if ((!_Working) && (obj is SteelBarObject sbO) && (sbO.hasHeat()) && (_Inv == null)) {
-					_StepsTillCompletion = 1;
-					SteelPlateObject spO = new SteelPlateObject(0, 0, 0);
-					spO.setHeat(sbO.getHeatValue());
-					_Inv = spO as PlaceableObject;
+					SteelGearObject sgO = new SteelGearObject(0, 0, 0);
+					sgO.setHeat(spO.getHeatValue()); // Transfer heat
+					_Inv = sgO as PlaceableObject;
 					_Inv.SetGarbage(true);
 					_Working = true;
 					Output.SetValidObj(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(_Inv.GetSourceID(), _Inv.GetAtlasPos())]);
@@ -261,7 +322,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// If we are working and have fule
 			if (_Working) {
 				// Then we tak a step to completion
-				_StepsTillCompletion--;
+				if (LubeIntake.ConsumeLube()) _StepsTillCompletion--; // We need lub to mill
 
 				// Once we are done
 				if (_StepsTillCompletion == 0) {
@@ -289,6 +350,39 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			if (_Inv != null) _Inv.ResetPos();
 			_Inv = null;
+		}
+
+		public List<GroupedSubObject> getObjects() {
+			List<GroupedSubObject> ret = new List<GroupedSubObject>();
+
+			// Set coords
+			Vector2I Objpos = this.GetOGPos();
+			switch (this.GetDir()) {
+				case PlaceableBig.Direction.UP:
+					LubeIntake.MoveObject(Objpos.X + 0, Objpos.Y + 0);
+					break;
+				case PlaceableBig.Direction.DOWN:
+					LubeIntake.MoveObject(Objpos.X + 1, Objpos.Y - 1);
+					break;
+				case PlaceableBig.Direction.LEFT:
+					LubeIntake.MoveObject(Objpos.X + 0, Objpos.Y - 1);
+					break;
+				case PlaceableBig.Direction.RIGHT:
+					LubeIntake.MoveObject(Objpos.X - 1, Objpos.Y + 0);
+					break;
+			}
+
+			ret.Add(LubeIntake);
+
+			return ret;
+		}
+
+		// Grouped interface
+		public GroupedSubObject getGroupedObject(Vector2I pos) {
+			GD.Print("requested: ", pos);
+			GD.Print("Input Loc: ", LubeIntake.GetOGPos());
+			if (LubeIntake.GetOGPos() == pos) return LubeIntake as GroupedSubObject;
+			return null;
 		}
 	}
 }

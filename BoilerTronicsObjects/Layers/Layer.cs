@@ -264,7 +264,6 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			if (newPlaceable is GroupedSubObject gsObj) {
-				GD.Print("Grouped Sub Object");
 				List<GroupedObject> validGroups = new List<GroupedObject>();
 
 				foreach (GroupedObject gObj in groupedObjectList) {
@@ -272,14 +271,11 @@ namespace BoilerTronicsObjects.Layers
 				}
 
 				if (validGroups.Count == 0) {
-					GD.Print("New group");
 					GroupedObject gObj = gsObj.createGroup();
 					if (gObj != null && gObj.addObject(gsObj)) groupedObjectList.Add(gObj);
 				} else if (validGroups.Count == 1) {
-					GD.Print("Add to group");
 					validGroups[0].addObject(newPlaceable as GroupedSubObject);
 				} else {
-					GD.Print("Combine groups");
 					// Multipe objects
 					GroupedObject biggestGroup = validGroups[0];
 
@@ -295,7 +291,43 @@ namespace BoilerTronicsObjects.Layers
 					}
 				}
 			}
-			
+
+			if (newPlaceable is BigGroupedSubObject bgsObj) {
+				List<GroupedSubObject> L = bgsObj.getObjects();
+
+				foreach (GroupedSubObject subObj in L) {
+					List<GroupedObject> validGroups = new List<GroupedObject>();
+
+					foreach (GroupedObject gObj in groupedObjectList) {
+						if (gObj.validObject(subObj as GroupedSubObject)) validGroups.Add(gObj);
+					}
+
+					if (validGroups.Count == 0) {
+						GD.Print("New Group");
+						GroupedObject gObj = subObj.createGroup();
+						if (gObj != null && gObj.addObject(subObj)) groupedObjectList.Add(gObj);
+					} else if (validGroups.Count == 1) {
+						GD.Print("Add Group");
+						validGroups[0].addObject(subObj as GroupedSubObject);
+					} else {
+						GD.Print("Combine Group");
+						// Multipe objects
+						GroupedObject biggestGroup = validGroups[0];
+
+						foreach (GroupedObject gObj in validGroups) {
+							if (gObj.getObjectList().Count > biggestGroup.getObjectList().Count) biggestGroup = gObj;
+						}
+
+						biggestGroup.addObject(subObj as GroupedSubObject);
+
+						foreach (GroupedObject gObj in validGroups) {
+							if (gObj != biggestGroup) biggestGroup.combineGroup(gObj);
+							groupedObjectList.Remove(gObj);
+						}
+					}
+				}
+			}
+
 			// UpdateInternals();
 			GD.Print("Added object");
 			
@@ -395,11 +427,7 @@ namespace BoilerTronicsObjects.Layers
 			if (objectToRemove is GroupedSubObject gsObj) {
 				GroupedObject gObj = gsObj.getGroup();
 
-				GD.Print("Group of object being deleted: ", gObj);
-				GD.Print("Number of items in group before deletion: ", gObj.getObjectList().Count);
-
 				if (groupedObjectList.Contains(gObj)) {
-					GD.Print("Calling delete");
 					gObj.deleteObject(objectToRemove as GroupedSubObject);
 				}
 
@@ -413,9 +441,30 @@ namespace BoilerTronicsObjects.Layers
 					}
 
 					groupedObjectList.Remove(gObj);
-					GD.Print("This group is now empty");
-				} else {
-					GD.Print("Number of items left in group: ", gObj.getObjectList().Count);
+				}
+			}
+
+			if (objectToRemove is BigGroupedSubObject bgsObj) {
+				List<GroupedSubObject> L = bgsObj.getObjects();
+
+				foreach (GroupedSubObject subObj in L) {
+					GroupedObject gObj = subObj.getGroup();
+
+					if (groupedObjectList.Contains(gObj)) {
+						gObj.deleteObject(subObj as GroupedSubObject);
+					}
+
+					if (gObj.getObjectList().Count == 0) { // We are now empty
+						if (gObj is Scriptable sObj) {
+							sObj.DestroyTerminal();
+						}
+
+						if (gObj is Runnable rObj) {
+							rObj.UnRegisterSteppable();
+						}
+
+						groupedObjectList.Remove(gObj);
+					}
 				}
 			}
 

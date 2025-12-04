@@ -93,7 +93,19 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			return new PipeGroup(this.GetCurrPos().X, this.GetCurrPos().Y) as GroupedObject;
 		}
 
-		public void UpdateSprite() {
+		public virtual bool CanConnect(PipeObject p) {
+			Vector2I uv = new Vector2I(1, -1);
+			Vector2I dv = new Vector2I(-1, 1);
+			Vector2I lv = new Vector2I(-1, 0);
+			Vector2I rv = new Vector2I(1, 0);
+			
+			Vector2I pPos = p.GetCurrPos();
+			Vector2I pos = GetCurrPos();
+
+			return (((pPos + uv) == pos) || ((pPos + dv) == pos) || ((pPos + lv) == pos) || ((pPos + rv) == pos)); // Return true if we are adjacent and false otherwise
+		}
+
+		public virtual void UpdateSprite() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			int u = 0;
@@ -107,16 +119,40 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			Vector2I rv = new Vector2I(1, 0);
 
 			PlaceableObject obju = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + uv);
-			if (obju != null && obju is PipeObject) u = 1;
+			if (obju != null) {
+				if (obju is PipeObject plObj && plObj.CanConnect(this)) u = 1;
+				else if (obju is BigGroupedSubObject bgsuObj) {
+					PipeObject sobju = bgsuObj.getGroupedObject(this.GetCurrPos() + uv) as PipeObject;
+					if (sobju != null && sobju.CanConnect(this)) u = 1;
+				}
+			}
 
 			PlaceableObject objd = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + dv);
-			if (objd != null && objd is PipeObject) d = 1;
+			if (objd != null) {
+				if (objd is PipeObject pdObj && pdObj.CanConnect(this)) d = 1;
+				else if (objd is BigGroupedSubObject bgsdObj) {
+					PipeObject sobjd = bgsdObj.getGroupedObject(this.GetCurrPos() + dv) as PipeObject;
+					if (sobjd != null && sobjd.CanConnect(this)) d = 1;
+				}
+			}
 			
 			PlaceableObject objr = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + rv);
-			if (objr != null && objr is PipeObject) r = 1;
+			if (objr != null) {
+				if (objr is PipeObject prObj && prObj.CanConnect(this)) r = 1;
+				else if (objr is BigGroupedSubObject bgsrObj) {
+					PipeObject sobjr = bgsrObj.getGroupedObject(this.GetCurrPos() + rv) as PipeObject;
+					if (sobjr != null && sobjr.CanConnect(this)) r = 1;
+				}
+			}
 
 			PlaceableObject objl = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + lv);
-			if (objl != null && objl is PipeObject) l = 1;
+			if (objl != null) {
+				if (objl is PipeObject plObj && plObj.CanConnect(this)) l = 1;
+				else if (objl is BigGroupedSubObject bgslObj) {
+					PipeObject sobjl = bgslObj.getGroupedObject(this.GetCurrPos() + lv) as PipeObject;
+					if (sobjl != null && sobjl.CanConnect(this)) l = 1;
+				}
+			}
 
 			direction = (Direction) ((u) | (r << 1) | (d << 2) | (l << 3));
 
@@ -128,7 +164,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public PipeObject(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, layerSourceId, new Vector2I(0,0), altTitle) {
 		}
 
-		public List<PipeObject> GetConnections() {
+		// This is needed so that we can inherit the function of the pipe, but not the sprite
+		public PipeObject(int OGX, int OGY, int layerSourceID, Vector2I atPos, int altTitle = 0) : base(OGX, OGY, layerSourceID, atPos, altTitle) {
+		}
+
+		public virtual List<PipeObject> GetConnections() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 
 			Vector2I v1 = new Vector2I(1, -1);

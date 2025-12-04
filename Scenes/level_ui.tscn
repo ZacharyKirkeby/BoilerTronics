@@ -1,19 +1,13 @@
-[gd_scene load_steps=49 format=3 uid="uid://besvo8smcg6e"]
+[gd_scene load_steps=43 format=3 uid="uid://besvo8smcg6e"]
 
-[ext_resource type="Script" path="res://Scenes/LevelUi.cs" id="1_2qe5m"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="1_31yto"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_xdjqv"]
-[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="4_2qe5m"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="4_2qe5m"]
 [ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="5_q1sto"]
-[ext_resource type="Script" path="res://Scenes/CanvasLayer.cs" id="6_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="7_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicalni876ix" path="res://Resources/Icons/view.png" id="7_34jgd"]
-[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/ObjectPicker.cs" id="7_ai2e2"]
-[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton1.cs" id="7_h5pod"]
 [ext_resource type="Script" uid="uid://bm2ejy2n4db66" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="7_htk61"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_4jcs4"]
-[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton2.cs" id="8_iu26y"]
-[ext_resource type="Script" path="res://Resources/Scripts/Testing/LevelUI/PlaceButton3.cs" id="9_qd36q"]
 [ext_resource type="Texture2D" uid="uid://o4kbh8c6qu4t" path="res://Resources/Icons/step.png" id="10_2j1wt"]
 [ext_resource type="Texture2D" uid="uid://oicm7xhgyenm" path="res://Resources/Icons/Pause.png" id="10_iu26y"]
 [ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="11_iu26y"]
@@ -277,7 +271,6 @@ Button/styles/normal = SubResource("StyleBoxFlat_4jcs4")
 Button/styles/pressed = SubResource("StyleBoxFlat_q1sto")
 
 [node name="Node2D" type="Node2D"]
-script = ExtResource("1_2qe5m")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
 offset_right = 1920.0
@@ -447,7 +440,6 @@ text = "Time Played: 0 hrs"
 horizontal_alignment = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="MainVBox/TerminalLevelSplit/VBoxContainer"]
-script = ExtResource("6_2j1wt")
 
 [node name="VerticalButtonTray" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/CanvasLayer"]
 layout_mode = 3
@@ -585,7 +577,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_iu26y")
 text = "Movement"
-script = ExtResource("7_h5pod")
 
 [node name="PlaceType2" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
@@ -594,7 +585,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_qd36q")
 text = "Factory"
-script = ExtResource("8_iu26y")
 
 [node name="PlaceType3" type="Button" parent="MainVBox/PanelContainer/HBoxContainer/CategoryPicker"]
 layout_mode = 2
@@ -603,7 +593,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("3_xdjqv")
 theme_override_styles/normal = SubResource("StyleBoxFlat_2j1wt")
 text = "Claw"
-script = ExtResource("9_qd36q")
 
 [node name="PanelContainer" type="PanelContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -621,7 +610,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 50
-script = ExtResource("7_ai2e2")
 
 [node name="CounterTimeControlsContainer" type="VBoxContainer" parent="MainVBox/PanelContainer/HBoxContainer"]
 layout_mode = 2
