@@ -1,4 +1,4 @@
-[gd_scene load_steps=63 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=64 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
@@ -27,6 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="19_g4s26"]
 [ext_resource type="Texture2D" uid="uid://bwkfrqjmrfgmo" path="res://Resources/Icons/arrow-left-2.png" id="23_uqjh5"]
 [ext_resource type="Texture2D" uid="uid://b3n57xvq1tw8s" path="res://Resources/Icons/arrow-right-2.png" id="24_bsnj2"]
+[ext_resource type="Script" uid="uid://dyapsmun0wssi" path="res://Scenes/LevelUI/StoryWindow.cs" id="28_3k86a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -1216,26 +1217,27 @@ These instructions execute instantly (no step cost):
 - [code]wrt[/code] - Write to output"
 fit_content = true
 
-[node name="Level1Story" type="Window" parent="."]
+[node name="StoryWindow" type="Window" parent="."]
 unique_name_in_owner = true
 oversampling_override = 1.0
 title = "Level 1"
 initial_position = 2
 size = Vector2i(500, 300)
 max_size = Vector2i(500, 300)
+script = ExtResource("28_3k86a")
 
-[node name="MarginContainer" type="MarginContainer" parent="Level1Story"]
+[node name="MarginContainer" type="MarginContainer" parent="StoryWindow"]
 custom_minimum_size = Vector2(500, 300)
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Level1Context" type="Label" parent="Level1Story/MarginContainer"]
+[node name="Context" type="Label" parent="StoryWindow/MarginContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_xc2rq")
 theme_override_font_sizes/font_size = 18
-text = "It seems like you’ve been struggling in your academic career at Purdue University within your computer science degree and failed CS 307! You couldn’t bear to let down professor Turkstra and so you’ve dropped out. You purchased a factory to operate and you realized you have no idea how to build and operate one, but must now learn based on the limited assembly you learned in CS250 due to the ancient nature of the factory components. Best of luck!"
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -1274,4 +1276,4 @@ autowrap_mode = 2
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
 [connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
-[connection signal="close_requested" from="Level1Story" to="." method="_on_level_1_story_close_requested"]
+[connection signal="close_requested" from="StoryWindow" to="." method="_on_level_1_story_close_requested"]
