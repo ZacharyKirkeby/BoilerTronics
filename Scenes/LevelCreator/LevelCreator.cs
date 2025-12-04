@@ -202,6 +202,19 @@ public partial class LevelCreator : LevelUi
 		saveWindow.Visible = false;
 	}
 
+	private void _on_export_and_upload_pressed()
+    {
+		string fileName = GetNode<LineEdit>("%NewFileName").GetText(); 
+		/* TODO ADD UPLOAD TO SERVER */
+        BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		GD.Print("LevelCreator: overwriting level: ", fileName);
+		man.saveState.SaveDataTo(man, "LevelCreator", "/" + fileName);
+		
+		// close windows when done
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		saveWindow.Visible = false;
+    }
+
 	private void _on_load_button_pressed()
     {
         var fileLocation = GetNode<Label>("%FileLocation");

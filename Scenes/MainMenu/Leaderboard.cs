@@ -106,7 +106,7 @@ public partial class Leaderboard : CenterContainer
 				};
 				*/
 				HandleLeaderboard(1);
-				break;
+					break;
 		}
 		UpdateLeaderboard();
 	}

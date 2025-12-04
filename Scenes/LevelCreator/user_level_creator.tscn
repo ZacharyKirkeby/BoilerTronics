@@ -1098,7 +1098,6 @@ oversampling_override = 1.0
 title = "Export Level"
 initial_position = 1
 size = Vector2i(600, 500)
-visible = false
 
 [node name="Existing Level" type="ScrollContainer" parent="CreatorSaveWindow"]
 anchors_preset = 15
@@ -1127,6 +1126,21 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 alignment = 1
 
+[node name="HBoxContainer3" type="HBoxContainer" parent="CreatorSaveWindow/Existing Level/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Label" type="Label" parent="CreatorSaveWindow/Existing Level/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Author: "
+
+[node name="AuthorName" type="LineEdit" parent="CreatorSaveWindow/Existing Level/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+alignment = 1
+
 [node name="FileLocation" type="Label" parent="CreatorSaveWindow/Existing Level/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 0)
@@ -1142,6 +1156,14 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("7_ewnk5")
 text = "Export"
+
+[node name="ExportAndUpload" type="Button" parent="CreatorSaveWindow/Existing Level/VBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource("7_ewnk5")
+text = "Export and Upload"
 
 [node name="CreatorLoadWindow" type="Window" parent="."]
 unique_name_in_owner = true
@@ -1470,6 +1492,7 @@ text = "Change Metadata"
 [connection signal="close_requested" from="CreatorSaveWindow" to="." method="_on_creator_save_window_close_requested"]
 [connection signal="text_changed" from="CreatorSaveWindow/Existing Level/VBoxContainer/HBoxContainer2/NewFileName" to="." method="_on_new_file_name_text_changed"]
 [connection signal="pressed" from="CreatorSaveWindow/Existing Level/VBoxContainer/ExportButton" to="." method="_on_export_button_pressed"]
+[connection signal="pressed" from="CreatorSaveWindow/Existing Level/VBoxContainer/ExportAndUpload" to="." method="_on_export_and_upload_pressed"]
 [connection signal="close_requested" from="CreatorLoadWindow" to="." method="_on_creator_load_window_close_requested"]
 [connection signal="item_selected" from="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/ExistingLoadLevelSelector" to="." method="_on_existing_load_level_selector_item_selected"]
 [connection signal="pressed" from="CreatorLoadWindow/TabContainer/Existing Level/VBoxContainer/VBoxContainer/LoadLevelButton" to="." method="_on_load_level_button_pressed"]
