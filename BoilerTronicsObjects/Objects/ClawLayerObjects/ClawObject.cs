@@ -336,22 +336,23 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			/* TODO: register animations for steel objects
 			} else if (heldObject is SteelBarObject sbObj) {
+				// TODO: make the animations for these materials
 				if (sbObj.hasHeat()) {
-					SetFrameIndex(8);
+					// SetFrameIndex(8);
 				} else {
-					SetFrameIndex(7);
+					// SetFrameIndex(7);
 				}
 			} else if (heldObject is SteelPlateObject spObj) {
 				if (spObj.hasHeat()) {
-					SetFrameIndex(10);
+					// SetFrameIndex(10);
 				} else {
-					SetFrameIndex(9);
+					// SetFrameIndex(9);
 				}
 			} else if (heldObject is SteelGearObject sgObj) {
 				if (sgObj.hasHeat()) {
-					SetFrameIndex(12);
+					// SetFrameIndex(12);
 				} else {
-					SetFrameIndex(11);
+					// SetFrameIndex(11);
 				}
 			*/
 			} else {
@@ -415,6 +416,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			}
 		}
 
+		// TODO: make these work again
+		// The goal of these is to allow for the heated material to change the sprite of the claw when they are done moving
 		public void deleteHeld() {
 			heldObject = null;
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;

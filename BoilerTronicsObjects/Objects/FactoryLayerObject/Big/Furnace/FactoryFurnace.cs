@@ -321,7 +321,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// If so we wnat to do somthing and return true to accept it
 				if (obj is CoalObject) {
 					GD.Print("FactoryFurnace: We go fule");
-
 					_Fule += 5;
 					
 					// light up the furnace if both objects are ready to go
@@ -334,7 +333,6 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				// If so we wnat to do somthing and return true to accept it
 				if ((!_Working) && (obj is IronOreObject) && (_Inv == null)) {
 					GD.Print("FactoryFurnace: We go ore");
-					
 					_StepsTillCompletion = 2;
 					_Inv = new IronBarObject(0, 0, 0) as PlaceableObject;
 					_Inv.SetGarbage(true);
