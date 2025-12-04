@@ -61,7 +61,7 @@ public partial class MainMenu : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/level_select.tscn");
 	}
 
-	private async Task _get_levels()
+	private async Task<List<LevelData>> _get_levels()
 	{
 		ProfileMenuController profMan = ProfileMenuController.GlobalManager;
 		UserData userDat = null;
@@ -73,11 +73,12 @@ public partial class MainMenu : Node2D
 			{
 				GD.Print(level);
 			}
-
+			return levels;
 		}
+		return null;
 	}
 
-	private void _on_level_creator_pressed()
+	private async Task _on_level_creator_pressed()
 	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("LevelCreatorMenu").Visible = true;
@@ -86,13 +87,14 @@ public partial class MainMenu : Node2D
 		{
 			child.QueueFree();
 		}
-		_get_levels();
-		
-		
-		
-		
+		List<LevelData> levels = await _get_levels();
+		foreach (LevelData level in levels)
+        {
+            CreateRow(level.LevelName, level.CreatorName, level);
+        }
 	}
-	public PanelContainer CreateRow()
+	
+	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
 	{
 		// ---- PanelContainer ----
 		var panel = new PanelContainer
@@ -136,7 +138,7 @@ public partial class MainMenu : Node2D
 		// ---- Label ----
 		var label1 = new Label
 		{
-			Text = "Label"
+			Text = levelName
 		};
 		label1.AddThemeFontOverride("font", font);
 		label1.AddThemeColorOverride("font_color", Colors.Black);
@@ -145,7 +147,7 @@ public partial class MainMenu : Node2D
 		// ---- Label2 ----
 		var label2 = new Label
 		{
-			Text = "Label2"
+			Text = authorName
 		};
 		label2.AddThemeFontOverride("font", font);
 		label2.AddThemeColorOverride("font_color", Colors.Black);
@@ -168,6 +170,7 @@ public partial class MainMenu : Node2D
 		var icon = ResourceLoader.Load<Texture2D>("res://Resources/Icons/play.png");
 		button.Icon = icon;
 		button.AddThemeConstantOverride("icon_max_width", 100);
+		button.Pressed += () => OnRowButtonPressed(dat);
 
 		hbox.AddChild(button);
 
@@ -181,6 +184,12 @@ public partial class MainMenu : Node2D
 		return panel;
 	}
 	
+	private void OnRowButtonPressed(LevelData level)
+	{
+    GD.Print($"Button for level {level.LevelName} pressed");
+    // TODO Open level creator with level loaded
+	}
+
 	private void _on_level_creator_button_pressed()
 	{
 		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
