@@ -243,27 +243,27 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// UP
 
-			objectData[0][0].SetInternalObj(materialOut);
+			objectData[0][0].SetInternalObj(coalIn);
 			objectData[0][1].SetInternalObj(materialIn);
-			objectData[0][2].SetInternalObj(coalIn);
+			objectData[0][2].SetInternalObj(materialOut);
 			objectData[0][3].SetInternalObj(null);
 
 			// DOWN
 			objectData[1][0].SetInternalObj(materialIn);
 			objectData[1][1].SetInternalObj(null);
-			objectData[1][2].SetInternalObj(materialOut);
-			objectData[1][3].SetInternalObj(coalIn);
+			objectData[1][2].SetInternalObj(coalIn);
+			objectData[1][3].SetInternalObj(materialOut);
 
 			// LEFT
 			objectData[2][0].SetInternalObj(null);
-			objectData[2][1].SetInternalObj(coalIn);
+			objectData[2][1].SetInternalObj(materialOut);
 			objectData[2][2].SetInternalObj(materialIn);
-			objectData[2][3].SetInternalObj(materialOut);
+			objectData[2][3].SetInternalObj(coalIn);
 
 			// RIGHT
-			objectData[3][0].SetInternalObj(coalIn);
+			objectData[3][0].SetInternalObj(materialOut);
 			objectData[3][1].SetInternalObj(null);
-			objectData[3][2].SetInternalObj(materialOut);
+			objectData[3][2].SetInternalObj(coalIn);
 			objectData[3][3].SetInternalObj(materialIn);
 
 			
@@ -496,7 +496,10 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// reset frames of all data points
 			// very slightly inefficient (4 iterations, 3 objects) but it works so idc lol
 			for (int i = 0; i < 4; i++) {objectData[facingDir][i].ResetFrame();}
-			this.GetParentLayer().UpdateObject(this);
+			
+			if (this.GetParentLayer() != null) {
+				this.GetParentLayer().UpdateObject(this);
+			}
 		}
 
 	}
