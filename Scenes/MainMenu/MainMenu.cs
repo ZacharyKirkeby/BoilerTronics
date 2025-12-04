@@ -44,6 +44,8 @@ public partial class MainMenu : Node2D
 		}
 	}
 
+
+
 	private void _on_new_game_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -78,7 +80,13 @@ public partial class MainMenu : Node2D
 		return null;
 	}
 
-	private async Task _on_level_creator_pressed()
+	private void _on_level_creator_pressed()
+{
+	// fire-and-forget async task
+	_ = OpenLevelCreatorAsync();
+}
+
+	private async Task OpenLevelCreatorAsync()
 	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("LevelCreatorMenu").Visible = true;
@@ -89,9 +97,9 @@ public partial class MainMenu : Node2D
 		}
 		List<LevelData> levels = await _get_levels();
 		foreach (LevelData level in levels)
-        {
-            CreateRow(level.LevelName, level.CreatorName, level);
-        }
+		{
+			CreateRow(level.LevelName, level.CreatorName, level);
+		}
 	}
 	
 	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
@@ -186,8 +194,8 @@ public partial class MainMenu : Node2D
 	
 	private void OnRowButtonPressed(LevelData level)
 	{
-    GD.Print($"Button for level {level.LevelName} pressed");
-    // TODO Open level creator with level loaded
+	GD.Print($"Button for level {level.LevelName} pressed");
+	// TODO Open level creator with level loaded
 	}
 
 	private void _on_level_creator_button_pressed()
