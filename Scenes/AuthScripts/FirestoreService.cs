@@ -471,6 +471,215 @@ public partial class FirestoreService : Node
 		}
 	}
 
+	// once again my naming is a banger
+	public async Task<string> SaveLevelAsync(LevelData levelData)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return null;
+		}
+
+		string userId = FirebaseAuthManager.Instance.UserId;
+		levelData.CreatorId = userId;
+
+		// Generate unique level ID if not provided
+		string levelId = levelData.LevelId ?? $"{userId}_{Guid.NewGuid()}";
+		levelData.LevelId = levelId;
+
+		string url = $"{_firestoreUrl}/levels/{levelId}";
+		var firestoreDoc = ConvertLevelToFirestoreDocument(levelData);
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
+			if (response.Success)
+			{
+				GD.Print($"Level saved: {levelData.LevelName} (ID: {levelId})");
+				return levelId;
+			}
+			return null;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to save level: {ex.Message}");
+			return null;
+		}
+	}
+
+	// retrive server stored level
+	public async Task<LevelData> GetLevelAsync(string levelId)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return null;
+		}
+
+		string url = $"{_firestoreUrl}/levels/{levelId}";
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
+
+			if (response.ResponseCode == 404)
+			{
+				GD.Print($"Level {levelId} not found");
+				return null;
+			}
+
+			if (response.Success)
+			{
+				return ConvertFromFirestoreLevelDocument(response.Data);
+			}
+
+			return null;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to get level: {ex.Message}");
+			return null;
+		}
+	}
+
+	public async Task<List<LevelData>> GetUserLevelsAsync(string userId, int limit = 50)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return new List<LevelData>();
+		}
+		// this may not work idfk
+		string url = $"{_firestoreUrl}/levels?pageSize={limit}";
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, null, idToken, "GET");
+
+			if (response.Success)
+			{
+				var levels = new List<LevelData>();
+
+				if (response.Data.TryGetProperty("documents", out var documents))
+				{
+					foreach (var doc in documents.EnumerateArray())
+					{
+						var level = ConvertFromFirestoreLevelDocument(doc);
+						if (level != null && level.CreatorId == userId)
+						{
+							levels.Add(level);
+						}
+					}
+				}
+
+				GD.Print($"Retrieved {levels.Count} levels for user {userId}");
+				return levels;
+			}
+
+			return new List<LevelData>();
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to get user levels: {ex.Message}");
+			return new List<LevelData>();
+		}
+	}
+
+	// idk if we need this but fuck it we ball
+	public async Task<bool> DeleteLevelAsync(string levelId, string userId)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return false;
+		}
+
+		// Verify you own this level
+		var level = await GetLevelAsync(levelId);
+		if (level == null || level.CreatorId != userId)
+		{
+			GD.PrintErr("User does not own this level or level not found");
+			return false;
+		}
+
+		string url = $"{_firestoreUrl}/levels/{levelId}";
+
+		try
+		{
+			var response = await MakeFirestoreRequestAsync(url, null, idToken, "DELETE");
+			if (response.Success)
+			{
+				GD.Print($"Level deleted: {levelId}");
+			}
+			return response.Success;
+		}
+		catch (Exception ex)
+		{
+			GD.PrintErr($"Failed to delete level: {ex.Message}");
+			return false;
+		}
+	}
+
+	public async Task<LeaderboardData> GetLeaderboardAroundUserAsync(string levelId, string userId, int range = 5)
+	{
+		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
+		if (string.IsNullOrEmpty(idToken))
+		{
+			GD.PrintErr("No authentication token available");
+			return null;
+		}
+		var allScores = await GetGlobalLeaderboardAsync(levelId, 1000);
+
+		var leaderboardData = new LeaderboardData
+		{
+			AboveUser = new List<ScoreData>(),
+			UserScore = null,
+			BelowUser = new List<ScoreData>(),
+			UserRank = -1,
+			TotalEntries = allScores.Count
+		};
+
+		int userIndex = allScores.FindIndex(s => s.UserId == userId);
+
+		if (userIndex == -1)
+		{
+			GD.Print($"User {userId} not found on leaderboard for level {levelId}");
+			return leaderboardData;
+		}
+
+		leaderboardData.UserScore = allScores[userIndex];
+		leaderboardData.UserRank = userIndex + 1;
+
+		// Get scores above user
+		int startAbove = Math.Max(0, userIndex - range);
+		for (int i = startAbove; i < userIndex; i++)
+		{
+			leaderboardData.AboveUser.Add(allScores[i]);
+		}
+
+		// Get scores below user
+		int endBelow = Math.Min(allScores.Count, userIndex + range + 1);
+		for (int i = userIndex + 1; i < endBelow; i++)
+		{
+			leaderboardData.BelowUser.Add(allScores[i]);
+		}
+
+		GD.Print($"User rank: {leaderboardData.UserRank} of {leaderboardData.TotalEntries}");
+		return leaderboardData;
+	}
+
+	// i also have no clue if this will work yet
+	public async Task<int> GetUserRankAsync(string levelId, string userId)
+	{
+		var allScores = await GetGlobalLeaderboardAsync(levelId, 1000);
+		int userIndex = allScores.FindIndex(s => s.UserId == userId);
+		return userIndex == -1 ? -1 : userIndex + 1;
+	}
+
 	public async Task<List<ScoreData>> GetGlobalLeaderboardAsync(string levelId, int limit = 10)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
