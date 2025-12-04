@@ -9,7 +9,7 @@ using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class SteelMill : PlaceableBig, BigMovable, Runnable {
+	public class SteelMill : PlaceableBig, BigMovable, Runnable, BigGroupedSubObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
@@ -23,6 +23,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		
 		private FactoryBigObjectInput Input;
 		private FactoryBigObjectOutput Output;
+		private SteelLubeIntake LubeIntake;
 		private List<PlaceableBigData>[] objectData;
 
 		private PlaceableObject _Inv;
@@ -140,6 +141,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// internal insert, output objects
 			Input = new FactoryBigObjectInput(0, 0, 0);
 			Output = new FactoryBigObjectOutput(0, 0, 0);
+			LubeIntake = new SteelLubeIntake(0, 0, 0); // Lube intake
 
 			// Set the parent object of our in and out, this will allow for cbs
 			Input.SetParent(this);
@@ -181,6 +183,27 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			
 			SetDir(Direction.UP);
+		}
+
+		public override void SetDir(Direction inputDir) {
+			Vector2I pos = this.GetOGPos();
+
+			switch (inputDir) {
+				case PlaceableBig.Direction.UP:
+					LubeIntake.MoveObject(pos.X + 0, pos.Y + 0);
+					break;
+				case PlaceableBig.Direction.DOWN:
+					LubeIntake.MoveObject(pos.X + 1, pos.Y - 1);
+					break;
+				case PlaceableBig.Direction.LEFT:
+					LubeIntake.MoveObject(pos.X + 0, pos.Y - 1);
+					break;
+				case PlaceableBig.Direction.RIGHT:
+					LubeIntake.MoveObject(pos.X - 1, pos.Y + 0);
+					break;
+			}
+
+			base.SetDir(inputDir);
 		}
 
 		private PlaceableBigData findDataAtPos(List<PlaceableBigData> D, Vector2I P) {
@@ -299,7 +322,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			// If we are working and have fule
 			if (_Working) {
 				// Then we tak a step to completion
-				_StepsTillCompletion--;
+				if (LubeIntake.ConsumeLube()) _StepsTillCompletion--; // We need lub to mill
 
 				// Once we are done
 				if (_StepsTillCompletion == 0) {
@@ -327,6 +350,39 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			if (_Inv != null) _Inv.ResetPos();
 			_Inv = null;
+		}
+
+		public List<GroupedSubObject> getObjects() {
+			List<GroupedSubObject> ret = new List<GroupedSubObject>();
+
+			// Set coords
+			Vector2I Objpos = this.GetOGPos();
+			switch (this.GetDir()) {
+				case PlaceableBig.Direction.UP:
+					LubeIntake.MoveObject(Objpos.X + 0, Objpos.Y + 0);
+					break;
+				case PlaceableBig.Direction.DOWN:
+					LubeIntake.MoveObject(Objpos.X + 1, Objpos.Y - 1);
+					break;
+				case PlaceableBig.Direction.LEFT:
+					LubeIntake.MoveObject(Objpos.X + 0, Objpos.Y - 1);
+					break;
+				case PlaceableBig.Direction.RIGHT:
+					LubeIntake.MoveObject(Objpos.X - 1, Objpos.Y + 0);
+					break;
+			}
+
+			ret.Add(LubeIntake);
+
+			return ret;
+		}
+
+		// Grouped interface
+		public GroupedSubObject getGroupedObject(Vector2I pos) {
+			GD.Print("requested: ", pos);
+			GD.Print("Input Loc: ", LubeIntake.GetOGPos());
+			if (LubeIntake.GetOGPos() == pos) return LubeIntake as GroupedSubObject;
+			return null;
 		}
 	}
 }
