@@ -203,6 +203,8 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("Leaderboard").Visible = false;
 		GetNode<Control>("LevelCreatorMenu").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
+		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = false;
 	}
 
 	private void _on_quit_pressed()
@@ -238,6 +240,7 @@ public partial class MainMenu : Node2D
 		//actually make volume 0
 		_on_main_vol_slider_value_changed(0);
 	}
+	
 	private void _on_open_pdf_pressed()
 	{
 		string pdfPath = "res://docs/AssemblyManual.pdf";
@@ -245,5 +248,30 @@ public partial class MainMenu : Node2D
 			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
 		else
 			GD.PrintErr($"PDF not found: {pdfPath}");
+	}
+	
+	private void _on_open_pdf_2_pressed()
+	{
+		string pdfPath = "res://docs/tempUserGuide.pdf";
+		if (FileAccess.FileExists(pdfPath))
+			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
+		else
+			GD.PrintErr($"PDF not found: {pdfPath}");
+	}
+
+	public void _on_achievements_pressed() {
+		GetNode<Window>("Achievements Menu").Visible = true;
+	}
+	
+	private void _on_achievements_menu_close_requested() {
+		GetNode<Window>("Achievements Menu").Visible = false;
+	}
+	
+	public void _on_easter_eggs_pressed() {
+		GetNode<Window>("Easter Egg Menu").Visible = true;
+	}
+	
+	private void _on_easter_egg_menu_close_requested() {
+		GetNode<Window>("Easter Egg Menu").Visible = false;
 	}
 }

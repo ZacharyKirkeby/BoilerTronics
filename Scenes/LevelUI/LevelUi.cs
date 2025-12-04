@@ -183,6 +183,11 @@ public partial class LevelUi : Node2D
 
 		// update level name
 		UpdateTitle(manager.saveState.levelName);
+		
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+		if(manager.GetLevelID() == 37) {
+			achievementManager.TryEasterEggUnlock("EasterEgg3");
+		}
 	
 		// If we're in a normal level, don't save the level creator's name!
 		manager.saveState.shouldSaveCreatorName = false;
@@ -581,6 +586,10 @@ public partial class LevelUi : Node2D
 		ppsSolutionLabel.Text = "PPS: " + pps.ToString("F2");
 		costSolutionLabel.Text = "Cost: $" + cps.ToString("F2");
 		stepsSolutionLabel.Text = "Steps: " + rc.ToString("F2");
+		
+		//check for first level completion achievement
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
+		achievementManager.TryAchievementUnlock("Achievement1");
 	}
 	
 	public void UpdateSolutionCutoffs(float pps, float cps, int rc) {
@@ -590,6 +599,7 @@ public partial class LevelUi : Node2D
 	}
 
 	public float[] UpdateSolutionGrading(float ppsCutoff, float ppsSol, float costCutoff, float costSol, int stepsCutoff, int stepsSol) {
+		var achievementManager = BoilerTronicsAchievementManager.AchievementManager;
 		//difference and grading labels
 		float[] grades = new float[3];
 		if(ppsCutoff <= ppsSol) {
@@ -615,6 +625,8 @@ public partial class LevelUi : Node2D
 			grades[1] =  CalculateGrade(costCutoff, costSol, false);
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			//if cost is better, achievement 3 unlocked
+			achievementManager.TryAchievementUnlock("Achievement3");
 		}
 		else {
 			//bad
@@ -623,6 +635,11 @@ public partial class LevelUi : Node2D
 			grades[1] =  CalculateGrade(costCutoff, costSol, false);
 			costDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			costGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			
+			//if cost of solution is 5000 over unlock easter egg
+			if((costSol - costCutoff) >= 5000) {
+				achievementManager.TryEasterEggUnlock("EasterEgg2");
+			}
 		}
 		if(stepsCutoff >= stepsSol) {
 			//good
@@ -631,6 +648,9 @@ public partial class LevelUi : Node2D
 			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(0, 1, 0));
+			
+			//if time is better, achievement 2 unlocked
+			achievementManager.TryAchievementUnlock("Achievement2");
 		}
 		else {
 			//bad
@@ -639,6 +659,15 @@ public partial class LevelUi : Node2D
 			grades[2] =  CalculateGrade(stepsCutoff, stepsSol, false);
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
+			
+			//if steps of solution over by 100 unlock easter egg
+			if((stepsSol - stepsCutoff) >= 100) {
+				achievementManager.TryEasterEggUnlock("EasterEgg1");
+			}
+		}
+		if(ppsCutoff <= ppsSol && costCutoff >= costSol && stepsCutoff >= stepsSol) {
+			//if all better, achievement 4 unlocked
+			achievementManager.TryAchievementUnlock("Achievement4");
 		}
 		return grades;
 	}
@@ -730,5 +759,25 @@ public partial class LevelUi : Node2D
 		// Toggle button visibility
 		GetNode<Button>("%HintBack").Visible = hintIndex > 0;
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
+	}
+	
+	private void _on_achievement_notice_close_requested()
+	{
+		GetNode<Window>("Achievement Notice").Visible = false;
+	}
+	
+	private void _on_cost_easter_egg_close_requested()
+	{
+		GetNode<Window>("Cost Easter Egg").Visible = false;
+	}
+	
+	private void _on_time_easter_egg_close_requested()
+	{
+		GetNode<Window>("Time Easter Egg").Visible = false;
+	}
+	
+	private void _on_mystery_level_easter_egg_close_requested()
+	{
+		GetNode<Window>("Mystery Level Easter Egg").Visible = false;
 	}
 }

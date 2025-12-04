@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=29 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -11,9 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
 [ext_resource type="Script" uid="uid://bcl7r42iof2k0" path="res://Scenes/MainMenu/ProfileMenuController.cs" id="10_w5buf"]
+[ext_resource type="Script" uid="uid://ddyw6wtfs473h" path="res://Scenes/MainMenu/Achievement.cs" id="11_6c6cs"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
+[ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
 [ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="14_6c6cs"]
+[ext_resource type="Script" uid="uid://y1rt7blgu1cs" path="res://Scenes/MainMenu/EasterEgg.cs" id="13_fo6ee"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -86,6 +89,8 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rlg4b"]
+load_path = "res://.godot/imported/unlocked.png-d035798e52417f4d690640c07ff1a01f.ctex"
 
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_mdp32")
@@ -257,11 +262,20 @@ theme_override_font_sizes/font_size = 50
 text = "Fullscreen"
 alignment = 1
 
-[node name="OpenPDF" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="OpenPDF" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+theme_override_font_sizes/font_size = 28
 text = "Open Manual (PDF)"
+
+[node name="OpenPDF2" type="Button" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(300, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Open User Guide (PDF)"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="SettingsMenu/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -357,7 +371,20 @@ theme_override_font_sizes/font_size = 25
 text = "Objects Placed: 0"
 horizontal_alignment = 1
 
-[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer"]
+[node name="Achievements" type="HBoxContainer" parent="ProfileMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Achievements" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 25
+text = "Achievements"
+
+[node name="Back" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -365,6 +392,15 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
+
+[node name="Easter Eggs" type="Button" parent="ProfileMenu/VBoxContainer/Achievements"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 25
+text = "Easter Eggs"
 
 [node name="Leaderboard" type="CenterContainer" parent="."]
 visible = false
@@ -676,6 +712,227 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
+[node name="Achievements Menu" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Achievements"
+initial_position = 2
+size = Vector2i(800, 800)
+visible = false
+script = ExtResource("11_6c6cs")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Achievements Menu"]
+custom_minimum_size = Vector2(700, 50)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Achievement1" type="HBoxContainer" parent="Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement1 Image" type="TextureRect" parent="Achievements Menu/VBoxContainer/Achievement1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("11_w5buf")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Achievements Menu/VBoxContainer/Achievement1"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement1 Title" type="Label" parent="Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "New Factory Builder"
+
+[node name="Achievement1 Description" type="Label" parent="Achievements Menu/VBoxContainer/Achievement1/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Build your first factory successfully"
+
+[node name="Achievement2" type="HBoxContainer" parent="Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement2 Image" type="TextureRect" parent="Achievements Menu/VBoxContainer/Achievement2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Achievements Menu/VBoxContainer/Achievement2"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement2 Title" type="Label" parent="Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Master of Time"
+
+[node name="Achievement2 Description" type="Label" parent="Achievements Menu/VBoxContainer/Achievement2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Have a solution with a better step count than the cutoff"
+
+[node name="Achievement3" type="HBoxContainer" parent="Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement3 Image" type="TextureRect" parent="Achievements Menu/VBoxContainer/Achievement3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Achievements Menu/VBoxContainer/Achievement3"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement3 Title" type="Label" parent="Achievements Menu/VBoxContainer/Achievement3/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Financially Responsible"
+
+[node name="Achievement3 Description" type="Label" parent="Achievements Menu/VBoxContainer/Achievement3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Have a solution with a lower cost than the cutoff"
+
+[node name="Achievement4" type="HBoxContainer" parent="Achievements Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Achievement4 Image" type="TextureRect" parent="Achievements Menu/VBoxContainer/Achievement4"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Achievements Menu/VBoxContainer/Achievement4"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Achievement4 Title" type="Label" parent="Achievements Menu/VBoxContainer/Achievement4/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Factory Wizard"
+
+[node name="Achievement4 Description" type="Label" parent="Achievements Menu/VBoxContainer/Achievement4/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Have a solution that is better than the cutoffs for EVERY category!"
+
+[node name="Easter Egg Menu" type="Window" parent="."]
+oversampling_override = 1.0
+title = "Easter Eggs"
+initial_position = 2
+size = Vector2i(800, 800)
+visible = false
+script = ExtResource("13_fo6ee")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Easter Egg Menu"]
+custom_minimum_size = Vector2(700, 50)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EasterEgg1" type="HBoxContainer" parent="Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EasterEgg1 Image" type="TextureRect" parent="Easter Egg Menu/VBoxContainer/EasterEgg1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Easter Egg Menu/VBoxContainer/EasterEgg1"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg1 Title" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Not a Master of Time"
+
+[node name="EasterEgg1 Description" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg1/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Do you have infinite time on your hands? No? Try it out on a solution."
+
+[node name="EasterEgg2" type="HBoxContainer" parent="Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EasterEgg2 Image" type="TextureRect" parent="Easter Egg Menu/VBoxContainer/EasterEgg2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Easter Egg Menu/VBoxContainer/EasterEgg2"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg2 Title" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Making it Rain (Debt)"
+
+[node name="EasterEgg2 Description" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Try making it rain on a solution. May not be ideal, but might get you this easter egg."
+
+[node name="EasterEgg3" type="HBoxContainer" parent="Easter Egg Menu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="EasterEgg3 Image" type="TextureRect" parent="Easter Egg Menu/VBoxContainer/EasterEgg3"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_rlg4b")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Easter Egg Menu/VBoxContainer/EasterEgg3"]
+custom_minimum_size = Vector2(700, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EasterEgg3 Title" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg3/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Secret Factory"
+
+[node name="EasterEgg3 Description" type="Label" parent="Easter Egg Menu/VBoxContainer/EasterEgg3/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Look for an undiscovered factory... it could be hard to spot."
 
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Select" to="." method="_on_level_select_pressed"]
@@ -687,11 +944,16 @@ text = "Back"
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
-[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/OpenPDF" to="." method="_on_open_pdf_pressed"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/HBoxContainer/OpenPDF2" to="." method="_on_open_pdf_2_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="ProfileMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Easter Eggs" to="." method="_on_easter_eggs_pressed"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/LevelCreatorButton" to="." method="_on_level_creator_button_pressed"]
 [connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="close_requested" from="Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
+[connection signal="close_requested" from="Easter Egg Menu" to="." method="_on_easter_egg_menu_close_requested"]

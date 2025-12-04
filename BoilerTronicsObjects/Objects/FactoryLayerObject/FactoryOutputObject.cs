@@ -34,7 +34,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private int _TargetNum;
 
 		private int _CurrNum;
-		
+				
 		public PlaceableObject PickUp() {
 			return null; // We can't pick something up from the out put
 		}
