@@ -78,7 +78,7 @@ public partial class Leaderboard : CenterContainer
 		// TODO: implement loading system for these cases, i.e. these are the actually relevant cases that spawn/register
 		// on level leaderboard select
 		switch (index) {
-			case 0:
+			case 11:
 				/*
 				leaderboard = new List<(string, float)>
 				{
@@ -91,9 +91,9 @@ public partial class Leaderboard : CenterContainer
 					("Bob", 200)
 				};
 				*/
-				HandleLeaderboard(0);
+				HandleLeaderboard(11);
 				break;
-			case 1:
+			case 12:
 				/*
 				leaderboard = new List<(string, float)>
 				{
@@ -105,7 +105,7 @@ public partial class Leaderboard : CenterContainer
 					("Ethan", 82)
 				};
 				*/
-				HandleLeaderboard(1);
+				HandleLeaderboard(12);
 				break;
 		}
 		UpdateLeaderboard();

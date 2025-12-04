@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=4 uid="uid://xwk7mdkifoyd"]
+[gd_scene load_steps=24 format=4 uid="uid://xwk7mdkifoyd"]
 
 [ext_resource type="Script" uid="uid://bjjp7fgr1wmfp" path="res://Scenes/LevelSelect/NewLevelSelect.cs" id="1_gji4h"]
 [ext_resource type="Theme" uid="uid://b6b4ydxbprpk8" path="res://Scenes/LevelSelect/paneltheme.tres" id="2_pn0g7"]
@@ -100,6 +100,16 @@ _data = {
 &"new_animation": SubResource("Animation_iburf")
 }
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jv00j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uofod"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lpahk"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s4bmt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ardaf"]
+
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_gji4h")
 
@@ -133,14 +143,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label51" type="Label" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.1    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play51" type="Button" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -153,7 +166,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section5"]
@@ -170,14 +183,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label52" type="Label" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.2    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play52" type="Button" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
 unique_name_in_owner = true
@@ -190,7 +206,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section5"]
@@ -207,14 +223,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label53" type="Label" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.3    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play53" type="Button" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
 unique_name_in_owner = true
@@ -227,7 +246,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section5"]
@@ -244,14 +263,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label54" type="Label" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.4    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play54" type="Button" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
 unique_name_in_owner = true
@@ -264,7 +286,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section5"]
@@ -281,14 +303,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label55" type="Label" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.5    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play55" type="Button" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
 unique_name_in_owner = true
@@ -301,7 +326,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section5"]
@@ -318,14 +343,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label56" type="Label" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 5.6    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play56" type="Button" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
 unique_name_in_owner = true
@@ -338,7 +366,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Section4" type="HBoxContainer" parent="VBoxContainer"]
@@ -361,14 +389,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label41" type="Label" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.1    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play41" type="Button" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -381,7 +412,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section4"]
@@ -398,14 +429,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label42" type="Label" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.2    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play42" type="Button" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
 unique_name_in_owner = true
@@ -418,7 +452,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section4"]
@@ -435,14 +469,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label43" type="Label" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.3    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play43" type="Button" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
 unique_name_in_owner = true
@@ -455,7 +492,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section4"]
@@ -472,14 +509,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label44" type="Label" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.4    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play44" type="Button" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
 unique_name_in_owner = true
@@ -492,7 +532,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section4"]
@@ -509,14 +549,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label45" type="Label" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.5    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play45" type="Button" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
 unique_name_in_owner = true
@@ -529,7 +572,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section4"]
@@ -546,14 +589,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label46" type="Label" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 4.6    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play46" type="Button" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
 unique_name_in_owner = true
@@ -566,7 +612,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Section3" type="HBoxContainer" parent="VBoxContainer"]
@@ -589,14 +635,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label31" type="Label" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.1    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play31" type="Button" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -609,7 +658,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section3"]
@@ -626,14 +675,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label32" type="Label" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.2    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play32" type="Button" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
 unique_name_in_owner = true
@@ -646,7 +698,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section3"]
@@ -663,14 +715,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label33" type="Label" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.3    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play33" type="Button" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
 unique_name_in_owner = true
@@ -683,7 +738,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section3"]
@@ -700,14 +755,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label34" type="Label" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.4    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play34" type="Button" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
 unique_name_in_owner = true
@@ -720,7 +778,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section3"]
@@ -737,14 +795,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label35" type="Label" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.5    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play35" type="Button" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
 unique_name_in_owner = true
@@ -757,7 +818,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section3"]
@@ -774,14 +835,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label36" type="Label" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 3.6    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play36" type="Button" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
 unique_name_in_owner = true
@@ -794,7 +858,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Section2" type="HBoxContainer" parent="VBoxContainer"]
@@ -817,14 +881,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label21" type="Label" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.1    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play21" type="Button" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -837,7 +904,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section2"]
@@ -854,14 +921,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label22" type="Label" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.2    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play22" type="Button" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
 unique_name_in_owner = true
@@ -874,7 +944,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section2"]
@@ -891,14 +961,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label23" type="Label" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.3    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play23" type="Button" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
 unique_name_in_owner = true
@@ -911,7 +984,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section2"]
@@ -928,14 +1001,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label24" type="Label" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.4    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play24" type="Button" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
 unique_name_in_owner = true
@@ -948,7 +1024,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section2"]
@@ -965,14 +1041,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label25" type="Label" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.5    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play25" type="Button" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
 unique_name_in_owner = true
@@ -985,7 +1064,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section2"]
@@ -1002,14 +1081,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label26" type="Label" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 2.6    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play26" type="Button" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
 unique_name_in_owner = true
@@ -1022,7 +1104,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Section1" type="HBoxContainer" parent="VBoxContainer"]
@@ -1038,37 +1120,23 @@ theme = ExtResource("2_pn0g7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel"]
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 100
 
 [node name="Control" type="Control" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label11" type="Label" parent="VBoxContainer/Section1/Panel/VBoxContainer/HBoxContainer"]
+[node name="Label11" type="Label" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.1"
-
-[node name="StatsLabel11" type="Label" parent="VBoxContainer/Section1/Panel/VBoxContainer/HBoxContainer"]
-z_index = 1
-layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 1
-theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
-theme_override_constants/outline_size = 10
-theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 75
-text = "Price Grade: A   
-Step Grade: A
-Cost Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play11" type="Button" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
 unique_name_in_owner = true
@@ -1081,7 +1149,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section1"]
@@ -1097,14 +1165,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label12" type="Label" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.2    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play12" type="Button" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
 unique_name_in_owner = true
@@ -1117,7 +1188,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section1"]
@@ -1133,14 +1204,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label13" type="Label" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.3    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play13" type="Button" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
 unique_name_in_owner = true
@@ -1153,7 +1227,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section1"]
@@ -1169,14 +1243,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label14" type="Label" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.4    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play14" type="Button" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
 unique_name_in_owner = true
@@ -1189,7 +1266,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section1"]
@@ -1205,14 +1282,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label15" type="Label" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.5    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play15" type="Button" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
 unique_name_in_owner = true
@@ -1225,7 +1305,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section1"]
@@ -1241,14 +1321,17 @@ theme_override_constants/separation = 100
 layout_mode = 2
 
 [node name="Label16" type="Label" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
+unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_horizontal = 4
+size_flags_vertical = 3
 theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("3_jv00j")
-theme_override_font_sizes/font_size = 140
-text = " Level 1.6    Grade: A"
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
 
 [node name="Play16" type="Button" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
 unique_name_in_owner = true
@@ -1261,7 +1344,7 @@ theme_override_font_sizes/font_size = 50
 text = "Play"
 
 [node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
@@ -1284,6 +1367,16 @@ texture = ExtResource("7_5fyqv")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="BackButton" type="Button" parent="CanvasLayer"]
+custom_minimum_size = Vector2(200, 50)
+offset_left = 858.0
+offset_top = 953.0
+offset_right = 1058.0
+offset_bottom = 1003.0
+theme = ExtResource("3_iburf")
+theme_override_font_sizes/font_size = 50
+text = "Back"
+
 [node name="UpButton" type="Button" parent="CanvasLayer"]
 unique_name_in_owner = true
 offset_left = 910.0
@@ -1292,7 +1385,7 @@ offset_right = 1010.0
 offset_bottom = 135.16975
 size_flags_horizontal = 8
 size_flags_vertical = 4
-theme = ExtResource("6_k5pw0")
+theme = ExtResource("3_iburf")
 theme_override_constants/icon_max_width = 90
 icon = ExtResource("7_jv00j")
 icon_alignment = 1
@@ -1407,6 +1500,17 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Clear"
 
+[node name="AchievementButton" type="Button" parent="CanvasLayer"]
+offset_left = 1116.0
+offset_top = 822.0
+offset_right = 1258.0
+offset_bottom = 907.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jv00j")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_uofod")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_lpahk")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_s4bmt")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ardaf")
+
 [connection signal="pressed" from="VBoxContainer/Section5/Panel/VBoxContainer/Play51" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Section5/Panel2/VBoxContainer/Play52" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Section5/Panel3/VBoxContainer/Play53" to="." method="_on_play_pressed"]
@@ -1437,6 +1541,7 @@ text = "Clear"
 [connection signal="pressed" from="VBoxContainer/Section1/Panel4/VBoxContainer/Play14" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Section1/Panel5/VBoxContainer/Play15" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="VBoxContainer/Section1/Panel6/VBoxContainer/Play16" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="CanvasLayer/BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/RightButton" to="." method="_on_button_pressed"]
 [connection signal="close_requested" from="CanvasLayer/Window" to="." method="_on_window_close_requested"]
 [connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save0Cont/Save 0" to="." method="_on_save_0_pressed"]
