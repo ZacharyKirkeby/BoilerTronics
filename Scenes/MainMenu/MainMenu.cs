@@ -4,9 +4,13 @@ using System;
 public partial class MainMenu : Node2D
 {
 	private int level = 11;
+	private FirebaseAuthManager _authManager;
+	private FirestoreService _firestoreService;
 	
 	public override void _Ready()
 	{
+		InitializeServices();
+
 		// Set fullscreen toggle
 		var fullscreenButton = GetNode<Button>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen");
 		fullscreenButton.ButtonPressed = DisplayServer.WindowGetMode() == DisplayServer.WindowMode.ExclusiveFullscreen
@@ -17,6 +21,25 @@ public partial class MainMenu : Node2D
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		volSlider.Value = soundManager.GetCurrentVolume();
 		
+	}
+
+	private void InitializeServices()
+	{
+		// Get or create auth manager
+		_authManager = FirebaseAuthManager.Instance;
+		if (_authManager == null)
+		{
+			_authManager = new FirebaseAuthManager();
+			AddChild(_authManager);
+		}
+
+		// Get or create firestore service
+		_firestoreService = FirestoreService.Instance;
+		if (_firestoreService == null)
+		{
+			_firestoreService = new FirestoreService();
+			AddChild(_firestoreService);
+		}
 	}
 
 	private void _on_new_game_pressed()
