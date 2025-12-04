@@ -184,6 +184,8 @@ public partial class LevelUi : Node2D
 		// update level name
 		UpdateTitle(manager.saveState.levelName);
 	
+		// If we're in a normal level, don't save the level creator's name!
+		manager.saveState.shouldSaveCreatorName = false;
 	}
 
 	public override void _Process(double delta) {

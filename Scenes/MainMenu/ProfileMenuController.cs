@@ -6,9 +6,11 @@ using System.Linq;
 public partial class ProfileMenuController : Control
 {
 	private FirebaseAuthManager _authManager;
+	public bool IsAuthenticated() { return _authManager.IsAuthenticated; }	// publicly facing function to get authentication status
 	private FirestoreService _firestoreService;
 	private FriendsService _friendsService;
 	private UserData _currentUserData;
+	public UserData GetUserData() { return _currentUserData; }	// publicly facing function to return UserData
 
 	private HBoxContainer _mainContainer;
 	private VBoxContainer _profileContainer;
@@ -21,10 +23,15 @@ public partial class ProfileMenuController : Control
 	private int _cachedRequestsCount = -1;
 	private int _cachedAchievements = -1;
 	private float _cachedHoursPlayed = -1;
+	
+	// publicly facing manager such that it is possible for other scripts to get _UserData and etc
+	public static ProfileMenuController GlobalManager;
 
 
 	public override void _Ready()
 	{
+		GlobalManager = this;
+		
 		// Get services
 		_authManager = FirebaseAuthManager.Instance;
 		_firestoreService = FirestoreService.Instance;
