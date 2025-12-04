@@ -14,7 +14,7 @@
 [ext_resource type="Theme" uid="uid://yrlb1mo8agju" path="res://Scenes/LevelUI/StatValues.tres" id="7_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_5rb4o"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="9_qx84d"]
-[ext_resource type="PackedScene" uid="uid://bryroj3e2my4u" path="res://Testing/test_level.tscn" id="10_3k86a"]
+[ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="10_3k86a"]
 [ext_resource type="Script" uid="uid://bm2ejy2n4db66" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="11_wueca"]
 [ext_resource type="Script" uid="uid://b50g55xq2tjm8" path="res://Resources/Scripts/LevelUI/PlaceButton1.cs" id="12_ykdp4"]
 [ext_resource type="Script" uid="uid://df57nb3r4xluq" path="res://Resources/Scripts/LevelUI/PlaceButton2.cs" id="13_82t02"]

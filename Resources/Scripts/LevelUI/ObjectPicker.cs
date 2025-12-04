@@ -60,6 +60,10 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false, "The roller allows you to turn a sheet of material into a pipe of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
 		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false, "The press allows you to turn a bar of a given material into a sheet of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
 		new ItemInfo("Pipe", FactoryPress.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false, "This pipe allows for the flow of liquid, it'll attatch to any adjacent pipes, liquid inputs, and liquid outputs"),
+		new ItemInfo("Cooler", CoolerObject.GetCostStatic(), 2, 3, new Vector2I(0,5), new Vector2I(85, 85), false, false),
+		new ItemInfo("Heater", HeaterObject.GetCostStatic(), 2, 3, new Vector2I(1,5), new Vector2I(85, 85), false, false),
+		new ItemInfo("WaterPump", WaterPump.GetCostStatic(), 2, 14, new Vector2I(0,0), new Vector2I(85, 85), false, true),
+		new ItemInfo("LubePump", LubePump.GetCostStatic(), 2, 14, new Vector2I(0,1), new Vector2I(85, 85), false, true),
 	};
 
 	static ItemInfo[] DeveloperSection =
@@ -70,6 +74,9 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Iron Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false, false, "Input for iron bar"),
 		new ItemInfo("Iron Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false, false, "Input for iron plate"),
 		new ItemInfo("Iron Rod In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false, false, "Input for iron rod"),
+		new ItemInfo("Steel Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,2), new Vector2I(85, 85), false, false),
+		new ItemInfo("Steel Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,2), new Vector2I(85, 85), false, false),
+		new ItemInfo("Steel Gear In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,0), new Vector2I(85, 85), false, false),
 		
 		// Factory Output Objects
 		new ItemInfo("Coal Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false, false, "Output for coal"),
@@ -77,6 +84,9 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Iron Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false, false, "Output for iron bar"),
 		new ItemInfo("Iron Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false, false, "Output for iron plate"),
 		new ItemInfo("Iron Rod Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false, false, "Output for iron rod"),
+		new ItemInfo("Steel Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,3), new Vector2I(85, 85), false, false),
+		new ItemInfo("Steel Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,3), new Vector2I(85, 85), false, false),
+		new ItemInfo("Steel Gear Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,1), new Vector2I(85, 85), false, false),
 		
 		// Floor Tiles
 		new ItemInfo("Floor Tile 1", FloorTileObject.GetCostStatic(), 2, 4, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Tile for the floor"),

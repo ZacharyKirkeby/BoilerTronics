@@ -185,6 +185,7 @@ namespace BoilerTronicsObjects.Placeable
 			};
 		}
 		
+		/*
 		// Used for ArrayList.Contains and etc
 		// Not 100% conclusive! Potential edge case is if two objects, identical on the surface level
 		// and sharing the same coordinates, but on different Layers, this will
@@ -201,5 +202,6 @@ namespace BoilerTronicsObjects.Placeable
 				this.GetAtlasPos() == cObj.GetAtlasPos()
 			);
 		}
+		*/
 	}
 }
