@@ -568,9 +568,15 @@ public partial class BoilerTronicsLevel : Node2D
 			aObj.Reset();
 			aObj.QueueFree();
 		}
-		
-		foreach (Runnable rObj in runnableList) {
-			rObj.Reset();
+
+		foreach (List<PlaceableObject> RL in runList) {
+			for (int i = RL.Count - 1; i >= 0; i--)
+				{
+				PlaceableObject obj = RL[i];
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Reset();
+			}
 		}
 		
 		// why is this code duplicated from the above?
