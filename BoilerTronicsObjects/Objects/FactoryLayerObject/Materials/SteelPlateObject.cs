@@ -8,12 +8,17 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMaterial : PlaceableObject, Movable, Runnable, HeatedMaterial{
+	public class SteelPlateObject : PlaceableObject, Movable, Runnable, HeatedMaterial{
 		
-		private static Vector2I objectAtlasPos = new Vector2I(0, 4); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
-		private static int layerSourceId = 0;
+		private static Vector2I headtedAtlasPos = new Vector2I(3, 2);
+		private static Vector2I cooledAtlasPos = new Vector2I(3, 1);
+
+		private static Vector2I objectAtlasPos = new Vector2I(3, 1);
+
+		private static int layerSourceId = 9;
 
 		// Used to keep track of how 'hot' the item is
+		private ClawObject holder = null;
 		private int heatValue = 0;
 		
 		public override void ResetPos()
@@ -40,10 +45,17 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		// Sets heat value to the value passed in
 		public void setHeat(int HV) {
 			heatValue = HV;
+
+			if (heatValue > 0) {
+				// Set the sprite to the heated atlasp pos
+				// Unsure if the following is needed as we will only be heated if we are in a heater or a furnace
+				// Tell the hook that is holding us that we got heated (if we are being held)
+			}
 		}
 
 		// Let's a hook tell us that they are holding us so that we can update them when we change states
 		public void setHook(ClawObject cObj) {
+			holder = cObj;
 		}
 
 		// Moveable interfact
@@ -65,11 +77,31 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 		public void Step() {
 			if (heatValue > 0) heatValue--;
+
+			if (heatValue == 0) {
+				// Change the sprite of the object
+				this.SetAtlasPos(cooledAtlasPos);
+
+				// If we have a holder we need to notify them we have a diffrent sprite
+				if (holder != null) {
+					holder.updateHeld();
+				}
+
+				// Tell the hook that is holding us that we got heated (if we are being held)
+				BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+
+				if (man.currLevel.fLayer.FindObject(this.GetCurrPos()) == this) {
+					// set tile sprite at curr position
+					man.currLevel.fLayer.SetCell(this.GetCurrPos(), this.GetSourceID(), this.GetAtlasPos()); // Set the new sprite
+				}
+			}
 		}
 
 		public void Reset() {
 			heatValue = 0;
 			ResetPos();
+			if (holder != null) holder.deleteHeld();
+			UnRegisterSteppable();
 		}
 
 		public void RegisterSteppable() {
@@ -84,7 +116,11 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 			manager.currLevel.UnRegisterRunnable(this);
 		}
 
-		public FactoryTestMaterial(int OGX, int OGY, int altTitle = 0) 
-		: base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {}
+
+		public SteelPlateObject(int OGX, int OGY, int altTitle = 0) 
+		: base(OGX, OGY, layerSourceId, cooledAtlasPos, altTitle) {
+			RegisterSteppable();
+			this.SetGarbage(true); // This will be deleted on reset
+		}
 	}
 }
