@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dbk5umv3gfk4f"]
+[gd_scene load_steps=14 format=3 uid="uid://dbk5umv3gfk4f"]
 
 [ext_resource type="Script" uid="uid://b37pk4svv1syi" path="res://Scenes/LevelSelect/LevelSelect.cs" id="1_lx4vd"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_2sqnl"]
@@ -14,6 +14,14 @@ thickness = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chbko"]
 bg_color = Color(5.7756904e-07, 0.41124302, 0.20597282, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dglhw"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rfj7w"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjhrt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_r0w1d"]
 
 [sub_resource type="Theme" id="Theme_72w8f"]
 Button/colors/font_color = Color(0, 0, 0, 1)
@@ -76,6 +84,16 @@ custom_minimum_size = Vector2(0, 600)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_chbko")
+
+[node name="Mystery Level" type="Button" parent="MainVBox/PanelContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 75
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dglhw")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_rfj7w")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_bjhrt")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_r0w1d")
 
 [node name="HBoxContainer" type="VBoxContainer" parent="MainVBox/PanelContainer2"]
 custom_minimum_size = Vector2(600, 300)
@@ -142,6 +160,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "New Level"
 
+[connection signal="pressed" from="MainVBox/PanelContainer2/Mystery Level" to="." method="_on_mystery_level_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MainVBox/PanelContainer2/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="close_requested" from="Window" to="." method="_on_window_close_requested"]
