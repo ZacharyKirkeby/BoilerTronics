@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=27 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bcl7r42iof2k0" path="res://Scenes/MainMenu/ProfileMenuController.cs" id="10_w5buf"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
+[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="14_6c6cs"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -73,6 +74,13 @@ Button/fonts/font = SubResource("FontVariation_28flt")
 Button/styles/focus = ExtResource("4_6c6cs")
 Button/styles/hover = ExtResource("5_fo6ee")
 Button/styles/normal = ExtResource("4_6c6cs")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fo6ee"]
+bg_color = Color(0.57794297, 0.49357384, 0.33771932, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_mdp32")
@@ -563,6 +571,86 @@ text = "Back"
 
 [node name="Node" type="Node" parent="."]
 script = ExtResource("12_rlg4b")
+
+[node name="LevelCreatorMenu" type="CenterContainer" parent="."]
+visible = false
+offset_top = 375.0
+offset_right = 1920.0
+offset_bottom = 979.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelCreatorMenu"]
+layout_mode = 2
+theme = ExtResource("3_w5buf")
+theme_override_constants/separation = 20
+
+[node name="Panel" type="Panel" parent="LevelCreatorMenu/VBoxContainer"]
+custom_minimum_size = Vector2(1100, 550)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_t1dhk")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LevelCreatorMenu/VBoxContainer/Panel"]
+layout_mode = 0
+offset_left = 48.8
+offset_top = 18.0
+offset_right = 1148.8
+offset_bottom = 500.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fo6ee")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "LevelName"
+
+[node name="Label2" type="Label" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "by Level Creator"
+
+[node name="Button" type="Button" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 100
+icon = ExtResource("14_6c6cs")
+
+[node name="Control2" type="Control" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/VBoxContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelCreatorMenu/VBoxContainer"]
+layout_mode = 2
+
+[node name="Back2" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 76
+text = "Level Creator"
+
+[node name="Back" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 76
+text = "Back"
 
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Select" to="." method="_on_level_select_pressed"]
