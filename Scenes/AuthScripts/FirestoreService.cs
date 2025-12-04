@@ -287,57 +287,61 @@ public partial class FirestoreService : Node
 		var httpRequest = new HttpRequest();
 		AddChild(httpRequest);
 
+		GD.Print(url);
 		var headers = new List<string>
-		{
-			"Content-Type: application/json",
-			$"Authorization: Bearer {idToken}"
-		};
+	{
+		"Content-Type: application/json",
+		$"Authorization: Bearer {idToken}"
+	};
 
-		var taskCompletionSource = new TaskCompletionSource<FirestoreResponse>();
+		var tcs = new TaskCompletionSource<FirestoreResponse>();
 
 		httpRequest.RequestCompleted += (long result, long responseCode, string[] responseHeaders, byte[] body) =>
 		{
 			httpRequest.QueueFree();
-
-			string responseText = Encoding.UTF8.GetString(body);
+			string text = Encoding.UTF8.GetString(body);
 
 			if (responseCode >= 200 && responseCode < 300)
 			{
-				var data = string.IsNullOrEmpty(responseText) ? new JsonElement() : JsonSerializer.Deserialize<JsonElement>(responseText);
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
-			}
-			else if (responseCode == 404)
-			{
-				// 404:document doesn't exist - not bad trust 
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = 404 });
+				var data = string.IsNullOrEmpty(text)
+					? new JsonElement()
+					: JsonSerializer.Deserialize<JsonElement>(text);
+
+				tcs.SetResult(new FirestoreResponse { Success = true, Data = data, ResponseCode = (int)responseCode });
 			}
 			else
 			{
-				GD.PrintErr($"Firestore error ({responseCode}): {responseText}");
-				taskCompletionSource.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
+				GD.PrintErr($"Firestore error ({responseCode}): {text}");
+				tcs.SetResult(new FirestoreResponse { Success = false, ResponseCode = (int)responseCode });
 			}
 		};
 
 		HttpClient.Method httpMethod = method switch
 		{
 			"GET" => HttpClient.Method.Get,
-			"PATCH" => HttpClient.Method.Patch,
+			"PUT" => HttpClient.Method.Put,
 			"DELETE" => HttpClient.Method.Delete,
 			_ => HttpClient.Method.Post
 		};
 
 		if (payload != null)
 		{
-			string jsonPayload = JsonSerializer.Serialize(payload);
-			httpRequest.Request(url, headers.ToArray(), httpMethod, jsonPayload);
+			GD.Print(url);
+			string json = JsonSerializer.Serialize(payload);
+			byte[] bytes = Encoding.UTF8.GetBytes(json);
+
+			headers.Add($"Content-Length: {bytes.Length}");
+
+			httpRequest.Request(url, headers.ToArray(), httpMethod, json);
 		}
 		else
 		{
 			httpRequest.Request(url, headers.ToArray(), httpMethod);
 		}
 
-		return await taskCompletionSource.Task;
+		return await tcs.Task;
 	}
+
 
 	// call this to get a set of friends data
 	public async Task<List<ScoreData>> GetFriendScoresAsync(string levelId, int limit = 10)
@@ -471,42 +475,59 @@ public partial class FirestoreService : Node
 		}
 	}
 
+
+	string CleanForDocId(string input)
+	{
+		// Firestore must not contain /, ?, #, or spaces
+		var invalid = new[] { '/', '?', '#', ' ', ',' };
+		foreach (var c in invalid)
+			input = input.Replace(c.ToString(), "");
+		return input;
+	}
+
+	private string BuildUpdateMaskQuery()
+	{
+		string[] fields =
+		{
+		"levelId",
+		"creatorId",
+		"creatorName",
+		"levelName",
+		"description",
+		"levelDataJson",
+		"difficulty",
+		"tags"
+	};
+
+		return "?" + string.Join("&", fields.Select(f => $"updateMask.fieldPaths={f}"));
+	}
+
+
+
 	// once again my naming is a banger
 	public async Task<string> SaveLevelAsync(LevelData levelData)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
 		if (string.IsNullOrEmpty(idToken))
-		{
-			GD.PrintErr("No authentication token available");
 			return null;
-		}
 
 		string userId = FirebaseAuthManager.Instance.UserId;
 		levelData.CreatorId = userId;
 
-		// Generate unique level ID if not provided
-		string levelId = levelData.LevelId ?? $"{userId}_{Guid.NewGuid()}";
+		string levelId = $"{userId}_{Guid.NewGuid()}";
 		levelData.LevelId = levelId;
 
-		string url = $"{_firestoreUrl}/levels/{levelId}";
 		var firestoreDoc = ConvertLevelToFirestoreDocument(levelData);
 
-		try
-		{
-			var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "PATCH");
-			if (response.Success)
-			{
-				GD.Print($"Level saved: {levelData.LevelName} (ID: {levelId})");
-				return levelId;
-			}
-			return null;
-		}
-		catch (Exception ex)
-		{
-			GD.PrintErr($"Failed to save level: {ex.Message}");
-			return null;
-		}
+		string safeId = CleanForDocId(levelId);
+		string url = $"{_firestoreUrl}/levels/{safeId}{BuildUpdateMaskQuery()}";
+
+
+		var response = await MakeFirestoreRequestAsync(url, firestoreDoc, idToken, "POST");
+
+		return response.Success ? levelId : null;
 	}
+
 
 	// retrive server stored level
 	public async Task<LevelData> GetLevelAsync(string levelId)
@@ -518,7 +539,7 @@ public partial class FirestoreService : Node
 			return null;
 		}
 
-		string url = $"{_firestoreUrl}/levels/{levelId}";
+		string url = $"{_firestoreUrl}/levels/{levelId}?currentDocument.exists=true";
 
 		try
 		{
@@ -776,31 +797,43 @@ public partial class FirestoreService : Node
 		}
 	}
 
-	private object ConvertLevelToFirestoreDocument(LevelData levelData)
+	private Dictionary<string, object> ConvertLevelToFirestoreDocument(LevelData levelData)
 	{
 		var fields = new Dictionary<string, object>
 	{
-		{ "levelId", new { stringValue = levelData.LevelId } },
-		{ "creatorId", new { stringValue = levelData.CreatorId } },
-		{ "creatorName", new { stringValue = levelData.CreatorName } },
-		{ "levelName", new { stringValue = levelData.LevelName } },
-		{ "description", new { stringValue = levelData.Description ?? "" } },
-		{ "levelDataJson", new { stringValue = levelData.LevelDataJson } },
-		{ "difficulty", new { stringValue = levelData.Difficulty ?? "medium" } }
+		{ "levelId", FirestoreString(levelData.LevelId) },
+		{ "creatorId", FirestoreString(levelData.CreatorId) },
+		{ "creatorName", FirestoreString(levelData.CreatorName) },
+		{ "levelName", FirestoreString(levelData.LevelName) },
+		{ "description", FirestoreString(levelData.Description ?? "") },
+		{ "levelDataJson", FirestoreString(levelData.LevelDataJson) },
+		{ "difficulty", FirestoreString(levelData.Difficulty ?? "medium") }
 	};
 
 		if (levelData.Tags != null && levelData.Tags.Count > 0)
 		{
-			fields["tags"] = new
-			{
-				arrayValue = new
+			fields["tags"] = new Dictionary<string, object>
+		{
+			{ "arrayValue", new Dictionary<string, object>
 				{
-					values = ConvertListToFirestoreArray(levelData.Tags)
+					{ "values", levelData.Tags
+						.Select(t => FirestoreString(t))
+						.ToList()
+					}
 				}
-			};
+			}
+		};
 		}
 
-		return new { fields };
+		return new Dictionary<string, object>
+	{
+		{ "fields", fields }
+	};
+	}
+
+	private Dictionary<string, object> FirestoreString(string v)
+	{
+		return new Dictionary<string, object> { { "stringValue", v } };
 	}
 
 	private LevelData ConvertFromFirestoreLevelDocument(JsonElement doc)
