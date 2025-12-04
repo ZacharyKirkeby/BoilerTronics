@@ -9,9 +9,50 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	public class PipeGroup : PlaceableObject, Runnable, GroupedObject{
+
+		/*
+		 * This will be used to track the liquid type in the system
+		 * We should throw an error if these liquids do not exist in the system
+		 */
+		public enum LiquidType {
+			None = 0,
+			Water = 1,
+			Lube = 2,
+		}
+
+		LiquidType currentType; // Current type of liquid
+		int liquidAmount; // Current amout of liquid in the system
 		
 		private List<PipeObject> pipeList = new List<PipeObject>(); // List of conveyorObjects
 		private static Vector2I dummyAtlasPos = new Vector2I(0,0);
+
+		public void addLiquid(LiquidType T, int amt) {
+			if (T == currentType || currentType == LiquidType.None) liquidAmount += amt;
+			else {
+				// Error: mixing liquid types
+				BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+				man.currLevel.E.handleError(ErrorHandler.ErrorType.FluidMixing, null, this.GetCurrPos()); // Throw an error
+				return;
+			}
+
+			currentType = T;
+		}
+
+		public bool consumeLiquid(LiquidType T, int amt) {
+			if (T == currentType && liquidAmount <= amt) liquidAmount -= amt;
+			else {
+				return false; // Not correct type or not enough in system
+			}
+
+			if (liquidAmount == 0) currentType = LiquidType.None;
+
+			return true; // Consumed liquid
+		}
+
+		public void clearLiquid() {
+			currentType = LiquidType.None;
+			liquidAmount = 0;
+		}
 
 		public PipeGroup(int OGX, int OGY, int altTitle = 0) : base(OGX, OGY, 0, dummyAtlasPos, altTitle) { // The actual texture should not matter, this just needs to be a placable so that we can register it with the game state
 			RegisterSteppable();
@@ -96,8 +137,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						foreach (GroupedSubObject gsObj in group) {
 							pipeList.Remove(gsObj as PipeObject);
 							newGroup.addObject(gsObj);
-							retList.Add(newGroup);
 						}
+
+						retList.Add(newGroup);
 					}
 				}
 			}
@@ -147,7 +189,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 				pipeList.Remove(pObj);
 				pObj.removeFromGroup();
 
-				foreach (PipeObject pConn in pObj.GetConnections()) {
+				foreach (PipeObject pConn in pipeList) {
 					pConn.UpdateSprite();
 				}
 			}
@@ -158,9 +200,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// add any newly created groups to our layer
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-			// TODO: Create this in Layer.cs to allow for all layers to have grouped objects
-			foreach (GroupedObject gObj in newGroups) manager.currLevel.mLayer.addGroupedObject(gObj);
+			foreach (GroupedObject gObj in newGroups) manager.currLevel.fLayer.addGroupedObject(gObj);
 		}
 
 		// Checks if a given object is in the group
