@@ -51,6 +51,7 @@ public partial class BoilerTronicsLevel : Node2D
 	public ArrayList runnableList = new ArrayList(); // List of runnable Objects (used for checking)
 
 	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving (used for resetting in the middle of moving)
+	public ArrayList animatingList = new ArrayList(); // List of objects that are currently animated (used for resetting in the middle of moving)
 
 	public Parser P;
 	public ErrorHandler E;
@@ -130,13 +131,15 @@ public partial class BoilerTronicsLevel : Node2D
 
 	private BoilerTronicsLevel.GameRunState RunState;
 
-	private float StepDeltaTime = 1.0f; // 1 Second
-	private float SlowRunDeltaTime = 1.0f; // 1 Second
-	private float FastRunDeltaTime = 0.5f; // Half Second
-	private float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
-	private float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
-	private int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
-	private int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	// consider these as constants!
+	public const float StepDeltaTime = 1.0f; // 1 Second
+	public const float SlowRunDeltaTime = 1.0f; // 1 Second
+	public const float FastRunDeltaTime = 0.5f; // Half Second
+	public const float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
+	public const float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
+	public const int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
+	public const int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	
 	private int SubmitStartStep = -1; // This will be set when we enter the submit state, this is to allow for a smooth ramp up
 
 
@@ -524,9 +527,9 @@ public partial class BoilerTronicsLevel : Node2D
 	/* Reset Layer */
 
 	public void Reset() {
+		GD.Print("BoilerTronicsLevel: Starting Reset");
 		// Stops moving objects to prevent errors
 		HaultObjects();
-
 		// Reset all layers
 		mLayer.Reset();
 		rLayer.Reset();
@@ -542,7 +545,7 @@ public partial class BoilerTronicsLevel : Node2D
 			Layer layer = mObj.layer;
 			// Reset object
 			obj.ResetPos();
-			// Add back to it's layer
+			// Add back to its layer
 			layer.AddObject(obj);
 			// Free object
 			mObj.QueueFree();
@@ -550,7 +553,7 @@ public partial class BoilerTronicsLevel : Node2D
 
 		foreach (List<PlaceableObject> RL in runList) {
 			for (int i = RL.Count - 1; i >= 0; i--)
-    			{
+				{
 				PlaceableObject obj = RL[i];
 				if (!(obj is Runnable)) continue;
 				Runnable rObj = (Runnable)obj;
@@ -558,10 +561,29 @@ public partial class BoilerTronicsLevel : Node2D
 			}
 		}
 		
+		// reset all animating objects
+		foreach (AnimatingObject aObj in animatingList) {
+			aObj.Reset();
+			aObj.QueueFree();
+		}
+		
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
+		
+		// why is this code duplicated from the above?
+		foreach (Runnable rObj in runnableList)
+		{
+			rObj.Reset();
+		}
+		
+		
+		
 		StepCount = 0;
 
-		// Empty moving list
+		// Empty moving/animating list
 		this.movingList.Clear();
+		this.animatingList.Clear();
 
 		// ResetSem
 		runSem = null;
@@ -591,6 +613,8 @@ public partial class BoilerTronicsLevel : Node2D
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
 		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
 		SubmitStartStep = -1;
+		
+		GD.Print("BoilerTronicsLevel: Ended Reset");
 	}
 
 	/* RunState Management */
@@ -757,14 +781,30 @@ public partial class BoilerTronicsLevel : Node2D
 		if (obj is TimeConsumingObject) 
 		movingList.Remove(obj);
 	}
+	
+	/* Handle Animating Objects */
+	public void RegisterAnimating(Object obj) {
+		if (obj is AnimatingObject) 
+		animatingList.Add(obj);
+	}
+
+	public void UnRegisterAnimating(Object obj) {
+		if (obj is AnimatingObject) 
+		animatingList.Remove(obj);
+	}
 
 	/* Error Handling */
 
 	// Resume Objects ?? (This could be used in the middle of a step if we pause)
 
 	public void HaultObjects() {
-		// Halt all other movement
+		
+		// Halt all other movement/animations
 		foreach (TimeConsumingObject obj in movingList) {
+			obj.haultObject();
+		}
+		
+		foreach (TimeConsumingObject obj in animatingList) {
 			obj.haultObject();
 		}
 

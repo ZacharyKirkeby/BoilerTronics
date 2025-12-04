@@ -9,10 +9,12 @@ using BoilerTronicsObjects.Interfaces;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using Parsing;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
-	public class ClawObject : PlaceableFramed, Scriptable, Runnable, QualityObject {
+
+	public class ClawObject : PlaceableAnimated, Scriptable, Runnable, QualityObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
@@ -35,6 +37,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		// "atlasPos" corresponds to the location on a given sprite sheet that a specific object
 		// (i.e. "claw", "factory", "floor tile", "leftrail") will correspond to.
 		
+		/*
 		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
 			this.Q = Q;
 			_parser = new Parser(this.Q);
@@ -86,6 +89,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		{
 			DestroyTerminal(); // Destroys the terminal for this scriptable
 		}
+		*/
 
 		// Runnable Interface
 
@@ -142,7 +146,8 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			
 			// FRAME SYSTEM
 			// resets this object's "displayed" visuals by resetting its frame index
-			ResetFrame();
+			// ResetFrame();
+			ResetState();
 
 			UpdateRegisterDisplay();
 		}
@@ -313,19 +318,23 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 			return;
 		}
-
-		// TODO: Create some helper function so that we can update our current from based on our held object
-		private void UpdateFrame() {
+		
+		// Select the correct grab animation
+		private void GrabAnim() {
+			Vector2I modAtlas = new Vector2I(0, 0);
+			int modSourceId = (int) GetQuality();
+			
 			if (heldObject is CoalObject) {
-				SetFrameIndex(2);
+				TriggerAnimation("grabCoal", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronOreObject) {
-				SetFrameIndex(3);
+				TriggerAnimation("grabIronOre", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronBarObject) {
-				SetFrameIndex(4);
+				TriggerAnimation("grabIronBar", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronPlateObject) {
-				SetFrameIndex(5);
+				TriggerAnimation("grabIronPlate", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 			} else if (heldObject is IronRodObject) {
-				SetFrameIndex(6);
+				TriggerAnimation("grabIronRod", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+			/* TODO: register animations for steel objects
 			} else if (heldObject is SteelBarObject sbObj) {
 				if (sbObj.hasHeat()) {
 					SetFrameIndex(8);
@@ -344,18 +353,28 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 				} else {
 					SetFrameIndex(11);
 				}
+			*/
 			} else {
-				SetFrameIndex(0);
+				TriggerAnimation("grabEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
+				GD.PrintErr("ClawObject: Err: Grab anim failed to find heldObject, using default empty anim. internal obj: ", heldObject);
 			}
-
-			// Update on the layer
-			BoilerTronicsLevel level = BoilerTronicsGlobalManager.GlobalManager.currLevel;
-			level.cLayer.SetCell(this.GetCurrPos(), GetFrame().GetSourceID(), GetFrame().GetAtlasPos());
+		}
+		
+		// Select the correct drop animation
+		private void DropAnim() {
+			Vector2I modAtlas = new Vector2I(0, 0);
+			int modSourceId = (int) GetQuality();
+			
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
+			
+			// well i'm silly. in reality, we only need one "drop" animation
+			// because the object "drops" the instant the "Drop" call is triggered
+			TriggerAnimation("dropEmpty", AnimatingObject.AnimateType.AnimateFull, modAtlas, modSourceId);
 		}
 
 		public void Grab(string[] args) {
 
-			GD.Print("Grab func called");
+			GD.Print("ClawObject: Grab func called");
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Grab);
 
@@ -388,7 +407,12 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			}
 
 			// Call to some update frame function that will update based on the held item
-			UpdateFrame();
+			// UpdateFrame();
+			
+			// only update if object successfully picked up
+			if (heldObject != null) {
+				GrabAnim();
+			}
 		}
 
 		public void deleteHeld() {
@@ -405,7 +429,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		public void Drop(string[] args) {
-			GD.Print("Drop func called");
+			GD.Print("ClawObject: Drop func called");
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Drop);
 			if (heldObject == null) return; // Not an error ?
@@ -418,15 +442,23 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			heldObject.MoveCurrPos(pos.X, pos.Y);
 
 			if (factoryObj == null) {
+				GD.Print("ClawObject: Dropping On Ground\n");
 				manager.currLevel.fLayer.AddObject(heldObject);
 				heldObject = null;
 			} else if (factoryObj is Movable mObj) {
+				GD.Print("ClawObject: Dropping Into Factory\n");
 				if (mObj.Place(heldObject)) heldObject = null;
 			} else if (factoryObj is BigMovable bmObj) {
+				GD.Print("ClawObject: Dropping Into Factory\n");
 				if (bmObj.Place(heldObject, this.GetCurrPos())) heldObject = null;
 			}
 
-			UpdateFrame();
+			// UpdateFrame();
+			
+			// only play anim if object is successfully dropped
+			if (heldObject == null) {
+				DropAnim();
+			}
 		}
 
 		public void Rotate(string[] args)
@@ -439,15 +471,113 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 		}
 
 		// Command methods
-		// Override 'save' function to also return a script's information
-		public override Godot.Collections.Dictionary<string, Variant> Save()
-		{
-			Godot.Collections.Dictionary<string, Variant> res = base.Save();
+
+		public ClawObject(int OGX, int OGY, int altTitle = 0, Quality Q = Quality.LOW_QUALITY) : base(OGX, OGY, layerSourceId, objectAtlasPos, altTitle) {
+			_parser = new Parser();
+			_parser._Ready();
+			CreateTerminal(); // We need to create a terminal so that the user can actually write a script
+			RegisterSteppable(); // Registers this as a runnable with the level state
 			
-			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
-			res["terminalCode"] = GetScript();
-			res["quality"] = (int) GetQuality();
-			return res;
+			// for qualitites
+			SetQuality(Q);
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
+			
+			// ANIMATIONS //
+			
+			// anim base for "grab" animations
+			List<TileTex> grabAnimBase = new List<TileTex>{
+				new TileTex(new Vector2I(3, 0), 10),
+				new TileTex(new Vector2I(2, 0), 10),
+				new TileTex(new Vector2I(1, 0), 10),
+			};
+			
+			// grab empty
+			PlaceableAnimationData grabEmpty = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabEmpty.AddFrame(new TileTex(new Vector2I(0, 0), 10));
+			animationData.Add(
+				"grabEmpty",
+				grabEmpty
+			);
+			
+			// grab coal
+			PlaceableAnimationData grabCoal = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabCoal.AddFrame(new TileTex(new Vector2I(0, 1), 10));
+			animationData.Add(
+				"grabCoal",
+				grabCoal
+			);
+			
+			// grab iron ore
+			PlaceableAnimationData grabIronOre = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabIronOre.AddFrame(new TileTex(new Vector2I(0, 2), 10));
+			animationData.Add(
+				"grabIronOre",
+				grabIronOre
+			);
+			
+			// grab iron bar
+			PlaceableAnimationData grabIronBar = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabIronBar.AddFrame(new TileTex(new Vector2I(0, 3), 10));
+			animationData.Add(
+				"grabIronBar",
+				grabIronBar
+			);
+			
+			// grab iron plate
+			PlaceableAnimationData grabIronPlate = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabIronPlate.AddFrame(new TileTex(new Vector2I(0, 4), 10));
+			animationData.Add(
+				"grabIronPlate",
+				grabIronPlate
+			);
+			
+			// grab iron rod
+			PlaceableAnimationData grabIronRod = new PlaceableAnimationData(
+				grabAnimBase, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			grabIronRod.AddFrame(new TileTex(new Vector2I(0, 5), 10));
+			animationData.Add(
+				"grabIronRod",
+				grabIronRod
+			);
+			
+			
+			// drop empty
+			List<TileTex> dropEmptyAnim = new List<TileTex>{
+				new TileTex(new Vector2I(0, 0), 10),
+				new TileTex(new Vector2I(1, 0), 10),
+				new TileTex(new Vector2I(2, 0), 10),
+				new TileTex(new Vector2I(3, 0), 10),
+			};
+			PlaceableAnimationData dropEmpty = new PlaceableAnimationData(
+				dropEmptyAnim, this, 
+				new Vector2I(0, 0), // (0, 0) offset
+				0.2);				// each frame is 0.2s long
+			animationData.Add(
+				"dropEmpty",
+				dropEmpty
+			);
+		} // create object
+
+		~ClawObject()
+		{
+			DestroyTerminal(); // Destroys the terminal for this scriptable
 		}
 		
 		/*
@@ -462,26 +592,36 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			Instead, modify the below two functions, as Layers and etc utilize these functions --
 			while the PlaceableObjects  still correctly serialize their private internal values.
 		*/
-		public override Vector2I GetAtlasPos() {
-			TileTex T = GetFrame();
-			
-			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
-			// in its idle state. Note that with the animation update, the below will also need to be updated!
-			if (GetFrameIndex() == 0) {
-				return T.GetAtlasPos() + new Vector2I((int) Q, 0);
+		// overrides visuals in accordance to the expected visuals (for quality system)
+		// (hacky solution)
+		public override int GetSourceID() {
+			if (GetStateName() == "default") {
+				SetSourceIdMod(0);
+			} else {
+				SetSourceIdMod((int) GetQuality());
 			}
-			return T.GetAtlasPos();
+			
+			return currData.GetFrame().GetSourceID() + GetSourceIdMod();
 		}
 		
-		public override int GetSourceID() {
+		public override Vector2I GetAtlasPos() {
+			if (GetStateName() == "default") {
+				SetAtlasMod(new Vector2I((int) GetQuality(), 0));
+			} else {
+				SetAtlasMod(new Vector2I(0, 0));
+			}
+			return currData.GetFrame().GetAtlasPos() + GetAtlasMod();
+		}
+
+		// Override 'save' function to also return a script's information
+		public override Godot.Collections.Dictionary<string, Variant> Save()
+		{
+			Godot.Collections.Dictionary<string, Variant> res = base.Save();
 			
-			// NOTE: this functionality here ensures that the object's "quality" status is properly reflected
-			// in its animated states. Note that with the animation update, the below will also need to be updated!
-			// NOTE: this doesn't work, but at the same time this doesn't matter to much because
-			// said animation update is basically ready to go.
-			int mod = 0;
-			if (GetFrameIndex() != 0) { mod = (int) Q; }
-			return base.GetSourceID() + mod;
+			// GD.Print("TODO: override per-object serialization to also include corresponding CodeEdit information");
+			res["terminalCode"] = GetScript();
+			res["quality"] = (int) GetQuality();
+			return res;
 		}
 
 		// Quality Interface
@@ -489,12 +629,37 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 			Q = newQuality;
 			
 			// Update sprite?
+			SetAtlasMod(new Vector2I((int) GetQuality(), 0));
 		}
 
 		public Quality GetQuality() {
 			return Q;
 		}
+		
+		// note: we can't use the base "GetTexture()" functionality as this
+		// would use the "GetSource()" and "GetAtlasPos()" functions from PlaceableAnimated!
+		public override Texture GetTexture()
+		{
+			// this.GetSourceID();
+			// this.GetAtlasPos();
+			// GD.Print("ClawObject: GetTexture: sourceId: ", this.GetSourceID(), ", atlasPos: ", this.GetAtlasPos().ToString());
+			//return base.GetTexture();
+			
+			var tileSet = GD.Load<TileSet>("res://Resources/objects.tres");
+			int sourceid = tileSet.GetSourceId(this.GetSourceID());
 
+			TileSetAtlasSource tileSetSource = tileSet.GetSource(sourceid) as TileSetAtlasSource;
+
+			// get the tile
+			var tile = tileSetSource.GetTileTextureRegion(this.GetAtlasPos());
+			var fullTexture = tileSetSource.Texture.GetImage();
+			var imageTexture = fullTexture.GetRegion(tile);
+			var texture = new ImageTexture();
+			texture.SetImage(imageTexture);
+
+			return texture;
+		}
+		
 		public static Texture GetQualityTexture(Quality Q) {
 			// Get the texture based off the quality passed in
 			Vector2I atPos = objectAtlasPos + new Vector2I((int) Q, 0);

@@ -253,7 +253,7 @@ namespace BoilerTronicsObjects.Layers
 				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 					// check each individual data point
 					Vector2I dataCoords = data.GetPosition(obj.GetPos());
-					TileTex tex = data.GetTileTex();
+					TileTex tex = data.GetFrame();
 					
 					// update tiles to point to the origin (reference)
 					tiles[dataCoords.X, dataCoords.Y] = newPlaceable;
@@ -388,7 +388,8 @@ namespace BoilerTronicsObjects.Layers
 			}
 			*/
 
-			GD.Print(GetPath());
+			// GD.Print("Layer.cs: added object path: ", GetPath());
+			GD.Print("Layer.cs: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
 			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
@@ -533,11 +534,31 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		// update an object's sprite position
+		// NOTE: old coordinates are unaffected! whatever uses this MUST CORRECTLY DELETE THE OBJECT'S OLD SPRITES/POSITIONS, otherwise there'll be some odd visuals.
 		public virtual void UpdateObject(PlaceableObject obj) {
-			if (!objectList.Contains(obj)) return; // We don't care about this objcet if
+			if (!objectList.Contains(obj)) return; // We don't care about this objcet if this object doesn't exist!
 			if (FindObject(obj.GetCurrPos()) != obj) return; // Verify that the object is in the position we think it is in
 
 			SetCell(obj.GetCurrPos(), obj.GetSourceID(), obj.GetAtlasPos()); // Update cell for that object
+			
+			// special: PlaceableBig case
+			// update tiles, cells to fill accordingly to the PlaceableBig data
+			if (obj is PlaceableBig) {
+				PlaceableBig objB = (PlaceableBig) obj;
+				// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+				// the "origin" object will already be placed by the code above!
+				foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(objB.GetCurrPos());
+					TileTex tex = data.GetFrame();
+					
+					// update tile grid 
+					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+				}
+			}
+			
+			// end
 		}
 
 		public void Reset() {
@@ -583,7 +604,7 @@ namespace BoilerTronicsObjects.Layers
 					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
 						// check each individual data point
 						Vector2I dataCoords = data.GetPosition(objB.GetPos());
-						TileTex tex = data.GetTileTex();
+						TileTex tex = data.GetFrame();
 						
 						// update tiles to point to the origin (reference)
 						tiles[dataCoords.X, dataCoords.Y] = obj;

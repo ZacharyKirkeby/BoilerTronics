@@ -3,7 +3,7 @@ using System;
 
 namespace BoilerTronicsObjects.Interfaces {
 	interface TimeConsumingObject {
-		// This function should register the object with the global level and be called when the object is instantiater
+		// This function should register the object with the global level and be called when the object is instantiated
 		void registerConsumingObject();
 		// This function should unregister the object with the global level and be called then the time consuming action is complete
 		void unregisterConsumingObject();
