@@ -619,7 +619,7 @@ public partial class FirestoreService : Node
 		}
 	}
 
-	public async Task<List<LevelData>> GetUserLevelsAsync(string userId, int limit = 50)
+	public async Task<List<LevelData>> GetUserLevelsAsync(int limit = 50)
 	{
 		string idToken = await FirebaseAuthManager.Instance.GetIdTokenAsync();
 		if (string.IsNullOrEmpty(idToken))
@@ -643,14 +643,14 @@ public partial class FirestoreService : Node
 					foreach (var doc in documents.EnumerateArray())
 					{
 						var level = ConvertFromFirestoreLevelDocument(doc);
-						if (level != null && level.CreatorId == userId)
+						if (level != null)
 						{
 							levels.Add(level);
 						}
 					}
 				}
 
-				GD.Print($"Retrieved {levels.Count} levels for user {userId}");
+				GD.Print($"Retrieved {levels.Count} levels");
 				return levels;
 			}
 
