@@ -1217,7 +1217,6 @@ These instructions execute instantly (no step cost):
 - [code]wrt[/code] - Write to output"
 fit_content = true
 
-
 [node name="StoryWindow" type="Window" parent="."]
 unique_name_in_owner = true
 oversampling_override = 1.0
@@ -1240,6 +1239,7 @@ size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("3_xc2rq")
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="Time Easter Egg" type="Window" parent="."]
 oversampling_override = 1.0
@@ -1319,7 +1319,6 @@ layout_mode = 2
 text = "Congrats! You have unlocked a new achievement! You can see all achievements within the achievements menu found in the profile section."
 horizontal_alignment = 1
 vertical_alignment = 1
-
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
