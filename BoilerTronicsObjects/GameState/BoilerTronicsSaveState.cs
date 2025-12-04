@@ -224,11 +224,17 @@ public class BoilerTronicsSaveState
 		return LoadData(manager, SavePath);
 	}
 	
-	// load level name; automatically generate the save data info, given the level ID
+	// load level name; automatically loads a save given its name
 	// input should be handled automatically by the global manager
+	// checks if save file can be found in local and game directories
 	// returns success of loading the save data
 	public bool LoadLevelName(BoilerTronicsGlobalManager manager, String levelName) {
 		string SavePath = "user://LevelCreator/" + levelName + ".save";
+		
+		// if this isn't in the user directory, maybe try looking for it in the game's directory?
+		if (!FileAccess.FileExists(SavePath)) {
+			SavePath = "res://Resources/Levels/" + levelName + ".save";
+		}
 		return LoadData(manager, SavePath);
 	}
 	
