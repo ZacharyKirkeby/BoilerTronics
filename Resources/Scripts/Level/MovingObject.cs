@@ -3,8 +3,9 @@ using System;
 using BoilerTronicsObjects.Placeable;
 using BoilerTronicsObjects.Objects.ClawLayerObjects;
 using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Interfaces;
 
-public partial class MovingObject : Area2D {
+public partial class MovingObject : Area2D, TimeConsumingObject{
 
 	Vector2 PosDelta; // amount we need to move (relative to global position)
 	double TotalDelta; // Total time that has elapsed
@@ -21,7 +22,7 @@ public partial class MovingObject : Area2D {
 	bool move = true;
 
 	public MovingObject(PlaceableObject obj, Vector2I mov, Layer layer, float time) {
-		GD.Print("new moving!");
+		// GD.Print("new moving!");
 
 		float xd = mov.X;
 		float yd = mov.Y;
@@ -30,10 +31,10 @@ public partial class MovingObject : Area2D {
 		this.layer = layer;
 
 		Vector2I pos = obj.GetCurrPos();
-		GD.Print("POS: ", pos);
+		// GD.Print("POS: ", pos);
 
 		this.TargetPos = pos + mov;
-		GD.Print("TARGET POS: ", TargetPos);
+		// GD.Print("TARGET POS: ", TargetPos);
 		this.TargetDelta = time;
 
 		// Why trhe fuck does this work??? IDK why we need to divide then multiply by 2, but we need to :D
@@ -41,22 +42,22 @@ public partial class MovingObject : Area2D {
 		Vector2 currLocalPos = layer.MapToLocal(pos) / 2;
 
 		this.CurrGlobalPos = currLocalPos;
-		GD.Print("GLOBAL POS: ", CurrGlobalPos);
-		GD.Print("LAYER POS: ", layer.ToGlobal(layer.Position));
+		// GD.Print("GLOBAL POS: ", CurrGlobalPos);
+		// GD.Print("LAYER POS: ", layer.ToGlobal(layer.Position));
 
 		Vector2 targetLocalPos = layer.MapToLocal(TargetPos) / 2;
 
 		this.TargetGlobalPos = targetLocalPos;
-		GD.Print("TARGET GLOBAL POS: ", TargetGlobalPos);
+		// GD.Print("TARGET GLOBAL POS: ", TargetGlobalPos);
 
 		this.PosDelta = (TargetGlobalPos - CurrGlobalPos); // Calculate the amount we need to move
-		GD.Print("POS DELTA: ", PosDelta);
+		// GD.Print("POS DELTA: ", PosDelta);
 
 		this.Position = CurrGlobalPos + layer.Position / 2;
 	}
 
 	public override void _Ready() {
-		GD.Print("Ready!");
+		// GD.Print("Ready!");
 		this.layer.RemoveObject(this.obj);
 		// Create collision object 2d
 		this.Shape = new CollisionShape2D();
@@ -84,12 +85,17 @@ public partial class MovingObject : Area2D {
 		this.AddChild(Sprite);
 		Sprite.ZIndex = layer.ZIndex;
 
-		GD.Print("Children: ", this.GetChildren());
-		GD.Print("POS: ", this.Position);
+		// GD.Print("Children: ", this.GetChildren());
+		// GD.Print("POS: ", this.Position);
 
 		// Register with the GameState (For resets and errors and such)
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.RegisterMoving(this);
+
+		// Register moving object for error handling
+		registerConsumingObject();
+
+		// Grab sem to prevent future stepping until we are done with our action
+		manager.currLevel.runSem.Wait();
 
 		// add event for when we detect a collision
 		AreaEntered += Collison;
@@ -127,9 +133,13 @@ public partial class MovingObject : Area2D {
 
 			// Place the object back on the layer
 			layer.AddObject(obj);
+
 			// De-register object from the game state
-			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			manager.currLevel.UnRegisterMoving(this);
+			unregisterConsumingObject();
+
+			// Release sem
+			manager.currLevel.runSem.Release();
+
 			// Destroy this object
 			this.QueueFree();
 		}
@@ -162,8 +172,17 @@ public partial class MovingObject : Area2D {
 		}
 	}
 
-	public void Halt() {
-		// make this flag false so that stop moving
+	public void registerConsumingObject() {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.RegisterMoving(this);
+	}
+
+	public void unregisterConsumingObject() {
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager.currLevel.UnRegisterMoving(this);
+	}
+
+	public void haultObject() {
 		move = false;
 	}
 }
