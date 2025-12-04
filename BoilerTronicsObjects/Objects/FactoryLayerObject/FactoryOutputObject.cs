@@ -105,6 +105,18 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 					// iron rod variant
 					SetAtlasPos(new Vector2I(1, 3));
 					break;
+				case 205:
+					// steel rod
+					SetAtlasPos(new Vector2I(2, 3));
+					break;
+				case 206:
+					// steel plate
+					SetAtlasPos(new Vector2I(3, 3));
+					break;
+				case 207:
+					// steel gear
+					SetAtlasPos(new Vector2I(0, 1));
+					break;
 				default:
 					SetAtlasPos(new Vector2I(2, 3)); // Place holder
 					GD.Print("FactoryInputObject: Warning: InputObject does not have visual variant for object id: ", _TargetObjectID);
