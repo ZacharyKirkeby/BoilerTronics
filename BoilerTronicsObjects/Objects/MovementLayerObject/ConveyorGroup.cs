@@ -99,7 +99,7 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 				foreach (List<GroupedSubObject> group in converyorGroupList) {
 					if (group != keepList) {
 						// Create new Group
-						ConveyorGroup newGroup = new ConveyorGroup(0, 0, dir);
+						GroupedObject newGroup = group[0].createGroup();
 
 						// Add all nodes to that group
 						// Remove those nodes from us
@@ -267,10 +267,15 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void CreateTerminal() {
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			E = manager.terminalContainer.AddEditor();
+			Terminals currTerminal = manager.terminalContainer;
+			E = currTerminal.AddEditor();
 			E.Name = "Conveyor";
-			
 			E.SetCorrespondingObject(this);
+			
+			// set as active tab
+			// currTerminal.SetCurrentTab(currTerminal.GetTabCount() - 1);
+			// update terminal highlighting
+			// currTerminal.GetCurrentEditor().TerminalSelected();
 		}
 
 		public void DestroyTerminal() {

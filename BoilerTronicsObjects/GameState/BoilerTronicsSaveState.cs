@@ -374,12 +374,11 @@ public class BoilerTronicsSaveState
 					// if loaded string exists, then load as appropriate
 					terminalCode = (string) targetObj["terminalCode"];
 					
-					
-					// TODO: cast object as appropriate and create appropriate terminal, load in data, etc
-					
 					((Scriptable) target).SetScript(terminalCode);
 					GD.Print("SaveState: successfully loaded terminal code");
 				}
+				
+			// grouped case ("mildly convoluted")
 			} else if (target is GroupedSubObject gsObj) {
 				string groupCode;
 				
@@ -400,12 +399,19 @@ public class BoilerTronicsSaveState
 				}
 			}
 			
-			// get direction, if relevant
+			// get/set direction, if relevant
 			if (target is PlaceableBig) {
 				if (targetObj.ContainsKey("dir")) {
 					int dir = (int) targetObj["dir"];
 					((PlaceableBig) target).SetDir((PlaceableBig.Direction) dir);
 				}
+			}
+			
+			// get/set quality, if relevant
+			if (target is QualityObject && targetObj.ContainsKey("quality")) {
+				int qualityVal = (int) targetObj["quality"];
+				((QualityObject) target).SetQuality((Quality) qualityVal);
+				GD.Print("SaveState: updated object (", target, ") to have quality ", qualityVal);
 			}
 			
 			listObj.Add(target);
