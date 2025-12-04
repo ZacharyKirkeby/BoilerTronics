@@ -195,6 +195,7 @@ namespace BoilerTronicsObjects.Layers
 		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
+			GD.Print("Adding object:", newPlaceable);
 			// reset layer transparency
 			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
@@ -263,6 +264,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			if (newPlaceable is GroupedSubObject gsObj) {
+				GD.Print("Grouped Sub Object");
 				List<GroupedObject> validGroups = new List<GroupedObject>();
 
 				foreach (GroupedObject gObj in groupedObjectList) {
@@ -270,11 +272,14 @@ namespace BoilerTronicsObjects.Layers
 				}
 
 				if (validGroups.Count == 0) {
+					GD.Print("New group");
 					GroupedObject gObj = gsObj.createGroup();
 					if (gObj != null && gObj.addObject(gsObj)) groupedObjectList.Add(gObj);
 				} else if (validGroups.Count == 1) {
+					GD.Print("Add to group");
 					validGroups[0].addObject(newPlaceable as GroupedSubObject);
 				} else {
+					GD.Print("Combine groups");
 					// Multipe objects
 					GroupedObject biggestGroup = validGroups[0];
 
