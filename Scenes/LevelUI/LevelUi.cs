@@ -731,6 +731,6 @@ public partial class LevelUi : Node2D
 	}
 	
 	private void _on_level_1_story_close_requested() {
-		GetNode<Window>("%Level1Story").Visible = false;
+		GetNode<Window>("%StoryWindow").Visible = false;
 	}
 }

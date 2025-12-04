@@ -11,9 +11,6 @@ public partial class StoryWindow : Window
 
 	private Label _context;
 
-	// ------------------------------------------
-	// STORY DICTIONARY
-	// ------------------------------------------
 	private static readonly Dictionary<int, string> Stories = new()
 	{
 		// ---------- 1.X ----------
@@ -77,16 +74,15 @@ Looks like you’re moving past just using iron as a build material as you find 
 		{ 56, "You are truly achieving much more than you initially throughout you could as you find yourself beating every challenge that comes your way. Time to create a full steel build chain using all your previously learned skills." },
 	};
 
-	// ------------------------------------------
-	// USE THE DICTIONARY
-	// ------------------------------------------
+
 	public override void _Ready()
 	{
 		_context = GetNode<Label>("MarginContainer/Context");
+		this.Title = "Level " + manager.GetLevelID().ToString()[0].ToString() + "." + manager.GetLevelID().ToString()[1].ToString();
 		LevelId = manager.GetLevelID();
 		if (Stories.TryGetValue(LevelId, out var text))
 			_context.Text = text;
 		else
-			_context.Text = "No story found for this level.";
+			this.Visible = false;
 	}
 }
