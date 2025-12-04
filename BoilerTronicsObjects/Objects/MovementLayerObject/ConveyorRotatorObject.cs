@@ -77,6 +77,9 @@ namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
 		public void Step() {
 			// Make a call to the parser
+			if(this == null || E == null) {
+				return;
+			}
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			if (_parser == null)
 			{
