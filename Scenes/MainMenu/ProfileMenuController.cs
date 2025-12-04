@@ -57,6 +57,9 @@ public partial class ProfileMenuController : Control
 
 	private void UpdateProfileStatsOnly()
 	{
+		if (!IsInstanceValid(_profileContainer)) return;
+		if (!IsInstanceValid(_friendsContainer)) return;
+
 		if (_profileContainer == null)
 			return;
 
@@ -84,6 +87,9 @@ public partial class ProfileMenuController : Control
 
 	private void UpdateFriendRequestsOnly(List<FriendRequest> requests)
 	{
+		if (!IsInstanceValid(_profileContainer)) return;
+		if (!IsInstanceValid(_friendsContainer)) return;
+
 		// Get or create the RequestsList container
 		var requestsList = _friendsContainer.GetNodeOrNull<VBoxContainer>("RequestsList");
 		if (requestsList == null)
@@ -134,6 +140,10 @@ public partial class ProfileMenuController : Control
 
 	private async void UpdateFriendsListOnly()
 	{
+
+		if (!IsInstanceValid(_profileContainer)) return;
+		if (!IsInstanceValid(_friendsContainer)) return;
+
 		if (_friendsContainer == null)
 			return;
 
@@ -387,6 +397,10 @@ public partial class ProfileMenuController : Control
 
 	private async void OnAuthenticationChanged(bool isAuthenticated)
 	{
+		// Stop polling during logout
+		if (!isAuthenticated)
+			_pollTimer = 0f;
+
 		if (isAuthenticated)
 		{
 			await LoadUserData();
@@ -396,11 +410,12 @@ public partial class ProfileMenuController : Control
 			_currentUserData = null;
 		}
 
-		if (Visible)
+		if (IsInstanceValid(this) && Visible)
 		{
-			UpdateProfileMenu();
+			CallDeferred(nameof(UpdateProfileMenu));
 		}
 	}
+
 
 	private async System.Threading.Tasks.Task LoadUserData()
 	{
@@ -418,18 +433,23 @@ public partial class ProfileMenuController : Control
 
 	public void UpdateProfileMenu()
 	{
+		if (!IsInstanceValid(_profileContainer) || !IsInstanceValid(_friendsContainer))
+			return;
+
 		// Clear profile content (keep title)
-		var profileChildren = _profileContainer.GetChildren();
-		for (int i = profileChildren.Count - 1; i >= 1; i--)
+		for (int i = _profileContainer.GetChildCount() - 1; i >= 1; i--)
 		{
-			profileChildren[i].QueueFree();
+			var child = _profileContainer.GetChild(i);
+			if (IsInstanceValid(child))
+				child.QueueFree();
 		}
 
 		// Clear friends content (keep title)
-		var friendsChildren = _friendsContainer.GetChildren();
-		for (int i = friendsChildren.Count - 1; i >= 1; i--)
+		for (int i = _friendsContainer.GetChildCount() - 1; i >= 1; i--)
 		{
-			friendsChildren[i].QueueFree();
+			var child = _friendsContainer.GetChild(i);
+			if (IsInstanceValid(child))
+				child.QueueFree();
 		}
 
 		if (_authManager.IsAuthenticated && _currentUserData != null)
@@ -442,6 +462,7 @@ public partial class ProfileMenuController : Control
 			ShowLoginForm();
 		}
 	}
+
 
 	private void ShowAuthenticatedProfile()
 	{
