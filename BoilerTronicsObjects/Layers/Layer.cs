@@ -397,10 +397,10 @@ namespace BoilerTronicsObjects.Layers
 		// system also should properly handle PlaceableBig objects
 		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
-			GD.Print(objectToRemove);
+			// GD.Print(objectToRemove);
 			if (!objectList.Contains(objectToRemove)) return;
 			Vector2I pos = objectToRemove.GetPos();
-			GD.Print(pos);
+			// GD.Print(pos);
 			if (!editableTiles[pos.X, pos.Y]) return;
 			
 			objectList.Remove(objectToRemove); // remove to object form the list
