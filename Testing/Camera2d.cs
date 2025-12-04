@@ -40,6 +40,7 @@ namespace BoilerTronicsObjects.GameCamera {
 		
 		
 		public override void _Ready() {
+			SetTextureFilter((Godot.CanvasItem.TextureFilterEnum) 2);
 			// on startup, move the camera to the "center" of the view area
 			this.Position -= new Vector2I(0, 750 / 2);
 			GD.Print("Camera2d: pos: ", this.Position);

@@ -63,6 +63,9 @@ namespace BoilerTronicsObjects.Layers
 		// x, y are # of cells on the respective axis
 		public void RedefineLayer(int newX, int newY) {
 			
+			// how do you even translate GD scripts into enums because this shit wasn't working
+			SetTextureFilter((Godot.CanvasItem.TextureFilterEnum) 2);
+			
 			tiles = new PlaceableObject[newX, newY];
 			editableTiles = new bool[newX, newY];
 			maxX = newX - 1;
