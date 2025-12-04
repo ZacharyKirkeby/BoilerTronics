@@ -13,6 +13,8 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		private static Vector2I headtedAtlasPos = new Vector2I(1, 2);
 		private static Vector2I cooledAtlasPos = new Vector2I(1, 3);
 
+		private static Vector2I objectAtlasPos = new Vector2I(1, 3);
+
 		private static int layerSourceId = 9;
 
 		// Used to keep track of how 'hot' the item is
