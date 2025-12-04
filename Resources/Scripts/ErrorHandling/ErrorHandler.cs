@@ -20,6 +20,8 @@ public partial class ErrorHandler : Node2D
 		TerminalInvalidCommand = -201,
 		TerminalInvalidArg = -202,
 		TerminalInvalidCommandUse = -203,
+		FluidGeneric = -300,
+		FluidMixing = -301,
 		// TODO: Make more error codes
 	}
 
@@ -145,6 +147,9 @@ public partial class ErrorHandler : Node2D
 				break;
 			case ErrorType.ClawInventory:
 				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/ClawInventoryError.tscn");
+				break;
+			case ErrorType.FluidMixing:
+				packedErrorScene = ResourceLoader.Load<PackedScene>("res://Scenes/ErrorWindows/FluidMixing.tscn");
 				break;
 			default:
 				return; // Invalid error code

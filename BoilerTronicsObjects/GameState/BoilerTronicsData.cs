@@ -16,12 +16,18 @@ namespace BoilerTronicsObjects.Data {
 			if (hasInitializedObjectMap) {return;}
 			
 			// Floor layer
-			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
-			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 0); 	//factoryin
+			// objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 1);	//factoryout
 			// objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 3);	//factorymachine
 			objectMap.Add(hashCoords(3, new Vector2I(0, 0)), 4);	//factoryfurnace
 			objectMap.Add(hashCoords(3, new Vector2I(0, 3)), 5);	//factorypress
 			objectMap.Add(hashCoords(3, new Vector2I(0, 2)), 6);	//factoryroller
+			objectMap.Add(hashCoords(13, new Vector2I(0, 0)), 7);	//pipe
+			objectMap.Add(hashCoords(14, new Vector2I(0, 0)), 8);	//waterpump
+			objectMap.Add(hashCoords(14, new Vector2I(0, 1)), 9);	//lubepump
+			objectMap.Add(hashCoords(3, new Vector2I(0, 5)), 10);	//cooler
+			objectMap.Add(hashCoords(3, new Vector2I(1, 5)), 11);	//heater
+			objectMap.Add(hashCoords(3, new Vector2I(1, 7)), 12);	//steelmill
 			
 			// Actual Floors
 			objectMap.Add(hashCoords(4, new Vector2I(0, 0)), 2);	//floordefault
@@ -59,6 +65,9 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(9, new Vector2I(2, 0)), 202); //ironbar
 			objectMap.Add(hashCoords(9, new Vector2I(3, 0)), 203); //ironplate
 			objectMap.Add(hashCoords(9, new Vector2I(0, 1)), 204); //ironrod
+			objectMap.Add(hashCoords(9, new Vector2I(2, 1)), 205); //steelbar
+			objectMap.Add(hashCoords(9, new Vector2I(3, 1)), 206); //steelplate
+			objectMap.Add(hashCoords(9, new Vector2I(1, 3)), 207); //steelgear
 			
 			// Input Objects
 			objectMap.Add(hashCoords(0, new Vector2I(1, 0)), 250); 	//factoryin - coal
@@ -66,6 +75,9 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(3, 0)), 252); 	//factoryin - iron bar
 			objectMap.Add(hashCoords(0, new Vector2I(0, 2)), 253); 	//factoryin - iron plate
 			objectMap.Add(hashCoords(0, new Vector2I(1, 2)), 254); 	//factoryin - iron rod
+			objectMap.Add(hashCoords(0, new Vector2I(2, 2)), 255); 	//factoryin - steel bar
+			objectMap.Add(hashCoords(0, new Vector2I(3, 2)), 256); 	//factoryin - steel plate
+			objectMap.Add(hashCoords(0, new Vector2I(0, 0)), 257); 	//factoryin - steel gear
 			
 			// Output Objects
 			objectMap.Add(hashCoords(0, new Vector2I(1, 1)), 300); 	//factoryout - coal
@@ -73,6 +85,9 @@ namespace BoilerTronicsObjects.Data {
 			objectMap.Add(hashCoords(0, new Vector2I(3, 1)), 302); 	//factoryout - iron bar
 			objectMap.Add(hashCoords(0, new Vector2I(0, 3)), 303); 	//factoryout - iron plate
 			objectMap.Add(hashCoords(0, new Vector2I(1, 3)), 304); 	//factoryout - iron rod
+			objectMap.Add(hashCoords(0, new Vector2I(2, 3)), 305); 	//factoryout - steel bar
+			objectMap.Add(hashCoords(0, new Vector2I(3, 3)), 306); 	//factoryout - steel plate
+			objectMap.Add(hashCoords(0, new Vector2I(0, 1)), 307); 	//factoryout - steel gear
 			
 			hasInitializedObjectMap = true;
 		}
