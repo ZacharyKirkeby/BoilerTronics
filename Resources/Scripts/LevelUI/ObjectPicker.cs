@@ -22,8 +22,9 @@ public partial class ObjectPicker : HBoxContainer
 		public bool big; // Bool to tell us if this is a big object or not (this will affect the way the texture is rendered)
 		public bool quality; // Bool to tell us if this item has quality asocuiated with it
 		public int sel;
+		public String tooltip;
 
-		public ItemInfo(string name, int price, int sel, int table, Vector2I atPos, Vector2I offSet, bool big, bool quality) {
+		public ItemInfo(string name, int price, int sel, int table, Vector2I atPos, Vector2I offSet, bool big, bool quality, String tooltip) {
 			this.name = name;
 			this.price = price;
 			this.table = table;
@@ -32,6 +33,7 @@ public partial class ObjectPicker : HBoxContainer
 			this.big = big;
 			this.quality = quality;
 			this.sel = sel;
+			this.tooltip = tooltip;
 		}
 	}
 
@@ -41,65 +43,65 @@ public partial class ObjectPicker : HBoxContainer
 	static int ClawIndex = 3;
 
 	static ItemInfo[] MovementSection = {
-		new ItemInfo("Vertical Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Horizontal Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("Rotator", ConveyorRotatorObject.GetCostStatic(), 1, 2, new Vector2I(0,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(2,0), new Vector2I(130, 90), true, false), // Placeholder sprite ATM
+		new ItemInfo("Vertical Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Allow for you to move a rail (and whatever is on said rail) up or down with the ‘mov u’ and ‘mov d’ commands."),
+		new ItemInfo("Horizontal Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,1), new Vector2I(85, 85), false, false, "Allow for you to move a rail (and whatever is on said rail) left or right with the ‘mov l’ and ‘mov r’ commands."),
+		new ItemInfo("Rotator", ConveyorRotatorObject.GetCostStatic(), 1, 2, new Vector2I(0,2), new Vector2I(85, 85), false, false, "Allows for you to rotate a rail (and whatever is on said rail) by usingthe ‘rot l’ or ‘rot r’ commands."),
+		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(2,0), new Vector2I(130, 90), true, false, "Allows you to switch to position of a rail (and whatever is on said rail) by using the ‘swt’ command."),
 	};
 
 	static ItemInfo[] ClawSection = {
-		new ItemInfo("Claw", ClawObject.GetCostStatic(), 3, 1, new Vector2I(0,0), new Vector2I(85, 131), false, true),
-		new ItemInfo("Vertical Rail", TrackObject.GetCostStatic(), 3, 1, new Vector2I(0,1), new Vector2I(85, 131), false, false),
-		new ItemInfo("Horizontal Rail", TrackObject.GetCostStatic(), 3, 1, new Vector2I(0,2), new Vector2I(85, 131), false, false),
+		new ItemInfo("Claw", ClawObject.GetCostStatic(), 3, 1, new Vector2I(0,0), new Vector2I(85, 131), false, true, "Claws can be moved using the ‘mov’ command, they must be on a rail and move onto a rail of the correct direction. You can pick up materials via the ‘grb’ command or drop material via the ‘drp’ command."),
+		new ItemInfo("Vertical Rail", TrackObject.GetCostStatic(), 3, 1, new Vector2I(0,1), new Vector2I(85, 131), false, false, "This rail allows a claw to move up and down"),
+		new ItemInfo("Horizontal Rail", TrackObject.GetCostStatic(), 3, 1, new Vector2I(0,2), new Vector2I(85, 131), false, false, "This rail allows a claw to move left and right"),
 	};
 
 	static ItemInfo[] FactorySection = {
-		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true, false),
-		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false),
-		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false),
-		new ItemInfo("Steel Mill", SteelMill.GetCostStatic(), 2, 3, new Vector2I(1,7), new Vector2I(85, 85), true, false),
-		new ItemInfo("Pipe", PipeObject.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Cooler", CoolerObject.GetCostStatic(), 2, 3, new Vector2I(0,5), new Vector2I(85, 85), false, false),
-		new ItemInfo("Heater", HeaterObject.GetCostStatic(), 2, 3, new Vector2I(1,5), new Vector2I(85, 85), false, false),
-		new ItemInfo("WaterPump", WaterPump.GetCostStatic(), 2, 14, new Vector2I(0,0), new Vector2I(85, 85), false, true),
-		new ItemInfo("LubePump", LubePump.GetCostStatic(), 2, 14, new Vector2I(0,1), new Vector2I(85, 85), false, true),
+		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true, false, "Allows for you to smelt raw material into a bar of said material. The furnace needs a fuel source in the form of coal and takes two time steps to smelt a given object."),
+		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false, "The roller allows you to turn a sheet of material into a pipe of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
+		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false, "The press allows you to turn a bar of a given material into a sheet of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
+		new ItemInfo("Steel Mill", SteelMill.GetCostStatic(), 2, 3, new Vector2I(1,7), new Vector2I(85, 85), true, false, "The press will allow you to mill steel plates into gears, for it to work it must have lube and the plate must still be hot!"),
+		new ItemInfo("Pipe", FactoryPress.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false, "This pipe allows for the flow of liquid, it'll attatch to any adjacent pipes, liquid inputs, and liquid outputs"),
+		new ItemInfo("Cooler", CoolerObject.GetCostStatic(), 2, 3, new Vector2I(0,5), new Vector2I(85, 85), false, false, "This item allows for you to cool hot elemetns, you must attach it to a pipe system that has water avalible!"),
+		new ItemInfo("Heater", HeaterObject.GetCostStatic(), 2, 3, new Vector2I(1,5), new Vector2I(85, 85), false, false, "This object allows you to re-heat items so you can continue to work with them"),
+		new ItemInfo("WaterPump", WaterPump.GetCostStatic(), 2, 14, new Vector2I(0,0), new Vector2I(85, 85), false, true, "This object pumps water into a pump system, higher quality = more water"),
+		new ItemInfo("LubePump", LubePump.GetCostStatic(), 2, 14, new Vector2I(0,1), new Vector2I(85, 85), false, true, "This object pumps luberciant into a pump system, higher quality = more lube"),
 	};
 
 	static ItemInfo[] DeveloperSection =
 	{
 		// Factory Input Objects
-		new ItemInfo("Coal In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Ore In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Rod In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Gear In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,0), new Vector2I(85, 85), false, false),
+		new ItemInfo("Coal In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,0), new Vector2I(85, 85), false, false, "Input for coal"),
+		new ItemInfo("Iron Ore In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,0), new Vector2I(85, 85), false, false, "Input for iron ore"),
+		new ItemInfo("Iron Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,0), new Vector2I(85, 85), false, false, "Input for iron bar"),
+		new ItemInfo("Iron Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,2), new Vector2I(85, 85), false, false, "Input for iron plate"),
+		new ItemInfo("Iron Rod In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(1,2), new Vector2I(85, 85), false, false, "Input for iron rod"),
+		new ItemInfo("Steel Bar In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(2,2), new Vector2I(85, 85), false, false, "Input for steel bar"),
+		new ItemInfo("Steel Plate In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(3,2), new Vector2I(85, 85), false, false, "Input for steel plate"),
+		new ItemInfo("Steel Gear In", FactoryInputObject.GetCostStatic(), 2, 0, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Input for steel gear"),
 		
 		// Factory Output Objects
-		new ItemInfo("Coal Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Ore Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false, false),
-		new ItemInfo("Iron Rod Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,3), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,3), new Vector2I(85, 85), false, false),
-		new ItemInfo("Steel Gear Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,1), new Vector2I(85, 85), false, false),
+		new ItemInfo("Coal Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,1), new Vector2I(85, 85), false, false, "Output for coal"),
+		new ItemInfo("Iron Ore Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,1), new Vector2I(85, 85), false, false, "Output for iron ore"),
+		new ItemInfo("Iron Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,1), new Vector2I(85, 85), false, false, "Output for iron bar"),
+		new ItemInfo("Iron Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,3), new Vector2I(85, 85), false, false, "Output for iron plate"),
+		new ItemInfo("Iron Rod Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(1,3), new Vector2I(85, 85), false, false, "Output for iron rod"),
+		new ItemInfo("Steel Bar Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(2,3), new Vector2I(85, 85), false, false, "Output for steel bar"),
+		new ItemInfo("Steel Plate Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(3,3), new Vector2I(85, 85), false, false, "Output for steel plate"),
+		new ItemInfo("Steel Gear Out", FactoryOutputObject.GetCostStatic(), 2, 0, new Vector2I(0,1), new Vector2I(85, 85), false, false, "Output for steel gear"),
 		
 		// Floor Tiles
-		new ItemInfo("Floor Tile 1", FloorTileObject.GetCostStatic(), 2, 4, new Vector2I(0,0), new Vector2I(85, 85), false, false),
+		new ItemInfo("Floor Tile 1", FloorTileObject.GetCostStatic(), 2, 4, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Tile for the floor"),
 		
 		// Floor Obstructions
-		new ItemInfo("Floor Cracked Tile Object", FloorCrackedTileObject.GetCostStatic(), 2, 5, new Vector2I(0,0), new Vector2I(85, 85), false, false),
-		new ItemInfo("Broken Pipe: Floor Left", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(0,3), new Vector2I(85, 85), false, false),
-		new ItemInfo("Broken Pipe: Floor Right", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(1,3), new Vector2I(85, 85), false, false),
+		new ItemInfo("Floor Cracked Tile Object", FloorCrackedTileObject.GetCostStatic(), 2, 5, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Broken floor tile"),
+		new ItemInfo("Broken Pipe: Floor Left", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(0,3), new Vector2I(85, 85), false, false, "Broken pipe on the floor"),
+		new ItemInfo("Broken Pipe: Floor Right", PipeBrokenFloorObject.GetCostStatic(), 2, 5, new Vector2I(1,3), new Vector2I(85, 85), false, false, "Broken pipe on the floor"),
 		
 		// Ceiling (Rail Layer) Obstructions
-		new ItemInfo("StalagmiteObject", StalagmiteObject.GetCostStatic(), 3, 5, new Vector2I(0,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("StalagmiteObjects", StalagmitesObject.GetCostStatic(), 3, 5, new Vector2I(1,1), new Vector2I(85, 85), false, false),
-		new ItemInfo("Broken Pipe: Ceiling Left", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(0,2), new Vector2I(85, 85), false, false),
-		new ItemInfo("Broken Pipe: Ceiling Right", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(1,2), new Vector2I(85, 85), false, false),
+		new ItemInfo("StalagmiteObject", StalagmiteObject.GetCostStatic(), 3, 5, new Vector2I(0,1), new Vector2I(85, 85), false, false, "It might tough the celing"),
+		new ItemInfo("StalagmiteObjects", StalagmitesObject.GetCostStatic(), 3, 5, new Vector2I(1,1), new Vector2I(85, 85), false, false, "It might tough the celing"),
+		new ItemInfo("Broken Pipe: Ceiling Left", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(0,2), new Vector2I(85, 85), false, false, "Is there water dripping from up there? Watch out, someone might sue!!"),
+		new ItemInfo("Broken Pipe: Ceiling Right", PipeBrokenCeilingObject.GetCostStatic(), 3, 5, new Vector2I(1,2), new Vector2I(85, 85), false, false, "Is there water dripping from up there? Watch out, someone might sue!!"),
 	};
 
 	public void Update(int selection)
@@ -143,7 +145,7 @@ public partial class ObjectPicker : HBoxContainer
 		}
 	}
 
-	Node createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sel, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
+	Control createBoilerObjectSelector(ImageTexture texture, Vector2I atlasCords, int sel, int sourceID, int posX, int posY, Label priceLabel, PanelContainer vboxPanel) {
 		DragableObjectControl objectController = new DragableObjectControl(texture, atlasCords, sel, sourceID, posX, posY, priceLabel, vboxPanel);
 		objectController.SetSize(new Vector2I(100, 100));
 		objectController.Set(Control.PropertyName.CustomMinimumSize, new Vector2I(128, 128));
@@ -183,9 +185,10 @@ public partial class ObjectPicker : HBoxContainer
 		StyleBoxFlat vboxStyle = new StyleBoxFlat();
 		vboxPanel.AddThemeStyleboxOverride("panel", vboxStyle);
 		vboxPanel.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+
 		VBoxContainer vbox = new VBoxContainer();
 		vbox.AddThemeConstantOverride("separation", 20);
-
+		
 		AddChild(vboxPanel);
 		vboxPanel.AddChild(vbox);
 		PanelContainer background = new PanelContainer();
@@ -215,9 +218,12 @@ public partial class ObjectPicker : HBoxContainer
 		nameLabel.HorizontalAlignment = HorizontalAlignment.Center;
 
 		GD.Print("Sel: ", item.sel);
-		background.AddChild(createBoilerObjectSelector(texture, item.atPos, item.sel, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel));
-
+		var spriteholder = createBoilerObjectSelector(texture, item.atPos, item.sel, item.table, item.offSet.X, item.offSet.Y, priceLabel, vboxPanel);
+		spriteholder.TooltipText = item.tooltip;
+		background.AddChild(spriteholder);
+		
 		vbox.AddChild(background);
+		
 		vbox.AddChild(nameLabel);
 		vbox.AddChild(priceLabel);
 	}

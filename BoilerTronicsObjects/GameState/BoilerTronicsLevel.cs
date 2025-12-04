@@ -548,7 +548,19 @@ public partial class BoilerTronicsLevel : Node2D
 			// Add back to its layer
 			layer.AddObject(obj);
 			// Free object
-			mObj.QueueFree();
+			if (IsInstanceValid(mObj)) {
+				mObj.QueueFree();
+			}
+		}
+
+		foreach (List<PlaceableObject> RL in runList) {
+			for (int i = RL.Count - 1; i >= 0; i--)
+				{
+				PlaceableObject obj = RL[i];
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Reset();
+			}
 		}
 		
 		// reset all animating objects
