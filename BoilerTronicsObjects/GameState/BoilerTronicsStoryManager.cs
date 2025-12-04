@@ -141,7 +141,7 @@ public partial class BoilerTronicsStoryManager : Node
 				// if loaded progress has a value, update
 				// minor optimization: only do so if save data and local data differ
 				if (playedLevels.ContainsKey(key)) {	// check: does local data have key?
-					if (progressLoaded[key] == val) {
+					if (playedLevels[key] == val) {
 						// if local data has same value as imported data, skip
 						continue;
 					}
