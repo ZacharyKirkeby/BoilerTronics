@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class Leaderboard : CenterContainer
 {
@@ -21,8 +22,20 @@ public partial class Leaderboard : CenterContainer
 	static private Label extraScore;
 
 	private List<(string Name, float Score)> leaderboard = new();
+	private List<(string Name, float Score)> friendsLeaderboard = new();
+	private bool showingFriends = false;
+	
+	// Firebase services
+	private FirebaseAuthManager _authManager;
+	private FirestoreService _firestoreService;
+	
+	// UI elements
+	private Button friendsToggleButton;
+	private int currentLevelId = 0;
 
 	public override void _Ready() {
+		InitializeServices();
+		
 		//get labels
 		firstName = GetNode<Label>("%firstName");
 		firstScore = GetNode<Label>("%firstScore");
@@ -36,6 +49,9 @@ public partial class Leaderboard : CenterContainer
 		fifthScore = GetNode<Label>("%fifthScore");
 		sixthName = GetNode<Label>("%sixthName");
 		sixthScore = GetNode<Label>("%sixthScore");
+		
+		// Create friends toggle button
+		CreateFriendsToggle();
 		
 		//leaderboard default values
 		
@@ -73,7 +89,113 @@ public partial class Leaderboard : CenterContainer
 		UpdateLeaderboard();
 		// UpdateDisplay();
 	}
+	
+	private void InitializeServices()
+	{
+		_authManager = FirebaseAuthManager.Instance;
+		if (_authManager == null)
+		{
+			_authManager = new FirebaseAuthManager();
+			AddChild(_authManager);
+		}
+
+		// # copy pasting maxxing
+		_firestoreService = FirestoreService.Instance;
+		if (_firestoreService == null)
+		{
+			_firestoreService = new FirestoreService();
+			AddChild(_firestoreService);
+		}
+	}
+	
+	private void CreateFriendsToggle()
+	{
+		// Create a button to toggle friends leaderboard
+		friendsToggleButton = new Button();
+		friendsToggleButton.Text = "→ Friends";
+		friendsToggleButton.Pressed += OnFriendsTogglePressed;
+		
+		AddChild(friendsToggleButton);
+		
+		// Initially hide if not authenticated
+		UpdateFriendsButtonVisibility();
+	}
+	
+	private async void UpdateFriendsButtonVisibility()
+	{
+		if (_authManager == null || !_authManager.IsAuthenticated)
+		{
+			friendsToggleButton.Visible = false;
+			return;
+		}
+		
+		// do you have friends?
+		var userData = await _firestoreService.GetUserAsync(_authManager.UserId);
+		if (userData == null || userData.Friends.Count == 0)
+		{
+			friendsToggleButton.Visible = false;
+		}
+		else
+		{
+			friendsToggleButton.Visible = true;
+		}
+	}
+	
+	private async void OnFriendsTogglePressed()
+	{
+		showingFriends = !showingFriends;
+		
+		if (showingFriends)
+		{
+			friendsToggleButton.Text = "← Global";
+			await LoadFriendsLeaderboard(currentLevelId);
+		}
+		else
+		{
+			friendsToggleButton.Text = "→ Friends";
+			UpdateLeaderboard(); // Show global leaderboard
+		}
+	}
+	
+	private async Task LoadFriendsLeaderboard(int levelId)
+	{
+		if (_firestoreService == null || _authManager == null || !_authManager.IsAuthenticated)
+		{
+			GD.PrintErr("Cannot load friends leaderboard: not authenticated");
+			return;
+		}
+		
+		// Convert level ID to string format
+		string levelIdStr = $"level_{levelId}";
+		
+		GD.Print("Loading friends leaderboard for level: ", levelIdStr);
+		
+		// Get friend scores from Firebase
+		var friendScores = await _firestoreService.GetFriendScoresAsync(levelIdStr, 10);
+		
+		friendsLeaderboard.Clear();
+		foreach (var score in friendScores)
+		{
+			friendsLeaderboard.Add((score.Username, score.Score));
+		}
+		
+		var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
+		if (userScore != null)
+		{
+			bool userInList = friendsLeaderboard.Any(entry => entry.Name == userScore.Username);
+			if (!userInList)
+			{
+				friendsLeaderboard.Add((userScore.Username, userScore.Score));
+			}
+		}
+		
+		// Sort and display
+		friendsLeaderboard = friendsLeaderboard.OrderByDescending(entry => entry.Score).ToList();
+		DisplayLeaderboard(friendsLeaderboard);
+	}
+	
 	private void _on_option_button_item_selected(int index) {
+		currentLevelId = index;
 		
 		// TODO: implement loading system for these cases, i.e. these are the actually relevant cases that spawn/register
 		// on level leaderboard select
@@ -108,14 +230,19 @@ public partial class Leaderboard : CenterContainer
 				HandleLeaderboard(1);
 				break;
 		}
+		
+		// Reset to global view when changing levels
+		showingFriends = false;
+		friendsToggleButton.Text = "→ Friends";
 		UpdateLeaderboard();
+		UpdateFriendsButtonVisibility();
 	}
 	
 	public void UpdateLeaderboard() {
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// if (manager == null || manager.currLevel == null) {
 			leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-			UpdateDisplay();
+			DisplayLeaderboard(leaderboard);
 			// return;
 		// }
 		/*
@@ -127,11 +254,11 @@ public partial class Leaderboard : CenterContainer
 			}
 		}
 		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
-		UpdateDisplay();
+		DisplayLeaderboard(leaderboard);
 		*/
 	}
 	
-	private void UpdateDisplay() {
+	private void DisplayLeaderboard(List<(string Name, float Score)> scoreList) {
 		GD.Print("updating leadboard display");
 		var labels = new (Label name, Label score)[]
 		{
@@ -144,9 +271,9 @@ public partial class Leaderboard : CenterContainer
 		};
 
 		for (int i = 0; i < labels.Length; i++) {
-			if (i < leaderboard.Count) {
-				labels[i].name.Text = leaderboard[i].Name;
-				labels[i].score.Text = leaderboard[i].Score.ToString("F2");
+			if (i < scoreList.Count) {
+				labels[i].name.Text = scoreList[i].Name;
+				labels[i].score.Text = scoreList[i].Score.ToString("F2");
 			}
 			else {
 				labels[i].name.Text = "-";
@@ -154,8 +281,8 @@ public partial class Leaderboard : CenterContainer
 			}
 		}
 		
-		var topEntries = leaderboard.Take(6).ToList();
-		var playerEntry = leaderboard.FirstOrDefault(entry => entry.Name == "You");
+		var topEntries = scoreList.Take(6).ToList();
+		var playerEntry = scoreList.FirstOrDefault(entry => entry.Name == "You");
 		bool playerInTop = topEntries.Any(entry => entry.Name == "You");
 		
 		Label extraNameLabel = GetNodeOrNull<Label>("%extraName");
