@@ -34,8 +34,10 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 0; // id for which level this save is referring to
 	
-	// TODO: implement into saving/loading
 	public string levelName = "placeholder";
+	
+	public bool shouldSaveCreatorName = false;
+	public string creatorName = null;
 	
 	// LAZY: this is public now
 	// default: a 50% darker version of the base floor tile, 2 tiles wide
@@ -186,6 +188,12 @@ public class BoilerTronicsSaveState
 				{ "saveSlot", save_slot },
 				{ "boundarySize", boundarySize },
 			};
+		
+		// if we're authenticated, save the username
+		ProfileMenuController profileController = ProfileMenuController.GlobalManager;
+		if (profileController.IsAuthenticated() && shouldSaveCreatorName) {
+			metadata["creatorName"] = profileController.GetUserData().Username;
+		}
 			
 		if (this.boundaryTex != null) {
 			metadata["boundaryAtlasX"] = boundaryTex.GetAtlasPos().X;
@@ -288,6 +296,11 @@ public class BoilerTronicsSaveState
 					
 					if (node.ContainsKey("levelName")) {
 						this.levelName = (string) node["levelName"];
+					}
+					
+					// load username if necessary
+					if (node.ContainsKey("creatorName")) {
+						this.creatorName = (string) node["creatorName"];
 					}
 					
 					GD.Print("SaveState: metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
