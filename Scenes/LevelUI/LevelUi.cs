@@ -199,14 +199,17 @@ public partial class LevelUi : Node2D
 		// note: may error into output if first time booting, but this should be a non-issue.
 		storyMan.LoadData();
 		bool storyPlayed = storyMan.HasStoryPlayed(levelId);
-		if (storyPlayed) {
-			// don't show story if we've seen it already
-			GetNode<Window>("%StoryWindow").Visible = false;
-		} else {
-			// first time seeing story
-			// mark as "played", save to data
-			storyMan.MarkStoryPlayed(levelId);
-			storyMan.SaveData();
+		
+		if (GetNode<Window>("%StoryWindow") != null) {
+			if (storyPlayed) {
+				// don't show story if we've seen it already
+				GetNode<Window>("%StoryWindow").Visible = false;
+			} else {
+				// first time seeing story
+				// mark as "played", save to data
+				storyMan.MarkStoryPlayed(levelId);
+				storyMan.SaveData();
+			}
 		}
 	}
 
