@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bcke814hrg3bb"]
+
+[node name="FlidMixing" type="AcceptDialog"]
+oversampling_override = 1.0
+title = "Fluid Mixing Error"
+initial_position = 1
+size = Vector2i(400, 314)
+visible = true
+ok_button_text = "OK"
+dialog_text = "It appears that your solution has mixed two or more diffrent fluids together in your pipes. You need to make sure that only one fuid exists in a pipe system at any given point. Be careful or your pipes might burst!"
+dialog_autowrap = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=25 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_xt57n"]
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
+[ext_resource type="Script" uid="uid://bcl7r42iof2k0" path="res://Scenes/MainMenu/ProfileMenuController.cs" id="10_w5buf"]
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
 
@@ -268,6 +269,7 @@ visible = false
 offset_top = 375.0
 offset_right = 1920.0
 offset_bottom = 955.0
+script = ExtResource("10_w5buf")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ProfileMenu"]
 layout_mode = 2
@@ -572,9 +574,9 @@ script = ExtResource("12_rlg4b")
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
 [connection signal="toggled" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Fullscreen" to="." method="_on_fullscreen_toggled"]
+[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/OpenPDF" to="." method="_on_open_pdf_pressed"]
