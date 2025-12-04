@@ -65,7 +65,7 @@ public partial class EasterEgg : Window
 				return;
 		}
 		if(unlocked) {
-			desc.Text = "Found: " + desc.Text;
+			//desc.Text = "Found: " + desc.Text;
 			icon.Texture = GD.Load<Texture2D>("res://Resources/Icons/star.png");
 		}
 	}
