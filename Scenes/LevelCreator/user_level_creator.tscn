@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://bfukkhvo3s8cs"]
+[gd_scene load_steps=70 format=3 uid="uid://b6vnic7vm540q"]
 
 [ext_resource type="Script" uid="uid://dmk70fc4hqsoi" path="res://Scenes/LevelCreator/LevelCreator.cs" id="1_6qvy5"]
 [ext_resource type="Script" uid="uid://dncowxuyc231n" path="res://BoilerTronicsObjects/Interpreter/RegisterLabel.cs" id="2_1ej6i"]
@@ -336,7 +336,7 @@ TextEdit/colors/font_color = Color(0, 0, 0, 1)
 TextEdit/fonts/font = ExtResource("4_14tgl")
 TextEdit/styles/normal = SubResource("StyleBoxFlat_hjyc6")
 
-[node name="Node2D" type="Node2D"]
+[node name="Node2D2" type="Node2D"]
 script = ExtResource("1_6qvy5")
 
 [node name="MainVBox" type="VBoxContainer" parent="."]
