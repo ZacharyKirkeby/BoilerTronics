@@ -255,6 +255,7 @@ public partial class Leaderboard : CenterContainer
 		UpdateFriendsButtonVisibility();
 	}
 
+	/*
 	public void UpdateLeaderboard()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -273,8 +274,62 @@ public partial class Leaderboard : CenterContainer
 		}
 		leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
 		DisplayLeaderboard(leaderboard);
-		*/
+		
 	}
+	*/
+	
+    private async void UpdateLeaderboard()
+    {
+        if (_authManager != null && _authManager.IsAuthenticated && !showingFriends)
+        {
+            // User is signed in and viewing global leaderboard
+            await LoadGlobalLeaderboard(currentLevelId);
+        }
+        else
+        {
+            // fallback to local leaderboard
+            leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
+            DisplayLeaderboard(leaderboard);
+        }
+    }
+
+    private async Task LoadGlobalLeaderboard(int levelId)
+    {
+        if (_firestoreService == null)
+        {
+            GD.PrintErr("Cannot load global leaderboard: FirestoreService is null");
+            return;
+        }
+
+        string levelIdStr = $"level_{levelId}";
+        GD.Print("Loading global leaderboard for level: ", levelIdStr);
+
+        try
+        {
+            // Replace with your actual global leaderboard call
+            var globalScores = await _firestoreService.GetGlobalLeaderboardAsync(levelIdStr, 6);
+
+            leaderboard.Clear();
+            foreach (var scoreEntry in globalScores)
+            {
+                leaderboard.Add((scoreEntry.Username, scoreEntry.Score / 100f)); // adjust divisor as needed
+            }
+
+            // Ensure current user is in the list
+            var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
+            if (userScore != null && !leaderboard.Any(entry => entry.Name == userScore.Username))
+            {
+                leaderboard.Add((userScore.Username, userScore.Score / 100f));
+            }
+
+            leaderboard = leaderboard.OrderByDescending(entry => entry.Score).ToList();
+            DisplayLeaderboard(leaderboard);
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr("Failed to load global leaderboard: ", ex.Message);
+        }
+    }
 
 	private void DisplayLeaderboard(List<(string Name, float Score)> scoreList)
 	{
