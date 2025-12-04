@@ -201,7 +201,7 @@ public partial class Leaderboard : CenterContainer
 			bool userInList = friendsLeaderboard.Any(entry => entry.Name == userScore.Username);
 			if (!userInList)
 			{
-				friendsLeaderboard.Add((userScore.Username, userScore.Score));
+				friendsLeaderboard.Add((userScore.Username, userScore.Score / 100 ));
 			}
 		}
 
