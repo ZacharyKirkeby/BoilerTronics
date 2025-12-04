@@ -550,22 +550,34 @@ public partial class BoilerTronicsLevel : Node2D
 			// Free object
 			mObj.QueueFree();
 		}
-		
-		// reset all animating objects
-		foreach (AnimatingObject aObj in animatingList) {
-			aObj.Reset();
-			aObj.QueueFree();
-		}
 
 		foreach (List<PlaceableObject> RL in runList) {
 			for (int i = RL.Count - 1; i >= 0; i--)
-    			{
+				{
 				PlaceableObject obj = RL[i];
 				if (!(obj is Runnable)) continue;
 				Runnable rObj = (Runnable)obj;
 				rObj.Reset();
 			}
 		}
+		
+		// reset all animating objects
+		foreach (AnimatingObject aObj in animatingList) {
+			aObj.Reset();
+			aObj.QueueFree();
+		}
+		
+		foreach (Runnable rObj in runnableList) {
+			rObj.Reset();
+		}
+		
+		// why is this code duplicated from the above?
+		foreach (Runnable rObj in runnableList)
+		{
+			rObj.Reset();
+		}
+		
+		
 		
 		StepCount = 0;
 
