@@ -50,9 +50,6 @@ public partial class Leaderboard : CenterContainer
 		sixthName = GetNode<Label>("%sixthName");
 		sixthScore = GetNode<Label>("%sixthScore");
 		
-		// Create friends toggle button
-		CreateFriendsToggle();
-		
 		//leaderboard default values
 		
 		// TEST: saves "You" with score 10.0f for level 0
@@ -85,6 +82,10 @@ public partial class Leaderboard : CenterContainer
 			- discussed with Abhi, will be implemented soon
 		
 		*/
+
+		friendsToggleButton = GetNode<Button>("%FriendsToggleButton");
+		friendsToggleButton.Pressed += OnFriendsTogglePressed;
+
 		HandleLeaderboard(0);
 		UpdateLeaderboard();
 		// UpdateDisplay();
@@ -107,20 +108,6 @@ public partial class Leaderboard : CenterContainer
 			AddChild(_firestoreService);
 		}
 	}
-	
-	private void CreateFriendsToggle()
-	{
-		// Create a button to toggle friends leaderboard
-		friendsToggleButton = new Button();
-		friendsToggleButton.Text = "→ Friends";
-		friendsToggleButton.Pressed += OnFriendsTogglePressed;
-		
-		AddChild(friendsToggleButton);
-		
-		// Initially hide if not authenticated
-		UpdateFriendsButtonVisibility();
-	}
-	
 	private async void UpdateFriendsButtonVisibility()
 	{
 		if (_authManager == null || !_authManager.IsAuthenticated)
