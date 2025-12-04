@@ -176,7 +176,7 @@ public partial class Leaderboard : CenterContainer
 		friendsLeaderboard.Clear();
 		foreach (var score in friendScores)
 		{
-			friendsLeaderboard.Add((score.Username, score.Score));
+			friendsLeaderboard.Add((score.Username, score.Score / 100));
 		}
 		
 		var userScore = await _firestoreService.GetUserBestScoreAsync(_authManager.UserId, levelIdStr);
