@@ -69,7 +69,7 @@ public partial class Leaderboard : CenterContainer
 			- discussed with Abhi, will be implemented soon
 		
 		*/
-		HandleLeaderboard(0);
+		HandleLeaderboard(11);
 		UpdateLeaderboard();
 		// UpdateDisplay();
 	}
@@ -78,7 +78,7 @@ public partial class Leaderboard : CenterContainer
 		// TODO: implement loading system for these cases, i.e. these are the actually relevant cases that spawn/register
 		// on level leaderboard select
 		switch (index) {
-			case 11:
+			case 0:
 				/*
 				leaderboard = new List<(string, float)>
 				{
@@ -93,7 +93,7 @@ public partial class Leaderboard : CenterContainer
 				*/
 				HandleLeaderboard(11);
 				break;
-			case 12:
+			case 1:
 				/*
 				leaderboard = new List<(string, float)>
 				{
