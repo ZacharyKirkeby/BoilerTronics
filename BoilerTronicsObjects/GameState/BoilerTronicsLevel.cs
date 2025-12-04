@@ -579,14 +579,6 @@ public partial class BoilerTronicsLevel : Node2D
 			}
 		}
 		
-		// why is this code duplicated from the above?
-		foreach (Runnable rObj in runnableList)
-		{
-			rObj.Reset();
-		}
-		
-		
-		
 		StepCount = 0;
 
 		// Empty moving/animating list
