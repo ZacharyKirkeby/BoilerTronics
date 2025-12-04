@@ -638,6 +638,7 @@ public partial class LevelUi : Node2D
 			stepsDifferenceLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 			stepsGradeLabel.AddThemeColorOverride("font_color", new Color(1, .2f, .5f));
 		}
+		GetNode<Histogram>("%Histogram").changeUserScore((grades[0] + grades[1] + grades[2]) / 3);
 		return grades;
 	}
 
