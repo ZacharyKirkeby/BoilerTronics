@@ -98,7 +98,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public void Reset() {
 			heatValue = 0;
 			ResetPos();
-			holder.deleteHeld();
+			if (holder != null) holder.deleteHeld();
 			UnRegisterSteppable();
 		}
 

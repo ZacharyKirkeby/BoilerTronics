@@ -137,8 +137,9 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 						foreach (GroupedSubObject gsObj in group) {
 							pipeList.Remove(gsObj as PipeObject);
 							newGroup.addObject(gsObj);
-							retList.Add(newGroup);
 						}
+
+						retList.Add(newGroup);
 					}
 				}
 			}
@@ -199,9 +200,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			// add any newly created groups to our layer
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-
-			// TODO: Create this in Layer.cs to allow for all layers to have grouped objects
-			foreach (GroupedObject gObj in newGroups) manager.currLevel.mLayer.addGroupedObject(gObj);
+			foreach (GroupedObject gObj in newGroups) manager.currLevel.fLayer.addGroupedObject(gObj);
 		}
 
 		// Checks if a given object is in the group

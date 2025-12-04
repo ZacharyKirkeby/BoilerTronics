@@ -56,23 +56,30 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
 			List<PipeObject> retList = new List<PipeObject>();
 			PlaceableObject obj = null;
+			Vector2I vec = new Vector2I(-1, -1);
 
 			switch (direction) {
 				case Placeable.Direction.UP:
-					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + up_v);
+					vec = this.GetCurrPos() + up_v;
 					break;
 				case Placeable.Direction.RIGHT:
-					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + right_v);
+					vec = this.GetCurrPos() + right_v;
 					break;
 				case Placeable.Direction.DOWN:
-					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + down_v);
+					vec = this.GetCurrPos() + down_v;
 					break;
 				case Placeable.Direction.LEFT:
-					obj = manager.currLevel.fLayer.FindObject(this.GetCurrPos() + left_v);
+					vec = this.GetCurrPos() + left_v;
 					break;
 			}
 
+			if (vec != new Vector2I(-1, -1)) obj = manager.currLevel.fLayer.FindObject(vec);
+
 			if (obj != null && obj is PipeObject pObj) retList.Add(pObj);
+			else if (obj != null && obj is BigGroupedSubObject bgsO) {
+				PipeObject spO = bgsO.getGroupedObject(vec) as PipeObject;
+				if (spO != null && spO.CanConnect(this)) retList.Add(spO);
+			}
 
 			return retList;
 		}

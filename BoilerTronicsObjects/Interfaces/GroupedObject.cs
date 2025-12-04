@@ -74,5 +74,6 @@ namespace BoilerTronicsObjects.Interfaces {
 	 */
 	public interface BigGroupedSubObject {
 		GroupedSubObject getGroupedObject(Vector2I pos); // Get the sub object that is also a grouped object, should return null if one does not exist at pos
+		List<GroupedSubObject> getObjects(); // Get all groupe subobjects in the big object (so we can make groups)
 	}
 }

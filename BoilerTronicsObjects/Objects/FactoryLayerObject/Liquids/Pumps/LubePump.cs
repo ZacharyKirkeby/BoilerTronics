@@ -57,7 +57,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		{
 			PipeGroup PG = this.getGroup() as PipeGroup;
 
-			PG.addLiquid(PipeGroup.LiquidType.Lube, 10 * (int) this.GetQuality());
+			if (PG != null) PG.addLiquid(PipeGroup.LiquidType.Lube, 10 * (int) this.GetQuality());
 		}
 
 		public void RegisterSteppable()
@@ -75,7 +75,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		public void Reset() {
 			PipeGroup PG = this.getGroup() as PipeGroup;
 
-			PG.clearLiquid();
+			if (PG != null) PG.clearLiquid();
 		}
 	}
 }
