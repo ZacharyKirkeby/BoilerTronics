@@ -34,14 +34,27 @@ namespace BoilerTronicsObjects.Layers
 		{
 			// add a check to make sure that we are only trying to place claws
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.objectToMove is ClawObject) {
+			if (manager.currSlection != 3) {return;}
+			
+			if (manager.objectToMove is ClawLayerObject || manager.selectedObject is ClawLayerObject) {
+				GD.Print("ClawLayer: Found claw, working in.");
 				MouseInput(@event, 3);
 				// GD.Print("Claw");
 			}
+			else if (manager.objectToMove is RailLayerObject || manager.selectedObject is RailLayerObject) {
+				GD.Print("ClawLayer: Found RailLayerObject, passing through mouse input.");
+				manager.layerRail.PassedMouseInput(@event);
+			}
 			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
 				// We always wnt to try to move
-				// GD.Print("Claw");
-				MouseInput(@event, 3);
+				GD.Print("ClawLayer: Input Working");
+				bool output = MouseInput(@event, 3);
+				
+				
+				if (output == false) {
+					GD.Print("ClawLayer: Passing mouse input to RailLayer.cs");
+					manager.layerRail.PassedMouseInput(@event);
+				}
 				return;
 			}
 			base._Input(@event);

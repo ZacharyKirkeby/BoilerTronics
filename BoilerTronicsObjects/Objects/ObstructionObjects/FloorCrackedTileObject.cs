@@ -1,12 +1,13 @@
 using Godot;
 using System;
 using BoilerTronicsObjects.Layers;
+using BoilerTronicsObjects.Objects;
 using BoilerTronicsObjects.Objects.FactoryLayerObjects;
 using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FloorCrackedTileObject : PlaceableObject {
+	public class FloorCrackedTileObject : PlaceableObject, FloorLayerObject {
 		
 		static int layerSourceId = 5;
 		// reminder that the sourceID corresponds to the sprite sheet for a given layer

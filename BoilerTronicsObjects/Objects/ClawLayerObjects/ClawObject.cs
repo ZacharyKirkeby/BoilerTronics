@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 {
 
-	public class ClawObject : PlaceableAnimated, Scriptable, Runnable, QualityObject {
+	public class ClawObject : PlaceableAnimated, Scriptable, Runnable, QualityObject, ClawLayerObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }

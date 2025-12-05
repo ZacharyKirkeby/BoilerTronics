@@ -199,12 +199,14 @@ namespace BoilerTronicsObjects.Layers
 		
 		// generic case that handles Placeables/PlaceableBigs without problem
 		// EDIT: inconsistent, don't use?
+		/*
 		public bool CheckValidPos(int X, int Y, PlaceableObject obj) {
 			if (obj is PlaceableBig bObj) {
 				return CheckValidPos(X, Y, bObj);
 			}
 			return CheckValidPos(X, Y);
 		}
+		*/
 
 		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
@@ -755,15 +757,64 @@ namespace BoilerTronicsObjects.Layers
 		
 		// returns if successful
 		private bool MousePlaceItem(Vector2I tileCoords, PlaceableObject objAtPos) {
+			Vector2I pos = tileCoords;
+			bool validPlacement = true;
+			// very minor optimization
+			bool isPlaceableBig = (objAtPos is PlaceableBig);
 			
-			bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos);// CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos);
-			if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
-				GD.Print("Layer.cs: Placement: Checking PlaceableBig object");
-				validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
+			// check ValidPos stuff differently for PlaceableBig
+			// check: are coordinates in bounds?
+			if (validPlacement) {
+				if (isPlaceableBig) {
+					if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) objAtPos)) validPlacement = false;
+				} else {
+					if (!CheckValidPos(pos.X, pos.Y)) validPlacement = false;
+				}
 			}
-			GD.Print("Layer.cs: MousePlaceItem: Valid pos?: ", validPos);
+			
+			// check: are coordinates occupied?
+			if (validPlacement) {
+				if (isPlaceableBig) {
+					if (FindObject(pos, (PlaceableBig) objAtPos) != null) validPlacement = false;
+				} else {
+					if (FindObject(pos) != null) validPlacement = false;
+				}
+			}
+			// GD.Print("Layer.cs: AddObject: Object Not in Occupied Position");
+			
+			if (validPlacement) {
+				// check: are the coordinates editable?
+				if (isPlaceableBig) {
+					PlaceableBig bObj = (PlaceableBig) objAtPos;
+					// iterate through 'obj' texture grid
+					foreach (PlaceableBigData data in bObj.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(pos);
+						
+						// if any of the tile positions are marked as "not editable", return
+						if (!editableTiles[dataCoords.X, dataCoords.Y]) validPlacement = false;
+					}
+				} else {
+					if (!editableTiles[pos.X, pos.Y]) validPlacement = false;
+				}
+			}
+			
+			/*
+			bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);// CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos);
+			bool occupiedSpot = (FindObject(tileCoords) != null);
+			if (manager.objectToMove is PlaceableBig bObj) { // PlaceableBig case
+				GD.Print("Layer.cs: Placement: Checking PlaceableBig object");
+				validPos = CheckValidPos(tileCoords.X, tileCoords.Y, bObj);
+				
+				if (validPos) occupiedSpot = (FindObject(tileCoords,bObj) != null);
+			}
+			*/
+			
+			// GD.Print("Layer.cs: MousePlaceItem: Valid pos?: ", validPos);
+			// GD.Print("Layer.cs: MousePlaceItem: Occupied Spot?: ", occupiedSpot);
 			// make sure nothing is there already
-			if (objAtPos != null || !validPos) {
+			//if (objAtPos != null || !validPos || occupiedSpot) {
+			if (!validPlacement) {
 				// reset so we don't place accidently
 				GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 				manager.placingObject = 0;
@@ -788,6 +839,7 @@ namespace BoilerTronicsObjects.Layers
 				// invalid placement
 				return false;
 			}
+			GD.Print("Layer.cs: MousePlaceItem: Object appears to be valid, attempt to place.");
 
 
 			// This will happen if we are mopving an object
@@ -862,18 +914,23 @@ namespace BoilerTronicsObjects.Layers
 			return true;
 		}
 
-		public void MouseInput(InputEvent @event, int targetSel)
+		// returns if call successfully acted an action or not
+		// also returns 'false' if something is de-selected. (?)
+		// idea is to better pass-through stuff (ex: claw->rail, factory->floor, etc)
+		public bool MouseInput(InputEvent @event, int targetSel)
 		{
+			GD.Print("Layer.cs: In MouseInput");
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
 				base._Input(@event);
-				return;
+				return false;
 			}
+			GD.Print("Layer.cs: MouseInput Validated");
 
 			// Get manager
 			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
 
-			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
+			if (manager.currLevel.StepCount != 0) return false; // Don't do anythin if we are stepping
 
 			// Get coords of event
 			Vector2 localMousePos = GetLocalMousePosition();
@@ -881,7 +938,20 @@ namespace BoilerTronicsObjects.Layers
 			PlaceableObject objAtPos = FindObject(tileCoords);
 
 			// check: are we working on this layer?
-			if (manager.currSlection != targetSel) return;
+			if (manager.currSlection != targetSel) return false;
+			
+			/* "Place Down" a PlaceableObject */
+			// must go first for functionality to be consistent
+			if (manager.placingObject == 1) {
+				GD.Print("Layer.cs: placingObject == 1");
+				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased()) {
+					GD.Print("Layer.cs: MousePlaceItem");
+					bool successful = MousePlaceItem(tileCoords, objAtPos);
+					if (!successful) { return false; } // abort
+				}
+				
+				return true;
+			}
 			
 			
 			// TODO: "object selection" mechanism
@@ -907,65 +977,73 @@ namespace BoilerTronicsObjects.Layers
 			// TODO: how should we handle claw/track layer? both will trigger this function at the same time, causes issues
 			// ex: claw selects one, track clears obj selection
 			if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed() && allowDrag) {
+				GD.Print("Layer.cs: Selection Process Starting");
 				
 				// clear object selection
 				if (objAtPos == null) {
-					GD.Print("Layer: Selection: Clicked on empty space, deselecting.");
+					GD.Print("Layer.cs: Selection: Clicked on empty space, deselecting.");
 					manager.ClearSelectingObject();
-					return;
+					return false;
 				} else {
 					
 					// no "selected" object, so update "selectedObject" accordingly
 					if (manager.selectedObject == null) {
 						
-						if (!CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos)) {
-							GD.Print("Layer: Selection: Selected object is invalid.");
-							return;
+						if (!CheckValidPos(tileCoords.X, tileCoords.Y)) {
+							GD.Print("Layer.cs: Selection: Selected object is invalid.");
+							return true;
+						}
+						
+						if (objAtPos is PlaceableBig bObj) {
+							if (!CheckValidPos(tileCoords.X, tileCoords.Y, bObj)) {
+								GD.Print("Layer.cs: Selection: Selected big object is invalid.");
+								return true;
+							}
 						}
 						
 						manager.selectedObject = objAtPos;
-						GD.Print("Layer: Selection: Successfully selecting object: ", objAtPos);
+						GD.Print("Layer.cs: Selection: Successfully selecting object: ", objAtPos);
 						
 						SelectingObject sObj = new SelectingObject(manager.selectedObject, this);
 						//manager.currLevel.cLayer.GetParent().AddChild(sObj);
 						this.AddChild(sObj);
-						return;
+						return true;
 						
 					// if selected object, and we clicked on something other than the selected object, then deselect
 					// TODO: dynamically switch selected objects or?
 					} else if (objAtPos != manager.selectedObject) {
-						GD.Print("Layer: Selection: Clicked on space other than selection, deselecting.");
+						GD.Print("Layer.cs: Selection: Clicked on space other than selection, deselecting.");
 						manager.ClearSelectingObject();
-						return;
+						return false;
 					}
 				}
 			}
 
-			/* "Place Down" a PlaceableObject */
-			if (manager.placingObject == 1) {
-				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased()) {
-					bool successful = MousePlaceItem(tileCoords, objAtPos);
-					if (!successful) { return; } // abort
-				}
+			
 				
 			
 			/* we aren't "Placing Down" a PlaceableObject */
 			/* only perform these actions if we've selected the object! */
-			} else if (manager.selectedObject == objAtPos) {
+			if (manager.selectedObject == objAtPos) {
 				// Left mouse click on a spot where an object exitsts
 				// Handles creating a new draggable object when clicking on a tile
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
 					&& allowDrag)
 				{
+					GD.Print("Layer.cs: MousePickupItem");
 					bool successful = MousePickupItem(tileCoords, objAtPos);
-					if (!successful) { return; } // abort
+					if (!successful) { return false; } // abort
 				}
 				else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed())
 				{
+					GD.Print("Layer.cs: MouseDeleteItem");
 					bool successful = MouseDeleteItem(tileCoords, objAtPos);
-					if (!successful) { return; } // abort
+					if (!successful) { return false; } // abort
 				}
 			}
+			
+			
+			return true;
 		}
 
 		// very specific variable for a very specific purpose:
@@ -998,5 +1076,9 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		// to be overridden by other layers
+		public virtual void PassedMouseInput(InputEvent @event) {
+			// TODO
+		}
 	}
 }
