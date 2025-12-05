@@ -15,3 +15,4 @@ Button/styles/focus = ExtResource("2_deck4")
 Button/styles/hover = null
 Button/styles/normal = ExtResource("2_deck4")
 Button/styles/pressed = ExtResource("2_deck4")
+Label/constants/outline_size = 2
