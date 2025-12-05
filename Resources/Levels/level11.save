@@ -1,0 +1,6 @@
+{"metadata":{"boundaryAtlasX":0,"boundaryAtlasY":0,"boundarySize":2,"boundarySourceId":6,"levelId":11,"levelName":"level 1-1","mapSize":[6,6],"saveSlot":-1}}
+{"clawLayer":{"objects":[{"OGX":1,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"quality":0,"sourceId":1,"terminalCode":"grb\nmov r\nmov r\nmov r\ndrp"}],"uneditableTiles":[]}}
+{"factoryLayer":{"objects":[{"OGX":1,"OGY":3,"altTitle":0,"atlasPosX":1,"atlasPosY":0,"sourceId":0},{"OGX":4,"OGY":3,"altTitle":0,"atlasPosX":1,"atlasPosY":1,"sourceId":0}],"uneditableTiles":[]}}
+{"floorLayer":{"objects":[{"OGX":1,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":4},{"OGX":3,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":4},{"OGX":2,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":4},{"OGX":4,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":0,"sourceId":4}],"uneditableTiles":[]}}
+{"movementlayer":{"objects":[],"uneditableTiles":[]}}
+{"railLayer":{"objects":[{"OGX":1,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"sourceId":1},{"OGX":2,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"sourceId":1},{"OGX":3,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"sourceId":1},{"OGX":4,"OGY":3,"altTitle":0,"atlasPosX":0,"atlasPosY":2,"sourceId":1}],"uneditableTiles":[]}}
