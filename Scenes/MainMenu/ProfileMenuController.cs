@@ -78,21 +78,28 @@ public partial class ProfileMenuController : Control
 
 		AddStatLabel(grid, $"Hours Played: {_currentUserData.HoursPlayed:F1}");
 		AddStatLabel(grid, $"Friends: {_currentUserData.Friends.Count}");
-		AddStatLabel(grid, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
-		AddStatLabel(grid, $"Easter Eggs: {_currentUserData.EasterEggsFound.Count}");
+		//AddStatLabel(grid, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
+		//AddStatLabel(grid, $"Easter Eggs: {_currentUserData.EasterEggsFound.Count}");
 	}
 
 	private void UpdateFriendRequestsOnly(List<FriendRequest> requests)
 	{
 		// Get or create the RequestsList container
-		var requestsList = _friendsContainer.GetNodeOrNull<VBoxContainer>("RequestsList");
+		var scroll = _friendsContainer.GetNodeOrNull<ScrollContainer>("RequestsScollContainer");
+		var requestsList = scroll.GetNodeOrNull<VBoxContainer>("RequestsList");
 		if (requestsList == null)
 		{
+			// Remove old children inside the scroll container (if any)
+			foreach (var child in scroll.GetChildren())
+				child.QueueFree();
+
+			// Recreate the list while preserving formatting
 			requestsList = new VBoxContainer();
 			requestsList.Name = "RequestsList";
 			requestsList.AddThemeConstantOverride("separation", 8);
-			_friendsContainer.AddChild(requestsList);
-			_friendsContainer.MoveChild(requestsList, 1); // ensure it’s at index 1
+			requestsList.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+			scroll.AddChild(requestsList);
 		}
 
 		// Clear previous children
@@ -457,10 +464,61 @@ public partial class ProfileMenuController : Control
 
 		AddStatLabel(gridContainer, $"Hours Played: {_currentUserData.HoursPlayed:F1}");
 		AddStatLabel(gridContainer, $"Friends: {_currentUserData.Friends.Count}");
-		AddStatLabel(gridContainer, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
-		AddStatLabel(gridContainer, $"Easter Eggs: {_currentUserData.EasterEggsFound.Count}");
+		//AddStatLabel(gridContainer, $"Achievements: {_currentUserData.AchievementsUnlocked.Count}");
+		//AddStatLabel(gridContainer, $"Easter Eggs: {_currentUserData.EasterEggsFound.Count}");
 
 		_profileContainer.AddChild(gridContainer);
+
+		 var buttonContainer = new VBoxContainer();
+		buttonContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+		buttonContainer.AddThemeConstantOverride("separation", 8);
+		_profileContainer.AddChild(buttonContainer);
+		
+		// Achievements button
+		var achievementsButton = new Button();
+		achievementsButton.CustomMinimumSize = new Vector2(400, 45);
+		achievementsButton.Text = "Achievements";
+		achievementsButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+		achievementsButton.AddThemeFontOverride("font", font);
+		achievementsButton.AddThemeFontSizeOverride("font_size", 45);
+		achievementsButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+
+		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
+		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
+		achievementsButton.AddThemeStyleboxOverride("normal", normalStyle);
+		achievementsButton.AddThemeStyleboxOverride("hover", hoverStyle);
+		achievementsButton.AddThemeStyleboxOverride("focus", normalStyle);
+
+		achievementsButton.Pressed += () =>
+		{
+			var main = GetTree().CurrentScene as MainMenu;
+			main._on_achievements_pressed();
+		};
+		buttonContainer.AddChild(achievementsButton);
+		
+		// EasterEgg button
+		var easterEggsButton = new Button();
+		easterEggsButton.CustomMinimumSize = new Vector2(400, 45);
+		easterEggsButton.Text = "Easter Eggs";
+		easterEggsButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
+
+		easterEggsButton.AddThemeFontOverride("font", font);
+		easterEggsButton.AddThemeFontSizeOverride("font_size", 45);
+		easterEggsButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
+
+		easterEggsButton.AddThemeStyleboxOverride("normal", normalStyle);
+		easterEggsButton.AddThemeStyleboxOverride("hover", hoverStyle);
+		easterEggsButton.AddThemeStyleboxOverride("focus", normalStyle);
+
+		easterEggsButton.Pressed += () =>
+		{
+			var main = GetTree().CurrentScene as MainMenu;
+			main._on_easter_eggs_pressed();
+		};
+		buttonContainer.AddChild(easterEggsButton);
 
 		// Logout button
 		var logoutButton = new Button();
@@ -468,19 +526,19 @@ public partial class ProfileMenuController : Control
 		logoutButton.Text = "Logout";
 		logoutButton.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
 
-		var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+		//var font = GD.Load<FontFile>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
 		logoutButton.AddThemeFontOverride("font", font);
 		logoutButton.AddThemeFontSizeOverride("font_size", 50);
 		logoutButton.AddThemeColorOverride("font_color", new Color(0, 0, 0, 1));
 
-		var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
-		var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
+		//var normalStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonnorm.tres");
+		//var hoverStyle = GD.Load<StyleBox>("res://Resources/ButtonThemes/menubuttonhover.tres");
 		logoutButton.AddThemeStyleboxOverride("normal", normalStyle);
 		logoutButton.AddThemeStyleboxOverride("hover", hoverStyle);
 		logoutButton.AddThemeStyleboxOverride("focus", normalStyle);
 
 		logoutButton.Pressed += () => _authManager.SignOut();
-		_profileContainer.AddChild(logoutButton);
+		buttonContainer.AddChild(logoutButton);
 	}
 
 	private async void ShowFriendsPanel()
@@ -514,6 +572,7 @@ public partial class ProfileMenuController : Control
 		_friendsContainer.AddChild(requestsLabel);
 
 		var requestsScrollContainer = new ScrollContainer();
+		requestsScrollContainer.Name = "RequestsScollContainer";
 		requestsScrollContainer.CustomMinimumSize = new Vector2(450, 120);
 		requestsScrollContainer.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
 		requestsScrollContainer.SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter;
