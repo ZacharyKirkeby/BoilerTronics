@@ -6,7 +6,7 @@ namespace ParsingTests;
 public partial class TestRunner : Node
 {
 	[Export]
-	public bool autoRun = true;
+	public bool autoRun = false;
 
 	public override void _Ready()
 	{
