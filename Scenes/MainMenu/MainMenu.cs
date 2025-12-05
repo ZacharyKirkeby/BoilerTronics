@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public partial class MainMenu : Node2D
 {
-	private int level = 1;
+	private int level = 11;
 	private FirebaseAuthManager _authManager;
 	private FirestoreService _firestoreService;
 	
@@ -60,7 +60,7 @@ public partial class MainMenu : Node2D
 
 	private void _on_level_select_pressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/level_select.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/new_level_select.tscn");
 	}
 
 	private async Task<List<LevelData>> _get_levels()

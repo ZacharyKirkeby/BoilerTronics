@@ -32,7 +32,7 @@ public class BoilerTronicsSaveState
 	int save_slot = -1; // count from 0-2 for any given level save; autosave will have a '-1' save slot
 	// TODO: handle errors if save_slot is OOB!
 	
-	int level_id = 0; // id for which level this save is referring to
+	int level_id = 11; // id for which level this save is referring to
 	
 	public string levelName = "placeholder";
 	
