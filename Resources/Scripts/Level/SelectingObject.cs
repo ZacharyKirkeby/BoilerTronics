@@ -68,21 +68,19 @@ public partial class SelectingObject : Area2D
 		}
 		
 		// generate highlight sprite as appropriate
-		/*
 		highlight = new Sprite2D();
 		highlight.Texture = sprite.Texture;
 		highlight.Offset = sprite.Offset;
 		highlight.Position = sprite.Position;
 		highlight.Scale = new Vector2(1.2f, 1.2f);
-		*/
 
 		// add as child such that if this object is QueueFree()'d, this sprite will be too
-		// this.AddChild(highlight);
+		this.AddChild(highlight);
 		this.AddChild(sprite);
 		sprite.ZIndex = layer.ZIndex + 2;
 		
 		// TODO: apply correct visual effects
 		sprite.Modulate = new Color("dcc4505c");
-		// highlight.Modulate = new Color("000000ff");
+		highlight.Modulate = new Color("000000ff");
 	}
 }
