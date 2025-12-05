@@ -7,7 +7,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryTestMachine : PlaceableObject, Runnable, Movable {
+	public class FactoryTestMachine : PlaceableObject, Runnable, Movable, FactoryLayerObject {
 		
 		private static Vector2I objectAtlasPos = new Vector2I(0, 3); // This is a dummy sprinte | TODO: Change this (not for this tesing object but for the actual object)
 		private static int layerSourceId = 0;

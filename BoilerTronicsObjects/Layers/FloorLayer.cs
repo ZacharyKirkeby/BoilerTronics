@@ -23,11 +23,14 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		public override void _Input(InputEvent @event)
-		{
+		{	
 			// add a check to make sure that we are only trying to place floors
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+			if (manager.currSlection != 2) {return;}
+			// GD.Print("FloorLayer: Working Input");
+			/*
 			// MouseInput(@event, 2, 0);
-			if (manager.objectToMove is FloorTileObject) {
+			if (manager.objectToMove is FloorLayerObject) {
 				MouseInput(@event, 2);
 				// GD.Print("Floor");
 			}
@@ -37,6 +40,16 @@ namespace BoilerTronicsObjects.Layers
 				return;
 			}
 			base._Input(@event);
+			*/
+		}
+		
+		
+		public override void PassedMouseInput(InputEvent @event) {
+			// GD.Print("FloorLayer : Receive Passed Input Working");
+			
+			if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right)) {
+				MouseInput(@event, 2);
+			}
 		}
 	}
 }

@@ -9,7 +9,7 @@ using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class SteelMill : PlaceableBig, BigMovable, Runnable, BigGroupedSubObject {
+	public class SteelMill : PlaceableBig, BigMovable, Runnable, BigGroupedSubObject, FactoryLayerObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
