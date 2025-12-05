@@ -28,6 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://bq77ea7qia174" path="res://Resources/Icons/Reset.png" id="19_g4s26"]
 [ext_resource type="Texture2D" uid="uid://bwkfrqjmrfgmo" path="res://Resources/Icons/arrow-left-2.png" id="23_uqjh5"]
 [ext_resource type="Texture2D" uid="uid://b3n57xvq1tw8s" path="res://Resources/Icons/arrow-right-2.png" id="24_bsnj2"]
+[ext_resource type="Script" uid="uid://dyapsmun0wssi" path="res://Scenes/LevelUI/StoryWindow.cs" id="28_3k86a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qe5m"]
 
@@ -1252,6 +1253,30 @@ These instructions execute instantly (no step cost):
 - [code]wrt[/code] - Write to output"
 fit_content = true
 
+[node name="StoryWindow" type="Window" parent="."]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Level 1"
+initial_position = 2
+size = Vector2i(500, 300)
+max_size = Vector2i(500, 300)
+script = ExtResource("28_3k86a")
+
+[node name="MarginContainer" type="MarginContainer" parent="StoryWindow"]
+custom_minimum_size = Vector2(500, 300)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Context" type="Label" parent="StoryWindow/MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_xc2rq")
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="Time Easter Egg" type="Window" parent="."]
 oversampling_override = 1.0
 title = "Time Easter Egg"
@@ -1330,7 +1355,6 @@ layout_mode = 2
 text = "Congrats! You have unlocked a new achievement! You can see all achievements within the achievements menu found in the profile section."
 horizontal_alignment = 1
 vertical_alignment = 1
-autowrap_mode = 2
 
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu" to="." method="_on_exit_menu_close_requested"]
@@ -1368,6 +1392,7 @@ autowrap_mode = 2
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintBack" to="." method="_on_hint_back_pressed"]
 [connection signal="pressed" from="HintsWindow/CenterContainer/HBoxContainer/HintForward" to="." method="_on_hint_forward_pressed"]
 [connection signal="close_requested" from="ManualWindow" to="." method="_on_manual_window_close_requested"]
+[connection signal="close_requested" from="StoryWindow" to="." method="_on_level_1_story_close_requested"]
 [connection signal="close_requested" from="Time Easter Egg" to="." method="_on_time_easter_egg_close_requested"]
 [connection signal="close_requested" from="Cost Easter Egg" to="." method="_on_cost_easter_egg_close_requested"]
 [connection signal="close_requested" from="Mystery Level Easter Egg" to="." method="_on_mystery_level_easter_egg_close_requested"]
