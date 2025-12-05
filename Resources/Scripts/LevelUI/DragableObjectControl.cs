@@ -59,6 +59,10 @@ public partial class DragableObjectControl : Control {
 
 			if (manager.currLevel.StepCount != 0) return; // Don't allow placement while we are stepping
 
+			// clear selection status
+			manager.ClearSelectingObject();
+			
+			// start placing object
 			manager.placingObject = 1;
 
 			// We now need to make the object so that we place it :D

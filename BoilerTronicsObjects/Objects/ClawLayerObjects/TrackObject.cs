@@ -6,7 +6,7 @@ using BoilerTronicsObjects.Placeable;
 
 namespace BoilerTronicsObjects.Objects.ClawLayerObjects {
 
-	public class TrackObject : PlaceableObject {
+	public class TrackObject : PlaceableObject, RailLayerObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }

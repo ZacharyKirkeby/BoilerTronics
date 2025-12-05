@@ -316,70 +316,75 @@ namespace BoilerTronicsObjects.Placeable
 			const int halfTileHeight = 8; 
 
 			// 1. Find the min/max tile coordinates to determine the overall grid extents
+			// NOTE: we need to nicely translate from their weird coordinate system to
+			// a normal, standard coordinate system!
+			
+			// these values will be the # of "halves"
 			int minX = 0, minY = 0, maxX = 0, maxY = 0;
 			foreach (var pbd in data)
 			{
 				Vector2I off = pbd.GetOffset();
-				if (off.X < minX) minX = off.X;
-				if (off.Y < minY) minY = off.Y;
-				if (off.X > maxX) maxX = off.X;
-				if (off.Y > maxY) maxY = off.Y;
+				int translatedX = 0;
+				int translatedY = 0;
+				translatedX += off.X; translatedY += off.X;		// "X" to our X
+				translatedY += off.Y * 2;						// "Y" to our Y
+				
+				if (translatedX < minX) minX = translatedX;
+				if (translatedY < minY) minY = translatedY;
+				if (translatedX > maxX) maxX = translatedX;
+				if (translatedY > maxY) maxY = translatedY;
 			}
-
-			// 2. Calculate actual pixel size with extra padding to prevent cropping
-			int padding = tileWidth * 2; // Increased padding for safety
-			int gridWidth = maxX - minX + 1;
-			int gridHeight = maxY - minY + 1;
-
-			// Estimate a safe maximum canvas size based on the range of tiles
-			int imageWidth = (gridWidth * tileWidth) + halfTileWidth + padding * 2;
-			int imageHeight = (gridHeight * halfTileHeight) + tileHeight + padding * 2;
-
+			
+			// remember: these values are in half-tiles!
+			int gridWidth = maxX - minX;
+			int gridHeight = maxY - minY;
+			GD.Print("PlaceableBig: GenerateTexture: gridWidth: ", gridWidth, ", gridHeight: ", gridHeight);
+			
+			// calculate max canvas size based on the range of tiles
+			int imageWidth = 32;
+			int imageHeight = 32;
+			// re: tile coordinate systen; refer to /resources/sprites/coordinate_ref.png for reference of grid system
+			// relative X-offsets
+			imageWidth += gridWidth * halfTileWidth;
+			// relative Y-offsets
+			imageHeight += gridHeight * halfTileHeight;
+			
 			Image stitchedImage = Image.Create(imageWidth, imageHeight, false, Image.Format.Rgba8);
 			stitchedImage.Fill(new Color(0, 0, 0, 0)); 
 
-			// Calculate the start position for drawing.
-			// This shifts the entire composite image so that the top-most tile is at a padded position.
-			Vector2I startPosition = new Vector2I(padding, padding + (gridHeight * halfTileHeight));
-
 			List<(Image I, PlaceableBigData PBD)> imgs = GetSortedImgs(data);
-
 			imgs.Reverse();
+			
+			// starting position of the tiles; main thing is that we must adjust
+			// the y-offsets until the stitched output always fits perfectly in the image!
+			Vector2I startingPos = new Vector2I(0, 0);
+			// startingPos -= new Vector2I(0, gridHeight * halfTileHeight);
+			// startingPos -= new Vector2I(0, -minX * halfTileHeight);
 
 			foreach (var D in imgs) 
 			{
 				Image currentImage = D.I;
 				PlaceableBigData pbd = D.PBD;
-				Vector2I tileOff = pbd.GetOffset(); 
-
-				// Apply a canvas-relative offset to account for negative grid coords
-				Vector2I relativeOff = tileOff - new Vector2I(minX, minY);
-
-				// Horizontal position is based on tile's X coordinate
-				int pixelX = startPosition.X + (relativeOff.X * tileWidth);
-
-				// Vertical position is based on tile's Y coordinate, inverting the stack logic
-				int pixelY = startPosition.Y + (relativeOff.Y * halfTileHeight); 
-
-				// Horizontal stagger on odd rows
-				if (relativeOff.Y % 2 != 0) {
-					pixelX += halfTileWidth;
-				}
-
-				// Fix for tiles being weirldy offset
-				if (((tileOff.X + tileOff.Y) % 2) != 0) {
-					pixelY -= halfTileHeight;
-					pixelX += halfTileWidth;
-				}
-
-
-				// Construct Position of tile
-				Vector2I finalPixelPosition = new Vector2I(pixelX, pixelY);
-
-				// Subtract the tileHeight to align the top of the sprite with its pixelY
-				finalPixelPosition.Y -= tileHeight; 
-				finalPixelPosition.X -= halfTileWidth; 
-
+				Vector2I tileOff = pbd.GetOffset();
+				
+				// translate the tile offset into the actual coordinate system; # of tile halves
+				Vector2I translatedTileOff = new Vector2I(0, 0);
+				
+				// re: tile coordinate systen; refer to /resources/sprites/coordinate_ref.png for reference of grid system
+				// relative X-offsets
+				translatedTileOff.X += tileOff.X; translatedTileOff.Y += tileOff.X;		// "X" to our X
+				// relative Y-offsets
+				translatedTileOff.Y += tileOff.Y * 2;									// "Y" to our Y
+				
+				// calculate relative offset from the top-left corner of the image
+				// this basically sets up the correct (0, 0) in a way
+				Vector2I relativeOff = translatedTileOff - new Vector2I(minX, minY);
+				
+				// Construct Position of tile; need to take the calculated coordinates (in widths) and translate to pixels
+				Vector2I finalPixelPosition = new Vector2I(relativeOff.X * halfTileWidth, relativeOff.Y * halfTileHeight);
+				
+				//GD.Print("PlaceableBig: Sprite Coords Offset: ", tileOff.ToString());
+				
 				// Use BlendRect for alpha blending
 				StitchImages(stitchedImage, currentImage, finalPixelPosition); 
 			}

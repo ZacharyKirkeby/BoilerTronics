@@ -575,6 +575,11 @@ private async Task SaveScoreToFirebase(int levelId, float score, float[] grades)
 
 	public void Reset() {
 		GD.Print("BoilerTronicsLevel: Starting Reset");
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
+		
 		// Stops moving objects to prevent errors
 		HaultObjects();
 		// Reset all layers
@@ -670,12 +675,20 @@ private async Task SaveScoreToFirebase(int levelId, float score, float[] grades)
 		// This will set our state to pause
 		RunState = GameRunState.Paused; // Pause, this will stop running
 		DeltaTime = StepDeltaTime;
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
 	}
 
 	public void SetStep() {
 		// This will set our state to step, this will make sure we can't run after stepping
 		RunState = GameRunState.Stepping;
 		DeltaTime = StepDeltaTime;
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
 	}
 
 	public void IncRun() {
@@ -707,7 +720,11 @@ private async Task SaveScoreToFirebase(int levelId, float score, float[] grades)
 	 * 5. Claws
 	 */
 	public void Step() {
-
+		
+		// clear selecting object
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		man.ClearSelectingObject();
+		
 		if (E.HasError()) {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Error);

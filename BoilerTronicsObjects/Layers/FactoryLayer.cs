@@ -23,16 +23,29 @@ namespace BoilerTronicsObjects.Layers
 		}
 
 		public override void _Input(InputEvent @event)
-		{
+		{	
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			// make sure that it is not a floor
-			if (!(manager.objectToMove is FloorTileObject)) {
-				MouseInput(@event, 2);
-				// GD.Print("Factory");
-			}
-			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
-				// We always wnt to try to move
-				MouseInput(@event, 2);
+			if (manager.currSlection != 2) {return;}
+			
+
+			if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right)) {
+				
+				// if held/selected object is a floor layer object, pass mouse input to floor layer object
+				// bypasses de-selection problems
+				if (manager.objectToMove is FloorLayerObject || manager.selectedObject is FloorLayerObject) {
+					// GD.Print("FactoryLayer: Found FloorLayerObject, passing through mouse input.");
+					manager.layerFloor.PassedMouseInput(@event);
+					return;
+				}
+				
+				// GD.Print("FactoryLayer: Input Working");
+				bool output = MouseInput(@event, 2);
+				
+				// if we didn't select anything successfully, pass down
+				if (output == false) {
+					// GD.Print("FactoryLayer: Passing mouse input to FloorLayer.cs");
+					manager.layerFloor.PassedMouseInput(@event);
+				}
 				return;
 			}
 			base._Input(@event);

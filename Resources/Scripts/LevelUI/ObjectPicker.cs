@@ -46,7 +46,7 @@ public partial class ObjectPicker : HBoxContainer
 		new ItemInfo("Vertical Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,0), new Vector2I(85, 85), false, false, "Allow for you to move a rail (and whatever is on said rail) up or down with the ‘mov u’ and ‘mov d’ commands."),
 		new ItemInfo("Horizontal Conveyor", ConveyorObject.GetCostStatic(), 1, 2, new Vector2I(0,1), new Vector2I(85, 85), false, false, "Allow for you to move a rail (and whatever is on said rail) left or right with the ‘mov l’ and ‘mov r’ commands."),
 		new ItemInfo("Rotator", ConveyorRotatorObject.GetCostStatic(), 1, 2, new Vector2I(0,2), new Vector2I(85, 85), false, false, "Allows for you to rotate a rail (and whatever is on said rail) by usingthe ‘rot l’ or ‘rot r’ commands."),
-		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(2,0), new Vector2I(130, 90), true, false, "Allows you to switch to position of a rail (and whatever is on said rail) by using the ‘swt’ command."),
+		new ItemInfo("Switch", SwitchObject.GetCostStatic(), 1, 2, new Vector2I(2,0), new Vector2I(85, 85), true, false, "Allows you to switch to position of a rail (and whatever is on said rail) by using the ‘swt’ command."),
 	};
 
 	static ItemInfo[] ClawSection = {
@@ -58,7 +58,7 @@ public partial class ObjectPicker : HBoxContainer
 	static ItemInfo[] FactorySection = {
 		new ItemInfo("Furnace", FactoryFurnace.GetCostStatic(), 2, 3, new Vector2I(0,0), new Vector2I(85, 85), true, false, "Allows for you to smelt raw material into a bar of said material. The furnace needs a fuel source in the form of coal and takes two time steps to smelt a given object."),
 		new ItemInfo("Roller", FactoryRoller.GetCostStatic(), 2, 3, new Vector2I(0,2), new Vector2I(85, 85), true, false, "The roller allows you to turn a sheet of material into a pipe of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
-		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(130, 90), true, false, "The press allows you to turn a bar of a given material into a sheet of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
+		new ItemInfo("Press", FactoryPress.GetCostStatic(), 2, 3, new Vector2I(0,3), new Vector2I(85, 85), true, false, "The press allows you to turn a bar of a given material into a sheet of that given material. It takes 1 time step to accomplish this and does not require any fuel."),
 		new ItemInfo("Steel Mill", SteelMill.GetCostStatic(), 2, 3, new Vector2I(1,7), new Vector2I(85, 85), true, false, "The press will allow you to mill steel plates into gears, for it to work it must have lube and the plate must still be hot!"),
 		new ItemInfo("Pipe", FactoryPress.GetCostStatic(), 2, 13, new Vector2I(0,0), new Vector2I(85, 85), false, false, "This pipe allows for the flow of liquid, it'll attatch to any adjacent pipes, liquid inputs, and liquid outputs"),
 		new ItemInfo("Cooler", CoolerObject.GetCostStatic(), 2, 3, new Vector2I(0,5), new Vector2I(85, 85), false, false, "This item allows for you to cool hot elemetns, you must attach it to a pipe system that has water avalible!"),
@@ -173,8 +173,8 @@ public partial class ObjectPicker : HBoxContainer
 			// GD.Print(data);
 			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
 			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
-			double hScale = 32 / texture.GetHeight();
-			double wScale = 32 / texture.GetWidth();
+			// double hScale = 32 / texture.GetHeight();
+			// double wScale = 32 / texture.GetWidth();
 		} else {
 			// get the tile
 			var tile = tileSetSource.GetTileTextureRegion(item.atPos);

@@ -1,10 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://bi5xoykbg2jdl"]
+[gd_scene load_steps=4 format=3 uid="uid://bi5xoykbg2jdl"]
 
 [ext_resource type="Script" uid="uid://cv7krxdsxh1i3" path="res://BoilerTronicsObjects/GameState/BoilerTronicsLevel.cs" id="1_56cbs"]
 [ext_resource type="Script" uid="uid://ic02xmoin3h2" path="res://Testing/Camera2d.cs" id="2_0eujj"]
+[ext_resource type="TileSet" uid="uid://cijjltc6wtqde" path="res://Resources/objects.tres" id="3_uem1w"]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_56cbs")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("2_0eujj")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+visible = false
+tile_map_data = PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+tile_set = ExtResource("3_uem1w")
