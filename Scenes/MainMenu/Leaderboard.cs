@@ -21,7 +21,7 @@ public partial class Leaderboard : CenterContainer
 	private FirebaseAuthManager _authManager;
 	private FirestoreService _firestoreService;
 	private Button friendsToggleButton;
-	private int currentLevelId = 0;
+	private int currentLevelId = 11;
 
 	// Hardcoded bc fml
 	private readonly Dictionary<int, List<(string Name, float Score)>> defaultLeaderboards = new()
@@ -61,8 +61,9 @@ public partial class Leaderboard : CenterContainer
 
 	public override void _Ready()
 	{
+		GD.Print("here");
 		InitializeServices();
-
+		GD.Print("init");
 		firstName = GetNode<Label>("%firstName");
 		firstScore = GetNode<Label>("%firstScore");
 		secondName = GetNode<Label>("%secondName");
@@ -78,15 +79,24 @@ public partial class Leaderboard : CenterContainer
 
 		extraName = GetNodeOrNull<Label>("%extraName");
 		extraScore = GetNodeOrNull<Label>("%extraScore");
-
+		
 		_authManager = FirebaseAuthManager.Instance;
 		_authManager.AuthenticationChanged += async (loggedIn) => await OnLoginStateChanged(loggedIn);
-
+		
 		friendsToggleButton = GetNode<Button>("%FriendsToggleButton");
 		friendsToggleButton.Pressed += async () => await OnFriendsTogglePressed();
 
+		GetLeaderboards();
+		
+
 		UpdateFriendsButtonVisibility();
 		_ = UpdateLeaderboardAsync();
+	}
+
+	private void GetLeaderboards()
+	{
+
+		GetNode<OptionButton>("%OptionButton").GetSelectedId();
 	}
 
 	private void InitializeServices()
@@ -172,6 +182,13 @@ public partial class Leaderboard : CenterContainer
 		DisplayLeaderboard(friendsLeaderboard);
 	}
 
+	private void _on_option_button_item_selected(int index)
+	{
+		int id = GetNode<OptionButton>("%OptionButton").GetSelectedId();
+		GD.Print("id: ", id);
+		_ =  _on_option_button_item_selectedAsync(id);
+	}
+
 	private async Task _on_option_button_item_selectedAsync(int index)
 	{
 		currentLevelId = index;
@@ -185,10 +202,12 @@ public partial class Leaderboard : CenterContainer
 	{
 		if (_authManager != null && _authManager.IsAuthenticated && !showingFriends)
 		{
+			GD.Print("Level ID:" + currentLevelId);
 			await LoadGlobalLeaderboard(currentLevelId);
 		}
 		else
 		{
+			GD.Print("Load Local");
 			LoadLocalLeaderboard(currentLevelId);
 		}
 	}

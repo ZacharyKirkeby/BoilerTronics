@@ -1,4 +1,4 @@
-[gd_scene load_steps=63 format=3 uid="uid://cjypehapfq0tu"]
+[gd_scene load_steps=65 format=3 uid="uid://cjypehapfq0tu"]
 
 [ext_resource type="Script" uid="uid://ck4i4ll7r5mf1" path="res://Scenes/LevelUI/LevelUi.cs" id="1_r8yfq"]
 [ext_resource type="Script" uid="uid://daprwi55iub6y" path="res://Testing/Terminals.cs" id="2_5sd26"]
@@ -13,6 +13,7 @@
 [ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="7_c2lek"]
 [ext_resource type="Theme" uid="uid://yrlb1mo8agju" path="res://Scenes/LevelUI/StatValues.tres" id="7_xc2rq"]
 [ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_5rb4o"]
+[ext_resource type="Script" uid="uid://bm8dhjamj62sm" path="res://Scenes/LevelUI/Histogram.cs" id="9_3k86a"]
 [ext_resource type="Texture2D" uid="uid://dltg62on1nfxw" path="res://Resources/Icons/arrow-right.png" id="9_qx84d"]
 [ext_resource type="PackedScene" uid="uid://bi5xoykbg2jdl" path="res://Testing/test_level.tscn" id="10_3k86a"]
 [ext_resource type="Script" uid="uid://bm2ejy2n4db66" path="res://BoilerTronicsObjects/Interpreter/Parser.cs" id="11_wueca"]
@@ -32,6 +33,18 @@
 
 [sub_resource type="Theme" id="Theme_ao4gj"]
 Button/styles/normal = SubResource("StyleBoxFlat_2qe5m")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qx84d"]
+bg_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trj04"]
 
@@ -437,7 +450,7 @@ text = "Exit"
 [node name="Level Statistics Menu" type="Window" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer"]
 oversampling_override = 1.0
 initial_position = 2
-size = Vector2i(800, 800)
+size = Vector2i(800, 900)
 visible = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu"]
@@ -446,10 +459,10 @@ anchor_left = 0.5
 anchor_top = 0.316
 anchor_right = 0.5
 anchor_bottom = 0.68
-offset_left = -200.0
-offset_top = -204.00006
-offset_right = 200.0
-offset_bottom = -6.1035156e-05
+offset_left = -351.5
+offset_top = -234.40002
+offset_right = 351.5
+offset_bottom = 338.0
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("5_nctgy")
@@ -605,6 +618,29 @@ unique_name_in_owner = true
 layout_mode = 2
 theme = ExtResource("7_xc2rq")
 horizontal_alignment = 1
+
+[node name="Enhanced Stats Button" type="Button" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Enhanced Statistics"
+
+[node name="Enhanced Stats Panel" type="Panel" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(500, 350)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qx84d")
+
+[node name="Histogram" type="Control" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/Enhanced Stats Panel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 180)
+anchors_preset = 0
+offset_top = 46.0
+offset_right = 696.5
+offset_bottom = 354.0
+script = ExtResource("9_3k86a")
 
 [node name="Settings Menu" type="Window" parent="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu"]
 oversampling_override = 1.0
@@ -1303,6 +1339,7 @@ autowrap_mode = 2
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/EditSettingsButton" to="." method="_on_edit_settings_button_pressed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu" to="." method="_on_level_statistics_menu_close_requested"]
+[connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/VBoxContainer/Level Statistics Menu/VBoxContainer/Enhanced Stats Button" to="." method="_on_enhanced_stats_button_pressed"]
 [connection signal="close_requested" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu" to="." method="_on_settings_menu_close_requested"]
 [connection signal="value_changed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="MainVBox/TerminalLevelSplit/VBoxContainer/PanelContainer/HBoxContainer/HBoxContainer/Exit Menu/Settings Menu/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
