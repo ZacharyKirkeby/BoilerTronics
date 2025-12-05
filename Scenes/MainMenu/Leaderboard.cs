@@ -21,12 +21,13 @@ public partial class Leaderboard : CenterContainer
 	private FirebaseAuthManager _authManager;
 	private FirestoreService _firestoreService;
 	private Button friendsToggleButton;
-	private int currentLevelId = 0;
+	private int currentLevelId = 11;
 
 	public override void _Ready()
 	{
+		GD.Print("here");
 		InitializeServices();
-
+		GD.Print("init");
 		firstName = GetNode<Label>("%firstName");
 		firstScore = GetNode<Label>("%firstScore");
 		secondName = GetNode<Label>("%secondName");
@@ -45,7 +46,7 @@ public partial class Leaderboard : CenterContainer
 		
 		_authManager = FirebaseAuthManager.Instance;
 		_authManager.AuthenticationChanged += async (loggedIn) => await OnLoginStateChanged(loggedIn);
-
+		
 		friendsToggleButton = GetNode<Button>("%FriendsToggleButton");
 		friendsToggleButton.Pressed += async () => await OnFriendsTogglePressed();
 
@@ -57,19 +58,28 @@ public partial class Leaderboard : CenterContainer
 	}
 
 	private void GetLeaderboards()
-    {
+	{
 
-        GetNode<OptionButton>("%OptionButton").GetSelectedId();
-    }
+		GetNode<OptionButton>("%OptionButton").GetSelectedId();
+	}
 
 	private void InitializeServices()
 	{
-		
-		_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
-		AddChild(_authManager);
+		/*
+		if (_authManager != null && _authManager.GetParent() == null) {
+			_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
+			AddChild(_authManager);
+		}
 
-		_firestoreService = FirestoreService.Instance ?? new FirestoreService();
-		AddChild(_firestoreService);
+		if (_firestoreService != null && _firestoreService.GetParent() == null) {
+			_firestoreService = FirestoreService.Instance ?? new FirestoreService();
+			AddChild(_firestoreService);
+		}
+		*/
+		
+		MainMenu.InitializeServices();
+		this._authManager = MainMenu.GetFirebaseAuthManager();
+		this._firestoreService = MainMenu.GetFirestoreService();
 	}
 
 	private async void UpdateFriendsButtonVisibility()
@@ -148,11 +158,11 @@ public partial class Leaderboard : CenterContainer
 	}
 
 	private void _on_option_button_item_selected(int index)
-    {
-        int id = GetNode<OptionButton>("%OptionButton").GetSelectedId();
+	{
+		int id = GetNode<OptionButton>("%OptionButton").GetSelectedId();
 		GD.Print("id: ", id);
 		_ =  _on_option_button_item_selectedAsync(id);
-    }
+	}
 
 	private async Task _on_option_button_item_selectedAsync(int index)
 	{
