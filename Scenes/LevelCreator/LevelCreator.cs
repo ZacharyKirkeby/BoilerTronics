@@ -5,6 +5,8 @@ using System.IO;
 using BoilerTronicsObjects.Placeable;	// use for TileTex
 
 using Parsing;
+using System.Linq;
+using System.Threading.Tasks;
 public partial class LevelCreator : LevelUi
 {
 	string levelSavePath = ProjectSettings.GlobalizePath("user://LevelCreator/");
@@ -14,17 +16,26 @@ public partial class LevelCreator : LevelUi
 		base._Ready();
 		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
-		string saveDir = ProjectSettings.GlobalizePath("res://Resources/Levels");
-		string[] saveFiles = Directory.GetFiles(saveDir, "*.save");
+
+		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+
 		foreach (string saveFile in saveFiles)
 		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		foreach (string saveFile in userSaveFiles) {
 			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
 		}
 		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
 		var loadName = GetNode<Label>("%LoadName");
 		loadName.Text = dropdown.GetItemText(dropdown.Selected);
 		saveWindow.Visible = true;
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// If we're in a level creator, we should save the creator's name!
+		manager.saveState.shouldSaveCreatorName = true;
 	}
 	
 	// opens level metadata edit button
@@ -203,6 +214,91 @@ public partial class LevelCreator : LevelUi
 		saveWindow.Visible = false;
 	}
 	
+	// send data to server
+	private async Task ExportLevelData(BoilerTronicsGlobalManager man, string filePath) {
+		// Generate LevelData to send to server
+		LevelData newDat = new LevelData();
+		
+		ProfileMenuController profMan = ProfileMenuController.GlobalManager;
+		UserData userDat = null;
+		if (profMan.IsAuthenticated()) {
+		  userDat = profMan.GetUserData();
+		} else {
+			return;
+		}
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// levelId irrelevant for now
+		newDat.LevelId = manager.GetLevelID().ToString();
+		newDat.CreatorId = userDat.Uuid;
+		newDat.CreatorName = userDat.Username;
+		newDat.LevelName = manager.saveState.levelName;
+		newDat.Description = "TODO description";
+		newDat.Difficulty = "TODO difficulty";
+		newDat.Tags = new List<string>(){
+			"TODO, tag1",
+			"TODO, tag2"
+		};
+		
+		// get the contents of the level as a raw string
+		newDat.LevelDataJson = manager.saveState.LoadDataIntoString(manager, filePath);
+		GD.Print("LevelCreator: Uploading LevelDataJson:", newDat.LevelDataJson);
+		
+		GD.Print("LevelCreator: LevelData to be sent: ", newDat.ToString());
+		
+		await sendData(newDat);
+
+		// TODO: execute server functions, send to server
+	}
+
+	private async Task sendData(LevelData dat)
+	{
+		var _instance = FirestoreService.Instance;
+		await _instance.SaveLevelAsync(dat);
+	}
+
+	private void _on_export_and_upload_pressed()
+	{
+		string fileName = GetNode<LineEdit>("%NewFileName").GetText(); 
+		/* TODO ADD UPLOAD TO SERVER */
+		
+		// first, save to local
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		GD.Print("LevelCreator: overwriting level: ", fileName);
+		man.saveState.SaveDataTo(man, "LevelCreator", "/" + fileName);
+
+		// then take local file and convert it to send to server
+		ExportLevelData(man, "LevelCreator/" + fileName);
+
+		
+		// close windows when done
+		var saveWindow = GetNode<Window>("%CreatorSaveWindow");
+		saveWindow.Visible = false;
+	}
+
+	private void _on_load_button_pressed()
+	{
+		var fileLocation = GetNode<Label>("%FileLocation");
+		fileLocation.Text = "Level will be saved at " + levelSavePath;
+		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
+		dropdown.Clear();
+		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
+
+		foreach (string saveFile in saveFiles)
+		{
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		foreach (string saveFile in userSaveFiles) {
+			dropdown.AddItem(Path.GetFileNameWithoutExtension(saveFile));
+		}
+		var saveWindow = GetNode<Window>("%CreatorLoadWindow");
+		var loadName = GetNode<Label>("%LoadName");
+		loadName.Text = dropdown.GetItemText(dropdown.Selected);
+		saveWindow.Visible = true;
+	}
+
 	private void _on_load_level_button_pressed()
 	{
 		OptionButton dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");

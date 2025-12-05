@@ -1,14 +1,26 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public partial class MainMenu : Node2D
 {
 	private int level = 11;
-	private FirebaseAuthManager _authManager;
-	private FirestoreService _firestoreService;
+	private static FirebaseAuthManager _authManager;
+	private static FirestoreService _firestoreService;
+	
+	public static MainMenu mainMainMenu;
+	
+	public static FirebaseAuthManager GetFirebaseAuthManager() {
+		return _authManager;
+	}
+	public static FirestoreService GetFirestoreService() {
+		return _firestoreService;
+	}
 	
 	public override void _Ready()
 	{
+		mainMainMenu = this;
 		InitializeServices();
 
 		// Set fullscreen toggle
@@ -23,14 +35,14 @@ public partial class MainMenu : Node2D
 		
 	}
 
-	private void InitializeServices()
+	public static void InitializeServices()
 	{
 		// Get or create auth manager
 		_authManager = FirebaseAuthManager.Instance;
 		if (_authManager == null)
 		{
 			_authManager = new FirebaseAuthManager();
-			AddChild(_authManager);
+			mainMainMenu.AddChild(_authManager);
 		}
 
 		// Get or create firestore service
@@ -38,9 +50,11 @@ public partial class MainMenu : Node2D
 		if (_firestoreService == null)
 		{
 			_firestoreService = new FirestoreService();
-			AddChild(_firestoreService);
+			mainMainMenu.AddChild(_firestoreService);
 		}
 	}
+
+
 
 	private void _on_new_game_pressed()
 	{
@@ -59,12 +73,160 @@ public partial class MainMenu : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/LevelSelect/new_level_select.tscn");
 	}
 
-	private void _on_settings_pressed()
+	private async Task<List<LevelData>> _get_levels()
+	{
+		ProfileMenuController profMan = ProfileMenuController.GlobalManager;
+		UserData userDat = null;
+		if (profMan.IsAuthenticated()) {
+			FirestoreService _instance = FirestoreService.Instance;
+			userDat = profMan.GetUserData();
+			List<LevelData> levels = await _instance.GetUserLevelsAsync(50);
+			foreach (LevelData level in levels)
+			{
+				GD.Print(level);
+			}
+			return levels;
+		}
+		return null;
+	}
+
+	private void _on_level_creator_pressed()
+{
+	// fire-and-forget async task
+	_ = OpenLevelCreatorAsync();
+}
+
+	private async Task OpenLevelCreatorAsync()
 	{
 		GetNode<Control>("MainMenu").Visible = false;
-		GetNode<Control>("SettingsMenu").Visible = true;
+		GetNode<Control>("LevelCreatorMenu").Visible = true;
+		var vbox = GetNode<VBoxContainer>("%LevelVBox");
+		foreach (Node child in vbox.GetChildren())
+		{
+			child.QueueFree();
+		}
+		List<LevelData> levels = await _get_levels();
+		foreach (LevelData level in levels)
+		{
+			vbox.AddChild(CreateRow(level.LevelName, level.CreatorName, level));
+		}
 	}
 	
+	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
+	{
+		GD.Print("test");
+		// ---- PanelContainer ----
+		var panel = new PanelContainer
+		{
+			CustomMinimumSize = new Vector2(0, 150)
+		};
+
+		var style = new StyleBoxFlat
+		{
+			BgColor = new Color("937e56"),   // background color
+			BorderColor = Colors.Black
+		};
+
+		style.CornerRadiusTopLeft = 10;
+		style.CornerRadiusTopRight = 10;
+		style.CornerRadiusBottomLeft = 10;
+		style.CornerRadiusBottomRight = 10;
+
+		style.BorderWidthLeft = 4;
+		style.BorderWidthTop = 4;
+		style.BorderWidthRight = 4;
+		style.BorderWidthBottom = 4;
+
+		panel.AddThemeStyleboxOverride("panel", style);
+
+		// ---- HBoxContainer ----
+		var hbox = new HBoxContainer();
+		panel.AddChild(hbox);
+
+		// Common font for labels
+		// (replace with your actual font path)
+		var font = ResourceLoader.Load<Font>("res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf");
+
+		// ---- Left Control (100 x 0) ----
+		var controlLeft = new Control
+		{
+			CustomMinimumSize = new Vector2(100, 0)
+		};
+		hbox.AddChild(controlLeft);
+
+		// ---- Label ----
+		var label1 = new Label
+		{
+			Text = levelName
+		};
+		label1.AddThemeFontOverride("font", font);
+		label1.AddThemeColorOverride("font_color", Colors.Black);
+		hbox.AddChild(label1);
+
+		// ---- Label2 ----
+		var label2 = new Label
+		{
+			Text = authorName
+		};
+		label2.AddThemeFontOverride("font", font);
+		label2.AddThemeColorOverride("font_color", Colors.Black);
+		hbox.AddChild(label2);
+
+		// ---- Button ----
+		var button = new Button
+		{
+			Text = "",
+			// Horizontal: Shrink End + Expand
+			SizeFlagsHorizontal = Control.SizeFlags.ShrinkEnd | Control.SizeFlags.Expand,
+			// Vertical: Shrink Center
+			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+		};
+
+		// Theme (replace with your theme path)
+		button.Theme = ResourceLoader.Load<Theme>("res://Resources/ButtonThemes/buttontheme.tres");
+
+		// Icon
+		var icon = ResourceLoader.Load<Texture2D>("res://Resources/Icons/play.png");
+		button.Icon = icon;
+		button.AddThemeConstantOverride("icon_max_width", 100);
+		button.Pressed += () => OnRowButtonPressed(dat);
+
+		hbox.AddChild(button);
+
+		// ---- Right Control (100 x 0) ----
+		var controlRight = new Control
+		{
+			CustomMinimumSize = new Vector2(100, 0)
+		};
+		hbox.AddChild(controlRight);
+
+		return panel;
+	}
+	
+	private void OnRowButtonPressed(LevelData level)
+	{
+		GD.Print($"Button for level {level.LevelName} pressed");
+		// TODO Open level creator with level loaded
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// TODO: create level given the LevelData
+		string levelName = level.CreatorName + level.LevelId;
+		manager.saveState.SaveStringTo(manager, "LevelCreator/Downloaded/", levelName, level.LevelDataJson);
+		
+		// TODO: set the load level target
+		
+		manager.loadLevelName = "Downloaded/" + levelName;
+		manager.creatingNewLevel = false;
+		
+		// play the level
+		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
+	}
+
+	private void _on_level_creator_button_pressed()
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
+	}
+
 	private void _on_profile_pressed() {
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("ProfileMenu").Visible = true;
@@ -80,8 +242,9 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("SettingsMenu").Visible = false;
 		GetNode<Control>("ProfileMenu").Visible = false;
 		GetNode<Control>("Leaderboard").Visible = false;
+		GetNode<Control>("LevelCreatorMenu").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
-		GetNode<Window>("AchievementsMenu").Visible = false;
+		GetNode<Window>("Achievements Menu").Visible = false;
 		GetNode<Window>("Easter Egg Menu").Visible = false;
 	}
 
@@ -90,8 +253,9 @@ public partial class MainMenu : Node2D
 		GetTree().Quit();
 	}
 	
-	private void _on_documentation_pressed() {
-		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/level_creator.tscn");
+	private void _on_settings_pressed() {
+		GetNode<Control>("MainMenu").Visible = false;
+		GetNode<Control>("SettingsMenu").Visible = true;
 	}
 
 	private void _on_fullscreen_toggled(bool toggledOn)
