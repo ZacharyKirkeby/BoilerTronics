@@ -669,6 +669,7 @@ public partial class LevelUi : Node2D
 			//if all better, achievement 4 unlocked
 			achievementManager.TryAchievementUnlock("Achievement4");
 		}
+		GetNode<Histogram>("%Histogram").changeUserScore((grades[0] + grades[1] + grades[2]) / 3);
 		return grades;
 	}
 
@@ -761,6 +762,14 @@ public partial class LevelUi : Node2D
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
 	}
 	
+	private void _on_enhanced_stats_button_pressed() {
+		if(GetNode<Panel>("%Enhanced Stats Panel").Visible == true) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = false;
+		}
+		else if(GetNode<Panel>("%Enhanced Stats Panel").Visible == false) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = true;
+		}
+	}
 	private void _on_achievement_notice_close_requested()
 	{
 		GetNode<Window>("Achievement Notice").Visible = false;
