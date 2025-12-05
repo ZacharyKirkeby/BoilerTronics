@@ -10,7 +10,7 @@ using BoilerTronicsObjects.Placeable;
 // Future floor tiles should ideally be a children of this tile!
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FloorTileObject : PlaceableObject {
+	public class FloorTileObject : PlaceableObject, FloorLayerObject, FactoryLayerObject {
 		
 		public override int GetCost() { return 0; }
 		public new static int GetCostStatic() { return 0; }

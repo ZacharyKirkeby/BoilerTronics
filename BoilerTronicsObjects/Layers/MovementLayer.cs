@@ -24,6 +24,7 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
+			// i love it when layers don't stack on top of each other
 			MouseInput(@event, 1);
 			base._Input(@event);
 		}

@@ -10,7 +10,7 @@ using BoilerTronicsObjects.Data;
 
 namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 
-	public class FactoryFurnace : PlaceableBig, BigMovable, Runnable {
+	public class FactoryFurnace : PlaceableBig, BigMovable, Runnable, FactoryLayerObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }

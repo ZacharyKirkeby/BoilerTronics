@@ -12,7 +12,7 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 	 * The purpose of this class is to provide a base for the pump objects for the seperate liquids.
 	 * The default pump object should not bu used, but instead it should be inherited by the specific object
 	 */
-	public class HeaterObject : PlaceableObject, Movable, Runnable {
+	public class HeaterObject : PlaceableObject, Movable, Runnable, FactoryLayerObject {
 
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }
@@ -74,4 +74,3 @@ namespace BoilerTronicsObjects.Objects.FactoryLayerObjects {
 		}
 	}
 }
-

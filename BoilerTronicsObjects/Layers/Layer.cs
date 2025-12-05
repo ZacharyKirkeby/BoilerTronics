@@ -63,6 +63,9 @@ namespace BoilerTronicsObjects.Layers
 		// x, y are # of cells on the respective axis
 		public void RedefineLayer(int newX, int newY) {
 			
+			// how do you even translate GD scripts into enums because this shit wasn't working
+			SetTextureFilter((Godot.CanvasItem.TextureFilterEnum) 2);
+			
 			tiles = new PlaceableObject[newX, newY];
 			editableTiles = new bool[newX, newY];
 			maxX = newX - 1;
@@ -164,6 +167,7 @@ namespace BoilerTronicsObjects.Layers
 
 		public bool CheckValidPos(int X, int Y)
 		{
+			GD.Print("Layer.cs: CheckValidPos: Placeable Case");
 			if (!CheckInBounds(X, Y)) return false;
 			if (!editableTiles[X, Y]) return false;
 			return true;
@@ -172,6 +176,7 @@ namespace BoilerTronicsObjects.Layers
 		// special case for PlaceableBig objects
 		public bool CheckValidPos(int X, int Y, PlaceableBig obj)
 		{
+			GD.Print("Layer.cs: CheckValidPos: PlaceableBig Case");
 			// check base origin point
 			if (!CheckInBounds(X, Y)) return false;
 			if (!editableTiles[X, Y]) return false;
@@ -191,11 +196,22 @@ namespace BoilerTronicsObjects.Layers
 			
 			return true;
 		}
+		
+		// generic case that handles Placeables/PlaceableBigs without problem
+		// EDIT: inconsistent, don't use?
+		/*
+		public bool CheckValidPos(int X, int Y, PlaceableObject obj) {
+			if (obj is PlaceableBig bObj) {
+				return CheckValidPos(X, Y, bObj);
+			}
+			return CheckValidPos(X, Y);
+		}
+		*/
 
 		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
-			GD.Print("Adding object:", newPlaceable);
+			GD.Print("Layer.cs: AddObject: Adding object:", newPlaceable);
 			// reset layer transparency
 			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
@@ -217,6 +233,8 @@ namespace BoilerTronicsObjects.Layers
 			} else {
 				if (!CheckValidPos(pos.X, pos.Y)) return;
 			}
+			//if (!CheckValidPos(pos.X, pos.Y, newPlaceable)) return;
+			GD.Print("Layer.cs: AddObject: Object In Bounds");
 			
 			// check: are coordinates occupied?
 			if (isPlaceableBig) {
@@ -224,6 +242,7 @@ namespace BoilerTronicsObjects.Layers
 			} else {
 				if (FindObject(pos) != null) return;
 			}
+			GD.Print("Layer.cs: AddObject: Object Not in Occupied Position");
 			
 			// check: are the coordinates editable?
 			if (isPlaceableBig) {
@@ -239,6 +258,7 @@ namespace BoilerTronicsObjects.Layers
 			} else {
 				if (!editableTiles[pos.X, pos.Y]) return;
 			}
+			GD.Print("Layer.cs: AddObject: Object In Editable Tiles");
 			
 
 			objectList.Add(newPlaceable); // adds the placeable to the list of objects on this layer
@@ -329,7 +349,7 @@ namespace BoilerTronicsObjects.Layers
 			}
 
 			// UpdateInternals();
-			GD.Print("Added object");
+			// GD.Print("Layer.cs: AddObject: Successfully added object");
 			
 			// update placeable's parent layer info
 			newPlaceable.SetParentLayer(this);
@@ -389,7 +409,7 @@ namespace BoilerTronicsObjects.Layers
 			*/
 
 			// GD.Print("Layer.cs: added object path: ", GetPath());
-			GD.Print("Layer.cs: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
+			GD.Print("Layer.cs: AddObject: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
 			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
@@ -734,130 +754,296 @@ namespace BoilerTronicsObjects.Layers
 				DrawLine(localPos + (Vector2) coordinates[coordinates.Count - 1], localPos + (Vector2) coordinates[0], drawColor, lineWeight);
 			}
 		}
+		
+		// returns if successful
+		private bool MousePlaceItem(Vector2I tileCoords, PlaceableObject objAtPos) {
+			Vector2I pos = tileCoords;
+			bool validPlacement = true;
+			// very minor optimization
+			bool isPlaceableBig = (objAtPos is PlaceableBig);
+			
+			// check ValidPos stuff differently for PlaceableBig
+			// check: are coordinates in bounds?
+			if (validPlacement) {
+				if (isPlaceableBig) {
+					if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) objAtPos)) validPlacement = false;
+				} else {
+					if (!CheckValidPos(pos.X, pos.Y)) validPlacement = false;
+				}
+			}
+			
+			// check: are coordinates occupied?
+			if (validPlacement) {
+				if (isPlaceableBig) {
+					if (FindObject(pos, (PlaceableBig) objAtPos) != null) validPlacement = false;
+				} else {
+					if (FindObject(pos) != null) validPlacement = false;
+				}
+			}
+			// GD.Print("Layer.cs: AddObject: Object Not in Occupied Position");
+			
+			if (validPlacement) {
+				// check: are the coordinates editable?
+				if (isPlaceableBig) {
+					PlaceableBig bObj = (PlaceableBig) objAtPos;
+					// iterate through 'obj' texture grid
+					foreach (PlaceableBigData data in bObj.GetTextureGrid()) {
+						// check each individual data point
+						Vector2I dataCoords = data.GetPosition(pos);
+						
+						// if any of the tile positions are marked as "not editable", return
+						if (!editableTiles[dataCoords.X, dataCoords.Y]) validPlacement = false;
+					}
+				} else {
+					if (!editableTiles[pos.X, pos.Y]) validPlacement = false;
+				}
+			}
+			
+			/*
+			bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);// CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos);
+			bool occupiedSpot = (FindObject(tileCoords) != null);
+			if (manager.objectToMove is PlaceableBig bObj) { // PlaceableBig case
+				GD.Print("Layer.cs: Placement: Checking PlaceableBig object");
+				validPos = CheckValidPos(tileCoords.X, tileCoords.Y, bObj);
+				
+				if (validPos) occupiedSpot = (FindObject(tileCoords,bObj) != null);
+			}
+			*/
+			
+			// GD.Print("Layer.cs: MousePlaceItem: Valid pos?: ", validPos);
+			// GD.Print("Layer.cs: MousePlaceItem: Occupied Spot?: ", occupiedSpot);
+			// make sure nothing is there already
+			//if (objAtPos != null || !validPos || occupiedSpot) {
+			if (!validPlacement) {
+				// reset so we don't place accidently
+				GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
+				manager.placingObject = 0;
 
-		public void MouseInput(InputEvent @event, int targetSel)
+				if (manager.objectToMove != null) {
+					GD.Print("Layer.cs: Restoring placed object position.");
+					AddObject(manager.objectToMove); // move the object back to it's original position
+					
+					// handle cases where freshly spawned scriptable objects still create
+					// a terminal, even if they should have been destroyed.
+					if (!objectList.Contains(manager.objectToMove)) {
+						if (manager.objectToMove is Scriptable) {
+							GD.Print("Layer.cs: Destroying Terminal");
+							// destroy terminal, unregister runnable
+							((Scriptable) manager.objectToMove).DestroyTerminal();
+							manager.currLevel.UnRegisterRunnable(manager.objectToMove);
+						}
+					}
+					manager.objectToMove = null;
+				}
+				
+				// invalid placement
+				return false;
+			}
+			GD.Print("Layer.cs: MousePlaceItem: Object appears to be valid, attempt to place.");
+
+
+			// This will happen if we are mopving an object
+			PlaceableObject obj = manager.objectToMove;
+
+			obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
+			Vector2I newPos = obj.GetPos();
+			AddObject(obj); // place object
+
+			// reset to prevent multiple placements
+			manager.objectToMove = null;
+			manager.placingObject = 0;
+			
+			// queue redraw for highlighting after moving an object
+			// QueueRedraw();
+			// 'null' check to prevent errors
+			if (manager.terminalContainer != null) manager.terminalContainer.UpdateSelectedTerminal();
+			manager.ClearSelectingObject();
+			return true;
+		}
+		
+		// returns if successful
+		private bool MousePickupItem(Vector2I tileCoords, PlaceableObject objAtPos) {
+			// we don't went to do anything if we can;t find anything there
+			if (objAtPos == null)
+			{
+				return false;
+			}
+
+			if (!editableTiles[tileCoords.X, tileCoords.Y]) return false;
+
+			RemoveObject(objAtPos);
+
+			// get the tile texture
+			Texture2D texture = objAtPos.GetTexture() as Texture2D;
+
+			Sprite2D sprite = new Sprite2D();
+			// get texture
+			sprite.Texture = texture;
+			sprite.Scale = grabbedObjectScaling;
+			sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
+
+			var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos);
+
+			SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
+			subView.AddChild(draggable);
+			manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
+
+			manager.placingObject = 1;
+
+			// when picking up an object, be sure to modulate layers as appropriate 
+			// LAZY: modulate all layers
+			manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
+			manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
+			manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
+			manager.layerRail.Modulate = manager.layerDeselectedVisibility;
+
+			// unmodulate this layer
+			this.Modulate = manager.layerDefaultVisibility;
+			
+			return true;
+		}
+		
+		// returns if successful
+		private bool MouseDeleteItem(Vector2I tileCoords, PlaceableObject objAtPos) {
+			// We want to delete
+			if (objAtPos != null) RemoveObject(objAtPos);
+			if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
+			if (objAtPos is Scriptable sObj) sObj.DestroyTerminal();
+			
+			manager.ClearSelectingObject();
+			return true;
+		}
+
+		// returns if call successfully acted an action or not
+		// also returns 'false' if something is de-selected. (?)
+		// idea is to better pass-through stuff (ex: claw->rail, factory->floor, etc)
+		public bool MouseInput(InputEvent @event, int targetSel)
 		{
+			GD.Print("Layer.cs: In MouseInput");
 			// make sure that this is a mouse event
 			if (!(@event is InputEventMouseButton buttonEvent)) {
 				base._Input(@event);
-				return;
+				return false;
 			}
+			GD.Print("Layer.cs: MouseInput Validated");
 
 			// Get manager
 			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
 
-			if (manager.currLevel.StepCount != 0) return; // Don't do anythin if we are stepping
+			if (manager.currLevel.StepCount != 0) return false; // Don't do anythin if we are stepping
 
 			// Get coords of event
 			Vector2 localMousePos = GetLocalMousePosition();
 			Vector2I tileCoords = LocalToMap(localMousePos);
 			PlaceableObject objAtPos = FindObject(tileCoords);
 
-			if (manager.currSlection != targetSel) return;
-
+			// check: are we working on this layer?
+			if (manager.currSlection != targetSel) return false;
+			
+			/* "Place Down" a PlaceableObject */
+			// must go first for functionality to be consistent
 			if (manager.placingObject == 1) {
-				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased())
-				{
-					bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);
-					if (manager.objectToMove is PlaceableBig) { // PlaceableBig case
-						GD.Print("Placement: Checking PlaceableBig object");
-						validPos = CheckValidPos(tileCoords.X, tileCoords.Y, (PlaceableBig) manager.objectToMove);
-					}
-					// make sure nothing is there already
-					if (objAtPos != null || !validPos) {
-						// reset so we don't place accidently
-						GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
-						manager.placingObject = 0;
-
-						if (manager.objectToMove != null) {
-							AddObject(manager.objectToMove); // move the object back to it's original position
-							
-							// handle cases where freshly spawned scriptable objects still create
-							// a terminal, even if they should have been destroyed.
-							if (!objectList.Contains(manager.objectToMove)) {
-								if (manager.objectToMove is Scriptable) {
-									GD.Print("Layer.cs: Destroying Terminal");
-									// destroy terminal, unregister runnable
-									((Scriptable) manager.objectToMove).DestroyTerminal();
-									manager.currLevel.UnRegisterRunnable(manager.objectToMove);
-								}
-							}
-							manager.objectToMove = null;
-						}
-
-						return;
-					}
-
-
-					// This will happen if we are mopving an object
-					PlaceableObject obj = manager.objectToMove;
-
-					obj.MoveObject(tileCoords.X, tileCoords.Y); // move to the new position
-					Vector2I newPos = obj.GetPos();
-					AddObject(obj); // place object
-
-					// reset to prevent multiple placements
-					manager.objectToMove = null;
-					manager.placingObject = 0;
-					
-					// queue redraw for highlighting after moving an object
-					// QueueRedraw();
-					// 'null' check to prevent errors
-					if (manager.terminalContainer != null) manager.terminalContainer.UpdateSelectedTerminal();
+				GD.Print("Layer.cs: placingObject == 1");
+				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased()) {
+					GD.Print("Layer.cs: MousePlaceItem");
+					bool successful = MousePlaceItem(tileCoords, objAtPos);
+					if (!successful) { return false; } // abort
 				}
-			} else {
+				
+				return true;
+			}
+			
+			
+			// TODO: "object selection" mechanism
+			if (true) {
+				
+				/*
+				Concept:
+				
+				click to "select" an object
+				- dynamically generate an object texture at this point and "highlight" or?
+				
+				when selected:
+				- click on "selected" object again to move/etc
+				- hotkeys to "re-place" the object with different states and etc
+					- dynamically generated tool tip here?
+				- click anywhere else to "de-select" the "selected" object
+					- functionality to immediately "select" the selected object or?
+				
+				*/
+			}
+			
+			// TODO: check if the mouse input is over a target input
+			// TODO: how should we handle claw/track layer? both will trigger this function at the same time, causes issues
+			// ex: claw selects one, track clears obj selection
+			if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed() && allowDrag) {
+				GD.Print("Layer.cs: Selection Process Starting");
+				
+				// clear object selection
+				if (objAtPos == null) {
+					GD.Print("Layer.cs: Selection: Clicked on empty space, deselecting.");
+					manager.ClearSelectingObject();
+					return false;
+				} else {
+					
+					// no "selected" object, so update "selectedObject" accordingly
+					if (manager.selectedObject == null) {
+						
+						if (!CheckValidPos(tileCoords.X, tileCoords.Y)) {
+							GD.Print("Layer.cs: Selection: Selected object is invalid.");
+							return true;
+						}
+						
+						if (objAtPos is PlaceableBig bObj) {
+							if (!CheckValidPos(tileCoords.X, tileCoords.Y, bObj)) {
+								GD.Print("Layer.cs: Selection: Selected big object is invalid.");
+								return true;
+							}
+						}
+						
+						manager.selectedObject = objAtPos;
+						GD.Print("Layer.cs: Selection: Successfully selecting object: ", objAtPos);
+						
+						SelectingObject sObj = new SelectingObject(manager.selectedObject, this);
+						//manager.currLevel.cLayer.GetParent().AddChild(sObj);
+						this.AddChild(sObj);
+						return true;
+						
+					// if selected object, and we clicked on something other than the selected object, then deselect
+					// TODO: dynamically switch selected objects or?
+					} else if (objAtPos != manager.selectedObject) {
+						GD.Print("Layer.cs: Selection: Clicked on space other than selection, deselecting.");
+						manager.ClearSelectingObject();
+						return false;
+					}
+				}
+			}
+
+			
+				
+			
+			/* we aren't "Placing Down" a PlaceableObject */
+			/* only perform these actions if we've selected the object! */
+			if (manager.selectedObject == objAtPos) {
 				// Left mouse click on a spot where an object exitsts
 				// Handles creating a new draggable object when clicking on a tile
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsPressed()
 					&& allowDrag)
 				{
-
-					// we don't went to do anything if we can;t find anything there
-					if (objAtPos == null)
-					{
-						return;
-					}
-
-					if (!editableTiles[tileCoords.X, tileCoords.Y]) return;
-
-					RemoveObject(objAtPos);
-
-					// get the tile texture
-					Texture2D texture = objAtPos.GetTexture() as Texture2D;
-
-					Sprite2D sprite = new Sprite2D();
-					// get texture
-					sprite.Texture = texture;
-					sprite.Scale = grabbedObjectScaling;
-					sprite.Set(Sprite2D.PropertyName.Position, new Vector2I(128, 128));
-
-					var draggable = new DraggableObject(Position - GetGlobalMousePosition(), sprite, objAtPos);
-
-					SubViewport subView = GetTree().Root.GetNode("/root/Node2D/MainVBox/TerminalLevelSplit/VBoxContainer/LevelContainer/SubViewport") as SubViewport;
-					subView.AddChild(draggable);
-					manager.objectToMove = objAtPos; // this is so that we can move it back to it's origional position if the user places it in the incorrect spot
-
-					manager.placingObject = 1;
-
-					// when picking up an object, be sure to modulate the 
-					// LAZY: modulate all layers
-					manager.layerClaw.Modulate = manager.layerDeselectedVisibility;
-					manager.layerFactory.Modulate = manager.layerDeselectedVisibility;
-					manager.layerFloor.Modulate = manager.layerDeselectedVisibility;
-					manager.layerRail.Modulate = manager.layerDeselectedVisibility;
-
-					// unmodulate this layer
-					this.Modulate = manager.layerDefaultVisibility;
-
+					GD.Print("Layer.cs: MousePickupItem");
+					bool successful = MousePickupItem(tileCoords, objAtPos);
+					if (!successful) { return false; } // abort
 				}
 				else if (buttonEvent.ButtonIndex == MouseButton.Right && buttonEvent.IsPressed())
 				{
-					// We want to delete
-					if (objAtPos != null) RemoveObject(objAtPos);
-					if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
-					if (objAtPos is Scriptable sObj) sObj.DestroyTerminal();
+					GD.Print("Layer.cs: MouseDeleteItem");
+					bool successful = MouseDeleteItem(tileCoords, objAtPos);
+					if (!successful) { return false; } // abort
 				}
 			}
+			
+			
+			return true;
 		}
 
 		// very specific variable for a very specific purpose:
@@ -890,5 +1076,9 @@ namespace BoilerTronicsObjects.Layers
 			}
 		}
 
+		// to be overridden by other layers
+		public virtual void PassedMouseInput(InputEvent @event) {
+			// TODO
+		}
 	}
 }

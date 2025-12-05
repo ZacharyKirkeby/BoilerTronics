@@ -106,6 +106,7 @@ namespace BoilerTronicsObjects.Placeable
 			this.CurrY = newY;
 		}
 
+		// NOTE: identical functionality to "GetCurrPos()". redundant/misnomer?
 		public Vector2I GetPos()
 		{
 			return new Vector2I(CurrX, CurrY);
