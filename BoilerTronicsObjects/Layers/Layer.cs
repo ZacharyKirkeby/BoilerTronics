@@ -745,6 +745,14 @@ namespace BoilerTronicsObjects.Layers
 			// very minor optimization
 			bool isPlaceableBig = (objAtPos is PlaceableBig);
 			
+			int oldDir = 0;
+			// temporarily set the object's direction to that stored in the global manager
+			if (isPlaceableBig) {
+				PlaceableBig bObj = (PlaceableBig) objAtPos;
+				oldDir = (int) bObj.GetDir();
+				bObj.SetDir((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) manager.objectToMoveDir);
+			}
+			
 			// check ValidPos stuff differently for PlaceableBig
 			// check: are coordinates in bounds?
 			validPlacement = VerifyObjectPlacement(objAtPos, tileCoords);
@@ -769,9 +777,16 @@ namespace BoilerTronicsObjects.Layers
 						}
 					}
 					manager.objectToMove = null;
+					
+					// reset the object's facing direction
+					if (isPlaceableBig) {
+						PlaceableBig bObj = (PlaceableBig) objAtPos;
+						bObj.SetDir((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) oldDir);
+					}
 				}
 				
 				// invalid placement
+				GD.Print("Layer.cs: MousePlaceItem: Object appears to be invalid, abort.");
 				return false;
 			}
 			GD.Print("Layer.cs: MousePlaceItem: Object appears to be valid, attempt to place.");

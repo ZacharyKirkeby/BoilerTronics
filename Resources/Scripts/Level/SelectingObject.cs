@@ -62,7 +62,7 @@ public partial class SelectingObject : Area2D
 			
 			sprite.Offset = new Vector2(tex.GetWidth() / 2, tex.GetHeight() / 2);
 			
-			sprite.Offset -= DraggableObject.CalculatePlaceableBigOffset(bObj);
+			sprite.Offset -= DraggableObject.CalculatePlaceableBigOffset(bObj, (int) bObj.GetDir());
 		} else {
 			sprite.Texture = this.obj.GetTexture() as Texture2D;
 		}
