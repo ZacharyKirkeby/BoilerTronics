@@ -188,8 +188,6 @@ texture_region_size = Vector2i(32, 64)
 10:8/0/texture_origin = Vector2i(0, -24)
 11:8/0 = 0
 11:8/0/texture_origin = Vector2i(0, -24)
-3:8/0 = 0
-3:8/0/texture_origin = Vector2i(0, -24)
 4:8/0 = 0
 4:8/0/texture_origin = Vector2i(0, -24)
 5:8/0 = 0
@@ -204,6 +202,8 @@ texture_region_size = Vector2i(32, 64)
 1:8/0/texture_origin = Vector2i(0, -24)
 2:8/0 = 0
 2:8/0/texture_origin = Vector2i(0, -24)
+3:8/0 = 0
+3:8/0/texture_origin = Vector2i(0, -24)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_pduoy"]
 texture = ExtResource("4_tveio")
