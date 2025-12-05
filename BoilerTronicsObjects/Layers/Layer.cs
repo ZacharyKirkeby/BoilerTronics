@@ -805,7 +805,7 @@ namespace BoilerTronicsObjects.Layers
 			// QueueRedraw();
 			// 'null' check to prevent errors
 			if (manager.terminalContainer != null) manager.terminalContainer.UpdateSelectedTerminal();
-			
+			manager.ClearSelectingObject();
 			return true;
 		}
 		
@@ -858,6 +858,7 @@ namespace BoilerTronicsObjects.Layers
 			if (objAtPos is Runnable) manager.currLevel.UnRegisterRunnable(objAtPos);
 			if (objAtPos is Scriptable sObj) sObj.DestroyTerminal();
 			
+			manager.ClearSelectingObject();
 			return true;
 		}
 
@@ -916,6 +917,12 @@ namespace BoilerTronicsObjects.Layers
 					
 					// no "selected" object, so update "selectedObject" accordingly
 					if (manager.selectedObject == null) {
+						
+						if (!CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos)) {
+							GD.Print("Layer: Selection: Selected object is invalid.");
+							return;
+						}
+						
 						manager.selectedObject = objAtPos;
 						GD.Print("Layer: Selection: Successfully selecting object: ", objAtPos);
 						
