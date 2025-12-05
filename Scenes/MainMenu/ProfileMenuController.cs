@@ -473,6 +473,7 @@ public partial class ProfileMenuController : Control
 		}
 		else
 		{
+			_profileContainer.GetChild<Label>(0).Text = "Profile";
 			ShowLoginForm();
 		}
 	}
