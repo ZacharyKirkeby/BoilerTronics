@@ -1,6 +1,7 @@
 // This will be the script for the level scene
 using Godot;
 using System;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Layers;
@@ -28,8 +29,29 @@ public partial class BoilerTronicsLevel : Node2D
 	public FactoryLayer fLayer;
 	public FloorLayer flLayer;
 
-	public ArrayList runnableList = new ArrayList(); // List of runnable Objects
-	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving
+	public ArrayList scriptRunnableList = new ArrayList(); // List of runnable Objects that wre scriptable
+
+	public SemaphoreSlim runSem = new SemaphoreSlim(255, 255); // Semephore that will allow us to see if we have objects still running
+
+	private static int nonScriptIndex = 0;
+	private static int miscIndex = 1;
+	private static int rotatorIndex = 2;
+	private static int convIndex = 3;
+	private static int clawIndex = 4;
+
+	// List of all object in the order that we want to run them, used for running
+	public List<PlaceableObject>[] runList = {
+		new List<PlaceableObject>(), // Non-scriptable objects
+		new List<PlaceableObject>(), // Misc
+		new List<PlaceableObject>(), // Rotators
+		new List<PlaceableObject>(), // Conveyores
+		new List<PlaceableObject>(), // Claws
+	};
+
+	public ArrayList runnableList = new ArrayList(); // List of runnable Objects (used for checking)
+
+	public ArrayList movingList = new ArrayList(); // List of objects that are currently moving (used for resetting in the middle of moving)
+	public ArrayList animatingList = new ArrayList(); // List of objects that are currently animated (used for resetting in the middle of moving)
 
 	public Parser P;
 	public ErrorHandler E;
@@ -109,13 +131,15 @@ public partial class BoilerTronicsLevel : Node2D
 
 	private BoilerTronicsLevel.GameRunState RunState;
 
-	private float StepDeltaTime = 1.0f; // 1 Second
-	private float SlowRunDeltaTime = 1.0f; // 1 Second
-	private float FastRunDeltaTime = 0.5f; // Half Second
-	private float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
-	private float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
-	private int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
-	private int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	// consider these as constants!
+	public const float StepDeltaTime = 1.0f; // 1 Second
+	public const float SlowRunDeltaTime = 1.0f; // 1 Second
+	public const float FastRunDeltaTime = 0.5f; // Half Second
+	public const float SubmitStartDeltaTime = 0.5f; // Half Second (this will slowly decrease)
+	public const float SubmitEndDeltaTime = 0.05f; // .05 Seconds (this will slowly decrease)
+	public const int SubmitSpeedCahngeStep = 5; // Number of steps between speed changes during submit speed
+	public const int SubmitSpeedSteps = 10; // Number fo steps between Start and End submit speed
+	
 	private int SubmitStartStep = -1; // This will be set when we enter the submit state, this is to allow for a smooth ramp up
 
 
@@ -353,23 +377,67 @@ public partial class BoilerTronicsLevel : Node2D
 			// attempt to reconstruct level based off the loaded information: update layers
 			GD.Print("BoilerTronicsLevel: loading layer: ", "floor");
 			UpdateLayer(manager.layerFloor, manager.GetSaveObjectList("floor"), manager.GetSaveProtectedTiles("floor"));
+
+			foreach (GroupedObject gObj in manager.currLevel.flLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "factory");
 			UpdateLayer(manager.layerFactory, manager.GetSaveObjectList("factory"), manager.GetSaveProtectedTiles("factory"));
+
+			foreach (GroupedObject gObj in manager.currLevel.fLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "claw");
 			UpdateLayer(manager.layerClaw, manager.GetSaveObjectList("claw"), manager.GetSaveProtectedTiles("claw"));
+
+			foreach (GroupedObject gObj in manager.currLevel.cLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "rail");
 			UpdateLayer(manager.layerRail, manager.GetSaveObjectList("rail"), manager.GetSaveProtectedTiles("rail"));
+
+			foreach (GroupedObject gObj in manager.currLevel.rLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
+			}
 			
 			GD.Print("BoilerTronicsLevel: loading layer: ", "movement");
 			UpdateLayer(manager.layerMovement, manager.GetSaveObjectList("movement"), manager.GetSaveProtectedTiles("movement"));
 			
-			// handle ConveyorGroup case
-			MovementLayer movement = (MovementLayer) manager.layerMovement;
-			foreach (ConveyorGroup obj in movement.ConvGroupList) {
-				obj.LoadTerminal();
+			foreach (GroupedObject gObj in manager.currLevel.mLayer.getGroupedList()) {
+				if (gObj is Scriptable sObj) {
+					foreach (GroupedSubObject gsObj in gObj.getObjectList()) {
+						if (gsObj.getText() == null) continue;
+						sObj.SetScript(gsObj.getText());
+						break;
+					}
+				}
 			}
 		}
 		
@@ -459,9 +527,9 @@ public partial class BoilerTronicsLevel : Node2D
 	/* Reset Layer */
 
 	public void Reset() {
+		GD.Print("BoilerTronicsLevel: Starting Reset");
 		// Stops moving objects to prevent errors
 		HaultObjects();
-
 		// Reset all layers
 		mLayer.Reset();
 		rLayer.Reset();
@@ -477,25 +545,51 @@ public partial class BoilerTronicsLevel : Node2D
 			Layer layer = mObj.layer;
 			// Reset object
 			obj.ResetPos();
-			// Add back to it's layer
+			// Add back to its layer
 			layer.AddObject(obj);
 			// Free object
-			mObj.QueueFree();
+			if (IsInstanceValid(mObj)) {
+				mObj.QueueFree();
+			}
 		}
 
+		foreach (List<PlaceableObject> RL in runList) {
+			for (int i = RL.Count - 1; i >= 0; i--)
+				{
+				PlaceableObject obj = RL[i];
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Reset();
+			}
+		}
+		
+		// reset all animating objects
+		foreach (AnimatingObject aObj in animatingList) {
+			aObj.Reset();
+			aObj.QueueFree();
+		}
+		
 		foreach (Runnable rObj in runnableList) {
 			rObj.Reset();
 		}
 		
+		// why is this code duplicated from the above?
 		foreach (Runnable rObj in runnableList)
 		{
 			rObj.Reset();
 		}
 		
+		
+		
 		StepCount = 0;
 
-		// Empty moving list
+		// Empty moving/animating list
 		this.movingList.Clear();
+		this.animatingList.Clear();
+
+		// ResetSem
+		runSem = null;
+		runSem = new SemaphoreSlim(255, 255);
 
 		// Clear errors
 		E.ClearError();
@@ -521,6 +615,8 @@ public partial class BoilerTronicsLevel : Node2D
 		RunState = BoilerTronicsLevel.GameRunState.Idle; // Set to idle
 		BoilerTronicsGlobalManager.GlobalManager.unlockTerminals();
 		SubmitStartStep = -1;
+		
+		GD.Print("BoilerTronicsLevel: Ended Reset");
 	}
 
 	/* RunState Management */
@@ -557,18 +653,34 @@ public partial class BoilerTronicsLevel : Node2D
 
 	/* Stepping and Running */
 
+	/* Run Order
+	 * ------------------------------
+	 * 1. Non-sctiptable elemnts (factory elements, materials, etc.), these should not take a time step to actually do their action. May have animations
+	 * 2. Misc runnable elements
+	 * 3. Rotators
+	 * 4. Conveyors
+	 * 5. Claws
+	 */
 	public void Step() {
+
 		if (E.HasError()) {
 			BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 			soundManager.PlaySound(SoundType.Error);
 			return; // Can't step if there is an error
 		}
+
 		if (movingList.Count != 0) return; // Can't step while stuff is moving
-		foreach (PlaceableObject obj in runnableList) {
-			if (!(obj is Runnable)) continue; // error here?
-			Runnable rObj = (Runnable)obj;
-			rObj.Step();
+
+		if (runSem.CurrentCount != 255) return; // If there are still things running we don't want to do another step
+
+		foreach (List<PlaceableObject> RL in runList) {
+			foreach (PlaceableObject obj in RL) {
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Step();
+			}
 		}
+
 		StepCount++;
 	}
 
@@ -589,6 +701,7 @@ public partial class BoilerTronicsLevel : Node2D
 				soundManager.PlaySound(SoundType.Error);
 				return; // Can't step if there is an error
 			}
+
 			Step(); // Step while we are running
 
 			// if we are on submit speed
@@ -610,26 +723,76 @@ public partial class BoilerTronicsLevel : Node2D
 
 	public void RegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
-		if (!(obj is Runnable)) return;
-		if (runnableList.Contains(obj)) return;
+		if (!(obj is Runnable)) {
+			GD.Print("Not runnable");
+			return;
+		}
+
+		if (runnableList.Contains(obj)) {
+			GD.Print("In list");
+			return;
+		}
+
+		if (obj is ClawObject) {
+			runList[clawIndex].Add(obj);
+		} else if (obj is ConveyorGroup) {
+			runList[convIndex].Add(obj);
+		} else if (obj is ConveyorRotatorObject) {
+			runList[rotatorIndex].Add(obj);
+		} else if (!(obj is Scriptable)) {
+			runList[nonScriptIndex].Add(obj);
+		} else {
+			runList[miscIndex].Add(obj);
+		}
+
 		runnableList.Add(obj);
+
+		GD.Print("Register", obj);
 	}
 
 	public void UnRegisterRunnable(PlaceableObject obj) {
 		// Add error checks later
 		if (!(obj is Runnable)) return;
+
 		if (!(runnableList.Contains(obj))) return;
+
+		if (obj is ClawObject) {
+			runList[clawIndex].Remove(obj);
+		} else if (obj is ConveyorGroup) {
+			runList[convIndex].Remove(obj);
+		} else if (obj is ConveyorRotatorObject) {
+			runList[rotatorIndex].Remove(obj);
+		} else if (!(obj is Scriptable)) {
+			runList[nonScriptIndex].Remove(obj);
+		} else {
+			runList[miscIndex].Remove(obj);
+		}
+
 		runnableList.Remove(obj);
+		GD.Print("Unregister", obj);
 	}
 	
 	/* Handle Moving Objects */
 
-	public void RegisterMoving(MovingObject mObj) {
-		movingList.Add(mObj);
+	public void RegisterMoving(Object obj) {
+		if (obj is TimeConsumingObject) 
+		movingList.Add(obj);
 	}
 
-	public void UnRegisterMoving(MovingObject mObj) {
-		movingList.Remove(mObj);
+	public void UnRegisterMoving(Object obj) {
+		if (obj is TimeConsumingObject) 
+		movingList.Remove(obj);
+	}
+	
+	/* Handle Animating Objects */
+	public void RegisterAnimating(Object obj) {
+		if (obj is AnimatingObject) 
+		animatingList.Add(obj);
+	}
+
+	public void UnRegisterAnimating(Object obj) {
+		if (obj is AnimatingObject) 
+		animatingList.Remove(obj);
 	}
 
 	/* Error Handling */
@@ -637,9 +800,14 @@ public partial class BoilerTronicsLevel : Node2D
 	// Resume Objects ?? (This could be used in the middle of a step if we pause)
 
 	public void HaultObjects() {
-		// Halt all other movement
-		foreach (MovingObject obj in movingList) {
-			obj.Halt();
+		
+		// Halt all other movement/animations
+		foreach (TimeConsumingObject obj in movingList) {
+			obj.haultObject();
+		}
+		
+		foreach (TimeConsumingObject obj in animatingList) {
+			obj.haultObject();
 		}
 
 	}
