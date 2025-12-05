@@ -211,6 +211,9 @@ public partial class LevelUi : Node2D
 				storyMan.SaveData();
 			}
 		}
+	
+		// If we're in a normal level, don't save the level creator's name!
+		manager.saveState.shouldSaveCreatorName = false;
 	}
 
 	public override void _Process(double delta) {
@@ -689,6 +692,7 @@ public partial class LevelUi : Node2D
 			//if all better, achievement 4 unlocked
 			achievementManager.TryAchievementUnlock("Achievement4");
 		}
+		GetNode<Histogram>("%Histogram").changeUserScore((grades[0] + grades[1] + grades[2]) / 3);
 		return grades;
 	}
 
@@ -785,6 +789,14 @@ public partial class LevelUi : Node2D
 		GetNode<Window>("%StoryWindow").Visible = false;
 	}
 
+	private void _on_enhanced_stats_button_pressed() {
+		if(GetNode<Panel>("%Enhanced Stats Panel").Visible == true) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = false;
+		}
+		else if(GetNode<Panel>("%Enhanced Stats Panel").Visible == false) {
+			GetNode<Panel>("%Enhanced Stats Panel").Visible = true;
+		}
+	}
 	private void _on_achievement_notice_close_requested()
 	{
 		GetNode<Window>("Achievement Notice").Visible = false;
