@@ -78,6 +78,7 @@ public partial class DragableObjectControl : Control {
 			subView.AddChild(draggable);
 
 			manager.currSlection = sel;
+			manager.ClearSelectingObject();
 
 			GD.Print("Curr Sel: ", manager.currSlection);
 

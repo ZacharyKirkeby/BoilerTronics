@@ -42,4 +42,7 @@ project/assembly_name="BoilerTronics"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=2
+textures/decals/filter=0
+textures/light_projectors/filter=0
 environment/defaults/default_clear_color=Color(0.18000486, 0.1800049, 0.1800048, 1)

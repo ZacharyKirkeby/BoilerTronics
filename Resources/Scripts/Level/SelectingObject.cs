@@ -78,9 +78,26 @@ public partial class SelectingObject : Area2D
 		this.AddChild(highlight);
 		this.AddChild(sprite);
 		sprite.ZIndex = layer.ZIndex + 2;
+		//highlight.ZIndex = layer.ZIndex + 0;
 		
 		// TODO: apply correct visual effects
-		sprite.Modulate = new Color("dcc4505c");
-		highlight.Modulate = new Color("000000ff");
+		sprite.Modulate = new Color("ffffffc2");
+		highlight.Modulate = new Color("00000081");
+		
+		
+		// TODO: add label for price
+		Label costLabel = new Label();
+		costLabel.SetText("$" + obj.GetCost());
+		costLabel.Position = sprite.Position;
+		
+		Theme inTheme = (Godot.Theme) GD.Load("res://Scenes/buttontheme.tres");
+		
+		// thanks: https://godotforums.org/d/33246-changing-font-size-of-the-label-through-code/3
+		costLabel.AddThemeFontSizeOverride("font_size", 16);
+		costLabel.SetTheme(inTheme);
+		costLabel.Position +=  new Vector2(16, 16);
+		
+		this.AddChild(costLabel);
+		costLabel.ZIndex = 1000;
 	}
 }
