@@ -98,12 +98,13 @@ public partial class MainMenu : Node2D
 		List<LevelData> levels = await _get_levels();
 		foreach (LevelData level in levels)
 		{
-			CreateRow(level.LevelName, level.CreatorName, level);
+			vbox.AddChild(CreateRow(level.LevelName, level.CreatorName, level));
 		}
 	}
 	
 	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
 	{
+		GD.Print("test");
 		// ---- PanelContainer ----
 		var panel = new PanelContainer
 		{
@@ -194,8 +195,20 @@ public partial class MainMenu : Node2D
 	
 	private void OnRowButtonPressed(LevelData level)
 	{
-	GD.Print($"Button for level {level.LevelName} pressed");
-	// TODO Open level creator with level loaded
+		GD.Print($"Button for level {level.LevelName} pressed");
+		// TODO Open level creator with level loaded
+		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		// TODO: create level given the LevelData
+		string levelName = level.CreatorName + level.LevelId;
+		manager.saveState.SaveStringTo(manager, "Downloaded", levelName, level.LevelDataJson);
+		
+		// TODO: set the load level target
+		
+		manager.loadLevelName = "Downloaded/" + levelName;
+		
+		// play the level
+		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
 	}
 
 	private void _on_level_creator_button_pressed()
