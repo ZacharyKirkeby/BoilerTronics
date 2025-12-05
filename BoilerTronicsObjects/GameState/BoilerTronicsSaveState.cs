@@ -34,8 +34,10 @@ public class BoilerTronicsSaveState
 	
 	int level_id = 11; // id for which level this save is referring to
 	
-	// TODO: implement into saving/loading
 	public string levelName = "placeholder";
+	
+	public bool shouldSaveCreatorName = false;
+	public string creatorName = null;
 	
 	// LAZY: this is public now
 	// default: a 50% darker version of the base floor tile, 2 tiles wide
@@ -186,6 +188,12 @@ public class BoilerTronicsSaveState
 				{ "saveSlot", save_slot },
 				{ "boundarySize", boundarySize },
 			};
+		
+		// if we're authenticated, save the username
+		ProfileMenuController profileController = ProfileMenuController.GlobalManager;
+		if (profileController.IsAuthenticated() && shouldSaveCreatorName) {
+			metadata["creatorName"] = profileController.GetUserData().Username;
+		}
 			
 		if (this.boundaryTex != null) {
 			metadata["boundaryAtlasX"] = boundaryTex.GetAtlasPos().X;
@@ -208,6 +216,54 @@ public class BoilerTronicsSaveState
 		((FileAccess) saveFile).Close();
 	}
 	
+	// note: 
+	public void SaveStringTo(BoilerTronicsGlobalManager manager, string directory, string fileName, string input) {
+		// lazy; import public data straight from manager
+		
+		// note: some formatting adopted from "https://docs.godotengine.org/en/stable/tutorials/io/saving_games.html"
+		string DirectoryPath = "user://" + directory;
+		string SavePath = DirectoryPath + fileName + ".save";
+		GD.Print("SaveState: Trying to save to ", SavePath);
+		
+		// by default saved in '%user%/AppData/Roaming/Godot/app_userdata/[game name]'
+		// TODO: have a distinct file save system for saving autosaves, level saves, etc
+		var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
+		// 'using' keyword means that this is automatically disposed of when going out of scope
+		
+		// if we can't open the file, then try and make the directory
+		// and then try to open the file again
+		if (saveFile == null) {
+			GD.Print("SaveState: Could not save, err: ", FileAccess.GetOpenError());
+			GD.Print("SaveState: Trying to create (recursive) directory(s) instead:");
+			
+			var dirSuccess = DirAccess.MakeDirRecursiveAbsolute(DirectoryPath);
+			
+			// if 'ERROR' == 0, then good. else, not so good.
+			if (dirSuccess != 0) {
+				GD.Print("SaveState: Failed to make recursive directory(s): " + DirectoryPath);
+				return;
+			}
+			
+			// try again
+			saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Write);
+			
+			if (saveFile == null) {
+				GD.Print("SaveState: Could not save, err: ", FileAccess.GetOpenError());
+				GD.Print("SaveState: Aborting save process.");
+				return;
+			} else {
+				GD.Print("SaveState: Successfully created recursive directories and save file. Continue saving process now.");
+			}
+		}
+		
+		BoilerTronicsGlobalManager man = BoilerTronicsGlobalManager.GlobalManager;
+		
+		// save this single line to input
+		saveFile.StoreLine(input);
+		
+		((FileAccess) saveFile).Close();
+	}
+	
 	// load level data; automatically generate the save data info, given the level ID
 	// input should be handled automatically by the global manager
 	// returns success of loading the save data
@@ -216,11 +272,17 @@ public class BoilerTronicsSaveState
 		return LoadData(manager, SavePath);
 	}
 	
-	// load level name; automatically generate the save data info, given the level ID
+	// load level name; automatically loads a save given its name
 	// input should be handled automatically by the global manager
+	// checks if save file can be found in local and game directories
 	// returns success of loading the save data
 	public bool LoadLevelName(BoilerTronicsGlobalManager manager, String levelName) {
-		string SavePath = "res://Resources/Levels/" + levelName + ".save";
+		string SavePath = "user://LevelCreator/" + levelName + ".save";
+		
+		// if this isn't in the user directory, maybe try looking for it in the game's directory?
+		if (!FileAccess.FileExists(SavePath)) {
+			SavePath = "res://Resources/Levels/" + levelName + ".save";
+		}
 		return LoadData(manager, SavePath);
 	}
 	
@@ -231,6 +293,18 @@ public class BoilerTronicsSaveState
 	public bool LoadSaveData(BoilerTronicsGlobalManager manager, string SaveLocationName) {
 		string SavePath = "user://" + SaveLocationName + ".save";
 		return LoadData(manager, SavePath);
+	}
+	
+	// given the save location, try and return the raw contents of the save file as a string
+	public string LoadDataIntoString(BoilerTronicsGlobalManager manager, string SaveLocationName) {
+		string SavePath = "user://" + SaveLocationName + ".save";
+		
+		if (!FileAccess.FileExists(SavePath)) {return null;}
+		
+		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
+		string output = saveFile.GetAsText();
+		
+		return output;
 	}
 	
 	// given a save location, load the data from that save and save that into our private data objects
@@ -288,6 +362,11 @@ public class BoilerTronicsSaveState
 					
 					if (node.ContainsKey("levelName")) {
 						this.levelName = (string) node["levelName"];
+					}
+					
+					// load username if necessary
+					if (node.ContainsKey("creatorName")) {
+						this.creatorName = (string) node["creatorName"];
 					}
 					
 					GD.Print("SaveState: metadata: level:", + level_id + ", save slot:" + save_slot + ", level dimensions:" + levelDimensions);
