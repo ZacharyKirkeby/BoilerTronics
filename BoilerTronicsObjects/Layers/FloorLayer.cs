@@ -24,23 +24,8 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{	
-			// add a check to make sure that we are only trying to place floors
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.currSlection != 2) {return;}
-			// GD.Print("FloorLayer: Working Input");
-			/*
-			// MouseInput(@event, 2, 0);
-			if (manager.objectToMove is FloorLayerObject) {
-				MouseInput(@event, 2);
-				// GD.Print("Floor");
-			}
-			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
-				// We always wnt to try to move
-				// MouseInput(@event, 2);
-				return;
-			}
+			// do nothing -- we should only ever receive pass-through events fom the FactoryLayer!
 			base._Input(@event);
-			*/
 		}
 		
 		
