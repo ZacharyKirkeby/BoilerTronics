@@ -188,6 +188,29 @@ public partial class LevelUi : Node2D
 		if(manager.GetLevelID() == 37) {
 			achievementManager.TryEasterEggUnlock("EasterEgg3");
 		}
+		
+		int levelId = manager.GetLevelID();
+		
+		if (BoilerTronicsStoryManager.StoryManager == null) {
+			BoilerTronicsStoryManager.StoryManager = new BoilerTronicsStoryManager();
+		}
+		BoilerTronicsStoryManager storyMan = BoilerTronicsStoryManager.StoryManager;
+		
+		// note: may error into output if first time booting, but this should be a non-issue.
+		storyMan.LoadData();
+		bool storyPlayed = storyMan.HasStoryPlayed(levelId);
+		
+		if (GetNode<Window>("%StoryWindow") != null) {
+			if (storyPlayed) {
+				// don't show story if we've seen it already
+				GetNode<Window>("%StoryWindow").Visible = false;
+			} else {
+				// first time seeing story
+				// mark as "played", save to data
+				storyMan.MarkStoryPlayed(levelId);
+				storyMan.SaveData();
+			}
+		}
 	
 		// If we're in a normal level, don't save the level creator's name!
 		manager.saveState.shouldSaveCreatorName = false;
@@ -762,6 +785,10 @@ public partial class LevelUi : Node2D
 		GetNode<Button>("%HintForward").Visible = hintIndex < hints.Length - 1;
 	}
 	
+	private void _on_level_1_story_close_requested() {
+		GetNode<Window>("%StoryWindow").Visible = false;
+	}
+
 	private void _on_enhanced_stats_button_pressed() {
 		if(GetNode<Panel>("%Enhanced Stats Panel").Visible == true) {
 			GetNode<Panel>("%Enhanced Stats Panel").Visible = false;
