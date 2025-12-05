@@ -23,6 +23,42 @@ public partial class Leaderboard : CenterContainer
 	private Button friendsToggleButton;
 	private int currentLevelId = 0;
 
+	// Hardcoded bc fml
+	private readonly Dictionary<int, List<(string Name, float Score)>> defaultLeaderboards = new()
+	{
+		{ 0, new List<(string Name, float Score)>
+			{
+				("Abhi", 45.23f),
+				("Keenan", 47.89f),
+				("Ethan", 51.34f),
+				("Ethen", 53.67f),
+				("Zach", 56.12f),
+				("You", 58.45f)
+			}
+		},
+		{ 1, new List<(string Name, float Score)>
+			{
+				("Ethan", 62.45f),
+				("Zach", 65.78f),
+				("Ethen", 68.23f),
+				("Keenan", 71.56f),
+				("Abhi", 74.89f),
+				("You", 77.34f)
+			}
+		},
+		{ 2, new List<(string Name, float Score)>
+			{
+				("Ethan", 82.67f),
+				("You", 85.12f),
+				("Ethan", 88.45f),
+				("Ethen", 91.78f),
+				("Keenan", 94.23f),
+				("Zach", 97.56f)
+			}
+		}
+		// Add more levels as needed
+	};
+
 	public override void _Ready()
 	{
 		InitializeServices();
@@ -55,11 +91,9 @@ public partial class Leaderboard : CenterContainer
 
 	private void InitializeServices()
 	{
-		_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
-		AddChild(_authManager);
-
-		_firestoreService = FirestoreService.Instance ?? new FirestoreService();
-		AddChild(_firestoreService);
+		MainMenu.InitializeServices();
+		this._authManager = MainMenu.GetFirebaseAuthManager();
+		this._firestoreService = MainMenu.GetFirestoreService();
 	}
 
 	private async void UpdateFriendsButtonVisibility()
@@ -107,6 +141,7 @@ public partial class Leaderboard : CenterContainer
 			currentLevelId = 0;
 
 			leaderboard.Clear();
+			LoadDefaultLeaderboard(currentLevelId);
 			DisplayLeaderboard(leaderboard);
 
 			if (extraName != null) extraName.Visible = false;
@@ -125,7 +160,7 @@ public partial class Leaderboard : CenterContainer
 		string levelIdStr = $"level_{levelId}";
 		var friendScores = await _firestoreService.GetFriendScoresAsync(levelIdStr, 10);
 		friendsLeaderboard.Clear();
-
+		GD.Print(friendScores);
 		foreach (var score in friendScores)
 			friendsLeaderboard.Add((score.Username, score.Score / 100f));
 
@@ -155,7 +190,6 @@ public partial class Leaderboard : CenterContainer
 		else
 		{
 			LoadLocalLeaderboard(currentLevelId);
-			DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
 		}
 	}
 
@@ -183,17 +217,51 @@ public partial class Leaderboard : CenterContainer
 		catch
 		{
 			LoadLocalLeaderboard(levelId);
-			DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
 		}
 	}
 
 	private void LoadLocalLeaderboard(int levelId)
 	{
 		leaderboard.Clear();
+		
+		// Try to load from file first
 		LoadLeaderboard(levelId, leaderboard);
 		bool hasScore = LoadScore(levelId, leaderboard);
-		if (!hasScore)
-			leaderboard.Add(("You", 0f));
+		
+		// If no data exists, use default leaderboard
+		if (leaderboard.Count == 0)
+		{
+			LoadDefaultLeaderboard(levelId);
+		}
+		// If only user score exists, add it to default leaderboard
+		else if (leaderboard.Count == 1 && hasScore)
+		{
+			var userScore = leaderboard[0];
+			LoadDefaultLeaderboard(levelId);
+			if (!leaderboard.Any(e => e.Name == userScore.Name))
+			{
+				leaderboard.Add(userScore);
+			}
+			leaderboard = leaderboard.OrderByDescending(e => e.Score).ToList();
+		}
+		
+		DisplayLeaderboard(leaderboard.OrderByDescending(e => e.Score).ToList());
+	}
+
+	private void LoadDefaultLeaderboard(int levelId)
+	{
+		leaderboard.Clear();
+		
+		// Use default leaderboard for this level if it exists
+		if (defaultLeaderboards.ContainsKey(levelId))
+		{
+			leaderboard.AddRange(defaultLeaderboards[levelId]);
+		}
+		else
+		{
+			// Fallback to level 0 defaults if specific level doesn't exist
+			leaderboard.AddRange(defaultLeaderboards[0]);
+		}
 	}
 
 	private void DisplayLeaderboard(List<(string Name, float Score)> scoreList)
@@ -285,7 +353,10 @@ public partial class Leaderboard : CenterContainer
 	public static bool LoadScore(int levelId, List<(string, float)> scoreList)
 	{
 		string path = $"user://Leaderboard/leaderboard{levelId}.leaderboard";
-		if (!FileAccess.FileExists(path)) return false;
+		if (!FileAccess.FileExists(path))
+		{
+			return false;
+		} 
 
 		using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
 		var jsonString = file.GetLine();
