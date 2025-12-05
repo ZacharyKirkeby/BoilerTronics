@@ -283,6 +283,7 @@ public class BoilerTronicsSaveState
 		if (!FileAccess.FileExists(SavePath)) {
 			SavePath = "res://Resources/Levels/" + levelName + ".save";
 		}
+		GD.Print("BoilerTronicsSaveState: LoadLevelName Path: ", SavePath);
 		return LoadData(manager, SavePath);
 	}
 	
@@ -311,7 +312,7 @@ public class BoilerTronicsSaveState
 	// returns success of loading the file
 	private bool LoadData(BoilerTronicsGlobalManager manager, string SavePath) {
 		
-		if (!FileAccess.FileExists(SavePath)) {return false;} // not valid save location
+		if (!FileAccess.FileExists(SavePath)) {GD.Print("BoilerTronicsSaveState: SavePath invalid!"); return false;} // not valid save location
 		
 		// open up save data
 		using var saveFile = FileAccess.Open(SavePath, FileAccess.ModeFlags.Read);
