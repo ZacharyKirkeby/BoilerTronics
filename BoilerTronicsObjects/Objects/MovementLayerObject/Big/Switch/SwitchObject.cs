@@ -10,7 +10,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class  SwitchObject: PlaceableBig, Scriptable, Runnable {
+	public class  SwitchObject: PlaceableBig, Scriptable, Runnable, MovementLayerObject {
 		
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }

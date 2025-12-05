@@ -8,7 +8,7 @@ using BoilerTronicsObjects.Interfaces;
 
 namespace BoilerTronicsObjects.Objects.MovementLayerObjects {
 
-	public class ConveyorObject : PlaceableObject, GroupedSubObject {
+	public class ConveyorObject : PlaceableObject, GroupedSubObject, MovementLayerObject {
 
 		public override int GetCost() { return 100; }
 		public new static int GetCostStatic() { return 100; }

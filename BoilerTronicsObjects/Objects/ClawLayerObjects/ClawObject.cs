@@ -16,7 +16,7 @@ namespace BoilerTronicsObjects.Objects.ClawLayerObjects
 
 	public class ClawObject : PlaceableAnimated, Scriptable, Runnable, QualityObject, ClawLayerObject {
 		
-		public override int GetCost() { return 100; }
+		public override int GetCost() { return 100 * ((int) Q + 1); }
 		public new static int GetCostStatic() { return 100; }
 		
 		static Vector2I objectAtlasPos = new Vector2I(0, 0);
