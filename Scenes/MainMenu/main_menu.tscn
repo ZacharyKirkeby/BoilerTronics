@@ -429,10 +429,14 @@ text = "Leaderboard"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(500, 30)
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -446,6 +450,19 @@ popup/item_0/text = "Level 1-1"
 popup/item_0/id = 0
 popup/item_1/text = "Level 1-2"
 popup/item_1/id = 1
+
+[node name="FriendsToggleButton" type="Button" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+visible = false
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_rlg4b")
+text = "Friends"
 
 [node name="GridContainer" type="GridContainer" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
