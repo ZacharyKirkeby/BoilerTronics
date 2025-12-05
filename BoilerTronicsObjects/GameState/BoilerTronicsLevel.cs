@@ -612,18 +612,16 @@ private async Task SaveScoreToFirebase(int levelId, float score, float[] grades)
 			aObj.Reset();
 			aObj.QueueFree();
 		}
-		
-		foreach (Runnable rObj in runnableList) {
-			rObj.Reset();
+
+		foreach (List<PlaceableObject> RL in runList) {
+			for (int i = RL.Count - 1; i >= 0; i--)
+				{
+				PlaceableObject obj = RL[i];
+				if (!(obj is Runnable)) continue;
+				Runnable rObj = (Runnable)obj;
+				rObj.Reset();
+			}
 		}
-		
-		// why is this code duplicated from the above?
-		foreach (Runnable rObj in runnableList)
-		{
-			rObj.Reset();
-		}
-		
-		
 		
 		StepCount = 0;
 

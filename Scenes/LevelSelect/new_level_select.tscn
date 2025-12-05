@@ -1,0 +1,1553 @@
+[gd_scene load_steps=24 format=4 uid="uid://xwk7mdkifoyd"]
+
+[ext_resource type="Script" uid="uid://bjjp7fgr1wmfp" path="res://Scenes/LevelSelect/NewLevelSelect.cs" id="1_gji4h"]
+[ext_resource type="Theme" uid="uid://b6b4ydxbprpk8" path="res://Scenes/LevelSelect/paneltheme.tres" id="2_pn0g7"]
+[ext_resource type="Theme" uid="uid://doo374ukjh36b" path="res://Resources/ButtonThemes/buttontheme.tres" id="3_iburf"]
+[ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="3_jv00j"]
+[ext_resource type="Texture2D" uid="uid://bup3h00kbmgup" path="res://Resources/Sprites/32x32_tracks.png" id="3_y0kcv"]
+[ext_resource type="Texture2D" uid="uid://cxqq2u61vlj2p" path="res://Resources/Sprites/32x32_train.png" id="5_gji4h"]
+[ext_resource type="Texture2D" uid="uid://b3n57xvq1tw8s" path="res://Resources/Icons/arrow-right-2.png" id="5_pgg1l"]
+[ext_resource type="Theme" uid="uid://2o6akadb80fc" path="res://Scenes/buttontheme.tres" id="6_k5pw0"]
+[ext_resource type="Texture2D" uid="uid://b243stotpjtla" path="res://Resources/Sprites/32x32_trainr.png" id="7_5fyqv"]
+[ext_resource type="Texture2D" uid="uid://c57l4safmhyj4" path="res://Resources/Icons/arrow-up.png" id="7_jv00j"]
+[ext_resource type="Texture2D" uid="uid://drlpbxqsu622l" path="res://Resources/Icons/arrow-down.png" id="10_uofod"]
+[ext_resource type="Texture2D" uid="uid://bwkfrqjmrfgmo" path="res://Resources/Icons/arrow-left-2.png" id="11_lpahk"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5fyqv"]
+texture = ExtResource("3_y0kcv")
+0:0/size_in_atlas = Vector2i(2, 2)
+0:0/0 = 0
+2:0/size_in_atlas = Vector2i(2, 2)
+2:0/0 = 0
+0:2/size_in_atlas = Vector2i(2, 2)
+0:2/0 = 0
+2:2/size_in_atlas = Vector2i(2, 2)
+2:2/0 = 0
+4:0/size_in_atlas = Vector2i(2, 2)
+4:0/0 = 0
+4:2/size_in_atlas = Vector2i(2, 2)
+4:2/0 = 0
+6:2/size_in_atlas = Vector2i(2, 2)
+6:2/0 = 0
+6:0/size_in_atlas = Vector2i(2, 2)
+6:0/0 = 0
+0:6/size_in_atlas = Vector2i(2, 2)
+0:6/0 = 0
+2:6/size_in_atlas = Vector2i(2, 2)
+2:6/0 = 0
+4:6/size_in_atlas = Vector2i(2, 2)
+4:6/0 = 0
+6:6/size_in_atlas = Vector2i(2, 2)
+6:6/0 = 0
+6:4/size_in_atlas = Vector2i(2, 2)
+6:4/0 = 0
+4:4/size_in_atlas = Vector2i(2, 2)
+4:4/0 = 0
+2:4/size_in_atlas = Vector2i(2, 2)
+2:4/0 = 0
+0:4/size_in_atlas = Vector2i(2, 2)
+0:4/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y0kcv"]
+texture = ExtResource("5_gji4h")
+0:0/size_in_atlas = Vector2i(2, 2)
+0:0/0 = 0
+2:0/size_in_atlas = Vector2i(2, 2)
+2:0/0 = 0
+4:0/size_in_atlas = Vector2i(2, 2)
+4:0/0 = 0
+6:0/size_in_atlas = Vector2i(2, 2)
+6:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_ttty8"]
+sources/0 = SubResource("TileSetAtlasSource_5fyqv")
+sources/1 = SubResource("TileSetAtlasSource_y0kcv")
+
+[sub_resource type="Animation" id="Animation_gji4h"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(940, 521)]
+}
+
+[sub_resource type="Animation" id="Animation_iburf"]
+resource_name = "new_animation"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.9666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1026, 525), Vector2(2860, 520)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y0kcv"]
+_data = {
+&"RESET": SubResource("Animation_gji4h"),
+&"new_animation": SubResource("Animation_iburf")
+}
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jv00j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uofod"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lpahk"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s4bmt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ardaf"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_gji4h")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(960, 540)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_top = -4608.0
+offset_right = 11520.0
+offset_bottom = 1152.0
+theme_override_constants/separation = 0
+
+[node name="Section5" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Section5"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label51" type="Label" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play51" type="Button" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel2"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label52" type="Label" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play52" type="Button" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel3"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label53" type="Label" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play53" type="Button" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel4"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label54" type="Label" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play54" type="Button" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel4/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel5"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label55" type="Label" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play55" type="Button" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel5/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section5"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section5/Panel6"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label56" type="Label" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play56" type="Button" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section5/Panel6/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Section4" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Section4"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label41" type="Label" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play41" type="Button" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel2"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label42" type="Label" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play42" type="Button" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel3"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label43" type="Label" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play43" type="Button" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel4"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label44" type="Label" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play44" type="Button" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel4/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel5"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label45" type="Label" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play45" type="Button" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel5/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section4"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section4/Panel6"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label46" type="Label" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play46" type="Button" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section4/Panel6/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Section3" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Section3"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label31" type="Label" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play31" type="Button" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel2"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label32" type="Label" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play32" type="Button" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel3"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label33" type="Label" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play33" type="Button" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel4"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label34" type="Label" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play34" type="Button" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel4/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel5"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label35" type="Label" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play35" type="Button" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel5/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section3/Panel6"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label36" type="Label" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play36" type="Button" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section3/Panel6/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Section2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Section2"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label21" type="Label" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play21" type="Button" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel2"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label22" type="Label" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play22" type="Button" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel3"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label23" type="Label" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play23" type="Button" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel4"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label24" type="Label" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play24" type="Button" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel4/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel5"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label25" type="Label" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play25" type="Button" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel5/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section2/Panel6"]
+z_index = 1
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label26" type="Label" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play26" type="Button" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section2/Panel6/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Section1" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Section1"]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label11" type="Label" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play11" type="Button" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel2" type="PanelContainer" parent="VBoxContainer/Section1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel2"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label12" type="Label" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play12" type="Button" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel2/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel3" type="PanelContainer" parent="VBoxContainer/Section1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel3"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label13" type="Label" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play13" type="Button" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel3/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel4" type="PanelContainer" parent="VBoxContainer/Section1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel4"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label14" type="Label" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play14" type="Button" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel4/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel5" type="PanelContainer" parent="VBoxContainer/Section1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel5"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label15" type="Label" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play15" type="Button" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel5/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="Panel6" type="PanelContainer" parent="VBoxContainer/Section1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_pn0g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Section1/Panel6"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Control" type="Control" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label16" type="Label" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8117647, 0.7254902, 0.5686275, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("3_jv00j")
+theme_override_font_sizes/font_size = 130
+text = "Level 1.1    Grade: A"
+horizontal_alignment = 1
+
+[node name="Play16" type="Button" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme = ExtResource("6_k5pw0")
+theme_override_font_sizes/font_size = 50
+text = "Play"
+
+[node name="Control2" type="Control" parent="VBoxContainer/Section1/Panel6/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+scale = Vector2(8, 8)
+tile_map_data = PackedByteArray("AAAOAAQAAAACAAAAAAAQAAQAAAACAAAAAAASAAQAAAACAAAAAAAUAAQAAAACAAAAAAAWAAQAAAACAAAAAAAYAAQAAAACAAAAAAAHAAQAAAAEAAIAAAAHAAMAAAAEAAAAAAAHAAEAAAAEAAAAAAAJAAQAAAACAAAAAAALAAQAAAACAAAAAAANAAQAAAACAAAAAAAaAAQAAAACAAAAAAAcAAQAAAACAAAAAAAeAAQAAAACAAAAAAAgAAQAAAACAAAAAAAiAAQAAAACAAAAAAAkAAQAAAACAAAAAAAmAAQAAAACAAAAAAAoAAQAAAACAAAAAAAqAAQAAAACAAAAAAAsAAQAAAACAAAAAAAuAAQAAAACAAAAAAAwAAQAAAACAAAAAAAyAAQAAAACAAAAAAA0AAQAAAACAAAAAAA2AAQAAAACAAAAAAA4AAQAAAACAAAAAAA6AAQAAAACAAAAAAA8AAQAAAACAAAAAAA+AAQAAAACAAAAAABAAAQAAAACAAAAAABCAAQAAAACAAAAAABEAAQAAAACAAAAAABGAAQAAAACAAAAAABIAAQAAAACAAAAAABKAAQAAAACAAAAAABMAAQAAAACAAAAAABOAAQAAAACAAAAAABQAAQAAAACAAAAAAAHAP//AAAEAAAAAAAHAPn/AAAEAAAAAAAHAPf/AAAEAAAAAAAHAPX/AAAEAAAAAAAHAO//AAAEAAAAAAAHAO3/AAAEAAAAAAAHAOv/AAAEAAAAAAAHAOf/AAAEAAAAAAAHAOX/AAAEAAAAAAAHAOT/AAAAAAAAAAAHAP7/AAAAAAAAAAAKAPv/AAACAAAAAAAMAPv/AAACAAAAAAAOAPv/AAACAAAAAAAQAPv/AAACAAAAAAASAPv/AAACAAAAAAAUAPv/AAACAAAAAAAWAPv/AAACAAAAAAAYAPv/AAACAAAAAAAaAPv/AAACAAAAAAAcAPv/AAACAAAAAAAeAPv/AAACAAAAAAAgAPv/AAACAAAAAAAiAPv/AAACAAAAAAAkAPv/AAACAAAAAAAmAPv/AAACAAAAAAAoAPv/AAACAAAAAAAqAPv/AAACAAAAAAAsAPv/AAACAAAAAAAuAPv/AAACAAAAAAAwAPv/AAACAAAAAAAyAPv/AAACAAAAAAA0APv/AAACAAAAAAA2APv/AAACAAAAAAA4APv/AAACAAAAAAA6APv/AAACAAAAAAA8APv/AAACAAAAAAA+APv/AAACAAAAAABAAPv/AAACAAAAAABCAPv/AAACAAAAAABEAPv/AAACAAAAAABGAPv/AAACAAAAAABIAPv/AAACAAAAAABKAPv/AAACAAAAAABMAPv/AAACAAAAAABOAPv/AAACAAAAAABQAPv/AAACAAAAAAAKAPL/AAACAAAAAAAMAPL/AAACAAAAAAAOAPL/AAACAAAAAAAQAPL/AAACAAAAAAASAPL/AAACAAAAAAAUAPL/AAACAAAAAAAWAPL/AAACAAAAAAAYAPL/AAACAAAAAAAaAPL/AAACAAAAAAAcAPL/AAACAAAAAAAeAPL/AAACAAAAAAAgAPL/AAACAAAAAAAiAPL/AAACAAAAAAAkAPL/AAACAAAAAAAmAPL/AAACAAAAAAAoAPL/AAACAAAAAAAqAPL/AAACAAAAAAAsAPL/AAACAAAAAAAuAPL/AAACAAAAAAAwAPL/AAACAAAAAAAyAPL/AAACAAAAAAA0APL/AAACAAAAAAA2APL/AAACAAAAAAA4APL/AAACAAAAAAA6APL/AAACAAAAAAA8APL/AAACAAAAAAA+APL/AAACAAAAAABAAPL/AAACAAAAAABCAPL/AAACAAAAAABEAPL/AAACAAAAAABGAPL/AAACAAAAAABIAPL/AAACAAAAAABKAPL/AAACAAAAAABMAPL/AAACAAAAAABOAPL/AAACAAAAAABQAPL/AAACAAAAAAAKAOn/AAACAAAAAAAMAOn/AAACAAAAAAAOAOn/AAACAAAAAAAQAOn/AAACAAAAAAASAOn/AAACAAAAAAAUAOn/AAACAAAAAAAWAOn/AAACAAAAAAAYAOn/AAACAAAAAAAaAOn/AAACAAAAAAAcAOn/AAACAAAAAAAeAOn/AAACAAAAAAAgAOn/AAACAAAAAAAiAOn/AAACAAAAAAAkAOn/AAACAAAAAAAmAOn/AAACAAAAAAAoAOn/AAACAAAAAAAqAOn/AAACAAAAAAAsAOn/AAACAAAAAAAuAOn/AAACAAAAAAAwAOn/AAACAAAAAAAyAOn/AAACAAAAAAA0AOn/AAACAAAAAAA2AOn/AAACAAAAAAA4AOn/AAACAAAAAAA6AOn/AAACAAAAAAA8AOn/AAACAAAAAAA+AOn/AAACAAAAAABAAOn/AAACAAAAAABCAOn/AAACAAAAAABEAOn/AAACAAAAAABGAOn/AAACAAAAAABIAOn/AAACAAAAAABKAOn/AAACAAAAAABMAOn/AAACAAAAAABOAOn/AAACAAAAAABQAOn/AAACAAAAAAAHAOP/AAAAAAAAAAAHAOD/AAAGAAIAAAAHAOL/AAAAAAAAAAAJAOD/AAACAAAAAAAKAOD/AAACAAAAAAALAOD/AAACAAAAAAAMAOD/AAACAAAAAAANAOD/AAACAAAAAAAOAOD/AAACAAAAAAAPAOD/AAACAAAAAAAQAOD/AAACAAAAAAARAOD/AAACAAAAAAASAOD/AAACAAAAAAATAOD/AAACAAAAAAAUAOD/AAACAAAAAAAVAOD/AAACAAAAAAAWAOD/AAACAAAAAAAXAOD/AAACAAAAAAAYAOD/AAACAAAAAAAZAOD/AAACAAAAAAAaAOD/AAACAAAAAAAbAOD/AAACAAAAAAAcAOD/AAACAAAAAAAdAOD/AAACAAAAAAAeAOD/AAACAAAAAAAfAOD/AAACAAAAAAAgAOD/AAACAAAAAAAhAOD/AAACAAAAAAAiAOD/AAACAAAAAAAjAOD/AAACAAAAAAAkAOD/AAACAAAAAAAlAOD/AAACAAAAAAAmAOD/AAACAAAAAAAnAOD/AAACAAAAAAAoAOD/AAACAAAAAAApAOD/AAACAAAAAAAqAOD/AAACAAAAAAArAOD/AAACAAAAAAAsAOD/AAACAAAAAAAtAOD/AAACAAAAAAAuAOD/AAACAAAAAAAvAOD/AAACAAAAAAAwAOD/AAACAAAAAAAxAOD/AAACAAAAAAAyAOD/AAACAAAAAAAzAOD/AAACAAAAAAA0AOD/AAACAAAAAAA1AOD/AAACAAAAAAA2AOD/AAACAAAAAAA3AOD/AAACAAAAAAA4AOD/AAACAAAAAAA5AOD/AAACAAAAAAA6AOD/AAACAAAAAAA7AOD/AAACAAAAAAA8AOD/AAACAAAAAAA9AOD/AAACAAAAAAA+AOD/AAACAAAAAABAAOD/AAACAAAAAABBAOD/AAACAAAAAABCAOD/AAACAAAAAABDAOD/AAACAAAAAABEAOD/AAACAAAAAABFAOD/AAACAAAAAABGAOD/AAACAAAAAABHAOD/AAACAAAAAABIAOD/AAACAAAAAABJAOD/AAACAAAAAABKAOD/AAACAAAAAABLAOD/AAACAAAAAABMAOD/AAACAAAAAABNAOD/AAACAAAAAABOAOD/AAACAAAAAABPAOD/AAACAAAAAABQAOD/AAACAAAAAABRAOD/AAACAAAAAAAHAP3/AAAAAAAAAAAJAPv/AAACAAAAAAAHAPv/AAAEAAQAAAAHAPL/AAAEAAQAAAAHAPD/AAAAAAAAAAAJAPL/AAACAAAAAAAHAPT/AAAAAAAAAAAHAOn/AAAEAAQAAAAJAOn/AAACAAAAAABSAAQAAAACAAYAAABSAPv/AAACAAYAAABSAPL/AAACAAYAAABSAOn/AAACAAYAAABSAOD/AAACAAYAAAA=")
+tile_set = SubResource("TileSet_ttty8")
+
+[node name="Animation" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+root_node = NodePath("../TrainSprite")
+libraries = {
+&"": SubResource("AnimationLibrary_y0kcv")
+}
+
+[node name="TrainSprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(940, 521)
+scale = Vector2(6, 6)
+texture = ExtResource("7_5fyqv")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="BackButton" type="Button" parent="CanvasLayer"]
+custom_minimum_size = Vector2(200, 50)
+offset_left = 858.0
+offset_top = 910.0
+offset_right = 1058.0
+offset_bottom = 960.0
+theme = ExtResource("3_iburf")
+theme_override_font_sizes/font_size = 50
+text = "Back"
+
+[node name="UpButton" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 910.0
+offset_top = 35.17
+offset_right = 1010.0
+offset_bottom = 135.16975
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("3_iburf")
+theme_override_constants/icon_max_width = 90
+icon = ExtResource("7_jv00j")
+icon_alignment = 1
+
+[node name="RightButton" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 1778.69
+offset_top = 490.0
+offset_right = 1878.69
+offset_bottom = 590.0
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("3_iburf")
+theme_override_constants/icon_max_width = 90
+icon = ExtResource("5_pgg1l")
+icon_alignment = 1
+
+[node name="DownButton" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 905.0
+offset_top = 975.06995
+offset_right = 1005.0
+offset_bottom = 1075.0704
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("3_iburf")
+theme_override_constants/icon_max_width = 90
+icon = ExtResource("10_uofod")
+icon_alignment = 1
+
+[node name="LeftButton" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 27.43
+offset_top = 490.0
+offset_right = 127.43
+offset_bottom = 590.0
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme = ExtResource("3_iburf")
+theme_override_constants/icon_max_width = 90
+icon = ExtResource("11_lpahk")
+icon_alignment = 1
+
+[node name="Window" type="Window" parent="CanvasLayer"]
+oversampling_override = 1.0
+title = "Save File"
+initial_position = 1
+size = Vector2i(1000, 600)
+visible = false
+
+[node name="SaveContainer" type="HBoxContainer" parent="CanvasLayer/Window"]
+custom_minimum_size = Vector2(900, 300)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_iburf")
+theme_override_constants/separation = 30
+
+[node name="Save0Cont" type="VBoxContainer" parent="CanvasLayer/Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 0" type="Button" parent="CanvasLayer/Window/SaveContainer/Save0Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 1"
+
+[node name="Clear 0" type="Button" parent="CanvasLayer/Window/SaveContainer/Save0Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[node name="Save1Cont" type="VBoxContainer" parent="CanvasLayer/Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 1" type="Button" parent="CanvasLayer/Window/SaveContainer/Save1Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 2"
+
+[node name="Clear 1" type="Button" parent="CanvasLayer/Window/SaveContainer/Save1Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[node name="Save2Cont" type="VBoxContainer" parent="CanvasLayer/Window/SaveContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Save 2" type="Button" parent="CanvasLayer/Window/SaveContainer/Save2Cont"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Save 3"
+
+[node name="Clear 2" type="Button" parent="CanvasLayer/Window/SaveContainer/Save2Cont"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear"
+
+[node name="AchievementButton" type="Button" parent="CanvasLayer"]
+offset_left = 9.0
+offset_top = 991.0
+offset_right = 151.0
+offset_bottom = 1076.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_jv00j")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_uofod")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_lpahk")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_s4bmt")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ardaf")
+
+[connection signal="pressed" from="VBoxContainer/Section5/Panel/VBoxContainer/Play51" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section5/Panel2/VBoxContainer/Play52" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section5/Panel3/VBoxContainer/Play53" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section5/Panel4/VBoxContainer/Play54" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section5/Panel5/VBoxContainer/Play55" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section5/Panel6/VBoxContainer/Play56" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel/VBoxContainer/Play41" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel2/VBoxContainer/Play42" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel3/VBoxContainer/Play43" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel4/VBoxContainer/Play44" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel5/VBoxContainer/Play45" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section4/Panel6/VBoxContainer/Play46" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel/VBoxContainer/Play31" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel2/VBoxContainer/Play32" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel3/VBoxContainer/Play33" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel4/VBoxContainer/Play34" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel5/VBoxContainer/Play35" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section3/Panel6/VBoxContainer/Play36" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel/VBoxContainer/Play21" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel2/VBoxContainer/Play22" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel3/VBoxContainer/Play23" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel4/VBoxContainer/Play24" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel5/VBoxContainer/Play25" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section2/Panel6/VBoxContainer/Play26" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel/VBoxContainer/Play11" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel2/VBoxContainer/Play12" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel3/VBoxContainer/Play13" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel4/VBoxContainer/Play14" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel5/VBoxContainer/Play15" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="VBoxContainer/Section1/Panel6/VBoxContainer/Play16" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="CanvasLayer/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/RightButton" to="." method="_on_button_pressed"]
+[connection signal="close_requested" from="CanvasLayer/Window" to="." method="_on_window_close_requested"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save0Cont/Save 0" to="." method="_on_save_0_pressed"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save0Cont/Clear 0" to="." method="_on_clear_0_pressed"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save1Cont/Save 1" to="." method="_on_save_1_pressed"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save1Cont/Clear 1" to="." method="_on_clear_1_pressed"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save2Cont/Save 2" to="." method="_on_save_2_pressed"]
+[connection signal="pressed" from="CanvasLayer/Window/SaveContainer/Save2Cont/Clear 2" to="." method="_on_clear_2_pressed"]
+[connection signal="pressed" from="CanvasLayer/AchievementButton" to="." method="_on_achievement_button_pressed"]

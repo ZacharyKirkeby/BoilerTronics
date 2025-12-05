@@ -14,8 +14,9 @@ using BoilerTronicsObjects.Layers;
 public partial class BoilerTronicsGlobalManager : Node
 {	
 	/* Game State Vars */
-	private int[] levelIDs = [0, 40]; // sets the range of viable level IDs: [min, max]
-	private int levelID = 0;
+	private int[] levelIDs = [11, 66]; // sets the range of viable level IDs: [min, max]
+	private int levelID = 11;
+	
 	private int[] levelLoadSlots = [0, 2]; // sets the range of viable level saves: [min, max]
 	private int levelLoadSlot = -1;	// -1 means load actual default level setup, -2 means autosave
 	
