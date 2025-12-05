@@ -335,7 +335,16 @@ public partial class LevelUi : Node2D
 
 		CallDeferred(nameof(ChangeScene));
 	}
-	
+	private void _on_leaderboard_pressed()
+	{
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+
+		// set save data info to autosave
+		manager.SetTargetLevelSave(0, -2);
+		manager.SaveLevel();
+		manager.fromLeaderboard = true;
+		CallDeferred(nameof(ChangeScene));
+	}
 
 	private void ChangeScene()
 	{

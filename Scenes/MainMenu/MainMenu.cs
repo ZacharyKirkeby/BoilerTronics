@@ -32,7 +32,13 @@ public partial class MainMenu : Node2D
 		BoilerTronicsSoundManager soundManager = BoilerTronicsSoundManager.SoundManager;
 		var volSlider = GetNode<HSlider>("SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider");
 		volSlider.Value = soundManager.GetCurrentVolume();
-		
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		if (manager.fromLeaderboard)
+		{
+			GetNode<Control>("MainMenu").Visible = false;
+			GetNode<Control>("Leaderboard").Visible = true;
+			manager.fromLeaderboard = false;
+		}
 	}
 
 	public static void InitializeServices()
