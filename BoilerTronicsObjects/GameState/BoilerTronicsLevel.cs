@@ -321,14 +321,17 @@ public partial class BoilerTronicsLevel : Node2D
 			
 		} else {
 			if (manager.loadLevelName == "") {
+				GD.Print("BoilerTronicsLevel: loading level");
 				loadedSave = manager.LoadLevel();
 			} else {
-				GD.Print("BoilerTronicsLevel: loading specific level");
+				GD.Print("BoilerTronicsLevel: loading specific level: ", manager.loadLevelName);
 				// load the specific save and reset the system
 				loadedSave = manager.saveState.LoadLevelName(manager, manager.loadLevelName);
 				manager.loadLevelName = "";
 			}
 		}
+		
+		GD.Print("BoilerTronicsLevel: loadedSave status: ", loadedSave);
 		
 		if (loadedSave) {
 			// reconstruct level based off the information loaded: load metadata

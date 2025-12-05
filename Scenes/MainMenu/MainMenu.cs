@@ -201,11 +201,12 @@ public partial class MainMenu : Node2D
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// TODO: create level given the LevelData
 		string levelName = level.CreatorName + level.LevelId;
-		manager.saveState.SaveStringTo(manager, "Downloaded", levelName, level.LevelDataJson);
+		manager.saveState.SaveStringTo(manager, "LevelCreator/Downloaded/", levelName, level.LevelDataJson);
 		
 		// TODO: set the load level target
 		
 		manager.loadLevelName = "Downloaded/" + levelName;
+		manager.creatingNewLevel = false;
 		
 		// play the level
 		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
