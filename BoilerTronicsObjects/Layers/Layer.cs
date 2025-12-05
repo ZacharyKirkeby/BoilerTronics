@@ -876,6 +876,14 @@ namespace BoilerTronicsObjects.Layers
 				return false;
 			}
 			GD.Print("Layer.cs: MouseInput Validated");
+			
+			if (buttonEvent.IsReleased()) {
+				// GD.Print("Layer.cs: Button Releasing");
+				// GD.Print("Layer.cs: Manager placing? ", manager.placingObject == 1);
+				// GD.Print("Layer.cs: Manager placing object:", manager.objectToMove);
+				// GD.Print("glob man B:", manager);
+			}
+			
 
 			// Get manager
 			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager

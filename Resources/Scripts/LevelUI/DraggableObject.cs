@@ -31,7 +31,9 @@ public partial class DraggableObject : Node2D {
 		
 		// If this is a Rail/Claw layer object, do some more offsetting
 		if (obj is RailLayerObject || obj is ClawLayerObject) {
-			sprite.Offset += new Vector2(0, 24);
+			sprite.Offset += new Vector2(0, 24);	// refer to rendering texture offsets
+		} else if (!(obj is PlaceableBig)) {
+			sprite.Offset += new Vector2(0, 8);		// refer to rendering texture offsets
 		}
 		
 		// store base sprite offset
@@ -105,6 +107,8 @@ public partial class DraggableObject : Node2D {
 		manager = BoilerTronicsGlobalManager.GlobalManager;
 
 		manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
+		manager.placingObject = 1;
+		// GD.Print("glob man A:", manager);
 		
 		// keep track of direction
 		if (this.obj is PlaceableBig bObj) {
@@ -119,7 +123,14 @@ public partial class DraggableObject : Node2D {
 
 	// this will allow for the draggable object to follow the mouse
 	public override void _Process(double delta) {
-		sprite.Position = GetGlobalMousePosition(); // add some mouse offset later
+		sprite.Position = GetGlobalMousePosition(); // add some mouse offset later EDIT: already sorta kinda done
+		
+		// just in case
+		// if (manager.objectToMove == null) {
+			// GD.Print("DraggableObject: manager objectToMove is null, trying to fix?");
+			// manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
+			// manager.placingObject = 1;
+		// }
 	}
 
 	public override void _Input(InputEvent @event)
@@ -139,6 +150,10 @@ public partial class DraggableObject : Node2D {
 			manager.layerFloor.Modulate =manager.layerDefaultVisibility;
 			manager.layerRail.Modulate = manager.layerDefaultVisibility;
 			manager.layerMovement.Modulate = manager.layerDefaultVisibility;
+			
+			// manager.objectToMove = this.obj;
+			// manager.placingObject = 1;
+			
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
 		}
