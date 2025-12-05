@@ -72,6 +72,9 @@ namespace BoilerTronicsObjects.Placeable
 			if (index >= frames.Count) { return; }
 			frameIndex = index;
 		}
+		public int GetFrameIndex() {
+			return frameIndex;
+		}
 		
 		// resets the frame back to this object's original visuals
 		public void ResetFrame() {

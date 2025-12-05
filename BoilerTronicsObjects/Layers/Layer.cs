@@ -37,6 +37,7 @@ namespace BoilerTronicsObjects.Layers
 		// NOTE: "ArrayList" is apparently some old, mostly deprecated stuff in C#, unlike in Java where it's still very useful
 		// Avoid using in the future!
 		protected ArrayList objectList = new ArrayList();     // List of objects that exist on the layer
+		protected ArrayList groupedObjectList = new ArrayList();     // List of objects that exist on the layer
 		int numItems = 0;                           // Number of items in this layer
 		int maxX;
 		int maxY;
@@ -97,6 +98,15 @@ namespace BoilerTronicsObjects.Layers
 		}
 		public Vector2I exportDimensions() {
 			return new Vector2I(maxX, maxY);
+		}
+
+		public ArrayList getGroupedList() {
+			return groupedObjectList;
+		}
+
+		public void addGroupedObject(GroupedObject gObj) {
+			if (gObj == null) return;
+			groupedObjectList.Add(gObj);
 		}
 		
 		// NOTE: unused?
@@ -185,6 +195,7 @@ namespace BoilerTronicsObjects.Layers
 		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
 		{
+			GD.Print("Adding object:", newPlaceable);
 			// reset layer transparency
 			//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 			manager.layerClaw.Modulate = new Color(1, 1, 1, 1);
@@ -242,7 +253,7 @@ namespace BoilerTronicsObjects.Layers
 				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 					// check each individual data point
 					Vector2I dataCoords = data.GetPosition(obj.GetPos());
-					TileTex tex = data.GetTileTex();
+					TileTex tex = data.GetFrame();
 					
 					// update tiles to point to the origin (reference)
 					tiles[dataCoords.X, dataCoords.Y] = newPlaceable;
@@ -251,12 +262,85 @@ namespace BoilerTronicsObjects.Layers
 					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
 				}
 			}
-			
+
+			if (newPlaceable is GroupedSubObject gsObj) {
+				List<GroupedObject> validGroups = new List<GroupedObject>();
+
+				foreach (GroupedObject gObj in groupedObjectList) {
+					if (gObj.validObject(newPlaceable as GroupedSubObject)) validGroups.Add(gObj);
+				}
+
+				if (validGroups.Count == 0) {
+					GroupedObject gObj = gsObj.createGroup();
+					if (gObj != null && gObj.addObject(gsObj)) groupedObjectList.Add(gObj);
+				} else if (validGroups.Count == 1) {
+					validGroups[0].addObject(newPlaceable as GroupedSubObject);
+				} else {
+					// Multipe objects
+					GroupedObject biggestGroup = validGroups[0];
+
+					foreach (GroupedObject gObj in validGroups) {
+						if (gObj.getObjectList().Count > biggestGroup.getObjectList().Count) biggestGroup = gObj;
+					}
+
+					biggestGroup.addObject(newPlaceable as GroupedSubObject);
+
+					foreach (GroupedObject gObj in validGroups) {
+						if (gObj != biggestGroup) biggestGroup.combineGroup(gObj);
+						groupedObjectList.Remove(gObj);
+					}
+				}
+			}
+
+			if (newPlaceable is BigGroupedSubObject bgsObj) {
+				List<GroupedSubObject> L = bgsObj.getObjects();
+
+				foreach (GroupedSubObject subObj in L) {
+					List<GroupedObject> validGroups = new List<GroupedObject>();
+
+					foreach (GroupedObject gObj in groupedObjectList) {
+						if (gObj.validObject(subObj as GroupedSubObject)) validGroups.Add(gObj);
+					}
+
+					if (validGroups.Count == 0) {
+						GD.Print("New Group");
+						GroupedObject gObj = subObj.createGroup();
+						if (gObj != null && gObj.addObject(subObj)) groupedObjectList.Add(gObj);
+					} else if (validGroups.Count == 1) {
+						GD.Print("Add Group");
+						validGroups[0].addObject(subObj as GroupedSubObject);
+					} else {
+						GD.Print("Combine Group");
+						// Multipe objects
+						GroupedObject biggestGroup = validGroups[0];
+
+						foreach (GroupedObject gObj in validGroups) {
+							if (gObj.getObjectList().Count > biggestGroup.getObjectList().Count) biggestGroup = gObj;
+						}
+
+						biggestGroup.addObject(subObj as GroupedSubObject);
+
+						foreach (GroupedObject gObj in validGroups) {
+							if (gObj != biggestGroup) biggestGroup.combineGroup(gObj);
+							groupedObjectList.Remove(gObj);
+						}
+					}
+				}
+			}
+
 			// UpdateInternals();
 			GD.Print("Added object");
 			
 			// update placeable's parent layer info
 			newPlaceable.SetParentLayer(this);
+			
+			// update highlighting as object is placed
+			if (newPlaceable is Scriptable) {
+				GD.Print("Layer.cs: calling to terminal to highlight");
+				BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+				Terminals currTerminal = manager.terminalContainer;
+				currTerminal.GetCurrentEditor().TerminalSelected();
+			}
 			
 			numItems++;
 
@@ -304,7 +388,8 @@ namespace BoilerTronicsObjects.Layers
 			}
 			*/
 
-			GD.Print(GetPath());
+			// GD.Print("Layer.cs: added object path: ", GetPath());
+			GD.Print("Layer.cs: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
 			manager.currLevel.UpdateCost(costToAdd);
 			ui?.UpdateCost(manager.currLevel.cost);
 		}
@@ -312,8 +397,10 @@ namespace BoilerTronicsObjects.Layers
 		// system also should properly handle PlaceableBig objects
 		public virtual void RemoveObject(PlaceableObject objectToRemove)
 		{
+			// GD.Print(objectToRemove);
 			if (!objectList.Contains(objectToRemove)) return;
 			Vector2I pos = objectToRemove.GetPos();
+			// GD.Print(pos);
 			if (!editableTiles[pos.X, pos.Y]) return;
 			
 			objectList.Remove(objectToRemove); // remove to object form the list
@@ -337,6 +424,50 @@ namespace BoilerTronicsObjects.Layers
 				}
 			}
 			
+			if (objectToRemove is GroupedSubObject gsObj) {
+				GroupedObject gObj = gsObj.getGroup();
+
+				if (groupedObjectList.Contains(gObj)) {
+					gObj.deleteObject(objectToRemove as GroupedSubObject);
+				}
+
+				if (gObj.getObjectList().Count == 0) { // We are now empty
+					if (gObj is Scriptable sObj) {
+						sObj.DestroyTerminal();
+					}
+
+					if (gObj is Runnable rObj) {
+						rObj.UnRegisterSteppable();
+					}
+
+					groupedObjectList.Remove(gObj);
+				}
+			}
+
+			if (objectToRemove is BigGroupedSubObject bgsObj) {
+				List<GroupedSubObject> L = bgsObj.getObjects();
+
+				foreach (GroupedSubObject subObj in L) {
+					GroupedObject gObj = subObj.getGroup();
+
+					if (groupedObjectList.Contains(gObj)) {
+						gObj.deleteObject(subObj as GroupedSubObject);
+					}
+
+					if (gObj.getObjectList().Count == 0) { // We are now empty
+						if (gObj is Scriptable sObj) {
+							sObj.DestroyTerminal();
+						}
+
+						if (gObj is Runnable rObj) {
+							rObj.UnRegisterSteppable();
+						}
+
+						groupedObjectList.Remove(gObj);
+					}
+				}
+			}
+
 			numItems--;
 			
 			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
@@ -403,11 +534,31 @@ namespace BoilerTronicsObjects.Layers
 			return tiles[loc.X, loc.Y];
 		}
 
+		// update an object's sprite position
+		// NOTE: old coordinates are unaffected! whatever uses this MUST CORRECTLY DELETE THE OBJECT'S OLD SPRITES/POSITIONS, otherwise there'll be some odd visuals.
 		public virtual void UpdateObject(PlaceableObject obj) {
-			if (!objectList.Contains(obj)) return; // We don't care about this objcet if
+			if (!objectList.Contains(obj)) return; // We don't care about this objcet if this object doesn't exist!
 			if (FindObject(obj.GetCurrPos()) != obj) return; // Verify that the object is in the position we think it is in
 
 			SetCell(obj.GetCurrPos(), obj.GetSourceID(), obj.GetAtlasPos()); // Update cell for that object
+			
+			// special: PlaceableBig case
+			// update tiles, cells to fill accordingly to the PlaceableBig data
+			if (obj is PlaceableBig) {
+				PlaceableBig objB = (PlaceableBig) obj;
+				// iterate through expected tiles and fill data (tilemap, internal data structs) accordingly
+				// the "origin" object will already be placed by the code above!
+				foreach (PlaceableBigData data in objB.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(objB.GetCurrPos());
+					TileTex tex = data.GetFrame();
+					
+					// update tile grid 
+					SetCell(dataCoords, tex.GetSourceID(), tex.GetAtlasPos());
+				}
+			}
+			
+			// end
 		}
 
 		public void Reset() {
@@ -453,7 +604,7 @@ namespace BoilerTronicsObjects.Layers
 					foreach (PlaceableBigData data in objB.GetTextureGrid()) {
 						// check each individual data point
 						Vector2I dataCoords = data.GetPosition(objB.GetPos());
-						TileTex tex = data.GetTileTex();
+						TileTex tex = data.GetFrame();
 						
 						// update tiles to point to the origin (reference)
 						tiles[dataCoords.X, dataCoords.Y] = obj;
@@ -616,9 +767,6 @@ namespace BoilerTronicsObjects.Layers
 									manager.currLevel.UnRegisterRunnable(manager.objectToMove);
 								}
 							}
-							
-							
-							// GD.Print("Layer.cs: objectToMove: ", manager.objectToMove);
 							manager.objectToMove = null;
 						}
 
