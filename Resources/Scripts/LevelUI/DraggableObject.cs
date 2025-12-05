@@ -2,20 +2,30 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Data;
 
 public partial class DraggableObject : Node2D {
 	
+	private Vector2 baseSpriteOffset;
 	private Vector2 mouse_offset;
 	private PlaceableObject obj;
 	private Sprite2D sprite;
+	private int rotateCount;
+	
+	BoilerTronicsGlobalManager manager;
 
 	public DraggableObject(Vector2 mouse_offset, Sprite2D spritToDrag, PlaceableObject obj) {
 		this.mouse_offset = mouse_offset;
+		this.rotateCount = 0;
 
 		// Copy Sprite and make it a child
 		this.sprite = spritToDrag.Duplicate() as Sprite2D;
 		this.sprite.Scale = new Vector2I(1, 1);
 		this.obj = obj; // This will keep track of the object that we are placing
+		
+		// store base sprite offset
+		baseSpriteOffset = sprite.Offset;
 		
 		
 		if (this.obj is PlaceableBig bObj) {
@@ -24,7 +34,7 @@ public partial class DraggableObject : Node2D {
 			
 			// offset the sprite accordingly such that the mouse is over (0, 0) of the sprite
 			// i.e. the tile map grid coordinates of the big placeable's origin
-			sprite.Offset -= CalculatePlaceableBigOffset(bObj);
+			sprite.Offset -= CalculatePlaceableBigOffset(bObj, (int) bObj.GetDir());
 		}
 		
 		// Set to very high Z-index such that this block is visibly above all other blocks
@@ -36,8 +46,8 @@ public partial class DraggableObject : Node2D {
 	// assume that we are at the top-left of the image; we are to calculate
 	// the offset from that position to the (0, 0) block.
 	// reuses code from PlaceableBig's GetTexture() and related functions.
-	public static Vector2 CalculatePlaceableBigOffset(PlaceableBig bObj) {
-		List<PlaceableBigData> data = bObj.GetTextureGrid();
+	public static Vector2 CalculatePlaceableBigOffset(PlaceableBig bObj, int dir) {
+		List<PlaceableBigData> data = bObj.GetTextureGrid((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) dir);
 		
 		// from PlaceableBig: GetBigTexture()
 		const int tileWidth = 32;
@@ -82,9 +92,16 @@ public partial class DraggableObject : Node2D {
 
 	public override void _Ready() {
 		// We may need to communicate somthing to the manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager = BoilerTronicsGlobalManager.GlobalManager;
 
 		manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
+		
+		// keep track of direction
+		if (this.obj is PlaceableBig bObj) {
+			manager.objectToMoveDir = (int) bObj.GetDir();
+		} else {
+			manager.objectToMoveDir = 0;
+		}
 	}
 
 	// this will allow for the draggable object to follow the mouse
@@ -112,8 +129,67 @@ public partial class DraggableObject : Node2D {
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
 		}
+		
+		// keyboard events
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+			
+			switch (keyEvent.Keycode) {
+				// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
+				case Key.E:
+					// GD.Print("TODO: Rotate Image Right!");
+					rotateCount = (rotateCount + 1) % 4;
+					// GD.Print("rotateCount: ", rotateCount);
+					if (obj is PlaceableBig) {
+						UpdateBigSpriteTexture();
+					}
+				break;
+				case Key.Q:
+					// GD.Print("TODO: Rotate Image Left!");
+					rotateCount = (rotateCount - 1) % 4;
+					if (rotateCount < 0) rotateCount = 4 + rotateCount; // make sure we loop properly!
+					// GD.Print("rotateCount: ", rotateCount);
+					if (obj is PlaceableBig) {
+						UpdateBigSpriteTexture();
+					}
+				break;
+			}
+		}
 
 		// Always pass downward
 		base._Input(@event);
+	}
+	
+	// update internal sprite texture
+	private void UpdateBigSpriteTexture() {
+		PlaceableBig bObj = obj as PlaceableBig;
+		int sourceId = obj.GetSourceID();
+		Vector2I atlasPos = obj.GetAtlasPos();
+		int dir = ((int) bObj.GetDir() + rotateCount) % 4;
+		
+		// update global var
+		manager.objectToMoveDir = dir;
+		
+		List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(sourceId, atlasPos)], (BoilerTronicsObjects.Placeable.PlaceableBig.Direction) dir);
+		
+		// failsafe: double check that 'data' isn't null!
+		if (data != null) {
+			// Then we can update the texture
+			ImageTexture texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+			
+			// undo texture offset
+			// sprite.Offset -= new Vector2(sprite.Texture.GetWidth() / 2, sprite.Texture.GetHeight() / 2);
+			// sprite.Offset += CalculatePlaceableBigOffset(bObj, (int) bObj.GetDir());
+			
+			sprite.Texture = texture;			// assign new texture
+			sprite.Offset = baseSpriteOffset; 	// reset offset
+			
+			// new texture offset
+			sprite.Offset += new Vector2(sprite.Texture.GetWidth() / 2, sprite.Texture.GetHeight() / 2);
+			sprite.Offset -= CalculatePlaceableBigOffset(bObj, dir);
+			return;
+		} else {
+			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: Catastrophic error, GetBigTexture failed!");
+			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: sourceID: ", sourceId, ", atlasPos: ", atlasPos, ", dir: ", dir);
+		}
 	}
 }
