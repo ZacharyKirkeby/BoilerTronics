@@ -204,6 +204,7 @@ public partial class DraggableObject : Node2D {
 		GenerateTextPrompts();
 	}
 	
+	// null/free old labels
 	private void ClearOldLabels() {
 		if (costLabel != null && IsInstanceValid(costLabel)) {
 			costLabel.QueueFree();
@@ -221,6 +222,7 @@ public partial class DraggableObject : Node2D {
 		}
 	}
 	
+	// regenerate text prompts/labels (price, rotation prompts, etc)
 	private void GenerateTextPrompts() {
 		
 		// Cost label
@@ -234,6 +236,14 @@ public partial class DraggableObject : Node2D {
 		costLabel.AddThemeFontSizeOverride("font_size", 16);
 		costLabel.SetTheme(inTheme);
 		costLabel.Position += new Vector2(16, 16);
+		
+		// handle the rail/claw layer objects a bit differently given how they're 32x64 rather than 32x32
+		// likewise, slightly adjust for MovementLayer objects
+		if (obj is MovementLayerObject) {
+			costLabel.Position -= new Vector2(0, 8);
+		} else if (obj is RailLayerObject || obj is ClawLayerObject) {
+			costLabel.Position -= new Vector2(0, 32);
+		}
 		
 		sprite.AddChild(costLabel);
 		
