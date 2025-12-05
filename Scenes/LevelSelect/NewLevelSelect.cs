@@ -364,9 +364,9 @@ private void changescenes()
 	}
 
 	private void _on_back_button_pressed()
-    {
-        GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
-    }
+	{
+		GetTree().ChangeSceneToFile("res://Scenes/MainMenu/main_menu.tscn");
+	}
 
 	private void SetSpriteDirection(Vector2I dir)
 {
@@ -385,7 +385,7 @@ private void changescenes()
 }
 
 	private void getScores()
-    {
+	{
 		for (int i = 1; i <= GridSize.Y; i++) {
 			for (int j = 1; j <= GridSize.X; j++) {
 				string levelnum = i.ToString() + j.ToString();
@@ -431,7 +431,7 @@ private void changescenes()
 			}
 		}
 			
-    }
+	}
 
 	private void UpdateDirectionButtons()
 	{
@@ -439,6 +439,16 @@ private void changescenes()
 		_btnRight.Visible = _gridPos.X < GridSize.X - 1;
 		_btnUp.Visible = _gridPos.Y < GridSize.Y - 1 && _gridPos.X == 0;
 		_btnDown.Visible = _gridPos.Y > 0 && _gridPos.X == 0;
+	}
+	
+	private void _on_achievement_button_pressed() {
+		GD.Print("entering mystery level");
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		var levelnum = 37;
+		int level = 37;
+		GD.Print("Level: " + level);
+		manager.SetTargetLevelSave(level, -1);
+		CallDeferred(nameof(changescenes));
 	}
 
 
