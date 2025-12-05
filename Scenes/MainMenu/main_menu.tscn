@@ -429,10 +429,15 @@ text = "Leaderboard"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(500, 30)
+[node name="HBoxContainer" type="HBoxContainer" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+alignment = 1
+
+[node name="OptionButton" type="OptionButton" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 30)
+layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
@@ -443,9 +448,22 @@ alignment = 1
 selected = 0
 item_count = 2
 popup/item_0/text = "Level 1-1"
-popup/item_0/id = 0
+popup/item_0/id = 11
 popup/item_1/text = "Level 1-2"
-popup/item_1/id = 1
+popup/item_1/id = 12
+
+[node name="FriendsToggleButton" type="Button" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_rlg4b")
+text = "Friends"
 
 [node name="GridContainer" type="GridContainer" parent="Leaderboard/VBoxContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -839,8 +857,7 @@ text = "Look for an undiscovered factory... it could be hard to spot."
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Achievements" to="." method="_on_achievements_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Easter Eggs" to="." method="_on_easter_eggs_pressed"]
-[connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
-[connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
+[connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer/OptionButton" to="." method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="close_requested" from="Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
 [connection signal="close_requested" from="Easter Egg Menu" to="." method="_on_easter_egg_menu_close_requested"]
