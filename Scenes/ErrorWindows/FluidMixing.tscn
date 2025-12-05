@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 [gd_scene format=3 uid="uid://bcke814hrg3bb"]
-=======
-[gd_scene format=3 uid="uid://dh0ggayjux2i1"]
->>>>>>> d7cc4768ccb7ef3e0e25bd089fc9df4e7dda557f
 
 [node name="FlidMixing" type="AcceptDialog"]
 oversampling_override = 1.0
