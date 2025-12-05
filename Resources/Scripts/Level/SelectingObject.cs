@@ -86,6 +86,7 @@ public partial class SelectingObject : Area2D
 		
 		
 		// TODO: add label for price
+		/*
 		Label costLabel = new Label();
 		costLabel.SetText("$" + obj.GetCost());
 		costLabel.Position = sprite.Position;
@@ -99,5 +100,6 @@ public partial class SelectingObject : Area2D
 		
 		this.AddChild(costLabel);
 		costLabel.ZIndex = 1000;
+		*/
 	}
 }

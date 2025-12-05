@@ -13,6 +13,11 @@ public partial class DraggableObject : Node2D {
 	private Sprite2D sprite;
 	private int rotateCount;
 	
+	// keep track of labels to free as needed and etc
+	private Label costLabel;
+	private Label labelQ;
+	private Label labelE;
+	
 	BoilerTronicsGlobalManager manager;
 
 	public DraggableObject(Vector2 mouse_offset, Sprite2D spritToDrag, PlaceableObject obj) {
@@ -102,6 +107,9 @@ public partial class DraggableObject : Node2D {
 		} else {
 			manager.objectToMoveDir = 0;
 		}
+		
+		ClearOldLabels();
+		GenerateTextPrompts();
 	}
 
 	// this will allow for the draggable object to follow the mouse
@@ -190,6 +198,67 @@ public partial class DraggableObject : Node2D {
 		} else {
 			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: Catastrophic error, GetBigTexture failed!");
 			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: sourceID: ", sourceId, ", atlasPos: ", atlasPos, ", dir: ", dir);
+		}
+		
+		ClearOldLabels();
+		GenerateTextPrompts();
+	}
+	
+	private void ClearOldLabels() {
+		if (costLabel != null && IsInstanceValid(costLabel)) {
+			costLabel.QueueFree();
+			costLabel = null;
+		}
+		
+		if (labelQ != null && IsInstanceValid(labelQ)) {
+			labelQ.QueueFree();
+			labelQ = null;
+		}
+		
+		if (labelE != null && IsInstanceValid(labelE)) {
+			labelE.QueueFree();
+			labelE = null;
+		}
+	}
+	
+	private void GenerateTextPrompts() {
+		
+		// Cost label
+		costLabel = new Label();
+		costLabel.SetText("$" + obj.GetCost());
+		costLabel.Position = this.Position;
+		
+		Theme inTheme = (Godot.Theme) GD.Load("res://Scenes/buttontheme.tres");
+		
+		// thanks: https://godotforums.org/d/33246-changing-font-size-of-the-label-through-code/3
+		costLabel.AddThemeFontSizeOverride("font_size", 16);
+		costLabel.SetTheme(inTheme);
+		costLabel.Position += new Vector2(16, 16);
+		
+		sprite.AddChild(costLabel);
+		
+		// if PlaceableBig, add text prompts for rotation purposes
+		if (obj is PlaceableBig) {
+			ImageTexture tex = sprite.Texture as ImageTexture;
+			
+			// Q label
+			labelQ = new Label();
+			labelQ.SetText("<-- Q");
+			labelQ.Position = this.Position;
+			labelQ.AddThemeFontSizeOverride("font_size", 16);
+			labelQ.SetTheme(inTheme);
+			labelQ.Position += new Vector2(-tex.GetWidth() - 0, -tex.GetHeight() - 8);
+			sprite.AddChild(labelQ);
+			
+			
+			// E label
+			labelE = new Label();
+			labelE.SetText("E -->");
+			labelE.Position = this.Position;
+			labelE.AddThemeFontSizeOverride("font_size", 16);
+			labelE.SetTheme(inTheme);
+			labelE.Position += new Vector2(tex.GetWidth() - 16, -tex.GetHeight() - 8);
+			sprite.AddChild(labelE);
 		}
 	}
 }
