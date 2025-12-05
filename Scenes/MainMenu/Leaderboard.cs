@@ -69,7 +69,7 @@ public partial class Leaderboard : CenterContainer
 			- discussed with Abhi, will be implemented soon
 		
 		*/
-		HandleLeaderboard(0);
+		HandleLeaderboard(11);
 		UpdateLeaderboard();
 		// UpdateDisplay();
 	}
@@ -91,7 +91,7 @@ public partial class Leaderboard : CenterContainer
 					("Bob", 200)
 				};
 				*/
-				HandleLeaderboard(0);
+				HandleLeaderboard(11);
 				break;
 			case 1:
 				/*
@@ -105,7 +105,7 @@ public partial class Leaderboard : CenterContainer
 					("Ethan", 82)
 				};
 				*/
-				HandleLeaderboard(1);
+				HandleLeaderboard(12);
 				break;
 		}
 		UpdateLeaderboard();
