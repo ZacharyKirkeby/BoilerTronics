@@ -189,6 +189,8 @@ public partial class LevelUi : Node2D
 			achievementManager.TryEasterEggUnlock("EasterEgg3");
 		}
 	
+		// If we're in a normal level, don't save the level creator's name!
+		manager.saveState.shouldSaveCreatorName = false;
 	}
 
 	public override void _Process(double delta) {

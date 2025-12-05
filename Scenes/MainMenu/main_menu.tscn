@@ -7,7 +7,7 @@
 [ext_resource type="StyleBox" uid="uid://poqqrikhcfj6" path="res://Resources/ButtonThemes/menubuttonhover.tres" id="5_fo6ee"]
 [ext_resource type="Texture2D" uid="uid://cmgebma7p1vn2" path="res://Resources/Icons/user.png" id="6_nqd6t"]
 [ext_resource type="Texture2D" uid="uid://b65q7unusmxur" path="res://Resources/Icons/podium.png" id="7_43m2q"]
-[ext_resource type="Texture2D" uid="uid://by1gseo6gukvk" path="res://Resources/Icons/book.png" id="8_xt57n"]
+[ext_resource type="Texture2D" uid="uid://bh1w7o0kqmrvj" path="res://Resources/Icons/setting.png" id="8_rlg4b"]
 [ext_resource type="Texture2D" uid="uid://wcetqgt1irl1" path="res://Resources/Icons/exit.png" id="9_os7au"]
 [ext_resource type="Script" uid="uid://dnfv06ht8pst5" path="res://Scenes/MainMenu/Username.cs" id="10_n0kcp"]
 [ext_resource type="Script" uid="uid://bcl7r42iof2k0" path="res://Scenes/MainMenu/ProfileMenuController.cs" id="10_w5buf"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
+[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="14_6c6cs"]
 [ext_resource type="Script" uid="uid://y1rt7blgu1cs" path="res://Scenes/MainMenu/EasterEgg.cs" id="13_fo6ee"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
@@ -77,6 +78,17 @@ Button/styles/focus = ExtResource("4_6c6cs")
 Button/styles/hover = ExtResource("5_fo6ee")
 Button/styles/normal = ExtResource("4_6c6cs")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fo6ee"]
+bg_color = Color(0.57794297, 0.49357384, 0.33771932, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rlg4b"]
 load_path = "res://.godot/imported/unlocked.png-d035798e52417f4d690640c07ff1a01f.ctex"
 
@@ -119,7 +131,7 @@ layout_mode = 2
 theme_override_constants/separation = 30
 
 [node name="New Game" type="Button" parent="MainMenu/VBoxContainer2/VBoxContainer"]
-custom_minimum_size = Vector2(600, 100)
+custom_minimum_size = Vector2(700, 100)
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
@@ -134,13 +146,13 @@ theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Level Select"
 
-[node name="Settings" type="Button" parent="MainMenu/VBoxContainer2/VBoxContainer"]
+[node name="Level Creator" type="Button" parent="MainMenu/VBoxContainer2/VBoxContainer"]
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 2
 focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
-text = "Settings"
+text = "Level Creator"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainMenu/VBoxContainer2"]
 layout_mode = 2
@@ -160,10 +172,10 @@ layout_mode = 2
 icon = ExtResource("7_43m2q")
 icon_alignment = 1
 
-[node name="Documentation" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
+[node name="Settings" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-icon = ExtResource("8_xt57n")
+icon = ExtResource("8_rlg4b")
 icon_alignment = 1
 
 [node name="Quit" type="Button" parent="MainMenu/VBoxContainer2/HBoxContainer"]
@@ -613,6 +625,88 @@ text = "Back"
 [node name="Node" type="Node" parent="."]
 script = ExtResource("12_rlg4b")
 
+[node name="LevelCreatorMenu" type="CenterContainer" parent="."]
+visible = false
+offset_top = 375.0
+offset_right = 1920.0
+offset_bottom = 979.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelCreatorMenu"]
+layout_mode = 2
+theme = ExtResource("3_w5buf")
+theme_override_constants/separation = 20
+
+[node name="Panel" type="Panel" parent="LevelCreatorMenu/VBoxContainer"]
+custom_minimum_size = Vector2(1100, 550)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_t1dhk")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LevelCreatorMenu/VBoxContainer/Panel"]
+layout_mode = 0
+offset_left = 48.8
+offset_top = 18.0
+offset_right = 1148.8
+offset_bottom = 500.0
+
+[node name="LevelVBox" type="VBoxContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox"]
+visible = false
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fo6ee")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "LevelName"
+
+[node name="Label2" type="Label" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "by Level Creator"
+
+[node name="Button" type="Button" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 100
+icon = ExtResource("14_6c6cs")
+
+[node name="Control2" type="Control" parent="LevelCreatorMenu/VBoxContainer/Panel/ScrollContainer/LevelVBox/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LevelCreatorMenu/VBoxContainer"]
+layout_mode = 2
+
+[node name="LevelCreatorButton" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 76
+text = "Level Creator"
+
+[node name="Back" type="Button" parent="LevelCreatorMenu/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(600, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_fonts/font = ExtResource("2_rlg4b")
+theme_override_font_sizes/font_size = 76
+text = "Back"
 [node name="Achievements Menu" type="Window" parent="."]
 oversampling_override = 1.0
 title = "Achievements"
@@ -837,10 +931,10 @@ text = "Look for an undiscovered factory... it could be hard to spot."
 
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Select" to="." method="_on_level_select_pressed"]
-[connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer2/VBoxContainer/Level Creator" to="." method="_on_level_creator_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Profile" to="." method="_on_profile_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Leaderboard" to="." method="_on_leaderboard_pressed"]
-[connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Documentation" to="." method="_on_documentation_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer2/HBoxContainer/Quit" to="." method="_on_quit_pressed"]
 [connection signal="value_changed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/MainVolSlider" to="." method="_on_main_vol_slider_value_changed"]
 [connection signal="pressed" from="SettingsMenu/VBoxContainer/Panel/VBoxContainer/VBoxContainer2/Mute" to="." method="_on_mute_pressed"]
@@ -853,5 +947,7 @@ text = "Look for an undiscovered factory... it could be hard to spot."
 [connection signal="pressed" from="ProfileMenu/VBoxContainer/Achievements/Easter Eggs" to="." method="_on_easter_eggs_pressed"]
 [connection signal="item_selected" from="Leaderboard/VBoxContainer/Panel/VBoxContainer/HBoxContainer/OptionButton" to="Leaderboard" method="_on_option_button_item_selected"]
 [connection signal="pressed" from="Leaderboard/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/LevelCreatorButton" to="." method="_on_level_creator_button_pressed"]
+[connection signal="pressed" from="LevelCreatorMenu/VBoxContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="close_requested" from="Achievements Menu" to="." method="_on_achievements_menu_close_requested"]
 [connection signal="close_requested" from="Easter Egg Menu" to="." method="_on_easter_egg_menu_close_requested"]
