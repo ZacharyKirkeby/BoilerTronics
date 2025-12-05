@@ -29,6 +29,11 @@ public partial class DraggableObject : Node2D {
 		this.sprite.Scale = new Vector2I(1, 1);
 		this.obj = obj; // This will keep track of the object that we are placing
 		
+		// If this is a Rail/Claw layer object, do some more offsetting
+		if (obj is RailLayerObject || obj is ClawLayerObject) {
+			sprite.Offset += new Vector2(0, 24);
+		}
+		
 		// store base sprite offset
 		baseSpriteOffset = sprite.Offset;
 		
