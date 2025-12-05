@@ -244,8 +244,8 @@ public partial class MainMenu : Node2D
 		GetNode<Control>("Leaderboard").Visible = false;
 		GetNode<Control>("LevelCreatorMenu").Visible = false;
 		GetNode<Control>("MainMenu").Visible = true;
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Achievements Menu").Visible = false;
-		GetNode<Window>("ProfileMenu/VBoxContainer/Achievements/Easter Egg Menu").Visible = false;
+		GetNode<Window>("Achievements Menu").Visible = false;
+		GetNode<Window>("Easter Egg Menu").Visible = false;
 	}
 
 	private void _on_quit_pressed()

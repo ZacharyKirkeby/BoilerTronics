@@ -13,7 +13,7 @@ public partial class Leaderboard : CenterContainer
 	static private Label fifthName, fifthScore;
 	static private Label sixthName, sixthScore;
 	static private Label extraName, extraScore;
-
+	[Export] public Vector2I LevelNums {get; set;} = new Vector2I(6, 5);
 	private List<(string Name, float Score)> leaderboard = new();
 	private List<(string Name, float Score)> friendsLeaderboard = new();
 	private bool showingFriends = false;
@@ -95,7 +95,12 @@ public partial class Leaderboard : CenterContainer
 
 	private void GetLeaderboards()
 	{
-
+		for (int i = 1; i <= LevelNums.Y; i++) {
+			for (int j = 1; j <= LevelNums.X; j++) {
+				String levelnum = i.ToString() + j.ToString();
+				GetNode<OptionButton>("%OptionButton").AddItem("Level " + i.ToString() + "-" + j.ToString(), levelnum.ToInt());
+			}
+		}
 		GetNode<OptionButton>("%OptionButton").GetSelectedId();
 	}
 
