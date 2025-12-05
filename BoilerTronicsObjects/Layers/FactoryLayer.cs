@@ -31,49 +31,23 @@ namespace BoilerTronicsObjects.Layers
 			if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right)) {
 				
 				// if held/selected object is a floor layer object, pass mouse input to floor layer object
+				// bypasses de-selection problems
 				if (manager.objectToMove is FloorLayerObject || manager.selectedObject is FloorLayerObject) {
-					GD.Print("FactoryLayer: Found FloorLayerObject, passing through mouse input.");
+					// GD.Print("FactoryLayer: Found FloorLayerObject, passing through mouse input.");
 					manager.layerFloor.PassedMouseInput(@event);
 					return;
 				}
 				
-				GD.Print("FactoryLayer: Input Working");
+				// GD.Print("FactoryLayer: Input Working");
 				bool output = MouseInput(@event, 2);
 				
 				// if we didn't select anything successfully, pass down
 				if (output == false) {
-					GD.Print("FactoryLayer: Passing mouse input to FloorLayer.cs");
+					// GD.Print("FactoryLayer: Passing mouse input to FloorLayer.cs");
 					manager.layerFloor.PassedMouseInput(@event);
 				}
 				return;
 			}
-			
-			/*
-			if (manager.objectToMove is FactoryLayerObject || manager.selectedObject is FactoryLayerObject) {
-			// LAZY: just check that it's *not* a floor tile object
-			//if (!(manager.objectToMove is FloorLayerObject) && !(manager.selectedObject is FloorLayerObject)) {
-				// GD.Print("FactoryLayer: Found factory obj, working in.");
-				GD.Print("FactoryLayer: Input Working");
-				MouseInput(@event, 2);
-				// GD.Print("Claw");
-			}
-			else if (manager.objectToMove is FloorLayerObject || manager.selectedObject is FloorLayerObject) {
-				GD.Print("FactoryLayer: Found FloorLayerObject, passing through mouse input.");
-				manager.layerFloor.PassedMouseInput(@event);
-			}
-			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
-				// We always wnt to try to move				
-				GD.Print("FactoryLayer: Input Working");
-				bool output = MouseInput(@event, 2);
-				
-				
-				if (output == false) {
-					GD.Print("FactoryLayer: Passing mouse input to FloorLayer.cs");
-					manager.layerFloor.PassedMouseInput(@event);
-				}
-				return;
-			}
-			*/
 			base._Input(@event);
 		}
 	}

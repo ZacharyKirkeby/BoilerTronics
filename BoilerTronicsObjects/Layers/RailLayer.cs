@@ -31,31 +31,14 @@ namespace BoilerTronicsObjects.Layers
 
 		public override void _Input(InputEvent @event)
 		{
-			// add a check to make sure that we are only trying to place rails (not claws)
-			BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-			if (manager.currSlection != 3) {return;}
-			GD.Print("RailLayer: Working Input");
-			// MouseInput(@event, 3, 1);
-			
-			if (manager.objectToMove is RailLayerObject || manager.selectedObject is RailLayerObject) {
-				GD.Print("RailLayer: Found rail, immediately working");
-				MouseInput(@event, 3);
-				// GD.Print("Rail");
-			}
-			else if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
-				// We always wnt to try to move
-				// GD.Print("Rail");
-				// MouseInput(@event, 3);
-				// NOTE: the "claw" layer will perform its input first before "passing on" to RailLayer.cs
-				//return;
-			}
+			// do nothing -- we should only ever receive pass-through events fom the ClawLayer!
 			base._Input(@event);
 		}
 		
 		public override void PassedMouseInput(InputEvent @event) {
-			GD.Print("RailLayer : Receive Passed Input Working");
+			// GD.Print("RailLayer : Receive Passed Input Working");
 			
-			if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right) && buttonEvent.IsPressed()) {
+			if (@event is InputEventMouseButton buttonEvent && (buttonEvent.ButtonIndex == MouseButton.Left || buttonEvent.ButtonIndex == MouseButton.Right)) {
 				MouseInput(@event, 3);
 			}
 		}
