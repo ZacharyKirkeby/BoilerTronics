@@ -55,11 +55,21 @@ public partial class Leaderboard : CenterContainer
 
 	private void InitializeServices()
 	{
-		_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
-		AddChild(_authManager);
+		/*
+		if (_authManager != null && _authManager.GetParent() == null) {
+			_authManager = FirebaseAuthManager.Instance ?? new FirebaseAuthManager();
+			AddChild(_authManager);
+		}
 
-		_firestoreService = FirestoreService.Instance ?? new FirestoreService();
-		AddChild(_firestoreService);
+		if (_firestoreService != null && _firestoreService.GetParent() == null) {
+			_firestoreService = FirestoreService.Instance ?? new FirestoreService();
+			AddChild(_firestoreService);
+		}
+		*/
+		
+		MainMenu.InitializeServices();
+		this._authManager = MainMenu.GetFirebaseAuthManager();
+		this._firestoreService = MainMenu.GetFirestoreService();
 	}
 
 	private async void UpdateFriendsButtonVisibility()
