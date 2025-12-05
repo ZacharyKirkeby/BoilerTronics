@@ -164,10 +164,13 @@ public partial class ObjectPicker : HBoxContainer
 		}
 		AddChild(new Control()); // Creates left padding so its not smushed against container
 		ImageTexture texture = new ImageTexture();
-
+		
 		if (item.big) {
+			// PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(0, 0), item.sel, item.atPos, 0, Direction.UP);
+			BoilerTronicsData.initializeObjectMap(); // just in case.
+			
 			List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(item.table, item.atPos)], PlaceableBig.Direction.UP);
-			GD.Print(data);
+			// GD.Print(data);
 			texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
 			// Used for scaling later ? (Unsure exactly how we would do this and preserve th scale when dragging)
 			double hScale = 32 / texture.GetHeight();

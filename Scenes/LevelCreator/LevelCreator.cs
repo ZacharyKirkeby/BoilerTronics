@@ -230,12 +230,12 @@ public partial class LevelCreator : LevelUi
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		
 		// levelId irrelevant for now
+		newDat.LevelId = manager.GetLevelID().ToString();
 		newDat.CreatorId = userDat.Uuid;
 		newDat.CreatorName = userDat.Username;
-		newDat.LevelId = "TODO, levelID, ignore?";
 		newDat.LevelName = manager.saveState.levelName;
-		newDat.Description = "TODO, description";
-		newDat.Difficulty = "TODO, difficulty";
+		newDat.Description = "TODO description";
+		newDat.Difficulty = "TODO difficulty";
 		newDat.Tags = new List<string>(){
 			"TODO, tag1",
 			"TODO, tag2"
@@ -245,16 +245,18 @@ public partial class LevelCreator : LevelUi
 		newDat.LevelDataJson = manager.saveState.LoadDataIntoString(manager, filePath);
 		GD.Print("LevelCreator: Uploading LevelDataJson:", newDat.LevelDataJson);
 		
+		GD.Print("LevelCreator: LevelData to be sent: ", newDat.ToString());
+		
 		await sendData(newDat);
 
 		// TODO: execute server functions, send to server
 	}
 
 	private async Task sendData(LevelData dat)
-    {
-        var _instance = FirestoreService.Instance;
+	{
+		var _instance = FirestoreService.Instance;
 		await _instance.SaveLevelAsync(dat);
-    }
+	}
 
 	private void _on_export_and_upload_pressed()
 	{

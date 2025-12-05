@@ -12,4 +12,20 @@ public class LevelData
 	public string LevelDataJson { get; set; }
 	public string Difficulty { get; set; }
 	public List<string> Tags { get; set; }
+	
+	public override string ToString() {
+		
+		string output = "{ ";
+		output += "LevelId: " + this.LevelId + ", ";
+		output += "LevelId: " + this.CreatorId + ", ";
+		output += "LevelId: " + this.CreatorName + ", ";
+		output += "LevelId: " + this.LevelName + ", ";
+		output += "LevelId: " + this.Description + ", ";
+		output += "LevelId: " + this.LevelDataJson + ", ";
+		output += "LevelId: " + this.Difficulty + ", ";
+		output += "LevelId: " + this.Tags.ToString();
+		output += " }";
+		
+		return output;
+	}
 }
