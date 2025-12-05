@@ -4,11 +4,21 @@ using System;
 public partial class MainMenu : Node2D
 {
 	private int level = 11;
-	private FirebaseAuthManager _authManager;
-	private FirestoreService _firestoreService;
+	private static FirebaseAuthManager _authManager;
+	private static FirestoreService _firestoreService;
+	
+	public static MainMenu mainMainMenu;
+	
+	public static FirebaseAuthManager GetFirebaseAuthManager() {
+		return _authManager;
+	}
+	public static FirestoreService GetFirestoreService() {
+		return _firestoreService;
+	}
 	
 	public override void _Ready()
 	{
+		mainMainMenu = this;
 		InitializeServices();
 
 		// Set fullscreen toggle
@@ -23,14 +33,14 @@ public partial class MainMenu : Node2D
 		
 	}
 
-	private void InitializeServices()
+	public static void InitializeServices()
 	{
 		// Get or create auth manager
 		_authManager = FirebaseAuthManager.Instance;
 		if (_authManager == null)
 		{
 			_authManager = new FirebaseAuthManager();
-			AddChild(_authManager);
+			mainMainMenu.AddChild(_authManager);
 		}
 
 		// Get or create firestore service
@@ -38,7 +48,7 @@ public partial class MainMenu : Node2D
 		if (_firestoreService == null)
 		{
 			_firestoreService = new FirestoreService();
-			AddChild(_firestoreService);
+			mainMainMenu.AddChild(_firestoreService);
 		}
 	}
 
