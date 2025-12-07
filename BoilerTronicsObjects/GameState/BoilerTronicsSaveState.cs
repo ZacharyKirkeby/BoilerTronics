@@ -443,8 +443,18 @@ public class BoilerTronicsSaveState
 			Vector2I originPos = new Vector2I((int) targetObj["OGX"], (int) targetObj["OGY"]);
 			Vector2I atlasPos = new Vector2I((int) targetObj["atlasPosX"], (int) targetObj["atlasPosY"]);
 			
+			int qualityVal = 0;
+			// get/set quality, if relevant
+			// if (target is QualityObject && targetObj.ContainsKey("quality")) {
+			if (targetObj.ContainsKey("quality")) {
+				qualityVal = (int) targetObj["quality"];
+				// GD.Print("SaveState: object (", target, ") has quality ", qualityVal);
+			}
+			
 			// create object, add to array list
-			PlaceableObject target = ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos);
+			PlaceableObject target = ObjectFactory.CreateObject(originPos, (int) targetObj["sourceId"], atlasPos, (BoilerTronicsObjects.Interfaces.Quality) qualityVal);
+			
+			
 			
 			// if object is scriptable, attempt to load terminal code
 			if (target is Scriptable) {
@@ -485,13 +495,6 @@ public class BoilerTronicsSaveState
 					int dir = (int) targetObj["dir"];
 					((PlaceableBig) target).SetDir((PlaceableBig.Direction) dir);
 				}
-			}
-			
-			// get/set quality, if relevant
-			if (target is QualityObject && targetObj.ContainsKey("quality")) {
-				int qualityVal = (int) targetObj["quality"];
-				((QualityObject) target).SetQuality((Quality) qualityVal);
-				GD.Print("SaveState: updated object (", target, ") to have quality ", qualityVal);
 			}
 			
 			listObj.Add(target);
