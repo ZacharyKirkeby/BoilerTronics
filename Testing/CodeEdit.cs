@@ -72,8 +72,8 @@ public partial class CodeEdit : Godot.CodeEdit
 		GD.Print($"[{Name}] content changed:\n{Text}");
 		isDirty = true;
 		CallDeferred(nameof(ValidateAndHighlight));
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		manager.currLevel.E.setSyntaxError(this.error);
+		//BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		//manager.currLevel.E.setSyntaxError(this.error);
 	}
 
 	public PlaceableObject getObject()
@@ -118,32 +118,31 @@ public partial class CodeEdit : Godot.CodeEdit
 	// Main validation and highlighting logic
 	public void ValidateAndHighlight()
 	{
+		if (!isDirty) return;
+
 		ClearSyntaxErrorHighlights();
 		lineErrors.Clear();
 
 		string code = this.Text;
 		var errors = ProgramValidator.ValidateProgram(code);
-		if (errors != null && errors.Count > 0)
+
+		this.error = errors != null && errors.Count > 0;
+
+		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		if (manager?.currLevel?.E != null)
 		{
-			this.error = true;
-		} else
-		{
-			this.error = false;
+			manager.currLevel.E.setSyntaxError(this.error);
 		}
-		// Process each error
+
 		foreach (var (lineNum, errorMsg) in errors)
 		{
-			// Store error for this line
 			if (!lineErrors.ContainsKey(lineNum))
 			{
 				lineErrors[lineNum] = errorMsg;
 			}
-
-			// Highlight the line with error
 			HighlightSyntaxError(lineNum, errorColor);
 		}
 
-		// Update error display
 		UpdateErrorLabel();
 		isDirty = false;
 	}
