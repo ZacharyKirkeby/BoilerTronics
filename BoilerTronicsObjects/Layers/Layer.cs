@@ -207,6 +207,50 @@ namespace BoilerTronicsObjects.Layers
 			return CheckValidPos(X, Y);
 		}
 		*/
+		
+		// verifies that the object can be placed at the position
+		private bool VerifyObjectPlacement(PlaceableObject newPlaceable, Vector2I pos) {
+			// very minor optimization
+			bool isPlaceableBig = (newPlaceable is PlaceableBig);
+			// GD.Print("Layer.cs: VerifyObjectPlacement: isPlaceableBig: ", isPlaceableBig);
+			// GD.Print("Layer.cs: VerifyObjectPlacement: pos: ", pos.ToString());
+			
+			// check ValidPos stuff differently for PlaceableBig
+			// check: are coordinates in bounds?
+			if (isPlaceableBig) {
+				if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) newPlaceable)) return false;
+			} else {
+				if (!CheckValidPos(pos.X, pos.Y)) return false;
+			}
+			//if (!CheckValidPos(pos.X, pos.Y, newPlaceable)) return;
+			// GD.Print("Layer.cs: VerifyObjectPlacement: Object In Bounds");
+			
+			// check: are coordinates occupied?
+			if (isPlaceableBig) {
+				if (FindObject(pos, (PlaceableBig) newPlaceable) != null) return false;
+			} else {
+				if (FindObject(pos) != null) return false;
+			}
+			// GD.Print("Layer.cs: VerifyObjectPlacement: Object Not in Occupied Position");
+			
+			// check: are the coordinates editable?
+			if (isPlaceableBig) {
+				PlaceableBig obj = (PlaceableBig) newPlaceable;
+				// iterate through 'obj' texture grid
+				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
+					// check each individual data point
+					Vector2I dataCoords = data.GetPosition(pos);
+					
+					// if any of the tile positions are marked as "not editable", return
+					if (!editableTiles[dataCoords.X, dataCoords.Y]) return false;
+				}
+			} else {
+				if (!editableTiles[pos.X, pos.Y]) return false;
+			}
+			// GD.Print("Layer.cs: VerifyObjectPlacement: Object Not OOB");
+			
+			return true;
+		}
 
 		// system should handle PlaceableBig objects
 		public virtual void AddObject(PlaceableObject newPlaceable)
@@ -220,44 +264,12 @@ namespace BoilerTronicsObjects.Layers
 			manager.layerRail.Modulate = new Color(1, 1, 1, 1);
 			manager.layerMovement.Modulate = new Color(1, 1, 1, 1);
 			
+			bool isPlaceableBig = (newPlaceable is PlaceableBig);
 			if (newPlaceable == null) return; // make sure that the object isn't null
 			Vector2I pos = newPlaceable.GetPos();
 			
-			// very minor optimization
-			bool isPlaceableBig = (newPlaceable is PlaceableBig);
-			
-			// check ValidPos stuff differently for PlaceableBig
-			// check: are coordinates in bounds?
-			if (isPlaceableBig) {
-				if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) newPlaceable)) return;
-			} else {
-				if (!CheckValidPos(pos.X, pos.Y)) return;
-			}
-			//if (!CheckValidPos(pos.X, pos.Y, newPlaceable)) return;
-			GD.Print("Layer.cs: AddObject: Object In Bounds");
-			
-			// check: are coordinates occupied?
-			if (isPlaceableBig) {
-				if (FindObject(pos, (PlaceableBig) newPlaceable) != null) return;
-			} else {
-				if (FindObject(pos) != null) return;
-			}
-			GD.Print("Layer.cs: AddObject: Object Not in Occupied Position");
-			
-			// check: are the coordinates editable?
-			if (isPlaceableBig) {
-				PlaceableBig obj = (PlaceableBig) newPlaceable;
-				// iterate through 'obj' texture grid
-				foreach (PlaceableBigData data in obj.GetTextureGrid()) {
-					// check each individual data point
-					Vector2I dataCoords = data.GetPosition(obj.GetPos());
-					
-					// if any of the tile positions are marked as "not editable", return
-					if (!editableTiles[dataCoords.X, dataCoords.Y]) return;
-				}
-			} else {
-				if (!editableTiles[pos.X, pos.Y]) return;
-			}
+			bool validPlacement = VerifyObjectPlacement(newPlaceable, pos);
+			if (!validPlacement) { return; }
 			GD.Print("Layer.cs: AddObject: Object In Editable Tiles");
 			
 
@@ -376,37 +388,6 @@ namespace BoilerTronicsObjects.Layers
 				manager.currLevel.targetProduction = ((FactoryOutputObject) newPlaceable).getTargetNum();
 				GD.Print("Layer.cs: found FactoryOutputObject, overriding manager.currLevel.targetProduction " + manager.currLevel.targetProduction);
 			}
-			/*
-			switch (newPlaceable)
-			{
-				case ClawObject:
-					costToAdd = 100;
-					break;
-				case TrackObject:
-					costToAdd = 100;
-					break;
-				case ConveyorObject:
-					costToAdd = 100;
-					break;
-				case ConveyorRotatorObject:
-					costToAdd = 100;
-					break;
-				case FactoryInputObject:
-					costToAdd = 100;
-					break;
-				case FactoryOutputObject f:
-					costToAdd = 100;
-					// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-					// if (manager.currLevel != null) {
-						// f.setTargetNum(manager.currLevel.targetProduction);
-						// GD.Print("FactoryOutputObject added with goal: " + manager.currLevel.targetProduction);
-					// }
-					break;
-				default:
-					costToAdd = 0;
-					break;
-			}
-			*/
 
 			// GD.Print("Layer.cs: added object path: ", GetPath());
 			GD.Print("Layer.cs: AddObject: added object, atlasPos: ", newPlaceable.GetAtlasPos().ToString(), ", sourceId: ", newPlaceable.GetSourceID());
@@ -555,12 +536,14 @@ namespace BoilerTronicsObjects.Layers
 		{	
 			// verify coordinates are within bounds
 			if (!CheckInBounds(loc.X, loc.Y)) {return null;}
-			
+			// GD.Print("Layer.cs: FindObject PlaceableBig: base coords: ", loc);
 			// iterate through 'obj' texture grid
 			foreach (PlaceableBigData data in obj.GetTextureGrid()) {
 				// check each individual data point
-				Vector2I dataCoords = data.GetPosition(obj.GetPos());
+				Vector2I dataCoords = data.GetPosition(loc);
 				
+				// GD.Print("Layer.cs: FindObject PlaceableBig: coords: ", dataCoords);
+				if (!CheckInBounds(dataCoords.X, dataCoords.Y)) { continue; }
 				// if tile is occupied, return tile reference
 				PlaceableObject objAt = tiles[dataCoords.X, dataCoords.Y];
 				if (objAt != null && objAt != obj) return objAt;
@@ -762,65 +745,25 @@ namespace BoilerTronicsObjects.Layers
 			// very minor optimization
 			bool isPlaceableBig = (objAtPos is PlaceableBig);
 			
+			int oldDir = 0;
+			// temporarily set the object's direction to that stored in the global manager
+			if (isPlaceableBig) {
+				PlaceableBig bObj = (PlaceableBig) objAtPos;
+				oldDir = (int) bObj.GetDir();
+				bObj.SetDir((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) manager.objectToMoveDir);
+			}
+			
 			// check ValidPos stuff differently for PlaceableBig
 			// check: are coordinates in bounds?
-			if (validPlacement) {
-				if (isPlaceableBig) {
-					if (!CheckValidPos(pos.X, pos.Y, (PlaceableBig) objAtPos)) validPlacement = false;
-				} else {
-					if (!CheckValidPos(pos.X, pos.Y)) validPlacement = false;
-				}
-			}
+			validPlacement = VerifyObjectPlacement(objAtPos, tileCoords);
 			
-			// check: are coordinates occupied?
-			if (validPlacement) {
-				if (isPlaceableBig) {
-					if (FindObject(pos, (PlaceableBig) objAtPos) != null) validPlacement = false;
-				} else {
-					if (FindObject(pos) != null) validPlacement = false;
-				}
-			}
-			// GD.Print("Layer.cs: AddObject: Object Not in Occupied Position");
-			
-			if (validPlacement) {
-				// check: are the coordinates editable?
-				if (isPlaceableBig) {
-					PlaceableBig bObj = (PlaceableBig) objAtPos;
-					// iterate through 'obj' texture grid
-					foreach (PlaceableBigData data in bObj.GetTextureGrid()) {
-						// check each individual data point
-						Vector2I dataCoords = data.GetPosition(pos);
-						
-						// if any of the tile positions are marked as "not editable", return
-						if (!editableTiles[dataCoords.X, dataCoords.Y]) validPlacement = false;
-					}
-				} else {
-					if (!editableTiles[pos.X, pos.Y]) validPlacement = false;
-				}
-			}
-			
-			/*
-			bool validPos = CheckValidPos(tileCoords.X, tileCoords.Y);// CheckValidPos(tileCoords.X, tileCoords.Y, objAtPos);
-			bool occupiedSpot = (FindObject(tileCoords) != null);
-			if (manager.objectToMove is PlaceableBig bObj) { // PlaceableBig case
-				GD.Print("Layer.cs: Placement: Checking PlaceableBig object");
-				validPos = CheckValidPos(tileCoords.X, tileCoords.Y, bObj);
-				
-				if (validPos) occupiedSpot = (FindObject(tileCoords,bObj) != null);
-			}
-			*/
-			
-			// GD.Print("Layer.cs: MousePlaceItem: Valid pos?: ", validPos);
-			// GD.Print("Layer.cs: MousePlaceItem: Occupied Spot?: ", occupiedSpot);
-			// make sure nothing is there already
-			//if (objAtPos != null || !validPos || occupiedSpot) {
 			if (!validPlacement) {
 				// reset so we don't place accidently
 				GD.Print("Layer.cs: Invalid placement | ","X: ", tileCoords.X, ", Y: ", tileCoords.Y);
 				manager.placingObject = 0;
 
 				if (manager.objectToMove != null) {
-					GD.Print("Layer.cs: Restoring placed object position.");
+					GD.Print("Layer.cs: Invalid Placement, Restoring placed object position.");
 					AddObject(manager.objectToMove); // move the object back to it's original position
 					
 					// handle cases where freshly spawned scriptable objects still create
@@ -834,9 +777,16 @@ namespace BoilerTronicsObjects.Layers
 						}
 					}
 					manager.objectToMove = null;
+					
+					// reset the object's facing direction
+					if (isPlaceableBig) {
+						PlaceableBig bObj = (PlaceableBig) objAtPos;
+						bObj.SetDir((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) oldDir);
+					}
 				}
 				
 				// invalid placement
+				GD.Print("Layer.cs: MousePlaceItem: Object appears to be invalid, abort.");
 				return false;
 			}
 			GD.Print("Layer.cs: MousePlaceItem: Object appears to be valid, attempt to place.");
@@ -926,6 +876,14 @@ namespace BoilerTronicsObjects.Layers
 				return false;
 			}
 			GD.Print("Layer.cs: MouseInput Validated");
+			
+			if (buttonEvent.IsReleased()) {
+				// GD.Print("Layer.cs: Button Releasing");
+				// GD.Print("Layer.cs: Manager placing? ", manager.placingObject == 1);
+				// GD.Print("Layer.cs: Manager placing object:", manager.objectToMove);
+				// GD.Print("glob man B:", manager);
+			}
+			
 
 			// Get manager
 			// BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager; // get the manager
@@ -945,8 +903,8 @@ namespace BoilerTronicsObjects.Layers
 			if (manager.placingObject == 1) {
 				GD.Print("Layer.cs: placingObject == 1");
 				if (buttonEvent.ButtonIndex == MouseButton.Left && buttonEvent.IsReleased()) {
-					GD.Print("Layer.cs: MousePlaceItem");
-					bool successful = MousePlaceItem(tileCoords, objAtPos);
+					GD.Print("Layer.cs: MousePlaceItem: ", manager.objectToMove);
+					bool successful = MousePlaceItem(tileCoords, manager.objectToMove);
 					if (!successful) { return false; } // abort
 				}
 				

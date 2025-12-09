@@ -2,20 +2,42 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using BoilerTronicsObjects.Placeable;
+using BoilerTronicsObjects.Objects;
+using BoilerTronicsObjects.Data;
 
 public partial class DraggableObject : Node2D {
 	
+	private Vector2 baseSpriteOffset;
 	private Vector2 mouse_offset;
 	private PlaceableObject obj;
 	private Sprite2D sprite;
+	private int rotateCount;
+	
+	// keep track of labels to free as needed and etc
+	private Label costLabel;
+	private Label labelQ;
+	private Label labelE;
+	
+	BoilerTronicsGlobalManager manager;
 
 	public DraggableObject(Vector2 mouse_offset, Sprite2D spritToDrag, PlaceableObject obj) {
 		this.mouse_offset = mouse_offset;
+		this.rotateCount = 0;
 
 		// Copy Sprite and make it a child
 		this.sprite = spritToDrag.Duplicate() as Sprite2D;
 		this.sprite.Scale = new Vector2I(1, 1);
 		this.obj = obj; // This will keep track of the object that we are placing
+		
+		// If this is a Rail/Claw layer object, do some more offsetting
+		if (obj is RailLayerObject || obj is ClawLayerObject) {
+			sprite.Offset += new Vector2(0, 24);	// refer to rendering texture offsets
+		} else if (!(obj is PlaceableBig)) {
+			sprite.Offset += new Vector2(0, 8);		// refer to rendering texture offsets
+		}
+		
+		// store base sprite offset
+		baseSpriteOffset = sprite.Offset;
 		
 		
 		if (this.obj is PlaceableBig bObj) {
@@ -24,7 +46,7 @@ public partial class DraggableObject : Node2D {
 			
 			// offset the sprite accordingly such that the mouse is over (0, 0) of the sprite
 			// i.e. the tile map grid coordinates of the big placeable's origin
-			sprite.Offset -= CalculatePlaceableBigOffset(bObj);
+			sprite.Offset -= CalculatePlaceableBigOffset(bObj, (int) bObj.GetDir());
 		}
 		
 		// Set to very high Z-index such that this block is visibly above all other blocks
@@ -36,8 +58,8 @@ public partial class DraggableObject : Node2D {
 	// assume that we are at the top-left of the image; we are to calculate
 	// the offset from that position to the (0, 0) block.
 	// reuses code from PlaceableBig's GetTexture() and related functions.
-	public static Vector2 CalculatePlaceableBigOffset(PlaceableBig bObj) {
-		List<PlaceableBigData> data = bObj.GetTextureGrid();
+	public static Vector2 CalculatePlaceableBigOffset(PlaceableBig bObj, int dir) {
+		List<PlaceableBigData> data = bObj.GetTextureGrid((BoilerTronicsObjects.Placeable.PlaceableBig.Direction) dir);
 		
 		// from PlaceableBig: GetBigTexture()
 		const int tileWidth = 32;
@@ -82,14 +104,33 @@ public partial class DraggableObject : Node2D {
 
 	public override void _Ready() {
 		// We may need to communicate somthing to the manager
-		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
+		manager = BoilerTronicsGlobalManager.GlobalManager;
 
 		manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
+		manager.placingObject = 1;
+		// GD.Print("glob man A:", manager);
+		
+		// keep track of direction
+		if (this.obj is PlaceableBig bObj) {
+			manager.objectToMoveDir = (int) bObj.GetDir();
+		} else {
+			manager.objectToMoveDir = 0;
+		}
+		
+		ClearOldLabels();
+		GenerateTextPrompts();
 	}
 
 	// this will allow for the draggable object to follow the mouse
 	public override void _Process(double delta) {
-		sprite.Position = GetGlobalMousePosition(); // add some mouse offset later
+		sprite.Position = GetGlobalMousePosition(); // add some mouse offset later EDIT: already sorta kinda done
+		
+		// just in case
+		// if (manager.objectToMove == null) {
+			// GD.Print("DraggableObject: manager objectToMove is null, trying to fix?");
+			// manager.objectToMove = this.obj; // This is a refrence that will be used when we are actually placing the object
+			// manager.placingObject = 1;
+		// }
 	}
 
 	public override void _Input(InputEvent @event)
@@ -109,11 +150,145 @@ public partial class DraggableObject : Node2D {
 			manager.layerFloor.Modulate =manager.layerDefaultVisibility;
 			manager.layerRail.Modulate = manager.layerDefaultVisibility;
 			manager.layerMovement.Modulate = manager.layerDefaultVisibility;
+			
+			// manager.objectToMove = this.obj;
+			// manager.placingObject = 1;
+			
 			Node2D subView = GetNode("../Node2D") as Node2D;
 			subView._Input(@event);
+		}
+		
+		// keyboard events
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed) {
+			
+			switch (keyEvent.Keycode) {
+				// key codes: https://docs.godotengine.org/en/latest/classes/class_%40globalscope.html#enum-globalscope-key
+				case Key.E:
+					// GD.Print("TODO: Rotate Image Right!");
+					rotateCount = (rotateCount + 1) % 4;
+					// GD.Print("rotateCount: ", rotateCount);
+					if (obj is PlaceableBig) {
+						UpdateBigSpriteTexture();
+					}
+				break;
+				case Key.Q:
+					// GD.Print("TODO: Rotate Image Left!");
+					rotateCount = (rotateCount - 1) % 4;
+					if (rotateCount < 0) rotateCount = 4 + rotateCount; // make sure we loop properly!
+					// GD.Print("rotateCount: ", rotateCount);
+					if (obj is PlaceableBig) {
+						UpdateBigSpriteTexture();
+					}
+				break;
+			}
 		}
 
 		// Always pass downward
 		base._Input(@event);
+	}
+	
+	// update internal sprite texture
+	private void UpdateBigSpriteTexture() {
+		PlaceableBig bObj = obj as PlaceableBig;
+		int sourceId = obj.GetSourceID();
+		Vector2I atlasPos = obj.GetAtlasPos();
+		int dir = ((int) bObj.GetDir() + rotateCount) % 4;
+		
+		// update global var
+		manager.objectToMoveDir = dir;
+		
+		List<PlaceableBigData> data = ObjectFactory.GetBigObjectTileMap(BoilerTronicsData.objectMap[BoilerTronicsData.hashCoords(sourceId, atlasPos)], (BoilerTronicsObjects.Placeable.PlaceableBig.Direction) dir);
+		
+		// failsafe: double check that 'data' isn't null!
+		if (data != null) {
+			// Then we can update the texture
+			ImageTexture texture = PlaceableBig.GetBigTexture(data) as ImageTexture;
+			
+			// undo texture offset
+			// sprite.Offset -= new Vector2(sprite.Texture.GetWidth() / 2, sprite.Texture.GetHeight() / 2);
+			// sprite.Offset += CalculatePlaceableBigOffset(bObj, (int) bObj.GetDir());
+			
+			sprite.Texture = texture;			// assign new texture
+			sprite.Offset = baseSpriteOffset; 	// reset offset
+			
+			// new texture offset
+			sprite.Offset += new Vector2(sprite.Texture.GetWidth() / 2, sprite.Texture.GetHeight() / 2);
+			sprite.Offset -= CalculatePlaceableBigOffset(bObj, dir);
+			return;
+		} else {
+			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: Catastrophic error, GetBigTexture failed!");
+			GD.PrintErr("DraggableObject: UpdateBigSpriteTexture: sourceID: ", sourceId, ", atlasPos: ", atlasPos, ", dir: ", dir);
+		}
+		
+		ClearOldLabels();
+		GenerateTextPrompts();
+	}
+	
+	// null/free old labels
+	private void ClearOldLabels() {
+		if (costLabel != null && IsInstanceValid(costLabel)) {
+			costLabel.QueueFree();
+			costLabel = null;
+		}
+		
+		if (labelQ != null && IsInstanceValid(labelQ)) {
+			labelQ.QueueFree();
+			labelQ = null;
+		}
+		
+		if (labelE != null && IsInstanceValid(labelE)) {
+			labelE.QueueFree();
+			labelE = null;
+		}
+	}
+	
+	// regenerate text prompts/labels (price, rotation prompts, etc)
+	private void GenerateTextPrompts() {
+		
+		// Cost label
+		costLabel = new Label();
+		costLabel.SetText("$" + obj.GetCost());
+		costLabel.Position = this.Position;
+		
+		Theme inTheme = (Godot.Theme) GD.Load("res://Scenes/buttontheme.tres");
+		
+		// thanks: https://godotforums.org/d/33246-changing-font-size-of-the-label-through-code/3
+		costLabel.AddThemeFontSizeOverride("font_size", 16);
+		costLabel.SetTheme(inTheme);
+		costLabel.Position += new Vector2(16, 16);
+		
+		// handle the rail/claw layer objects a bit differently given how they're 32x64 rather than 32x32
+		// likewise, slightly adjust for MovementLayer objects
+		if (obj is MovementLayerObject) {
+			costLabel.Position -= new Vector2(0, 8);
+		} else if (obj is RailLayerObject || obj is ClawLayerObject) {
+			costLabel.Position -= new Vector2(0, 32);
+		}
+		
+		sprite.AddChild(costLabel);
+		
+		// if PlaceableBig, add text prompts for rotation purposes
+		if (obj is PlaceableBig) {
+			ImageTexture tex = sprite.Texture as ImageTexture;
+			
+			// Q label
+			labelQ = new Label();
+			labelQ.SetText("<-- Q");
+			labelQ.Position = this.Position;
+			labelQ.AddThemeFontSizeOverride("font_size", 16);
+			labelQ.SetTheme(inTheme);
+			labelQ.Position += new Vector2(-tex.GetWidth() - 0, -tex.GetHeight() - 8);
+			sprite.AddChild(labelQ);
+			
+			
+			// E label
+			labelE = new Label();
+			labelE.SetText("E -->");
+			labelE.Position = this.Position;
+			labelE.AddThemeFontSizeOverride("font_size", 16);
+			labelE.SetTheme(inTheme);
+			labelE.Position += new Vector2(tex.GetWidth() - 16, -tex.GetHeight() - 8);
+			sprite.AddChild(labelE);
+		}
 	}
 }
