@@ -50,6 +50,9 @@ public partial class BoilerTronicsGlobalManager : Node
 	public LevelUi levelUi;
 	/***** End Testing Vars *****/
 	
+	// TODO: keep track of the objectToMove's current direction
+	public int objectToMoveDir;
+	
 	// TODO: similar to "objectToMove", probably functionally identical in a lot of ways (?)
 	// idea is to keep track of what object is currently "selected"
 	public PlaceableObject selectedObject;

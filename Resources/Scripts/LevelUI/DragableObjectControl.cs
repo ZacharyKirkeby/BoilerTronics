@@ -67,7 +67,7 @@ public partial class DragableObjectControl : Control {
 
 			// We now need to make the object so that we place it :D
 			PlaceableObject obj = ObjectFactory.CreateObject(new Vector2I(-1, -1), sourceID, atlasCords, Q, dir);
-			GD.Print(obj);
+			// GD.Print(obj);
 
 			if (obj is PlaceableBig bObj) bObj.SetDir(big_dir);
 
@@ -78,6 +78,7 @@ public partial class DragableObjectControl : Control {
 			subView.AddChild(draggable);
 
 			manager.currSlection = sel;
+			manager.ClearSelectingObject();
 
 			GD.Print("Curr Sel: ", manager.currSlection);
 

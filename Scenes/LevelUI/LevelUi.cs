@@ -443,12 +443,12 @@ public partial class LevelUi : Node2D
 		if (toggled_on)
 		{
 			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = true;
-			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = true;
+			//BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = true;
 		}
 		else
 		{
 			BoilerTronicsGlobalManager.GlobalManager.layerFactory.Visible = false;
-			BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = false;
+			//BoilerTronicsGlobalManager.GlobalManager.layerFloor.Visible = false;
 		}
 	}
 	
