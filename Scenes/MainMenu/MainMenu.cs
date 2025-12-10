@@ -299,7 +299,7 @@ public partial class MainMenu : Node2D
 	
 	private void _on_open_pdf_2_pressed()
 	{
-		string pdfPath = "res://docs/tempUserGuide.pdf";
+		string pdfPath = "res://docs/BoilerTronicsUserGuide.pdf";
 		if (FileAccess.FileExists(pdfPath))
 			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
 		else

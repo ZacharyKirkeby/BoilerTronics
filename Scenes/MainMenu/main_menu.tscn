@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://oluvf880mleu"]
+[gd_scene load_steps=31 format=3 uid="uid://oluvf880mleu"]
 
 [ext_resource type="Script" uid="uid://o31mbaih2jeb" path="res://Scenes/MainMenu/MainMenu.cs" id="1_mdp32"]
 [ext_resource type="FontFile" uid="uid://ddam3u770tbjj" path="res://Resources/Fonts/VCR_OSD_MONO_1.001.ttf" id="2_rlg4b"]
@@ -15,8 +15,8 @@
 [ext_resource type="Script" uid="uid://c0es3a6obapof" path="res://Scenes/MainMenu/Leaderboard.cs" id="11_37xt4"]
 [ext_resource type="Texture2D" uid="uid://boxms3ecpo1c" path="res://Resources/Icons/unlocked.png" id="11_w5buf"]
 [ext_resource type="Script" uid="uid://c7ouh2ahdqsmq" path="res://BoilerTronicsObjects/Interpreter/TestRunner.cs" id="12_rlg4b"]
-[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="14_6c6cs"]
 [ext_resource type="Script" uid="uid://y1rt7blgu1cs" path="res://Scenes/MainMenu/EasterEgg.cs" id="13_fo6ee"]
+[ext_resource type="Texture2D" uid="uid://be16fmp0k4ybf" path="res://Resources/Icons/play.png" id="14_6c6cs"]
 
 [sub_resource type="Theme" id="Theme_yhxw7"]
 Button/constants/icon_max_width = 75
@@ -89,6 +89,7 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rlg4b"]
 load_path = "res://.godot/imported/unlocked.png-d035798e52417f4d690640c07ff1a01f.ctex"
 
@@ -707,6 +708,7 @@ focus_mode = 0
 theme_override_fonts/font = ExtResource("2_rlg4b")
 theme_override_font_sizes/font_size = 76
 text = "Back"
+
 [node name="Achievements Menu" type="Window" parent="."]
 oversampling_override = 1.0
 title = "Achievements"
