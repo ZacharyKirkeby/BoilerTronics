@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 public partial class LevelCreator : LevelUi
 {
 	string levelSavePath = ProjectSettings.GlobalizePath("user://LevelCreator/");
+	string levelSavePathRaw = "user://LevelCreator/";
 
 	public override void _Ready()
 	{
@@ -17,7 +18,11 @@ public partial class LevelCreator : LevelUi
 		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
 
-		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		var localDir = DirAccess.Open(levelSavePathRaw);
+		string[] saveFiles = new string[0];
+		if (localDir != null) {
+			saveFiles = localDir.GetFiles();//localDir.GetFiles(levelSavePath, "*.save");
+		}
 		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
 
@@ -281,7 +286,12 @@ public partial class LevelCreator : LevelUi
 	{
 		var fileLocation = GetNode<Label>("%FileLocation");
 		fileLocation.Text = "Level will be saved at " + levelSavePath;
-		string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		//string[] saveFiles = Directory.GetFiles(levelSavePath, "*.save");
+		var localDir = DirAccess.Open(levelSavePathRaw);
+		string[] saveFiles = new string[0];
+		if (localDir != null) {
+			saveFiles = localDir.GetFiles();//localDir.GetFiles(levelSavePath, "*.save");
+		}
 		var dropdown = GetNode<OptionButton>("%ExistingLoadLevelSelector");
 		dropdown.Clear();
 		string[] userSaveFiles = Directory.GetFiles(ProjectSettings.GlobalizePath("res://Resources/Levels/"), "*.save");
