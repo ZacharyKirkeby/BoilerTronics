@@ -8,16 +8,18 @@ public partial class MainMenu : Node2D
 	private int level = 11;
 	private static FirebaseAuthManager _authManager;
 	private static FirestoreService _firestoreService;
-	
+
 	public static MainMenu mainMainMenu;
-	
-	public static FirebaseAuthManager GetFirebaseAuthManager() {
+
+	public static FirebaseAuthManager GetFirebaseAuthManager()
+	{
 		return _authManager;
 	}
-	public static FirestoreService GetFirestoreService() {
+	public static FirestoreService GetFirestoreService()
+	{
 		return _firestoreService;
 	}
-	
+
 	public override void _Ready()
 	{
 		mainMainMenu = this;
@@ -65,10 +67,10 @@ public partial class MainMenu : Node2D
 	private void _on_new_game_pressed()
 	{
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
-		
+
 		// load the default level for level 0
 		// manager.SetTargetLevelSave(0, -1);
-		
+
 		// load autosave
 		// manager.SetTargetLevelSave(0, -2);
 		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
@@ -83,7 +85,8 @@ public partial class MainMenu : Node2D
 	{
 		ProfileMenuController profMan = ProfileMenuController.GlobalManager;
 		UserData userDat = null;
-		if (profMan.IsAuthenticated()) {
+		if (profMan.IsAuthenticated())
+		{
 			FirestoreService _instance = FirestoreService.Instance;
 			userDat = profMan.GetUserData();
 			List<LevelData> levels = await _instance.GetUserLevelsAsync(50);
@@ -97,10 +100,10 @@ public partial class MainMenu : Node2D
 	}
 
 	private void _on_level_creator_pressed()
-{
-	// fire-and-forget async task
-	_ = OpenLevelCreatorAsync();
-}
+	{
+		// fire-and-forget async task
+		_ = OpenLevelCreatorAsync();
+	}
 
 	private async Task OpenLevelCreatorAsync()
 	{
@@ -117,7 +120,7 @@ public partial class MainMenu : Node2D
 			vbox.AddChild(CreateRow(level.LevelName, level.CreatorName, level));
 		}
 	}
-	
+
 	public PanelContainer CreateRow(String levelName, String authorName, LevelData dat)
 	{
 		GD.Print("test");
@@ -208,22 +211,22 @@ public partial class MainMenu : Node2D
 
 		return panel;
 	}
-	
+
 	private void OnRowButtonPressed(LevelData level)
 	{
 		GD.Print($"Button for level {level.LevelName} pressed");
 		// TODO Open level creator with level loaded
-		
+
 		BoilerTronicsGlobalManager manager = BoilerTronicsGlobalManager.GlobalManager;
 		// TODO: create level given the LevelData
 		string levelName = level.CreatorName + level.LevelId;
 		manager.saveState.SaveStringTo(manager, "LevelCreator/Downloaded/", levelName, level.LevelDataJson);
-		
+
 		// TODO: set the load level target
-		
+
 		manager.loadLevelName = "Downloaded/" + levelName;
 		manager.creatingNewLevel = false;
-		
+
 		// play the level
 		GetTree().ChangeSceneToFile("res://Scenes/LevelUI/level_ui.tscn");
 	}
@@ -233,16 +236,18 @@ public partial class MainMenu : Node2D
 		GetTree().ChangeSceneToFile("res://Scenes/LevelCreator/user_level_creator.tscn");
 	}
 
-	private void _on_profile_pressed() {
+	private void _on_profile_pressed()
+	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("ProfileMenu").Visible = true;
 	}
-	
-	private void _on_leaderboard_pressed() {
+
+	private void _on_leaderboard_pressed()
+	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("Leaderboard").Visible = true;
 	}
-	
+
 	private void _on_back_pressed()
 	{
 		GetNode<Control>("SettingsMenu").Visible = false;
@@ -258,8 +263,9 @@ public partial class MainMenu : Node2D
 	{
 		GetTree().Quit();
 	}
-	
-	private void _on_settings_pressed() {
+
+	private void _on_settings_pressed()
+	{
 		GetNode<Control>("MainMenu").Visible = false;
 		GetNode<Control>("SettingsMenu").Visible = true;
 	}
@@ -287,38 +293,53 @@ public partial class MainMenu : Node2D
 		//actually make volume 0
 		_on_main_vol_slider_value_changed(0);
 	}
-	
-	private void _on_open_pdf_pressed()
+
+	private void OpenPdf(string source)
 	{
-		string pdfPath = "res://docs/AssemblyManual.pdf";
-		if (FileAccess.FileExists(pdfPath))
-			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
-		else
-			GD.PrintErr($"PDF not found: {pdfPath}");
-	}
-	
-	private void _on_open_pdf_2_pressed()
-	{
-		string pdfPath = "res://docs/BoilerTronicsUserGuide.pdf";
-		if (FileAccess.FileExists(pdfPath))
-			OS.ShellOpen(ProjectSettings.GlobalizePath(pdfPath));
-		else
-			GD.PrintErr($"PDF not found: {pdfPath}");
+		if (!FileAccess.FileExists(source))
+		{
+			GD.PrintErr($"PDF not found: {source}");
+			return;
+		}
+
+		using var src = FileAccess.Open(source, FileAccess.ModeFlags.Read);
+		byte[] data = src.GetBuffer((long)src.GetLength());
+
+		string dest = System.IO.Path.Combine(OS.GetUserDataDir(), System.IO.Path.GetFileName(source));
+
+		using var dst = FileAccess.Open(dest, FileAccess.ModeFlags.Write);
+		dst.StoreBuffer(data);
+
+		OS.ShellOpen(dest);
 	}
 
-	public void _on_achievements_pressed() {
+	private void _on_open_pdf_pressed()
+	{
+		OpenPdf("res://docs/AssemblyManual.pdf");
+	}
+
+	private void _on_open_pdf_2_pressed()
+	{
+		OpenPdf("res://docs/BoilerTronicsUserGuide.pdf");
+	}
+
+	public void _on_achievements_pressed()
+	{
 		GetNode<Window>("Achievements Menu").Visible = true;
 	}
-	
-	private void _on_achievements_menu_close_requested() {
+
+	private void _on_achievements_menu_close_requested()
+	{
 		GetNode<Window>("Achievements Menu").Visible = false;
 	}
-	
-	public void _on_easter_eggs_pressed() {
+
+	public void _on_easter_eggs_pressed()
+	{
 		GetNode<Window>("Easter Egg Menu").Visible = true;
 	}
-	
-	private void _on_easter_egg_menu_close_requested() {
+
+	private void _on_easter_egg_menu_close_requested()
+	{
 		GetNode<Window>("Easter Egg Menu").Visible = false;
 	}
 }
