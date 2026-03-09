@@ -53,14 +53,21 @@ The goal is to design a functioning production line capable of meeting increasin
 - Cross-platform game framework
 
 ---
+### Gallery
 
+## Main Menu
+<img width="1728" height="974" alt="Screenshot 2026-03-09 at 1 50 55 PM" src="https://github.com/user-attachments/assets/bb6658ea-064b-43e1-af44-95f8aa4f9784" />
+
+## Level UI
+<img width="1728" height="970" alt="Screenshot 2026-03-09 at 1 51 18 PM" src="https://github.com/user-attachments/assets/820d9784-2235-4e84-b87d-5fa0af7855e5" />
+
+---
 ## Tech Stack
 
 | Technology | Purpose |
 |---|---|
 | **Godot Engine** | Game engine and rendering |
-| **C#** | Core gameplay systems |
-| **GDScript** | UI and engine scripting |
+| **C#** | Core gameplay systems and UI |
 | **Git / GitHub** | Version control |
 | **Agile / Scrum** | Team collaboration and project management |
 
